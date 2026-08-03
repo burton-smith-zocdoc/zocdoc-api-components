@@ -1,0 +1,47 @@
+{
+  "name": "powered-by-zocdoc",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json && pnpm run build:theme && pnpm run analyze",
+    "build:theme": "node --import tsx scripts/build-theme.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:client": "vitest run --project client",
+    "test:components": "vitest run --project components",
+    "analyze": "cem analyze --litelement --globs \"packages/*/src/**/*.ts\" --exclude \"**/*.stories.ts\" --exclude \"**/*.test.ts\"",
+    "storybook": "pnpm run analyze && storybook dev -p 6006",
+    "storybook:build": "pnpm run analyze && storybook build",
+    "demo": "pnpm --filter demo dev"
+  },
+  "devDependencies": {
+    "@charm-ux/theming": "link:../charm-ux/core/packages/theming",
+    "@custom-elements-manifest/analyzer": "0.11.0",
+    "lit": "^3.2.1",
+    "tsx": "^4.19.0",
+    "@storybook/web-components": "^10.5.5",
+    "@storybook/web-components-vite": "^10.5.5",
+    "@types/node": "^24.3.0",
+    "@vitest/browser": "^4.1.10",
+    "@vitest/browser-playwright": "^4.1.10",
+    "@wc-toolkit/cem-analyzer-plugin": "^1.0.2",
+    "@wc-toolkit/cem-inheritance": "^1.2.0",
+    "@wc-toolkit/cem-sorter": "^1.0.1",
+    "@wc-toolkit/jsdoc-tags": "^1.2.1",
+    "@wc-toolkit/module-path-resolver": "^1.0.1",
+    "@wc-toolkit/storybook-helpers": "^10.7.3",
+    "@wc-toolkit/type-parser": "^1.3.0",
+    "playwright": "^1.62.1",
+    "storybook": "^10.5.5",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.5",
+    "vitest": "^4.1.10"
+  },
+  "customElements": "custom-elements.json",
+  "pnpm": {
+    "overrides": {
+      "@lit/reactive-element": "2.1.2"
+    }
+  }
+}

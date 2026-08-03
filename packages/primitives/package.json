@@ -1,0 +1,18 @@
+{
+  "name": "@powered-by-zocdoc/primitives",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./theme/tokens.css": "./dist/theme/tokens.css",
+    "./theme/reset.css": "./dist/theme/reset.css",
+    "./theme/utilities.css": "./dist/theme/utilities.css",
+    "./theme/all.css": "./dist/theme/all.css"
+  },
+  "dependencies": {
+    "@charm-ux/core": "link:../../../charm-ux/core/packages/core",
+    "@charm-ux/theming": "link:../../../charm-ux/core/packages/theming",
+    "lit": "^3.2.1"
+  }
+}
