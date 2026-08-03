@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdSwitch } from './switch.js';
 import './switch.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdSwitch>('zd-switch', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdSwitch>('zd-switch', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdSwitch> = {
   title: 'Primitives/Switch',

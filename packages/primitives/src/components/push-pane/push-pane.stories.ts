@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdPushPane } from './push-pane.js';
 import './push-pane.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdPushPane>('zd-push-pane', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdPushPane>('zd-push-pane', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdPushPane> = {
   title: 'Primitives/Push Pane',
@@ -12,7 +14,8 @@ const meta: Meta<ZdPushPane> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`Filter results by insurance, visit reason, and availability.`),
+  render: (args) =>
+    template(args, html`Filter results by insurance, visit reason, and availability.`),
 };
 
 export default meta;

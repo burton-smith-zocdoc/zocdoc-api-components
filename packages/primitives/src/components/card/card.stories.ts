@@ -5,7 +5,9 @@ import type { ZdCard } from './card.js';
 import './card.js';
 import '../avatar/avatar.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdCard>('zd-card', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdCard>('zd-card', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdCard> = {
   title: 'Primitives/Card',
@@ -13,10 +15,14 @@ const meta: Meta<ZdCard> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-    <h3>Card Title</h3>
-    <p>Card content goes here.</p>
-  `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <h3>Card Title</h3>
+        <p>Card content goes here.</p>
+      `
+    ),
 };
 
 export default meta;

@@ -6,9 +6,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = join(__dirname, '../packages/primitives/dist/theme');
 
 async function buildTheme() {
-  const { zocdocThemeCss, zocdocResetCss, zocdocUtilitiesCss, zocdocAllCss } = await import(
-    '../packages/primitives/src/theme/zocdoc.js'
-  );
+  const { zocdocThemeCss, zocdocResetCss, zocdocUtilitiesCss, zocdocAllCss } =
+    await import('../packages/primitives/src/theme/zocdoc.js');
 
   await mkdir(outDir, { recursive: true });
 

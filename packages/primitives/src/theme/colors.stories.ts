@@ -2,7 +2,19 @@ import { html, css, LitElement } from 'lit';
 import type { Meta, StoryObj } from '@storybook/web-components';
 
 const colorScales = ['brand', 'accent', 'success', 'warning', 'danger', 'neutral'] as const;
-const colorSteps = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'] as const;
+const colorSteps = [
+  '50',
+  '100',
+  '200',
+  '300',
+  '400',
+  '500',
+  '600',
+  '700',
+  '800',
+  '900',
+  '950',
+] as const;
 
 class ColorSwatch extends LitElement {
   static override styles = css`

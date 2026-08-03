@@ -5,7 +5,9 @@ import type { ZdDialog } from './dialog.js';
 import './dialog.js';
 import '../button/button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdDialog>('zd-dialog', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdDialog>('zd-dialog', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdDialog> = {
   title: 'Primitives/Dialog',
@@ -32,6 +34,6 @@ export const WithFooter: Story = {
           <zd-button variant="ghost">Keep it</zd-button>
           <zd-button variant="destructive">Cancel appointment</zd-button>
         </div>
-      `,
+      `
     ),
 };

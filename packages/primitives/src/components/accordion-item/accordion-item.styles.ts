@@ -23,8 +23,10 @@ import { css } from 'lit';
 export default css`
   .base::details-content {
     transition:
-      block-size var(--zd-accordion-item-animation-duration) var(--zd-accordion-item-animation-timing-function),
-      content-visibility var(--zd-accordion-item-animation-duration) var(--zd-accordion-item-animation-timing-function);
+      block-size var(--zd-accordion-item-animation-duration)
+        var(--zd-accordion-item-animation-timing-function),
+      content-visibility var(--zd-accordion-item-animation-duration)
+        var(--zd-accordion-item-animation-timing-function);
 
     /*
      * Must come after the shorthand. transition-behavior is a longhand of
@@ -34,21 +36,5 @@ export default css`
      * closes and the block-size collapse animates an invisible box.
      */
     transition-behavior: allow-discrete;
-  }
-
-  /*
-   * The second selector matches the specificity of Charm's :host([animated])
-   * rule so reduced motion still wins when a consumer sets that attribute.
-   * The chevron is included to keep the row from spinning while the panel snaps.
-   */
-  @media (prefers-reduced-motion: reduce) {
-    .base::details-content,
-    :host([animated]) .base::details-content {
-      transition: none;
-    }
-
-    :host .chevron {
-      transition: none;
-    }
   }
 `;

@@ -5,7 +5,9 @@ import type { ZdButtonGroup } from './button-group.js';
 import './button-group.js';
 import '../button/button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdButtonGroup>('zd-button-group', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdButtonGroup>('zd-button-group', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdButtonGroup> = {
   title: 'Primitives/ButtonGroup',
@@ -13,11 +15,15 @@ const meta: Meta<ZdButtonGroup> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-    <zd-button>One</zd-button>
-    <zd-button>Two</zd-button>
-    <zd-button>Three</zd-button>
-  `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-button>One</zd-button>
+        <zd-button>Two</zd-button>
+        <zd-button>Three</zd-button>
+      `
+    ),
 };
 
 export default meta;

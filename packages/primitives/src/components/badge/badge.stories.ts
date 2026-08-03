@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdBadge } from './badge.js';
 import './badge.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdBadge>('zd-badge', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdBadge>('zd-badge', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdBadge> = {
   title: 'Primitives/Badge',

@@ -5,7 +5,9 @@ import type { ZdDisclosure } from './disclosure.js';
 import './disclosure.js';
 import '../button/button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdDisclosure>('zd-disclosure', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdDisclosure>('zd-disclosure', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdDisclosure> = {
   title: 'Primitives/Disclosure',
@@ -13,10 +15,14 @@ const meta: Meta<ZdDisclosure> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-      <zd-button slot="trigger" variant="link">More about this provider</zd-button>
-      <p>Board certified, accepting new patients.</p>
-    `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-button slot="trigger" variant="link">More about this provider</zd-button>
+        <p>Board certified, accepting new patients.</p>
+      `
+    ),
 };
 
 export default meta;

@@ -7,7 +7,9 @@ import '../menu/menu.js';
 import '../menu-item/menu-item.js';
 import '../button/button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdMenuGroup>('zd-menu-group', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdMenuGroup>('zd-menu-group', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdMenuGroup> = {
   title: 'Primitives/Menu Group',
@@ -15,10 +17,14 @@ const meta: Meta<ZdMenuGroup> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-      <zd-menu-item>In person</zd-menu-item>
-      <zd-menu-item>Video visit</zd-menu-item>
-    `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-menu-item>In person</zd-menu-item>
+        <zd-menu-item>Video visit</zd-menu-item>
+      `
+    ),
 };
 
 export default meta;

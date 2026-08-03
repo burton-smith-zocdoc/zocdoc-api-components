@@ -8,9 +8,5 @@
     "rootDir": "packages"
   },
   "include": ["packages/*/src/**/*.ts"],
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.stories.ts",
-    "**/test/**"
-  ]
+  "exclude": ["**/*.test.ts", "**/*.stories.ts", "**/test/**"]
 }

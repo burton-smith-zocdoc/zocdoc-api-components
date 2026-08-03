@@ -6,7 +6,9 @@ import './popup.js';
 import '../button/button.js';
 import '../card/card.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdPopup>('zd-popup', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdPopup>('zd-popup', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdPopup> = {
   title: 'Primitives/Popup',
@@ -14,10 +16,14 @@ const meta: Meta<ZdPopup> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-      <zd-button slot="anchor">Anchor</zd-button>
-      <zd-card>Positioned content</zd-card>
-    `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-button slot="anchor">Anchor</zd-button>
+        <zd-card>Positioned content</zd-card>
+      `
+    ),
 };
 
 export default meta;

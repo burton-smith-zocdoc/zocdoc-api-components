@@ -5,7 +5,9 @@ import type { ZdBreadcrumbItem } from './breadcrumb-item.js';
 import './breadcrumb-item.js';
 import '../breadcrumb/breadcrumb.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdBreadcrumbItem>('zd-breadcrumb-item', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdBreadcrumbItem>('zd-breadcrumb-item', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdBreadcrumbItem> = {
   title: 'Primitives/Breadcrumb Item',

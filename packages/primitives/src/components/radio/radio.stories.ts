@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdRadio } from './radio.js';
 import './radio.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdRadio>('zd-radio', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdRadio>('zd-radio', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdRadio> = {
   title: 'Primitives/Radio',

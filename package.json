@@ -1,12 +1,16 @@
 {
   "name": "powered-by-zocdoc",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "build": "tsc --build tsconfig.build.json && pnpm run build:theme && pnpm run analyze",
-    "build:theme": "node --import tsx scripts/build-theme.ts",
+    "build:theme": "oxnode scripts/build-theme.ts",
     "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "test": "vitest run",
     "test:client": "vitest run --project client",
     "test:components": "vitest run --project components",
@@ -18,8 +22,7 @@
   "devDependencies": {
     "@charm-ux/theming": "link:../charm-ux/core/packages/theming",
     "@custom-elements-manifest/analyzer": "0.11.0",
-    "lit": "^3.2.1",
-    "tsx": "^4.19.0",
+    "@oxc-node/cli": "^0.1.0",
     "@storybook/web-components": "^10.5.5",
     "@storybook/web-components-vite": "^10.5.5",
     "@types/node": "^24.3.0",
@@ -32,16 +35,19 @@
     "@wc-toolkit/module-path-resolver": "^1.0.1",
     "@wc-toolkit/storybook-helpers": "^10.7.3",
     "@wc-toolkit/type-parser": "^1.3.0",
+    "lit": "^3.2.1",
+    "oxfmt": "^0.62.0",
+    "oxlint": "^1.77.0",
     "playwright": "^1.62.1",
     "storybook": "^10.5.5",
     "typescript": "^5.9.3",
     "vite": "^7.1.5",
     "vitest": "^4.1.10"
   },
-  "customElements": "custom-elements.json",
   "pnpm": {
     "overrides": {
       "@lit/reactive-element": "2.1.2"
     }
-  }
+  },
+  "customElements": "custom-elements.json"
 }

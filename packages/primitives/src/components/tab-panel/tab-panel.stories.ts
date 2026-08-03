@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdTabPanel } from './tab-panel.js';
 import './tab-panel.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdTabPanel>('zd-tab-panel', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdTabPanel>('zd-tab-panel', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdTabPanel> = {
   title: 'Primitives/Tab Panel',

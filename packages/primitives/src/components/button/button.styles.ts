@@ -151,18 +151,30 @@ export default css`
     --zd-button-fg-color: var(--zd-button-ghost-fg-color);
     --zd-button-border-color: var(--zd-button-ghost-border-color);
     --zd-button-hover-bg-color: var(--zd-button-ghost-hover-bg-color);
-    --zd-button-hover-fg-color: var(--zd-button-ghost-hover-fg-color, var(--zd-button-ghost-fg-color));
+    --zd-button-hover-fg-color: var(
+      --zd-button-ghost-hover-fg-color,
+      var(--zd-button-ghost-fg-color)
+    );
     --zd-button-hover-border-color: var(--zd-button-ghost-hover-border-color);
     --zd-button-active-bg-color: var(--zd-button-ghost-active-bg-color);
-    --zd-button-active-fg-color: var(--zd-button-ghost-active-fg-color, var(--zd-button-ghost-fg-color));
+    --zd-button-active-fg-color: var(
+      --zd-button-ghost-active-fg-color,
+      var(--zd-button-ghost-fg-color)
+    );
     --zd-button-active-border-color: var(--zd-button-ghost-active-border-color);
-    --zd-button-disabled-bg-color: var(--zd-button-ghost-disabled-bg-color, var(--zd-button-ghost-bg-color));
+    --zd-button-disabled-bg-color: var(
+      --zd-button-ghost-disabled-bg-color,
+      var(--zd-button-ghost-bg-color)
+    );
     --zd-button-disabled-fg-color: var(--zd-button-ghost-disabled-fg-color);
     --zd-button-disabled-border-color: var(--zd-button-ghost-disabled-border-color);
     --zd-button-focus-bg-color: var(--zd-button-ghost-bg-color);
     --zd-button-focus-fg-color: var(--zd-button-ghost-fg-color);
     --zd-button-pressed-bg-color: var(--zd-button-ghost-active-bg-color);
-    --zd-button-pressed-fg-color: var(--zd-button-ghost-active-fg-color, var(--zd-button-ghost-fg-color));
+    --zd-button-pressed-fg-color: var(
+      --zd-button-ghost-active-fg-color,
+      var(--zd-button-ghost-fg-color)
+    );
     --zd-button-pressed-border-color: var(--zd-button-ghost-active-border-color);
   }
 

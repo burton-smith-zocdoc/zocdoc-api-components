@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdIcon } from './icon.js';
 import './icon.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdIcon>('zd-icon', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdIcon>('zd-icon', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdIcon> = {
   title: 'Primitives/Icon',

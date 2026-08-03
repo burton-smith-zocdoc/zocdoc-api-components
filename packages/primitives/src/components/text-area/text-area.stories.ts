@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdTextArea } from './text-area.js';
 import './text-area.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdTextArea>('zd-text-area', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdTextArea>('zd-text-area', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdTextArea> = {
   title: 'Primitives/Text Area',

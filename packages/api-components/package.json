@@ -1,9 +1,11 @@
 {
   "name": "@powered-by-zocdoc/api-components",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "dependencies": {
     "@powered-by-zocdoc/primitives": "workspace:*",
     "lit": "^3.2.1"

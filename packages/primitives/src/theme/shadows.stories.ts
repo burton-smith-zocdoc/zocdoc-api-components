@@ -54,7 +54,9 @@ export const ShadowScale: Story = {
         >
           None
         </div>
-        <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">none</div>
+        <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">
+          none
+        </div>
       </div>
       <div style="text-align: center;">
         <div
@@ -102,7 +104,9 @@ export const ShadowScale: Story = {
         >
           Inner
         </div>
-        <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">inner</div>
+        <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">
+          inner
+        </div>
       </div>
       <div style="text-align: center;">
         <div
@@ -110,7 +114,9 @@ export const ShadowScale: Story = {
         >
           Outline
         </div>
-        <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">outline (focus)</div>
+        <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">
+          outline (focus)
+        </div>
       </div>
     </div>
   `,
@@ -120,17 +126,25 @@ export const ElevationLevels: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 48px; padding: 24px;">
       <div>
-        <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Cards at different elevations</div>
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">
+          Cards at different elevations
+        </div>
         <div style="display: flex; gap: 24px; align-items: flex-end;">
-          <div style="padding: 24px; background: white; border-radius: 12px; box-shadow: var(--zd-shadow-xs);">
+          <div
+            style="padding: 24px; background: white; border-radius: 12px; box-shadow: var(--zd-shadow-xs);"
+          >
             <div style="font-weight: 500;">Flat Card</div>
             <div style="font-size: 14px; color: var(--zd-color-neutral-500);">shadow-xs</div>
           </div>
-          <div style="padding: 24px; background: white; border-radius: 12px; box-shadow: var(--zd-shadow-md);">
+          <div
+            style="padding: 24px; background: white; border-radius: 12px; box-shadow: var(--zd-shadow-md);"
+          >
             <div style="font-weight: 500;">Raised Card</div>
             <div style="font-size: 14px; color: var(--zd-color-neutral-500);">shadow-md</div>
           </div>
-          <div style="padding: 24px; background: white; border-radius: 12px; box-shadow: var(--zd-shadow-xl);">
+          <div
+            style="padding: 24px; background: white; border-radius: 12px; box-shadow: var(--zd-shadow-xl);"
+          >
             <div style="font-weight: 500;">Floating Card</div>
             <div style="font-size: 14px; color: var(--zd-color-neutral-500);">shadow-xl</div>
           </div>

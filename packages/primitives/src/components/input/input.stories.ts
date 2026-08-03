@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdInput } from './input.js';
 import './input.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdInput>('zd-input', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdInput>('zd-input', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdInput> = {
   title: 'Primitives/Input',

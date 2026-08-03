@@ -5,7 +5,9 @@ import type { ZdSkeleton } from './skeleton.js';
 import './skeleton.js';
 import '../card/card.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdSkeleton>('zd-skeleton', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdSkeleton>('zd-skeleton', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdSkeleton> = {
   title: 'Primitives/Skeleton',

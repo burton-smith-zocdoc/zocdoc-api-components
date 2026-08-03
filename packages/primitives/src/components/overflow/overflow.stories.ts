@@ -5,7 +5,9 @@ import type { ZdOverflow } from './overflow.js';
 import './overflow.js';
 import '../badge/badge.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdOverflow>('zd-overflow', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdOverflow>('zd-overflow', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdOverflow> = {
   title: 'Primitives/Overflow',
@@ -13,12 +15,16 @@ const meta: Meta<ZdOverflow> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-      <zd-badge>Dentist</zd-badge>
-      <zd-badge>Accepts new patients</zd-badge>
-      <zd-badge>Highly rated</zd-badge>
-      <zd-badge>Video visits</zd-badge>
-    `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-badge>Dentist</zd-badge>
+        <zd-badge>Accepts new patients</zd-badge>
+        <zd-badge>Highly rated</zd-badge>
+        <zd-badge>Video visits</zd-badge>
+      `
+    ),
 };
 
 export default meta;

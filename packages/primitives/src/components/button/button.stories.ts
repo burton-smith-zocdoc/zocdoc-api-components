@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdButton } from './button.js';
 import './button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdButton>('zd-button', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdButton>('zd-button', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdButton> = {
   title: 'Primitives/Button',

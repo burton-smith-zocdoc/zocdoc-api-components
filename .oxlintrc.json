@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "oxc", "unicorn", "import", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    "coverage",
+    "storybook-static",
+    "test-results",
+    "custom-elements.json"
+  ],
+  "rules": {
+    "eqeqeq": ["error", "always"],
+    "no-console": "error",
+    "import/no-cycle": "error",
+    "import/no-unassigned-import": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/__tests__/**", "**/test/**"],
+      "plugins": ["vitest"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["**/*.stories.ts", ".storybook/**"],
+      "rules": {
+        "no-console": "off",
+        "no-shadow": "off"
+      }
+    },
+    {
+      "files": ["scripts/**", "*.config.ts", "*.config.mjs", ".storybook/**"],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "no-console": "off",
+        "no-underscore-dangle": ["warn", { "allow": ["__dirname", "__filename"] }]
+      }
+    }
+  ]
+}

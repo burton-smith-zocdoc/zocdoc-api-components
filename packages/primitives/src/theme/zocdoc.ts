@@ -2101,6 +2101,13 @@ const zocdocTokensBase = charmTokens
         backdropColor: 'rgba(0, 0, 0, 0.5)',
         animationDuration: primitive('duration', 200),
         transition: `opacity ${primitive('duration', 200)} ${primitive('timingFunction', 'easeOut')}, transform ${primitive('duration', 200)} ${primitive('timingFunction', 'easeOut')}`,
+        /**
+         * Drawers (`position="start|end|top|bottom"`) slide on `transform`
+         * rather than fading in place, so Charm gives them their own timing.
+         * Without this we inherit Charm's literal `0.25s ease-in-out`, which is
+         * off the Zocdoc motion scale.
+         */
+        positionTransition: `opacity ${primitive('duration', 200)} ${primitive('timingFunction', 'easeOut')}, transform ${primitive('duration', 200)} ${primitive('timingFunction', 'easeOut')}`,
         enterSlideOffset: primitive('spacing', 16),
         mediaAspectRatio: '4 / 3',
       },
@@ -2409,7 +2416,22 @@ const zocdocTokensBase = charmTokens
       popup: {
         arrowColor: semantic('surface', 'default', 'bgColor'),
         arrowSize: '8px',
-        dropShadow: primitive('shadow', 'overlay'),
+        /**
+         * A `filter` value, not a `box-shadow` — Charm applies this with
+         * `filter` so the shadow can follow the panel's border radius and the
+         * arrow. `primitive('shadow', 'overlay')` is therefore the wrong shape:
+         * `drop-shadow()` takes a single shadow with no spread, so a two-layer
+         * box-shadow list makes the whole declaration invalid.
+         *
+         * Left off because `menu.shadow` already draws `shadow.overlay` on the
+         * panel, so enabling both would double every menu shadow. If we ever
+         * want popup to own it instead, `shadow.overlay` has zero spread on both
+         * layers and so does convert cleanly:
+         *   drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.04))
+         *   drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.08))
+         * — and `menu.shadow` would need to go to `none` in the same change.
+         */
+        dropShadow: 'none',
         showTransition: `opacity ${primitive('duration', 200)} ${primitive('timingFunction', 'easeOut')}`,
         hideTransition: `opacity ${primitive('duration', 150)} ${primitive('timingFunction', 'easeIn')}`,
       },
@@ -2431,41 +2453,6 @@ const zocdocTokensBase = charmTokens
         popupPadding: primitive('spacing', 4),
       },
     };
-  })
-  .extendRawCss({
-    theme: `/* Zocdoc font definitions */
-@font-face {
-  font-display: swap;
-  font-family: 'kievit-slab-book'; /* replacing kievit with sharp sans medium */
-  src: url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Medium-v1.002.woff2') format('woff2'),
-    url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Medium-v1.002.woff') format('woff');
-}
-@font-face {
-  font-display: swap;
-  font-family: 'sharp-sans-medium';
-  src: url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Medium-v1.002.woff2') format('woff2'),
-    url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Medium-v1.002.woff') format('woff');
-}
-@font-face {
-  font-display: swap;
-  font-family: 'sharp-sans-semibold';
-  src: url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Semibold-v1.002.woff2') format('woff2'),
-    url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Semibold-v1.002.woff') format('woff');
-}
-@font-face {
-  font-display: swap;
-  font-family: 'sharp-sans-bold';
-  src: url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Bold-v1.002.woff2') format('woff2'),
-    url('https://d1uhlocgth3qyq.cloudfront.net/fonts/SharpSans-Bold-v1.002.woff') format('woff');
-}
-@font-face {
-  font-family: 'fallback-font';
-  ascent-override: 100.9%;
-  descent-override: 30.6%;
-  line-gap-override: 0;
-  advance-override: 0;
-  src: local('Verdana');
-}`,
   });
 
 export const zocdocTokenDefinition = zocdocTokensBase.definition;

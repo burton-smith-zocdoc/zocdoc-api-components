@@ -6,7 +6,9 @@ import './menu.js';
 import '../menu-item/menu-item.js';
 import '../button/button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdMenu>('zd-menu', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdMenu>('zd-menu', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdMenu> = {
   title: 'Primitives/Menu',
@@ -14,12 +16,16 @@ const meta: Meta<ZdMenu> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-      <zd-button slot="trigger">Appointment options</zd-button>
-      <zd-menu-item>Reschedule</zd-menu-item>
-      <zd-menu-item>Cancel</zd-menu-item>
-      <zd-menu-item>Add to calendar</zd-menu-item>
-    `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-button slot="trigger">Appointment options</zd-button>
+        <zd-menu-item>Reschedule</zd-menu-item>
+        <zd-menu-item>Cancel</zd-menu-item>
+        <zd-menu-item>Add to calendar</zd-menu-item>
+      `
+    ),
 };
 
 export default meta;

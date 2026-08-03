@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdDivider } from './divider.js';
 import './divider.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdDivider>('zd-divider', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdDivider>('zd-divider', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdDivider> = {
   title: 'Primitives/Divider',

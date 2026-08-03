@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdProgressBar } from './progress-bar.js';
 import './progress-bar.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdProgressBar>('zd-progress-bar', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdProgressBar>('zd-progress-bar', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdProgressBar> = {
   title: 'Primitives/Progress Bar',

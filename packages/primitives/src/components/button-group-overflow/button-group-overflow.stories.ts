@@ -5,7 +5,10 @@ import type { ZdButtonGroupOverflow } from './button-group-overflow.js';
 import './button-group-overflow.js';
 import '../button/button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdButtonGroupOverflow>('zd-button-group-overflow', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdButtonGroupOverflow>(
+  'zd-button-group-overflow',
+  { excludeCategories: ['cssParts'] }
+);
 
 const meta: Meta<ZdButtonGroupOverflow> = {
   title: 'Primitives/Button Group Overflow',
@@ -13,12 +16,16 @@ const meta: Meta<ZdButtonGroupOverflow> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-      <zd-button>Book</zd-button>
-      <zd-button>Reschedule</zd-button>
-      <zd-button>Cancel</zd-button>
-      <zd-button>Message</zd-button>
-    `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-button>Book</zd-button>
+        <zd-button>Reschedule</zd-button>
+        <zd-button>Cancel</zd-button>
+        <zd-button>Message</zd-button>
+      `
+    ),
 };
 
 export default meta;

@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdCheckbox } from './checkbox.js';
 import './checkbox.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdCheckbox>('zd-checkbox', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdCheckbox>('zd-checkbox', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdCheckbox> = {
   title: 'Primitives/Checkbox',

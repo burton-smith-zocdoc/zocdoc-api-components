@@ -5,7 +5,9 @@ import type { ZdTooltip } from './tooltip.js';
 import './tooltip.js';
 import '../button/button.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdTooltip>('zd-tooltip', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdTooltip>('zd-tooltip', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdTooltip> = {
   title: 'Primitives/Tooltip',
@@ -13,10 +15,14 @@ const meta: Meta<ZdTooltip> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-      <zd-button>Insurance</zd-button>
-      <span slot="content">We check your plan before you book.</span>
-    `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-button>Insurance</zd-button>
+        <span slot="content">We check your plan before you book.</span>
+      `
+    ),
 };
 
 export default meta;

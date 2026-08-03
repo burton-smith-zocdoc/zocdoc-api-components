@@ -19,16 +19,16 @@ const preview: Preview = {
         const module = customElements.modules.find((m) =>
           m.declarations?.some((d) => d.name === component.name)
         );
-        const declaration = module?.declarations?.find(
-          (d) => d.name === component.name
-        );
+        const declaration = module?.declarations?.find((d) => d.name === component.name);
         return (declaration as { description?: string })?.description;
       },
     },
   },
   decorators: [
     (story) => html`
-      <style>${zocdocAllCss}</style>
+      <style>
+        ${zocdocAllCss}
+      </style>
       ${story()}
     `,
   ],

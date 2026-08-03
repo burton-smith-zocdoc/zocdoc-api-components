@@ -89,13 +89,25 @@ export const Durations: Story = {
       .duration-row:hover .duration-fill {
         width: 100%;
       }
-      .xfast .duration-fill { transition: width var(--zd-duration-xfast) ease; }
-      .fast .duration-fill { transition: width var(--zd-duration-fast) ease; }
-      .normal .duration-fill { transition: width var(--zd-duration-normal) ease; }
-      .slow .duration-fill { transition: width var(--zd-duration-slow) ease; }
-      .xslow .duration-fill { transition: width var(--zd-duration-xslow) ease; }
+      .xfast .duration-fill {
+        transition: width var(--zd-duration-xfast) ease;
+      }
+      .fast .duration-fill {
+        transition: width var(--zd-duration-fast) ease;
+      }
+      .normal .duration-fill {
+        transition: width var(--zd-duration-normal) ease;
+      }
+      .slow .duration-fill {
+        transition: width var(--zd-duration-slow) ease;
+      }
+      .xslow .duration-fill {
+        transition: width var(--zd-duration-xslow) ease;
+      }
     </style>
-    <p style="font-size: 14px; color: var(--zd-color-neutral-600); margin-bottom: 16px;">Hover over each row to see the animation duration</p>
+    <p style="font-size: 14px; color: var(--zd-color-neutral-600); margin-bottom: 16px;">
+      Hover over each row to see the animation duration
+    </p>
     <div class="duration-demo">
       <div class="duration-row xfast">
         <div class="duration-label">xfast</div>
@@ -164,12 +176,22 @@ export const TimingFunctions: Story = {
       .timing-row:hover .timing-ball {
         left: calc(100% - 40px);
       }
-      .ease .timing-ball { transition: left 1s var(--zd-timingFunction-ease); }
-      .ease-in .timing-ball { transition: left 1s var(--zd-timingFunction-easeIn); }
-      .ease-out .timing-ball { transition: left 1s var(--zd-timingFunction-easeOut); }
-      .ease-in-out .timing-ball { transition: left 1s var(--zd-timingFunction-easeInOut); }
+      .ease .timing-ball {
+        transition: left 1s var(--zd-timingFunction-ease);
+      }
+      .ease-in .timing-ball {
+        transition: left 1s var(--zd-timingFunction-easeIn);
+      }
+      .ease-out .timing-ball {
+        transition: left 1s var(--zd-timingFunction-easeOut);
+      }
+      .ease-in-out .timing-ball {
+        transition: left 1s var(--zd-timingFunction-easeInOut);
+      }
     </style>
-    <p style="font-size: 14px; color: var(--zd-color-neutral-600); margin-bottom: 16px;">Hover over each row to see the timing function</p>
+    <p style="font-size: 14px; color: var(--zd-color-neutral-600); margin-bottom: 16px;">
+      Hover over each row to see the timing function
+    </p>
     <div class="timing-demo">
       <div class="timing-row ease">
         <div class="timing-label">ease</div>
@@ -193,23 +215,37 @@ export const TimingFunctions: Story = {
 
 export const ZIndexLayers: Story = {
   render: () => html`
-    <div style="position: relative; height: 400px; background: var(--zd-color-neutral-100); border-radius: 12px; padding: 24px;">
-      <div style="position: absolute; top: 40px; left: 40px; width: 200px; height: 120px; background: var(--zd-color-neutral-200); border-radius: 8px; z-index: var(--zd-zIndex-base); display: flex; align-items: center; justify-content: center; font-weight: 500;">
+    <div
+      style="position: relative; height: 400px; background: var(--zd-color-neutral-100); border-radius: 12px; padding: 24px;"
+    >
+      <div
+        style="position: absolute; top: 40px; left: 40px; width: 200px; height: 120px; background: var(--zd-color-neutral-200); border-radius: 8px; z-index: var(--zd-zIndex-base); display: flex; align-items: center; justify-content: center; font-weight: 500;"
+      >
         base (0)
       </div>
-      <div style="position: absolute; top: 80px; left: 80px; width: 200px; height: 120px; background: var(--zd-color-brand-100); border-radius: 8px; z-index: var(--zd-zIndex-dropdown); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-md);">
+      <div
+        style="position: absolute; top: 80px; left: 80px; width: 200px; height: 120px; background: var(--zd-color-brand-100); border-radius: 8px; z-index: var(--zd-zIndex-dropdown); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-md);"
+      >
         dropdown (100)
       </div>
-      <div style="position: absolute; top: 120px; left: 120px; width: 200px; height: 120px; background: var(--zd-color-success-100); border-radius: 8px; z-index: var(--zd-zIndex-sticky); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-md);">
+      <div
+        style="position: absolute; top: 120px; left: 120px; width: 200px; height: 120px; background: var(--zd-color-success-100); border-radius: 8px; z-index: var(--zd-zIndex-sticky); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-md);"
+      >
         sticky (200)
       </div>
-      <div style="position: absolute; top: 160px; left: 160px; width: 200px; height: 120px; background: var(--zd-color-warning-100); border-radius: 8px; z-index: var(--zd-zIndex-modal); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-lg);">
+      <div
+        style="position: absolute; top: 160px; left: 160px; width: 200px; height: 120px; background: var(--zd-color-warning-100); border-radius: 8px; z-index: var(--zd-zIndex-modal); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-lg);"
+      >
         modal (300)
       </div>
-      <div style="position: absolute; top: 200px; left: 200px; width: 200px; height: 120px; background: var(--zd-color-accent-100); border-radius: 8px; z-index: var(--zd-zIndex-popover); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-lg);">
+      <div
+        style="position: absolute; top: 200px; left: 200px; width: 200px; height: 120px; background: var(--zd-color-accent-100); border-radius: 8px; z-index: var(--zd-zIndex-popover); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-lg);"
+      >
         popover (400)
       </div>
-      <div style="position: absolute; top: 240px; left: 240px; width: 200px; height: 120px; background: var(--zd-color-danger-100); border-radius: 8px; z-index: var(--zd-zIndex-tooltip); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-xl);">
+      <div
+        style="position: absolute; top: 240px; left: 240px; width: 200px; height: 120px; background: var(--zd-color-danger-100); border-radius: 8px; z-index: var(--zd-zIndex-tooltip); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-xl);"
+      >
         tooltip (500)
       </div>
     </div>

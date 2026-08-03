@@ -5,7 +5,9 @@ import type { ZdRadioGroup } from './radio-group.js';
 import './radio-group.js';
 import '../radio/radio.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdRadioGroup>('zd-radio-group', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdRadioGroup>('zd-radio-group', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdRadioGroup> = {
   title: 'Primitives/RadioGroup',
@@ -13,11 +15,15 @@ const meta: Meta<ZdRadioGroup> = {
   tags: ['autodocs'],
   args,
   argTypes,
-  render: (args) => template(args, html`
-    <zd-radio value="1">Option 1</zd-radio>
-    <zd-radio value="2">Option 2</zd-radio>
-    <zd-radio value="3">Option 3</zd-radio>
-  `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-radio value="1">Option 1</zd-radio>
+        <zd-radio value="2">Option 2</zd-radio>
+        <zd-radio value="3">Option 3</zd-radio>
+      `
+    ),
 };
 
 export default meta;
@@ -29,16 +35,24 @@ export const Default: Story = {
 
 export const Horizontal: Story = {
   args: { label: 'Appointment type', name: 'type' },
-  render: (args) => template(args, html`
-    <zd-radio value="in-person">In-person</zd-radio>
-    <zd-radio value="video">Video visit</zd-radio>
-  `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-radio value="in-person">In-person</zd-radio>
+        <zd-radio value="video">Video visit</zd-radio>
+      `
+    ),
 };
 
 export const WithDefaultValue: Story = {
   args: { label: 'Insurance', name: 'insurance', value: 'yes' },
-  render: (args) => template(args, html`
-    <zd-radio value="yes">I have insurance</zd-radio>
-    <zd-radio value="no">I'll pay out of pocket</zd-radio>
-  `),
+  render: (args) =>
+    template(
+      args,
+      html`
+        <zd-radio value="yes">I have insurance</zd-radio>
+        <zd-radio value="no">I'll pay out of pocket</zd-radio>
+      `
+    ),
 };

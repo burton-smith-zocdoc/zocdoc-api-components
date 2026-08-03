@@ -22,7 +22,7 @@ import breadcrumbItemStyles from '../breadcrumb-item/breadcrumb-item.styles.js';
 
 /** Every custom property the theme declares. */
 const declared = new Set(
-  [...zocdocThemeCss.matchAll(/(--zd-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
+  [...zocdocThemeCss.matchAll(/(--zd-[a-z0-9-]+)\s*:/g)].map((match) => match[1])
 );
 
 /**
@@ -60,7 +60,7 @@ describe.each(overrides)('$component style overrides', ({ styles }) => {
   it('references only tokens the theme declares', () => {
     const unresolvable = tokenReferences(styles)
       .filter(({ name, fallback }) =>
-        fallback ? !declared.has(name) && !declared.has(fallback) : !declared.has(name),
+        fallback ? !declared.has(name) && !declared.has(fallback) : !declared.has(name)
       )
       .map(({ name }) => name);
 
@@ -93,7 +93,7 @@ describe('button variant coverage', () => {
 
   it.each(variants)('%s remaps every state Charm paints', (variant) => {
     const block = buttonStyles.cssText.match(
-      new RegExp(`:host\\(\\[variant='${variant}'\\]\\)\\s*\\{([^}]*)\\}`),
+      new RegExp(`:host\\(\\[variant='${variant}'\\]\\)\\s*\\{([^}]*)\\}`)
     );
     expect(block).not.toBeNull();
 
@@ -121,7 +121,7 @@ describe('badge variant coverage', () => {
 
   it.each(variants)('%s remaps the fill and foreground', (variant) => {
     const block = badgeStyles.cssText.match(
-      new RegExp(`:host\\(\\[variant='${variant}'\\]\\)\\s*\\{([^}]*)\\}`),
+      new RegExp(`:host\\(\\[variant='${variant}'\\]\\)\\s*\\{([^}]*)\\}`)
     );
     expect(block?.[1]).toContain(`--zd-badge-bg-color: var(--zd-badge-${variant}-bg-color)`);
     expect(block?.[1]).toContain(`--zd-badge-fg-color: var(--zd-badge-${variant}-fg-color)`);
@@ -174,7 +174,7 @@ describe('icon size steps', () => {
   ])('$size sets font-size from $token', ({ size, token }) => {
     const lines = declarations(
       iconStyles.cssText,
-      new RegExp(`:host\\(\\[size='${size}'\\]\\)\\s*\\{([^}]*)\\}`),
+      new RegExp(`:host\\(\\[size='${size}'\\]\\)\\s*\\{([^}]*)\\}`)
     );
 
     expect(lines).toEqual([`font-size: var(${token})`]);

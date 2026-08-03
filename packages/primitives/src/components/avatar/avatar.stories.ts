@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdAvatar } from './avatar.js';
 import './avatar.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdAvatar>('zd-avatar', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdAvatar>('zd-avatar', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdAvatar> = {
   title: 'Primitives/Avatar',

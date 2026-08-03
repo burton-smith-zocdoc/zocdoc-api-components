@@ -4,7 +4,9 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { ZdMenuItem } from './menu-item.js';
 import './menu-item.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdMenuItem>('zd-menu-item', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdMenuItem>('zd-menu-item', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdMenuItem> = {
   title: 'Primitives/Menu Item',

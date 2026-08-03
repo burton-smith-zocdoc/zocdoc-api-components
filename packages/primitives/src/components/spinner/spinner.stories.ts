@@ -5,7 +5,9 @@ import type { ZdSpinner } from './spinner.js';
 import './spinner.js';
 import '../card/card.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdSpinner>('zd-spinner', { excludeCategories: ['cssParts'] });
+const { args, argTypes, template } = getStorybookHelpers<ZdSpinner>('zd-spinner', {
+  excludeCategories: ['cssParts'],
+});
 
 const meta: Meta<ZdSpinner> = {
   title: 'Primitives/Spinner',
