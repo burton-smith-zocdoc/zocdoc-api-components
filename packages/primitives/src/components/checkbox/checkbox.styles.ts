@@ -14,4 +14,14 @@ export default css`
     --zd-checkbox-icon-size: var(--zd-checkbox-small-icon-size);
     --zd-form-control-label-font-size: var(--zd-form-control-small-label-font-size);
   }
+
+  /**
+   * Charm uses checkbox.checked.fgColor for both the checkmark and the label.
+   * The checkmark needs inverted colors (white on dark bg in light mode), but
+   * the label should always use body text color. Override the label specifically.
+   */
+  :host([checked]) .label,
+  :host([indeterminate]) .label {
+    color: var(--zd-body-fg-color);
+  }
 `;

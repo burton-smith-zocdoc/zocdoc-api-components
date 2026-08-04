@@ -12,7 +12,7 @@ Proof of concept. Not published, not versioned, no browser support matrix.
 
 | Package | State |
 | --- | --- |
-| `@powered-by-zocdoc/primitives` | built — 220 `--zd-` custom properties, 3 node tests, 4 browser tests |
+| `@powered-by-zocdoc/primitives` | built — theme tokens, 35 components with axe-core accessibility tests (light + dark mode) |
 | `@powered-by-zocdoc/api-components` | scaffolded |
 
 ## Layout
@@ -70,8 +70,8 @@ is gitignored. **Never commit a token.**
 | --- | --- |
 | `pnpm typecheck` | `tsc --noEmit` across the workspace |
 | `pnpm test` | all Vitest projects |
-| `pnpm test:client` | node project — every `*.test.ts` |
-| `pnpm test:components` | Chromium project — every `*.browser.test.ts` |
+| `pnpm test:client` | node project — everything outside `components/` and `__tests__/` |
+| `pnpm test:components` | Chromium project — `components/` and `__tests__/` |
 | `pnpm storybook` | Storybook on :6006 |
 | `pnpm demo` | the demo site |
 

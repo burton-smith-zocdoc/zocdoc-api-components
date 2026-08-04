@@ -86,7 +86,7 @@ The `CharmElement` constructor registers everything in `dependencies()` — at
 construction time, long after the prefix is set. Ordering stops being something you
 have to get right.
 
-`src/__tests__/prefix.browser.test.ts` guards this in a real browser, including an
+`src/__tests__/prefix.test.ts` guards this in a real browser, including an
 assertion that importing a class module registers nothing until a host is
 constructed.
 

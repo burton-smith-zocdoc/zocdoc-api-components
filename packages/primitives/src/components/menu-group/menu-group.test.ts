@@ -1,0 +1,23 @@
+import { it } from 'vitest';
+import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+
+interface ZdMenuGroup extends HTMLElement {
+  label?: string;
+}
+
+describeA11y('zd-menu-group', () => {
+  it('passes axe checks with label and items', async () => {
+    const menu = document.createElement('zd-menu');
+    menu.innerHTML = `
+      <button slot="trigger">Menu</button>
+      <zd-menu-group label="Actions">
+        <zd-menu-item>Action 1</zd-menu-item>
+        <zd-menu-item>Action 2</zd-menu-item>
+      </zd-menu-group>
+    `;
+    getContainer().appendChild(menu);
+    await waitForUpdate();
+
+    await expectNoViolations();
+  });
+});

@@ -1,5 +1,5 @@
 ---
-globs: packages/*/src/**/__tests__/**,packages/*/src/**/*.test.ts,packages/*/src/**/*.browser.test.ts,packages/*/src/test/**
+globs: packages/*/src/**/__tests__/**,packages/*/src/**/*.test.ts,packages/*/src/test/**
 ---
 
 # Testing Rules (TEST)

@@ -8,3 +8,5 @@ coverage/
 test-results/
 custom-elements.json
 dist
+.vitest-attachments
+__screenshots__

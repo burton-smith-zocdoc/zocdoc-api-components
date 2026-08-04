@@ -58,13 +58,14 @@ imports a Charm barrel.
 
 Two projects, split by filename:
 
-| Pattern | Runs in |
+| Directory | Runs in |
 | --- | --- |
-| `*.test.ts` | node — client logic, no DOM |
-| `*.browser.test.ts` | real Chromium — anything touching `customElements` or rendering |
+| `src/components/**`, `src/__tests__/**` | real Chromium — anything touching `customElements` or rendering |
+| everything else | node — client logic, no DOM |
 
-The suffix travels with the file, so a test lands in the right project regardless of
-which directory it lives in.
+Every test file is plain `*.test.ts`; its directory decides the environment. The node
+project is a catch-all, so a new folder runs by default rather than being silently
+collected by neither project.
 
 `src/test/setup-browser.ts` imports the primitives package before any test module
 evaluates, so the prefix is configured first.

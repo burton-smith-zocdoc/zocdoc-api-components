@@ -72,6 +72,6 @@ project.updateProject({ prefix: 'zd' });
 
 The one exception is a story or demo that renders a bare `zd-*` primitive with no host component to declare it. There, call `project.scope.registerComponent(button)` explicitly — safe, because importing the primitives package has already run `configure.js`.
 
-Guarded by `packages/primitives/src/__tests__/prefix.browser.test.ts`, which asserts that a class-module import registers nothing until a host declaring it is constructed, and that nothing ever registers under `ch-`.
+Guarded by `packages/primitives/src/__tests__/prefix.test.ts`, which asserts that a class-module import registers nothing until a host declaring it is constructed, and that nothing ever registers under `ch-`.
 
 See also: [PBZD-004](./PBZD-004.md), [PBZD-005](./PBZD-005.md)

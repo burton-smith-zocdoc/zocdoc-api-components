@@ -40,9 +40,10 @@ Every task's requirements implicitly include this section.
   re-exports the class modules, and declare them in
   `static override get dependencies()`. Registration then happens at construction
   time, when the prefix is guaranteed set.
-- **Tests are routed by filename, not directory.** `*.browser.test.ts` runs in real
-  Chromium; every other `*.test.ts` runs in node. Anything touching `customElements`,
-  rendering, or `document` gets the `.browser` infix.
+- **Tests are routed by directory, not filename.** `components/` and `__tests__/` run in
+  real Chromium; everything else runs in node. Every file is plain `*.test.ts` — there is
+  no `.browser` infix. The node project is a catch-all, so a new folder runs by default
+  instead of being collected by neither project.
 - **No `as unknown as typeof CharmElement` casts in `dependencies()` arrays.** Task 4 confirmed the arrays typecheck clean against the class-module exports. If some future primitive genuinely demands a cast, that is a signal to check the import path, not to add one.
 - **PHI rules.** No patient field values in `console.log`, thrown error messages, or error bodies. No patient data in committed fixtures, stories, or tests — use only the sandbox test values in Task 2. No telemetry, analytics, or any network destination other than the configured `baseUrl`.
 - **Secrets.** Tokens live only in `.env.local`, which is gitignored. Never commit a token, never paste one into a source file, story, test, or fixture.
@@ -61,7 +62,7 @@ powered-by-zocdoc/
   package.json                  root scripts only
   pnpm-workspace.yaml
   tsconfig.base.json
-  vitest.config.ts              two projects, split on the *.browser.test.ts suffix
+  vitest.config.ts              two projects; browser claims components/ + __tests__/
   custom-elements-manifest.config.mjs
   .storybook/
     main.ts
@@ -78,7 +79,7 @@ powered-by-zocdoc/
       src/index.ts              imports configure first, then re-exports the above
       src/charm.stories.ts      stories for the themed Charm primitives
       src/__tests__/tokens.test.ts
-      src/__tests__/prefix.browser.test.ts
+      src/__tests__/prefix.test.ts
     api-components/
       package.json
       README.md
@@ -86,7 +87,7 @@ powered-by-zocdoc/
       src/client/
         configure.ts            ZocdocConfig singleton
         http.ts                 the only module that calls fetch
-        errors.ts               ZocdocApiError, ZocdocAuthError
+        errors.ts               ZocdocError, ZocdocAuthError, ZocdocNotFoundError, mapError
         types.ts                shared API types
         reference-data.ts       specialties, visit reasons, insurance plans (cached)
         provider-locations.ts   search
@@ -298,7 +299,7 @@ before writing any component.
 `packages/api-components/src/test/setup-browser.ts`,
 `packages/primitives/src/configure.ts`, `packages/primitives/src/charm.ts`,
 `packages/primitives/src/index.ts`, `packages/primitives/README.md`,
-`packages/primitives/src/__tests__/prefix.browser.test.ts`
+`packages/primitives/src/__tests__/prefix.test.ts`
 
 **Produces:** `pnpm test`, `pnpm test:client`, `pnpm test:components`; the `zd` prefix
 as an import side effect of `@powered-by-zocdoc/primitives`; the Charm primitive
@@ -349,21 +350,24 @@ browser test are the guard.
 
 #### The guard test
 
-`prefix.browser.test.ts` asserts four things, and the third is the one that proves the
+`prefix.test.ts` asserts four things, and the third is the one that proves the
 mechanism: after importing `input` as a class module, `zd-input` is **undefined**;
 after constructing a host that declares `input` in `dependencies()`, it is
 **defined**. The fourth asserts nothing ever registered under `ch-`.
 
 #### Vitest configuration
 
-Projects split on **filename**, not directory:
+The browser project claims the two directories that need a DOM; `client` takes the rest:
 
 ```ts
 import { playwright } from '@vitest/browser-playwright';
 
+// BROWSER_TESTS = ['packages/*/src/components/**/*.test.ts',
+//                  'packages/*/src/__tests__/**/*.test.ts']
+//
 // client:     include ['packages/*/src/**/*.test.ts']
-//             exclude ['packages/*/src/**/*.browser.test.ts']   environment: node
-// components: include ['packages/*/src/**/*.browser.test.ts']   browser: chromium
+//             exclude BROWSER_TESTS                            environment: node
+// components: include BROWSER_TESTS                            browser: chromium
 //             setupFiles ['./packages/api-components/src/test/setup-browser.ts']
 ```
 
@@ -371,9 +375,11 @@ Two corrections from the original:
 
 - **`provider: playwright()`, not `provider: 'playwright'`.** Vitest 4 changed this to
   a factory and fails with a clear `TypeError` on the string form.
-- **Directory globs became filename globs.** A directory split has to be edited every
-  time a package gains a folder — and this plan's restructure would have broken it
-  immediately. The suffix travels with the file.
+- **Only the browser project uses an allowlist.** An earlier revision made both projects
+  allowlists, which left `src/client/**` matching neither — those tests were collected by
+  nothing, silently. Making `client` a catch-all means a new folder runs by default, and
+  the worst case is a DOM test failing loudly in node rather than passing vacuously.
+  Share the glob list through one constant so the two projects cannot drift apart.
 
 `pnpm exec playwright install chromium` downloads a browser and will not work inside
 the ZD sandbox. Run it outside.
@@ -393,10 +399,20 @@ the ZD sandbox. Run it outside.
   - `getZocdocConfig(): ZocdocConfig`
   - `resetZocdocConfig(): void` (test-only)
   - `interface ZocdocConfig { baseUrl: string; getToken: string | (() => string | Promise<string>) }`
-  - `class ZocdocApiError extends Error { readonly status: number; readonly body: unknown }`
-  - `class ZocdocAuthError extends ZocdocApiError`
-  - `request<T>(path: string, init?: { method?: string; query?: QueryParams; body?: unknown; config?: ZocdocConfig }): Promise<T>`
+  - `class ZocdocError extends Error { readonly status: number; readonly code: string | undefined; readonly body: unknown }`
+  - `class ZocdocAuthError extends ZocdocError` (401, `code: 'AUTH_ERROR'`)
+  - `class ZocdocNotFoundError extends ZocdocError` (404, `code: 'NOT_FOUND'`)
+  - `mapError(status: number, body: unknown): ZocdocError`
+  - `request<T>(path: string, init?: ZocdocRequestInit): Promise<T>`
+  - `interface ZocdocRequestInit { method?: string; query?: QueryParams; body?: unknown; config?: ZocdocConfig; signal?: AbortSignal }`
   - `type QueryParams = Record<string, string | number | boolean | string[] | undefined | null>`
+
+**Deviation from the original draft of this task.** The names above are the shipped
+ones. The draft used `ZocdocApiError` with no `code` field and no 404 case, which
+CLIENT-003 does not permit: the rule requires a `ZocdocNotFoundError` for 404 and a
+`code` on the base class so a component can branch without string-matching a message.
+The rule is normative, so the rule won. Nothing downstream referenced `ZocdocApiError`
+outside this task, so the rename cost nothing.
 
 - [ ] **Step 1: Verify `packages/api-components/package.json`**
 
@@ -418,14 +434,18 @@ The scaffold already created it. Confirm it reads exactly this:
 
 - [ ] **Step 2: Write the failing tests**
 
-`packages/api-components/src/client/__tests__/http.test.ts`:
+`packages/api-components/src/client/__tests__/http.test.ts`. The skeleton below is the
+minimum; the shipped file grew to 15 cases, adding per-request token issuance, pipe
+encoding in a `provider_location_id`, the 404 branch, a PHI guard asserting the upstream
+body never reaches `message`, the unconfigured error, and the per-call config override.
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { configureZocdoc, resetZocdocConfig } from '../configure.js';
-import { ZocdocApiError, ZocdocAuthError } from '../errors.js';
+import { ZocdocAuthError, ZocdocError, ZocdocNotFoundError } from '../errors.js';
 import { request } from '../http.js';
 
+/** A fresh Response per call — a body can only be read once. */
 function mockFetch(status: number, body: unknown): void {
   vi.stubGlobal(
     'fetch',
@@ -476,12 +496,18 @@ describe('request', () => {
   it('throws ZocdocAuthError on 401', async () => {
     mockFetch(401, { message: 'Unauthorized' });
     await expect(request('/v1/thing')).rejects.toBeInstanceOf(ZocdocAuthError);
+    await expect(request('/v1/thing')).rejects.toMatchObject({ status: 401, code: 'AUTH_ERROR' });
   });
 
-  it('throws ZocdocApiError with the status on other failures', async () => {
+  it('throws ZocdocNotFoundError on 404', async () => {
+    mockFetch(404, { message: 'No such plan' });
+    await expect(request('/v1/insurance_plans/ip_0')).rejects.toBeInstanceOf(ZocdocNotFoundError);
+  });
+
+  it('throws ZocdocError with the status on other failures', async () => {
     mockFetch(500, { message: 'boom' });
     await expect(request('/v1/thing')).rejects.toMatchObject({ status: 500 });
-    await expect(request('/v1/thing')).rejects.toBeInstanceOf(ZocdocApiError);
+    await expect(request('/v1/thing')).rejects.toBeInstanceOf(ZocdocError);
   });
 
   it('sends a JSON body for POST', async () => {
@@ -540,14 +566,23 @@ export async function resolveToken(config: ZocdocConfig): Promise<string> {
 - [ ] **Step 5: Write `packages/api-components/src/client/errors.ts`**
 
 ```ts
-export class ZocdocApiError extends Error {
+/**
+ * `message` is developer-facing and deliberately generic: it names the status
+ * and nothing else. The upstream response is kept on `body` for debugging, but
+ * a 400 from this API carries `errors[].message` strings that may echo a
+ * submitted field value, so `body` must never be rendered to a user
+ * (CLIENT-003) and must never be logged (PHI-001).
+ */
+export class ZocdocError extends Error {
   public readonly status: number;
+  public readonly code: string | undefined;
   public readonly body: unknown;
 
-  public constructor(status: number, message: string, body: unknown) {
+  public constructor(message: string, status: number, code?: string, body?: unknown) {
     super(message);
-    this.name = 'ZocdocApiError';
+    this.name = 'ZocdocError';
     this.status = status;
+    this.code = code;
     this.body = body;
   }
 }
@@ -556,11 +591,34 @@ export class ZocdocApiError extends Error {
  * 401 specifically. Access tokens last 60 minutes, so an expired token is the
  * most common failure and deserves a different message from "no results".
  */
-export class ZocdocAuthError extends ZocdocApiError {
-  public constructor(body: unknown) {
-    super(401, 'Zocdoc API rejected the access token. It may have expired.', body);
+export class ZocdocAuthError extends ZocdocError {
+  public constructor(body?: unknown) {
+    super('Zocdoc API rejected the access token. It may have expired.', 401, 'AUTH_ERROR', body);
     this.name = 'ZocdocAuthError';
   }
+}
+
+/**
+ * 404. Distinct from an empty result set: asking for a plan that does not exist
+ * is an error, whereas a search that matches nothing is a successful empty
+ * response (COMP-001 keeps those two states separate).
+ */
+export class ZocdocNotFoundError extends ZocdocError {
+  public constructor(body?: unknown) {
+    super('The requested Zocdoc resource does not exist.', 404, 'NOT_FOUND', body);
+    this.name = 'ZocdocNotFoundError';
+  }
+}
+
+/** Maps a non-2xx status onto the hierarchy above. */
+export function mapError(status: number, body: unknown): ZocdocError {
+  if (status === 401) {
+    return new ZocdocAuthError(body);
+  }
+  if (status === 404) {
+    return new ZocdocNotFoundError(body);
+  }
+  return new ZocdocError(`Zocdoc API request failed with ${status}.`, status, undefined, body);
 }
 ```
 
@@ -568,11 +626,11 @@ export class ZocdocAuthError extends ZocdocApiError {
 
 ```ts
 import { getZocdocConfig, resolveToken, type ZocdocConfig } from './configure.js';
-import { ZocdocApiError, ZocdocAuthError } from './errors.js';
+import { mapError } from './errors.js';
 
 export type QueryParams = Record<string, string | number | boolean | string[] | undefined | null>;
 
-export interface RequestInit_ {
+export interface ZocdocRequestInit {
   method?: string;
   query?: QueryParams;
   body?: unknown;
@@ -589,10 +647,11 @@ function buildUrl(baseUrl: string, path: string, query?: QueryParams): string {
   return url.toString();
 }
 
-/** The only place in this codebase that calls fetch. */
-export async function request<T>(path: string, init: RequestInit_ = {}): Promise<T> {
+/** The only place in this codebase that calls fetch (CLIENT-001). */
+export async function request<T>(path: string, init: ZocdocRequestInit = {}): Promise<T> {
   const config = init.config ?? getZocdocConfig();
   const token = await resolveToken(config);
+  const hasBody = init.body !== undefined;
 
   const response = await fetch(buildUrl(config.baseUrl, path, init.query), {
     method: init.method ?? 'GET',
@@ -600,9 +659,9 @@ export async function request<T>(path: string, init: RequestInit_ = {}): Promise
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/json',
-      ...(init.body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
     },
-    ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }),
+    ...(hasBody ? { body: JSON.stringify(init.body) } : {}),
   });
 
   const text = await response.text();
@@ -613,14 +672,10 @@ export async function request<T>(path: string, init: RequestInit_ = {}): Promise
     parsed = text;
   }
 
-  if (response.status === 401) {
-    throw new ZocdocAuthError(parsed);
-  }
-
   if (!response.ok) {
     // Deliberately generic: request bodies may contain PHI and must never be
     // echoed into an error message.
-    throw new ZocdocApiError(response.status, `Zocdoc API request failed with ${response.status}.`, parsed);
+    throw mapError(response.status, parsed);
   }
 
   return parsed as T;
@@ -630,7 +685,7 @@ export async function request<T>(path: string, init: RequestInit_ = {}): Promise
 - [ ] **Step 7: Run and confirm the tests pass**
 
 Run: `pnpm test:client`
-Expected: PASS, 6 new tests.
+Expected: PASS, 15 new tests.
 
 - [ ] **Step 8: Stage**
 
@@ -650,14 +705,33 @@ git add packages/api-components/package.json packages/api-components/src/client
 - Consumes: `request` from Task 5
 - Produces:
   - `getSpecialties(): Promise<Specialty[]>`
-  - `getVisitReasons(specialty?: string): Promise<VisitReason[]>`
+  - `getVisitReasons(specialtyId?: string): Promise<VisitReason[]>`
   - `getInsurancePlans(): Promise<InsurancePlan[]>`
   - `clearReferenceDataCache(): void`
-  - `interface Specialty { id: string; name: string }`
-  - `interface VisitReason { id: string; name: string }`
-  - `interface InsurancePlan { id: string; name: string }`
+  - `interface Specialty { id; name; care_category; default_visit_reason_id; default_visit_reason_name }`
+  - `interface VisitReason { id; name; specialty_id }`
+  - `interface InsurancePlan { id; name; carrier?; network_type?; … }`
+  - `interface ZocdocPagedResponse<T>` / `ZocdocResponse<T>` — the two envelopes
 
 Correct the field names in `types.ts` to match what Task 2 actually recorded in `__fixtures__/`. The names above are the expected shape; the fixtures are the truth.
+
+**Three corrections applied from `docs/api-contract-notes.md`.** No fixtures exist
+(no token), so the notes were the authority:
+
+1. **The endpoints return the paged envelope, not a bare array.** `request<Specialty[]>('/v1/specialties')`
+   as drafted below would resolve to `{ request_id, page, …, data }` — an object that
+   satisfies no consumer expecting to map over it. Every getter unwraps `data`.
+2. **`getVisitReasons` filters on `specialty_id`.** The draft sent `specialty`, which
+   the API ignores, silently returning every visit reason rather than the filtered set.
+   This is the same prose-versus-parameter confusion Task 2 resolved.
+3. **Pagination is followed to `total_count`.** `page_size` caps at 500, so a single
+   request silently truncates any longer list. A specialty or insurance select missing
+   its tail looks like working software, which makes truncation worse than an error.
+   Not in the original draft; added because the getters would otherwise be wrong
+   rather than merely limited.
+
+The interface field lists are also fuller than the draft's `{ id, name }` stubs — the
+spec marks five fields required on `Specialty` and three on `VisitReason`.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -837,10 +911,22 @@ export function getInsurancePlans(): Promise<InsurancePlan[]> {
 
 If Task 2 recorded an envelope such as `{ data: [...] }` rather than a bare array, unwrap it here and update the test's mock body to match the real shape.
 
+**It did.** The shipped version routes all three getters through a `fetchAllPages`
+helper that unwraps `data` and walks pages until `total_count` is satisfied, exiting
+early on an empty page so an overstated `total_count` cannot spin through all 200.
+The `cached()` wrapper above is unchanged — it still stores the Promise rather than the
+resolved value (CLIENT-004), which is what makes two components mounting in the same
+tick share one request. The `await` inside the pagination loop carries a narrow
+`no-await-in-loop` disable: the page count is only known from a response, so the rule's
+suggested `Promise.all` cannot apply.
+
 - [ ] **Step 5: Run and confirm the tests pass**
 
 Run: `pnpm test:client`
-Expected: PASS, 4 new tests.
+Expected: PASS, 14 new tests — the four drafted above plus coverage for envelope
+unwrapping, concurrent callers sharing one in-flight request, multi-page accumulation,
+the single-page and empty-directory exits, `specialty_id` naming, per-specialty cache
+keys, and per-endpoint cache-key isolation.
 
 - [ ] **Step 6: Stage**
 
@@ -1233,7 +1319,7 @@ git add packages/api-components/src
 
 **Files:**
 - Create: `packages/api-components/src/test/mount.ts`, `packages/api-components/src/components/internal/request-state.ts`
-- Test: `packages/api-components/src/components/internal/__tests__/request-state.browser.test.ts`
+- Test: `packages/api-components/src/components/internal/__tests__/request-state.test.ts`
 
 **Interfaces:**
 - Consumes: `CharmElement` from `@charm-ux/core`
@@ -1279,7 +1365,7 @@ export async function settled(element: HTMLElement): Promise<void> {
 
 - [ ] **Step 2: Write the failing test**
 
-`packages/api-components/src/components/internal/__tests__/request-state.browser.test.ts`:
+`packages/api-components/src/components/internal/__tests__/request-state.test.ts`:
 
 ```ts
 import { html, render } from 'lit';
@@ -1403,7 +1489,7 @@ Pure presentation — it renders what it is given and emits a selection. Built f
 
 **Files:**
 - Create: `packages/api-components/src/components/provider-results/provider-results.ts`, `.../index.ts`, `.../provider-results.styles.ts`
-- Test: `packages/api-components/src/components/provider-results/provider-results.browser.test.ts`
+- Test: `packages/api-components/src/components/provider-results/provider-results.test.ts`
 
 **Interfaces:**
 - Consumes: `ProviderLocation` (Task 6), `renderRequestState` (Task 9)
@@ -1411,7 +1497,7 @@ Pure presentation — it renders what it is given and emits a selection. Built f
 
 - [ ] **Step 1: Write the failing test**
 
-`packages/api-components/src/components/provider-results/provider-results.browser.test.ts`:
+`packages/api-components/src/components/provider-results/provider-results.test.ts`:
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -1611,7 +1697,7 @@ git add packages/api-components/src
 
 **Files:**
 - Create: `packages/api-components/src/components/provider-search/provider-search.ts`, `.../index.ts`, `.../provider-search.styles.ts`
-- Test: `packages/api-components/src/components/provider-search/provider-search.browser.test.ts`
+- Test: `packages/api-components/src/components/provider-search/provider-search.test.ts`
 
 **Interfaces:**
 - Consumes: `searchProviderLocations` (Task 7), `getVisitReasons` / `getInsurancePlans` (Task 6), `renderRequestState` (Task 9)
@@ -1619,7 +1705,7 @@ git add packages/api-components/src
 
 - [ ] **Step 1: Write the failing test**
 
-`packages/api-components/src/components/provider-search/provider-search.browser.test.ts`:
+`packages/api-components/src/components/provider-search/provider-search.test.ts`:
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -1938,7 +2024,7 @@ Renders a day strip built from Charm's `button-group` plus a timeslot list. No c
 
 **Files:**
 - Create: `packages/api-components/src/components/availability-picker/availability-picker.ts`, `.../index.ts`, `.../availability-picker.styles.ts`
-- Test: `packages/api-components/src/components/availability-picker/availability-picker.browser.test.ts`
+- Test: `packages/api-components/src/components/availability-picker/availability-picker.test.ts`
 
 **Interfaces:**
 - Consumes: `getAvailability` (Task 7), `renderRequestState` (Task 9)
@@ -1946,7 +2032,7 @@ Renders a day strip built from Charm's `button-group` plus a timeslot list. No c
 
 - [ ] **Step 1: Write the failing test**
 
-`packages/api-components/src/components/availability-picker/availability-picker.browser.test.ts`:
+`packages/api-components/src/components/availability-picker/availability-picker.test.ts`:
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -2229,7 +2315,7 @@ It extends `CharmElement`, not `CharmFormControlElement`. A form-control element
 
 **Files:**
 - Create: `packages/api-components/src/components/patient-form/patient-form.ts`, `.../index.ts`, `.../patient-form.styles.ts`
-- Test: `packages/api-components/src/components/patient-form/patient-form.browser.test.ts`
+- Test: `packages/api-components/src/components/patient-form/patient-form.test.ts`
 
 **Interfaces:**
 - Consumes: `Patient` (Task 6)
@@ -2237,7 +2323,7 @@ It extends `CharmElement`, not `CharmFormControlElement`. A form-control element
 
 - [ ] **Step 1: Write the failing test**
 
-`packages/api-components/src/components/patient-form/patient-form.browser.test.ts`. Every value is a synthetic placeholder.
+`packages/api-components/src/components/patient-form/patient-form.test.ts`. Every value is a synthetic placeholder.
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -2549,7 +2635,7 @@ git add packages/api-components/src
 
 **Files:**
 - Create: `packages/api-components/src/components/booking-confirmation/booking-confirmation.ts`, `.../index.ts`
-- Test: `packages/api-components/src/components/booking-confirmation/booking-confirmation.browser.test.ts`
+- Test: `packages/api-components/src/components/booking-confirmation/booking-confirmation.test.ts`
 
 **Interfaces:**
 - Consumes: nothing
@@ -2557,7 +2643,7 @@ git add packages/api-components/src
 
 - [ ] **Step 1: Write the failing test**
 
-`packages/api-components/src/components/booking-confirmation/booking-confirmation.browser.test.ts`:
+`packages/api-components/src/components/booking-confirmation/booking-confirmation.test.ts`:
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -2666,7 +2752,7 @@ Holds flow state, renders the five children with direct property bindings, and o
 
 **Files:**
 - Create: `packages/api-components/src/components/booking-flow/booking-flow.ts`, `.../index.ts`, `.../booking-flow.styles.ts`
-- Test: `packages/api-components/src/components/booking-flow/booking-flow.browser.test.ts`
+- Test: `packages/api-components/src/components/booking-flow/booking-flow.test.ts`
 
 **Interfaces:**
 - Consumes: all five components (Tasks 10–14), `createAppointment` (Task 8)
@@ -2674,7 +2760,7 @@ Holds flow state, renders the five children with direct property bindings, and o
 
 - [ ] **Step 1: Write the failing test**
 
-`packages/api-components/src/components/booking-flow/booking-flow.browser.test.ts`:
+`packages/api-components/src/components/booking-flow/booking-flow.test.ts`:
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -2981,7 +3067,7 @@ Controls come from JSDoc via the manifest, so it has to exist before Storybook i
 ```js
 export default {
   globs: ['packages/api-components/src/components/**/*.ts'],
-  exclude: ['**/*.test.ts', '**/*.browser.test.ts', '**/*.stories.ts', '**/*.styles.ts'],
+  exclude: ['**/*.test.ts', '**/*.stories.ts', '**/*.styles.ts'],
   outdir: '.',
   litelement: true,
 };

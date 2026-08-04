@@ -539,7 +539,14 @@ const zocdocTokensBase = charmTokens
         },
         /** Zinc's `formControl.description` */
         helpText: {
-          color: semantic('surface', 'default', 'secondaryFgColor'),
+          /**
+           * Override to meet 4.5:1 contrast (WCAG AA). The default
+           * secondaryFgColor is too light at 3.18:1.
+           */
+          color: {
+            light: primitive('color', 'neutral', 700),
+            dark: primitive('color', 'neutral', 300),
+          },
           fontSize: semantic('typography', 'body', 'sm', 'fontSize'),
           fontWeight: primitive('fontWeight', 'normal'),
           lineHeight: semantic('typography', 'body', 'sm', 'lineHeight'),
@@ -2399,6 +2406,14 @@ const zocdocTokensBase = charmTokens
            */
           controlWidth: 'auto',
           /**
+           * Override Charm's default to meet 4.5:1 contrast (WCAG AA).
+           * Charm's default is too light at 3.18:1.
+           */
+          fgColor: {
+            light: primitive('color', 'neutral', 700),
+            dark: primitive('color', 'neutral', 200),
+          },
+          /**
            * Charm's item paints a hover background but has no radius token, so
            * the highlight comes out as a hard-edged block. Read by
            * `breadcrumb-item.styles.ts`, not by Charm.
@@ -2428,6 +2443,21 @@ const zocdocTokensBase = charmTokens
         },
         large: {
           size: primitive('fontSize', '24'),
+        },
+      },
+      /**
+       * Avatar with initials needs contrast-safe colors. Charm's default
+       * puts white text on a mid-gray background, falling short of 4.5:1.
+       * Using neutral-700 (#737373) to achieve 4.7:1 contrast with white.
+       */
+      avatar: {
+        bgColor: {
+          light: primitive('color', 'neutral', 700),
+          dark: primitive('color', 'neutral', 700),
+        },
+        fgColor: {
+          light: primitive('color', 'white'),
+          dark: primitive('color', 'white'),
         },
       },
       card: {

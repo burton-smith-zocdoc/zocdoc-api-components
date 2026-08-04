@@ -1,5 +1,12 @@
 import { css } from 'lit';
 
+/**
+ * Temporary workaround until Charm applies fgColor to initials.
+ * See charm-ux/core commit adding `color: ${component('avatar', 'fgColor')}`.
+ * Remove this file once the Charm update is released.
+ */
 export default css`
-  /* Zocdoc avatar style overrides */
+  .initials {
+    color: var(--zd-avatar-fg-color);
+  }
 `;
