@@ -222,7 +222,11 @@ export const PROVIDER_LOCATIONS: ProviderLocation[] = [
  * stories stay reproducible.
  */
 export function buildTimeslots(startDate: string, times: string[]): AvailabilitySlot[] {
-  return times.map((time) => ({ start_time: `${startDate}T${time}:00-04:00` }));
+  // `booking_url: null` rather than omitted, because that is what production sends — it was
+  // null in all 165 timeslots recorded on 2026-08-04, despite the spec typing it as a
+  // non-nullable string. Omitting it here would let a consumer written against the mock use
+  // `=== undefined` and pass, then miss the real null.
+  return times.map((time) => ({ start_time: `${startDate}T${time}:00-04:00`, booking_url: null }));
 }
 
 /** Half-hour slots with a midday gap, so a picker has both a run and a break to render. */
@@ -282,9 +286,11 @@ export function buildAvailability(
   startDate: string
 ): ProviderLocationAvailability {
   // The no-availability sentinel must come back present-but-empty, not absent: the
-  // endpoint returns one entry per requested location either way.
+  // endpoint returns one entry per requested location either way. `first_availability` is
+  // explicitly null, matching production — recorded 2026-08-04, where 9 of 10 batched
+  // locations came back exactly like this.
   if (providerLocationId === SCENARIOS.providerLocationNoAvailability) {
-    return { provider_location_id: providerLocationId, timeslots: [] };
+    return { provider_location_id: providerLocationId, first_availability: null, timeslots: [] };
   }
 
   const timeslots = buildTimeslots(startDate, SLOT_TIMES);

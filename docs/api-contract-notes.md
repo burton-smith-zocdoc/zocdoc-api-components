@@ -45,7 +45,22 @@ The operation's actual `## Query parameters:` table lists only `_id`-suffixed na
 the string `accepted_insurance` does not appear anywhere in the spec as a parameter.
 
 **Use `specialty_id`, `visit_reason_id`, `insurance_plan_id`.** `page` and `page_size` are
-real and accepted. This is corroborated by the booking guide's verbatim curl example:
+real and accepted.
+
+Settled against the running server on 2026-08-04, not just by reading: sending `specialty`
+in place of `specialty_id` returns
+
+```
+400 { error_type: 'invalid_request',
+      errors: [{ field: 'specialty_id',
+                 message: 'One of SpecialtyId or VisitReasonId is required.' }] }
+```
+
+The unknown parameter is dropped silently and the request then fails the required-filter
+check — which is the strongest available proof that `specialty` is not recognized, since a
+200 with plausible-looking results would not have distinguished "accepted" from "ignored".
+
+This is also corroborated by the booking guide's verbatim curl example:
 
 ```
 GET /v1/provider_locations?zip_code=36925&specialty_id=sp_153
@@ -100,6 +115,15 @@ The provider-locations case is the trap: results are nested at
 `data.provider_locations`, not `data`. `data.search_parameters` echoes back the resolved
 `specialty_id` and `visit_reason_id` — useful, since the API fills in defaults when you
 supply only one of the two.
+
+Every row above is confirmed against live production responses (2026-08-04), including the
+error envelope, which we triggered deliberately. Two specifics worth keeping:
+
+- The `visit_reason_id` the API fills in is the specialty's own `default_visit_reason_id`,
+  which `/v1/specialties` already returns on each item — so it is predictable, not opaque.
+- `search_parameters` also carries `available_from_in_provider_local_time` and
+  `available_to_in_provider_local_time`, both `null` when not requested. They are not in the
+  documented parameter list for this endpoint.
 
 ### Error envelope
 
@@ -159,7 +183,7 @@ Item fields: `id`, `name`, `carrier: { id, name }`, `network_type`, `program_typ
 | `specialty_id` | string | **one of `specialty_id` or `visit_reason_id` is required** |
 | `visit_reason_id` | string | if both are sent, the specialty must be the visit reason's own specialty |
 | `page` | integer | zero-indexed |
-| `page_size` | integer | |
+| `page_size` | integer | **defaults to 10** (measured; the spec documents no default or bounds here) |
 | `insurance_plan_id` | string | |
 | `visit_type` | string | `all` \| `in_person` \| `video_visit`; defaults to `in_person` |
 | `max_distance_to_patient_mi` | integer | default 50 |
@@ -170,7 +194,10 @@ virtual providers must pass `all` explicitly.
 Provider-location object fields:
 
 - `provider_location_id` — e.g. `pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890`.
-  **Contains a literal `|`**, so it must be percent-encoded in query strings and paths.
+  **Contains a literal `|`.** Percent-encoding it as `%7C` is correct and what
+  `URLSearchParams` does for us anyway, so `http.ts` needs no special handling. Verified
+  2026-08-04: the server accepts the raw `|` and `%7C` identically (both 200), so this is
+  not a trap — an earlier version of this note implied encoding was mandatory.
 - `provider_location_type` — `in_person_provider` | `virtual_provider`
 - `accepts_patient_insurance` — `accepted` | `not_accepted` | `insurance_not_specified`
 - `first_availability_date_in_provider_local_time` — `YYYY-MM-DD`, up to 90 days out
@@ -190,8 +217,20 @@ Provider-location object fields:
 prefix before use in an `<img src>` in some contexts.
 
 `booking_requirements.required_fields` drives which fields `zd-patient-form` must
-require (Task 13). Its enum values are not enumerated in the spec.
-**[NEEDS LIVE CHECK]** — capture a real response before hardcoding form logic.
+require (Task 13). Its values are not enumerated in the spec.
+
+*Live check done 2026-08-04, and it did not settle the question.* Across 13 provider
+locations from production searches, **every one returned `required_fields: []`** — so
+sampling gives us no vocabulary to build against. `accepts_booking_requests_from` was
+populated on all 13 (`in_network` and `self_pay` observed; `out_of_network` is in the enum
+but did not appear).
+
+Consequence for Task 13: treat the two documented paths
+(`data.patient.insurance.insurance_plan_id`, `data.patient.insurance.insurance_member_id`)
+as the known set, and make an unrecognized value **fail loudly in development and be
+ignored in production** rather than silently dropped — we cannot enumerate what else may
+arrive, and a requirement we skip becomes a booking that fails after the patient has filled
+in the form.
 
 ### `GET /v1/provider_locations/availability`
 
@@ -206,11 +245,24 @@ require (Task 13). Its enum values are not enumerated in the spec.
 | `insurance_plan_id` | string | used only to construct `booking_url` |
 | `insurance_carrier_id` | string | used only to construct `booking_url` |
 
-The OpenAPI description (bundle line 371) says "**31** days or less". An earlier version of
-this note claimed a guide says "30 days or less" and treated the two as contradictory —
-**that guide text could not be located**, and `guides/booking.md` serves the HTML app shell
-rather than markdown, so it is unverifiable. Do not cite the contradiction as established.
-Clamping to 30 is still safe either way, which is what we do.
+**The window is ≤30, not ≤31 — settled live on 2026-08-04.** The OpenAPI description
+(bundle lines 367–372) says "Must be **31** days or less after the start date", and the API's own
+rejection says the same thing:
+
+```
+400 { "field": "availability_range_in_days",
+      "message": "The EndDateInProviderLocalTime must be between 0 and 31 days
+                  after the StartDateInProviderLocalTime." }
+```
+
+That 400 is what a **31-day** span gets. A 30-day span succeeds. So the endpoint rejects the
+exact value both its documentation and its own error message say is allowed — the check is
+`< 31` while everything describing it says `<= 31`.
+
+This supersedes an earlier version of this note, which guessed at a contradiction between
+the spec and a guide that "says 30 days or less". That guide text was never located and the
+guess was wrong about the *mechanism*, though right that 30 is the safe clamp. Clamping to
+30 is what we do, and now there is a reason on file rather than caution.
 
 `data` is an array; each item:
 
@@ -228,10 +280,34 @@ Clamping to 30 is still safe either way, which is what we do.
   (`zd-availability-picker`) is not blocked and does not need a live capture for this.
 
 Empty availability returns an **empty array for that provider location**, not an error —
-which maps cleanly onto the `empty` state required by COMP-001.
+which maps cleanly onto the `empty` state required by COMP-001. Confirmed live: a batch of
+10 ids returned 10 entries, 9 of them with `timeslots: []` and `first_availability: null`.
 
 `booking_url` is documented as a **non-PHI** deep link; UTM params are appended
 automatically.
+
+**Verified live 2026-08-04.** One response with 164 timeslots confirms the item shape
+exactly as the spec's `Timeslot` describes it — keys are `start_time`, `visit_reason_id`,
+`booking_url` and nothing else. Three things the capture adds that the spec does not say:
+
+- **This envelope is not paged.** It is `{ request_id, data }` only — no `next_url`, `page`,
+  `page_size`, or `total_count`. That matches `AvailabilityResult` (bundle 2298), which
+  composes `BaseResult` rather than the paged envelope, so `fetchAllPages` must not be
+  pointed at this endpoint. See "Two response envelopes, not one".
+- **`booking_url` was `null` in all 165 timeslots observed**, despite being typed as a
+  non-nullable `string` with a URL example. Presumably populated only for syndication
+  clients. Treat it as `string | null` and never render a link without a null check.
+- **`first_availability` can be `null`** even though it `$ref`s `Timeslot`, whose
+  `required` list contains `start_time`. Same treatment: `Timeslot | null`.
+
+**Availability is sparse in this directory, which matters for fixtures.** Sampling four ZIP
+codes (11201, 10003, 60601, 90012) across two specialties, only **2 of 41** provider
+locations reported a non-null `first_availability_date_in_provider_local_time`. Every
+`Dentist` result in every market had none; `Dermatologist` in 11201 and 10003 had one each.
+So a script that grabs the first search result and asks for its availability will almost
+always record an empty fixture and look like a broken integration. Filter on a non-null
+first-availability date before probing — `scripts/verify-production-reference-data.ts` now
+does.
 
 ### `POST /v1/appointments`
 
@@ -268,9 +344,26 @@ Optional on `patient`: `patient_id`, `developer_patient_id`,
 `prefer_not_to_say` must be used alone; the others may combine. Note this is distinct
 from `sex_at_birth`, which is a separate required binary field.
 
-Response `data`: `appointment_id`, `appointment_status`, `developer_patient_id`,
-`is_provider_resource`, `location_phone_number`, `location_phone_extension`,
-`waiting_room_path`, `confirmation_type`.
+Response `data` — **live-verified 2026-08-04**, all ten fields documented:
+`appointment_id`, `appointment_status`, `developer_patient_id`, `is_provider_resource`,
+`location_phone_number`, `location_phone_extension`, `waiting_room_path`,
+`confirmation_type`, `visit_type`, `notes`. An earlier version of this note listed only
+eight — it omitted `visit_type` and `notes`, which are documented and returned; the docs
+were right and the note was incomplete.
+
+`GET /v1/appointments/{id}` returns those minus `visit_type`/`notes` ordering, plus
+`cancellation_reason`, `created_time_utc`, `last_modified_time_utc`, `patient_type`,
+`practice_id`, `provider_location_id`, `source`, `start_time`, `visit_reason_id`.
+
+**Six of these are `type: string` in the spec and came back `null`:**
+`developer_patient_id`, `location_phone_extension`, `waiting_room_path`, `notes`,
+`cancellation_reason`, `source`. Same systemic gap as everywhere else — see the nullability
+policy in `client/types.ts`. `source` is the surprising one: it documents "the channel where
+the appointment was booked", yet it is null on an appointment that was definitely booked
+through a channel.
+
+A first booking status is `pending_booking`, not `confirmed` — the state machine in
+COMP-001 must treat a 200 from `POST /v1/appointments` as *submitted*, not *booked*.
 
 **Every field on `patient` is PHI.** Per PHI-001 none of these values may appear in
 `console.log`, thrown error messages, or committed fixtures. No appointment fixture
@@ -316,9 +409,13 @@ parameters, so they could not have resolved the conflict in any case.
 
 ## Verified against production (2026-08-04)
 
-First live responses. Recorded by `scripts/verify-production-reference-data.ts` into
-`client/__fixtures__/`. Both fixtures were scanned for patient-shaped field names before
-staging — 11 and 19 distinct keys respectively, no matches.
+Live responses, recorded by `scripts/verify-production-reference-data.ts` into
+`client/__fixtures__/`. Every fixture is scanned for patient-shaped field names before it is
+written, and the script refuses to write on a hit; all five came back clean.
+
+Two runs are recorded here: reference data first, then provider search and availability once
+production reads were authorized. The second run is under **"Search and availability"**
+below.
 
 **The paged envelope is confirmed exactly as typed:**
 `{ request_id, next_url, page, page_size, total_count, data }`. Two details that were
@@ -345,12 +442,14 @@ carries.
 | Endpoint | `total_count` |
 |---|---|
 | `/v1/specialties` | 310 |
-| `/v1/visit_reasons?specialty_id=sp_271` | 1 |
+| `/v1/visit_reasons?specialty_id=sp_271` (Abdominal Radiologist) | 1 |
+| `/v1/visit_reasons?specialty_id=sp_98` (Dentist) | 71 |
 | `/v1/insurance_plans` | 10,677 |
+| `/v1/provider_locations?zip_code=11201&specialty_id=sp_98` | 27 |
 
-Visit reasons are narrow once scoped — `sp_271` (Abdominal Radiologist) has exactly one.
-That makes `specialty_id` cheap and worth always sending; unscoped, the list spans every
-specialty.
+Visit reasons are narrow once scoped, but **how** narrow varies by two orders of magnitude —
+one for Abdominal Radiologist, 71 for Dentist. Either way scoping is worth it; unscoped, the
+list spans every specialty. Don't size a UI off a single specialty's count.
 
 10,677 plans is 22 sequential round-trips at the maximum page size of 500, and roughly
 6 MB of JSON, paid on the client to populate one select. `getInsurancePlans()` therefore
@@ -371,6 +470,51 @@ fell inside them, so those are closed unions.
 
 `status` returned only `active`, because the endpoint defaults to it rather than because
 the other values are unused.
+
+### Search and availability
+
+Second run, after production reads were authorized. Four questions were open going in; three
+are now closed.
+
+**Closed — `specialty` is not a real parameter.** See "The parameter-name conflict is
+resolved" above for the 400 body. This was our misreading of a prose sentence, not an API
+defect.
+
+**Closed — the live `timeslots` item shape.** 164 real timeslots in one response, keys
+exactly `start_time`, `visit_reason_id`, `booking_url` and nothing more. The spec's
+`Timeslot` `$ref` was right. Task 12 needs no further discovery.
+
+**Closed — the `|` in `provider_location_id` does not require encoding.** Raw and `%7C`
+both return 200. We send the encoded form regardless because `URLSearchParams` does it for
+free, but no special handling is needed and nothing breaks if a caller hand-builds a URL.
+
+**Still open — `booking_requirements.required_fields`.** All 13 sampled locations returned
+`[]`, so production gave us no vocabulary. See that endpoint's section for what Task 13
+should do about it.
+
+**New, and the most consequential thing this run turned up: the spec never marks anything
+nullable, and null is everywhere.** `nullable` appears **zero times** in the OpenAPI 3.0.0
+document, which is the only mechanism 3.0 has for expressing it. Eight distinct field paths
+came back null across five responses — seven distinct fields, since `booking_url` showed up
+null in two positions:
+
+| Path | Declared as |
+|---|---|
+| `Availability.first_availability` | `$ref: Timeslot`, whose `required` lists `start_time` |
+| `Timeslot.booking_url` | `type: string` with a URL example — null in all 165 observed |
+| `ProviderLocation.first_availability_date_in_provider_local_time` | `type: string` |
+| `ProviderLocation.virtual_location` | `$ref: VirtualLocation` |
+| `Location.phone_extension` | `type: string` |
+| `search_parameters.available_from_in_provider_local_time` | `type: string` |
+| `search_parameters.available_to_in_provider_local_time` | `type: string` |
+
+None of the values are surprising — an in-person provider has no `virtual_location`. The
+point is that **our hand-written types must add `| null` wherever the spec says `string` or
+`$ref`**, and that a generated client would be wrong at every row above. Treat spec
+non-nullability as unreliable throughout, not just at the fields listed here.
+
+`booking_url` deserves its own line: documented as a bookable deep link, `null` in every
+timeslot we saw. Presumably syndication-only. Never render a link from it without a check.
 
 ## Auth status
 
@@ -450,30 +594,87 @@ Consequences for testing, which are not symmetric between reads and writes:
   practices, and `pr_no_availbility` and the eight booking-status ids do not exist.
 - Reference data (specialties, visit reasons, insurance plans) is catalog data with no
   patient fields, so it is safe to record from production.
-- **`POST /v1/appointments` must not be run against production.** It books a real
-  appointment at a real provider's office — irreversible and outward-facing. There is
-  also no compliant way to do it: PHI-002/TEST-003 require patient data from the
-  documented scenarios, and those exist only in sandbox, so any patient data submitted to
-  production is either a real person or realistic fake data that becomes real PHI once
-  stored.
+- **`POST /v1/appointments` against production is authorized** as of 2026-08-04, and
+  `scripts/verify-production-booking.ts` implements it. Two things an earlier version of
+  this note got wrong, both of which mattered:
+  - It called a booking **irreversible**. It isn't: `POST /v1/appointments/cancel` takes an
+    `appointment_id` and a `cancellation_reason_type`, and a machine-to-machine credential
+    can cancel anything it booked. The booking script cancels in a `finally`, so the
+    appointment comes off the calendar even if the run fails midway.
+  - It claimed there is **no compliant way** to submit patient data, because PHI-002 sources
+    test data from scenarios that are sandbox-only. The rule's purpose is that no test datum
+    correspond to a real person, and standards-reserved ranges satisfy that better than the
+    sandbox sentinels do: phone `212-555-0123` (NANP reserves 555-0100–0199 as unassignable)
+    and `@example.com` (RFC 2606). The email choice is the load-bearing one — booking sends
+    a confirmation, so a plausible address would have mailed a stranger an appointment
+    confirmation for care they never asked for.
 
-Authorized scope as of this addendum is reference-data reads only.
-`scripts/verify-production-reference-data.ts` implements exactly that, with a three-path
-allowlist and GET-only enforced in code.
+Authorized scope is now reads **and** the booking round-trip.
+`scripts/verify-production-reference-data.ts` keeps its GET-only guarantee and stays read-only;
+booking lives in a separate file so that guarantee is not weakened by adding a method
+parameter to it.
+
+### The booking round-trip, verified 2026-08-04
+
+Two appointments were booked and cancelled against production. Both returned
+`200 pending_booking` on create and `200 cancelled` on cancel, so nothing is left on any
+calendar. Findings are folded into `POST /v1/appointments` above; the response *shape* (keys
+and types, no values) is in `__fixtures__/appointment-response-shape.json`.
+
+Two appointments rather than one because the first run tripped the script's own method
+allowlist on the status read — a `GET /v1/appointments` this file had never declared. That
+run is the best evidence the safety design works: the allowlist refused an undeclared call,
+and the `finally` still cancelled the appointment before the error propagated. The bug was a
+missing allowlist entry, not a missing cancel.
+
+### The sandbox initially blocked the booking POST
+
+Before Burton widened the rule, the script ran end-to-end up to the POST and got
+`567 Access to this URL is blocked by network policy`. The agentic sandbox's HTTP allow-list
+is verb-scoped, and the production host shipped read-only:
+
+| Host | Path | Verbs |
+|---|---|---|
+| `api-developer.zocdoc.com` | `/v1/*` | `GET` |
+| `api-developer-sandbox.zocdoc.com` | `/v1/*` | `GET`, `POST` |
+
+The sandbox *environment* permitted booking while *production* did not — the reverse of what
+the naming suggests. `sbx` is not runnable from inside the sandbox, so Burton ran this
+outside it on 2026-08-04, after which the POST succeeded:
+
+```
+sbx proxy rules add api-developer.zocdoc.com --path "/v1/*" --verbs "GET|POST"
+```
+
+Worth knowing for anyone hitting a 567 here: it comes from the local proxy, so the request
+never reaches Zocdoc — a blocked booking attempt cannot have booked anything.
+
+Nothing was booked while this was blocked; the 567 arrives before the request reaches Zocdoc.
 
 ## Fixtures
 
 *Updated 2026-08-04 — this section previously said the directory was empty and that
 recording was blocked on a token. Both are now out of date.*
 
-`packages/api-components/src/client/__fixtures__/` holds three recorded reference-data
-responses: `specialties.json`, `visit-reasons.json`, and `insurance_plans.json`. See that
-directory's `README.md` for sources and dates.
+`packages/api-components/src/client/__fixtures__/` holds five recorded responses:
+`specialties.json`, `visit-reasons.json`, `insurance_plans.json`,
+`provider-locations.json`, and `availability.json`. See that directory's `README.md` for
+sources, dates, and why each capture was parameterized the way it was.
 
-Recording is only unblocked for reference data. Provider search, availability, and booking
-fixtures stay hand-written from the documented sandbox scenarios, for the reasons in the
-addendum above.
+**The JSON files are gitignored** (`.gitignore` ignores `__fixtures__`); only the README in
+that directory is tracked. They are local reconnaissance artifacts — regenerate them by
+re-running the recording script. Nothing in the test suite reads them; component and
+client tests run off the hand-written `client/mock/` fixtures instead. Anything a test
+needs to assert has to be carried over into `mock/` deliberately, which is what the
+`booking_url: null` and `first_availability: null` changes there do.
 
-**No PHI has been recorded.** The three recorded responses are catalog data — specialties,
-carriers, plan names, coverage states — with no patient fields. All three were scanned for
-patient-shaped keys before staging.
+Recording is unblocked for **reads**, following authorization to test against production on
+2026-08-04. That covers reference data, provider search, and availability. **Booking
+fixtures stay hand-written** from the documented sandbox scenarios — a production
+`POST /v1/appointments` is a real appointment at a real provider's office, and the
+recording script has no way to issue one.
+
+**No PHI has been recorded.** Catalogs contain no patient fields, and neither search nor
+availability responses have a patient in them at all. This is enforced, not assumed: the
+recording script scans every response for patient-shaped keys and refuses to write the
+fixture on a hit. All five files were scanned clean.

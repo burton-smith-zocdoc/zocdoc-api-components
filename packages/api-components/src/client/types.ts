@@ -4,10 +4,26 @@
  * are deliberately not camelCased. Endpoint wrappers take camelCase params and
  * translate; only the response types stay snake_case.
  *
- * Not yet live-verified: no token has been issued for the sandbox, so these come
- * from the spec. Fields the spec marks required are required here; fields whose
- * requiredness the spec leaves unstated are optional, so a missing one surfaces
- * as `undefined` rather than a lie in the type.
+ * Fields the spec marks required are required here; fields whose requiredness the
+ * spec leaves unstated are optional, so a missing one surfaces as `undefined`
+ * rather than a lie in the type.
+ *
+ * ## `| null` is not decoration
+ *
+ * The published spec declares `openapi: 3.0.0`, in which `nullable: true` is the
+ * only way to say a value may be null — and the string `nullable` appears **zero
+ * times** in the whole document. It is therefore no evidence of non-nullability.
+ * Production returns `null` at eight field paths we have actually recorded, every
+ * one of them typed as a plain `string` or `$ref` in the spec.
+ *
+ * So: `?: string` here means "the key may be absent". `?: string | null` means
+ * "absent, or explicitly null" — and every field carrying it was *observed* null on
+ * production, not guessed. Those two are not interchangeable: `x === undefined`
+ * silently misses `null`, while `x ?? fallback` and truthiness checks handle both.
+ * Prefer the latter. When adding a field, assume it can be null unless a recorded
+ * fixture shows otherwise.
+ *
+ * See "Search and availability" in `docs/api-contract-notes.md` for the full list.
  */
 
 /** Present on every response, paged or not. Useful when reporting a failure upstream. */
@@ -150,7 +166,8 @@ export interface Location {
   longitude?: number;
   location_name?: string;
   phone_number?: string;
-  phone_extension?: string;
+  /** Observed `null` on production, not absent — see the nullability note above. */
+  phone_extension?: string | null;
   /** IANA zone, e.g. `America/New_York`. Needed to render times in the provider's zone. */
   time_zone?: string;
   distance_to_patient_mi?: number;
@@ -164,15 +181,20 @@ export interface ProviderLocation {
   provider_location_id: string;
   provider_location_type?: ProviderLocationType;
   accepts_patient_insurance?: InsuranceAcceptance;
-  /** `YYYY-MM-DD`, up to 90 days out. */
-  first_availability_date_in_provider_local_time?: string;
+  /**
+   * `YYYY-MM-DD`, up to 90 days out, or **`null` when the location has no availability** —
+   * which is the common case, not the exception. Only 2 of 41 locations sampled across four
+   * ZIP codes had a date here.
+   */
+  first_availability_date_in_provider_local_time?: string | null;
   provider: Provider;
   location?: Location;
+  /** `null` for `in_person_provider` locations, which is most of them. */
   virtual_location?: {
     state?: string;
     location_name?: string;
     time_zone?: string;
-  };
+  } | null;
   practice?: {
     practice_id: string;
     practice_name: string;
@@ -185,6 +207,9 @@ export interface ProviderLocation {
      * `data.patient.insurance.insurance_member_id`. It stays `string[]` rather than a
      * union because the spec calls those examples ("Options include"), not a closed set,
      * so an unlisted path must not fail to typecheck.
+     *
+     * Production does not narrow this: all 13 locations sampled returned `[]`. The
+     * documented pair is the only vocabulary we have.
      */
     required_fields?: string[];
     accepts_booking_requests_from?: BookingRequestSource[];
@@ -193,10 +218,17 @@ export interface ProviderLocation {
 
 /** `data` on `/v1/provider_locations` — an object, not an array. */
 export interface ProviderLocationsData {
-  /** Echoes the resolved ids, since the API fills in a default when only one is sent. */
+  /**
+   * Echoes the resolved ids, since the API fills in a default when only one is sent. The
+   * filled-in `visit_reason_id` is the specialty's own `default_visit_reason_id`, which
+   * `/v1/specialties` already returns — so it is predictable, not opaque.
+   */
   search_parameters?: {
     specialty_id?: string;
     visit_reason_id?: string;
+    /** Not in this endpoint's documented parameter list, and `null` when not requested. */
+    available_from_in_provider_local_time?: string | null;
+    available_to_in_provider_local_time?: string | null;
   };
   provider_locations: ProviderLocation[];
 }
@@ -209,13 +241,23 @@ export interface AvailabilitySlot {
   /** ISO-8601 with the provider's local UTC offset (`2022-04-27T09:00:00-04:00`). */
   start_time: string;
   visit_reason_id?: string;
-  /** Documented as a non-PHI deep link; UTM params are appended automatically. */
-  booking_url?: string;
+  /**
+   * Documented as a non-PHI deep link with UTM params appended automatically — and
+   * documented as a non-nullable `string` with a full URL example. It was **`null` in all
+   * 165 timeslots recorded from production**, so it is presumably populated only for
+   * syndication clients. Never build a link from it without a null check.
+   */
+  booking_url?: string | null;
 }
 
 export interface ProviderLocationAvailability {
   provider_location_id: string;
-  first_availability?: AvailabilitySlot;
+  /**
+   * `null` when the location has no availability in the requested window. Note the spec
+   * `$ref`s `Timeslot` here, whose `required` list contains `start_time` — so a null is not
+   * merely unmarked, it is unrepresentable under the schema as published.
+   */
+  first_availability?: AvailabilitySlot | null;
   /**
    * Confirmed against the published OpenAPI bundle (v1.177): both this array and
    * `first_availability` reference the same `Timeslot` schema, so they share a type.
@@ -314,6 +356,10 @@ export interface Patient {
  *
  * `notes` is echoed back and is patient-authored free text, so it is PHI: it must not be
  * logged (PHI-001) even though it arrives from the API rather than from a form.
+ *
+ * The four `| null` fields were live-verified on 2026-08-04: a real booking returned each of
+ * them as an explicit `null`, not absent, while the spec types all four as plain `string`.
+ * See the `| null` policy at the top of this file.
  */
 export interface AppointmentResponseData {
   appointment_id: string;
@@ -321,10 +367,10 @@ export interface AppointmentResponseData {
   is_provider_resource: boolean;
   confirmation_type: AppointmentConfirmationType;
   visit_type: AppointmentVisitType;
-  developer_patient_id?: string;
+  developer_patient_id?: string | null;
   location_phone_number?: string;
-  location_phone_extension?: string;
-  /** Patient-facing URL for a Zocdoc video visit. Absent for in-person appointments. */
-  waiting_room_path?: string;
-  notes?: string;
+  location_phone_extension?: string | null;
+  /** Patient-facing URL for a Zocdoc video visit. `null` for in-person appointments. */
+  waiting_room_path?: string | null;
+  notes?: string | null;
 }
