@@ -386,7 +386,7 @@ the ZD sandbox. Run it outside.
 
 ---
 
-### Task 5: API client — configuration, errors, and the HTTP layer
+### Task 5: API client — configuration, errors, and the HTTP layer — ✅ COMPLETE
 
 **Files:**
 - Create: `packages/api-components/package.json`, `packages/api-components/src/client/configure.ts`, `packages/api-components/src/client/errors.ts`, `packages/api-components/src/client/http.ts`
@@ -695,7 +695,7 @@ git add packages/api-components/package.json packages/api-components/src/client
 
 ---
 
-### Task 6: Reference data with in-memory caching
+### Task 6: Reference data with in-memory caching — ✅ COMPLETE
 
 **Files:**
 - Create: `packages/api-components/src/client/types.ts`, `packages/api-components/src/client/reference-data.ts`
