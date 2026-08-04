@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdBreadcrumb>('zd-bread
 const meta: Meta<ZdBreadcrumb> = {
   title: 'Primitives/Breadcrumb',
   component: 'zd-breadcrumb',
-  tags: ['autodocs'],
   args,
   argTypes,
   // The trailing item needs no `current` or `separator` attribute - the

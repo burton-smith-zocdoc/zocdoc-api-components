@@ -1,0 +1,98 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as SkeletonStories from './skeleton.stories';
+
+<Meta of={SkeletonStories} />
+
+# Skeleton
+
+A placeholder in the shape of the content that's loading. Use it when you know what's coming — a list
+of provider cards, a row of times — so the layout doesn't jump when the data arrives.
+
+## Default
+
+<code-bubble>
+
+```html
+<zd-skeleton></zd-skeleton>
+```
+
+</code-bubble>
+
+## Shape
+
+`shape` takes `rect` (the default) or `circle`. `circle` only rounds the corners fully — it doesn't
+make the box square, so set a matching width and height for an avatar-shaped placeholder.
+
+<code-bubble>
+
+```html
+<zd-skeleton shape="circle" style="--zd-skeleton-width: 48px; height: 48px;"></zd-skeleton>
+```
+
+</code-bubble>
+
+## Animation
+
+`animation` takes `none`, `pulse`, or `wave`.
+
+<code-bubble>
+
+```html
+<zd-skeleton animation="pulse"></zd-skeleton>
+<zd-skeleton animation="wave"></zd-skeleton>
+<zd-skeleton animation="none"></zd-skeleton>
+```
+
+</code-bubble>
+
+## Sizing
+
+`--zd-skeleton-width` and `--zd-skeleton-min-height` size the placeholder;
+`--zd-skeleton-border-radius` rounds it.
+
+<code-bubble>
+
+```html
+<zd-skeleton style="--zd-skeleton-width: 60%;"></zd-skeleton>
+<zd-skeleton style="--zd-skeleton-width: 40%;"></zd-skeleton>
+```
+
+</code-bubble>
+
+## Composing a placeholder
+
+Match the shape of the real content — same rough sizes, same number of lines.
+
+<code-bubble>
+
+```html
+<div style="display: flex; gap: 1rem; align-items: center;">
+  <zd-skeleton shape="circle" style="--zd-skeleton-width: 48px; height: 48px;"></zd-skeleton>
+  <div style="flex: 1; display: grid; gap: 0.5rem;">
+    <zd-skeleton style="--zd-skeleton-width: 50%;"></zd-skeleton>
+    <zd-skeleton style="--zd-skeleton-width: 80%;"></zd-skeleton>
+  </div>
+</div>
+```
+
+</code-bubble>
+
+Vary the line widths. Identical bars read as a pattern rather than as text.
+
+# Accessibility
+
+The skeleton is `aria-hidden`, so it's invisible to assistive technology — correct, since a placeholder
+has nothing to say. But that means it announces nothing at all, so the loading state has to be
+announced somewhere else: put a `role="status"` region alongside it, or use `zd-spinner`, which is a
+status on its own (A11Y-002).
+
+Motion is already handled: under `prefers-reduced-motion` the wave falls back to the pulse keyframes,
+which change opacity without moving anything, and both animations slow down. In forced-colors mode the
+animation is dropped entirely. You don't need to gate `animation` yourself.
+
+Replace the skeleton with real content, an empty state, or an error — never leave it as the resting
+state. Loading, empty, and error are three different things (COMP-001).
+
+# API
+
+<ArgTypes />

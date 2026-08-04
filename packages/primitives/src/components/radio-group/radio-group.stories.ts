@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdRadioGroup>('zd-radio
 const meta: Meta<ZdRadioGroup> = {
   title: 'Primitives/RadioGroup',
   component: 'zd-radio-group',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

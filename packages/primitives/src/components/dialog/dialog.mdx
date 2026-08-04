@@ -1,0 +1,171 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as DialogStories from './dialog.stories';
+
+<Meta of={DialogStories} />
+
+# Dialog
+
+A modal window over the page, for a focused task or a confirmation. It renders a native `dialog`
+element, so the browser handles the top layer, the backdrop, and the focus trap.
+
+## Default
+
+The heading goes in the `heading` slot or the `heading` attribute, the body in the default slot, and
+actions in `footer`. A close button is included.
+
+<code-bubble>
+
+```html
+<zd-button shows="confirm-dialog">Open dialog</zd-button>
+
+<zd-dialog id="confirm-dialog" heading="Cancel this appointment?">
+  <p>Your appointment slot will be released and you'll need to book again.</p>
+  <div slot="footer">
+    <zd-button variant="ghost" hides="confirm-dialog">Keep it</zd-button>
+    <zd-button variant="destructive" hides="confirm-dialog">Cancel appointment</zd-button>
+  </div>
+</zd-dialog>
+```
+
+</code-bubble>
+
+The dialog exposes `show()`, `hide()`, and `toggle()`. `shows`, `hides`, and `toggles` on
+`zd-button` call those for you — see the button docs.
+
+## Rich heading
+
+Use the `heading` slot when the heading needs markup.
+
+<code-bubble>
+
+```html
+<zd-dialog id="rich-heading">
+  <span slot="heading">
+    Midtown Dental
+    <zd-badge variant="success">Available today</zd-badge>
+  </span>
+  <p>Next available: tomorrow at 9:00 AM</p>
+</zd-dialog>
+```
+
+</code-bubble>
+
+## Header actions
+
+The `actions` slot sits in the header, usually for a back button in a multi-step flow.
+
+<code-bubble>
+
+```html
+<zd-dialog id="step-dialog" heading="Choose a time">
+  <zd-button slot="actions" variant="ghost" size="small" icon-only>
+    <zd-icon slot="start" name="chevron-right" label="Back" style="rotate: 180deg;"></zd-icon>
+  </zd-button>
+  <p>Pick from the available slots.</p>
+</zd-dialog>
+```
+
+</code-bubble>
+
+## Position
+
+`position` takes `center` (the default), `start`, `end`, `top`, or `bottom`. The edge positions give
+you a drawer or a bottom sheet without a second component.
+
+<code-bubble>
+
+```html
+<zd-dialog id="filters" position="end" heading="Filters">
+  <p>Narrow your search.</p>
+</zd-dialog>
+```
+
+</code-bubble>
+
+## Size
+
+Set `--zd-dialog-size` for the dialog's width.
+
+<code-bubble>
+
+```html
+<zd-dialog id="wide" heading="Provider details" style="--zd-dialog-size: 720px;">
+  <p>Everything about this practice.</p>
+</zd-dialog>
+```
+
+</code-bubble>
+
+## Alert mode
+
+Use `alert` when the dialog must not be dismissed by the backdrop or the Escape key — the person has
+to choose an action.
+
+<code-bubble>
+
+```html
+<zd-dialog id="session" alert heading="Your session is expiring">
+  <p>You'll be signed out in one minute.</p>
+  <div slot="footer">
+    <zd-button variant="primary" hides="session">Stay signed in</zd-button>
+  </div>
+</zd-dialog>
+```
+
+</code-bubble>
+
+## Hiding the chrome
+
+`hide-close-button` keeps the close button in the DOM but visually hides it until focused.
+`no-header` removes the header entirely — including the close button, so provide your own way out.
+
+<code-bubble>
+
+```html
+<zd-dialog id="no-chrome" no-header>
+  <p>This dialog closes from its footer only.</p>
+  <div slot="footer">
+    <zd-button variant="primary" hides="no-chrome">Done</zd-button>
+  </div>
+</zd-dialog>
+```
+
+</code-bubble>
+
+## Events
+
+`dialog-show` and `dialog-hide` fire as the dialog opens and closes; `dialog-after-show` and
+`dialog-after-hide` fire once transitions finish. `dialog-request-close` fires when the person tries
+to dismiss it — cancel that event to keep the dialog open, for example to confirm unsaved changes.
+
+<code-bubble>
+
+```html
+<zd-dialog id="guarded" heading="Patient details">
+  <p>Changes aren't saved yet.</p>
+</zd-dialog>
+<script type="module">
+  document.querySelector('#guarded').addEventListener('dialog-request-close', (event) => {
+    if (formHasUnsavedChanges) event.preventDefault();
+  });
+</script>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The native `dialog` element traps focus and returns it to the trigger on close, so most of this is
+handled. What's left to you:
+
+- Always give the dialog an accessible name — a `heading` attribute or slot. With `no-header` there
+  is no heading, so set `aria-label` on the dialog itself.
+- In a multi-step flow, move focus to the new step's heading or first control when the content
+  changes (A11Y-003).
+- Use `close-button-label` to translate the close button's label.
+- Never put patient data in a heading that's also used for logging or analytics — and there is no
+  analytics in this library by design (PHI-003).
+
+# API
+
+<ArgTypes />

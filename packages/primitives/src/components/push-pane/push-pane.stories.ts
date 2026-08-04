@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdPushPane>('zd-push-pa
 const meta: Meta<ZdPushPane> = {
   title: 'Primitives/Push Pane',
   component: 'zd-push-pane',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

@@ -13,7 +13,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdMenu>('zd-menu', {
 const meta: Meta<ZdMenu> = {
   title: 'Primitives/Menu',
   component: 'zd-menu',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

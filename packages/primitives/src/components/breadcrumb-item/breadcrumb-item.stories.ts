@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdBreadcrumbItem>('zd-b
 const meta: Meta<ZdBreadcrumbItem> = {
   title: 'Primitives/Breadcrumb Item',
   component: 'zd-breadcrumb-item',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args, html`Dentists`),

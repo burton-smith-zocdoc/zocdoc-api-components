@@ -1,0 +1,120 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as OverflowStories from './overflow.stories';
+
+<Meta of={OverflowStories} />
+
+# Overflow
+
+Watches its own width and moves whatever no longer fits into a menu. Use it for horizontal sets
+that can't wrap — filter chips, a row of actions.
+
+## Default
+
+Put the collapsible items in the default slot. Resize the container to see items move into the
+menu.
+
+<code-bubble>
+
+```html
+<div style="max-width: 320px;">
+  <zd-overflow>
+    <zd-button>Book</zd-button>
+    <zd-button>Reschedule</zd-button>
+    <zd-button>Cancel</zd-button>
+    <zd-button>Message</zd-button>
+  </zd-overflow>
+</div>
+```
+
+</code-bubble>
+
+## Static content
+
+The `start` and `end` slots hold content that never collapses.
+
+<code-bubble>
+
+```html
+<div style="max-width: 320px;">
+  <zd-overflow>
+    <span slot="start">Filters:</span>
+    <zd-button>In person</zd-button>
+    <zd-button>Video visit</zd-button>
+    <zd-button>Accepts my insurance</zd-button>
+  </zd-overflow>
+</div>
+```
+
+</code-bubble>
+
+## Minimum visible items
+
+Use `min` to keep a number of items on screen even when they overflow the container.
+
+<code-bubble>
+
+```html
+<div style="max-width: 200px;">
+  <zd-overflow min="2">
+    <zd-button>Book</zd-button>
+    <zd-button>Reschedule</zd-button>
+    <zd-button>Cancel</zd-button>
+  </zd-overflow>
+</div>
+```
+
+</code-bubble>
+
+## Menu placement
+
+`menu-position` puts the overflow menu at the `start` or `end` of the row, or `none` to hide it
+entirely. `overflow-direction` controls which side items collapse from.
+
+<code-bubble>
+
+```html
+<div style="max-width: 260px;">
+  <zd-overflow menu-position="start" overflow-direction="start">
+    <zd-button>Book</zd-button>
+    <zd-button>Reschedule</zd-button>
+    <zd-button>Cancel</zd-button>
+  </zd-overflow>
+</div>
+```
+
+</code-bubble>
+
+Set `fixed-placement` when the overflow sits inside a container with `overflow: auto | hidden |
+scroll`, so the menu isn't clipped.
+
+## Custom menu
+
+Use the `menu` slot to supply your own menu instead of the generated one.
+
+## Reacting to overflow
+
+The component emits an `overflow` event whenever a resize changes what fits, and reflects an
+`overflowing` attribute you can style against.
+
+# Accessibility
+
+The overflow menu's trigger is an icon-only button labelled "More options". Use the `label`
+attribute to change it — for example when there's more than one overflow on a page.
+
+<code-bubble>
+
+```html
+<zd-overflow label="More appointment actions">
+  <zd-button>Book</zd-button>
+  <zd-button>Reschedule</zd-button>
+</zd-overflow>
+```
+
+</code-bubble>
+
+Because collapsed items move into a menu rather than being hidden, they stay reachable by keyboard
+at every width.
+
+# API
+
+<ArgTypes />

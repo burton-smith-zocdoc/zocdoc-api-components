@@ -18,6 +18,7 @@ Each rule is a single Markdown file so it can be referenced by ID in reviews and
 | `A11Y`   | `accessibility/`    | WCAG 2.2 AA, state announcements, focus management, form accessibility |
 | `I18N`   | `i18n/`             | Browser translation, Intl APIs, RTL support                            |
 | `COMP`   | `component-design/` | Component design: state machines, composition, events                  |
+| `STYLE`  | `styles/`           | CSS authoring conventions for component style sheets                   |
 | `TEST`   | `testing/`          | Vitest browser mode, mock strategies, test data                        |
 | `ADR`    | `adr/`              | Architecture decision records                                          |
 
@@ -26,7 +27,7 @@ Each rule is a single Markdown file so it can be referenced by ID in reviews and
 Rules are delivered to agents in two tiers:
 
 - **Always loaded** — foundational rules injected for every task: `PBZD-*`, `PHI-*`, `CLIENT-*`, `A11Y-*`, `I18N-*`.
-- **Path-gated** — activated when files being edited match a glob: `COMP-*`, `TEST-*`.
+- **Path-gated** — activated when files being edited match a glob: `COMP-*`, `STYLE-*`, `TEST-*`.
 - **Reference** — consulted on demand: `ADR-*`.
 
 ## Rule Index
@@ -86,6 +87,12 @@ Rules are delivered to agents in two tiers:
 | [COMP-003](component-design/COMP-003.md) | Emit events through base emit() helper        |
 | [COMP-004](component-design/COMP-004.md) | Standalone-capable children                   |
 
+### STYLE — Style Authoring (path-gated)
+
+| ID                             | Rule                                          |
+| ------------------------------ | --------------------------------------------- |
+| [STYLE-001](styles/STYLE-001.md) | Prefer CSS nesting over repeated selectors    |
+
 ### TEST — Testing (path-gated)
 
 | ID                             | Rule                                          |
@@ -106,7 +113,7 @@ Rules are delivered to agents in two tiers:
 1. Create the rule file `{CODE}-{NNN}.md` in the category directory, following the existing format.
 2. Add it to the **Rule Index** above.
 3. If always-loaded (`PBZD`, `PHI`, `CLIENT`, `A11Y`, `I18N`), ensure it is referenced in `AGENTS.md`.
-4. If path-gated (`COMP`, `TEST`), ensure the glob pattern in the Claude rules file covers it.
+4. If path-gated (`COMP`, `STYLE`, `TEST`), ensure the glob pattern in the Claude rules file covers it.
 
 ## How to Use These Rules
 

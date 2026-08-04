@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdTextArea>('zd-text-ar
 const meta: Meta<ZdTextArea> = {
   title: 'Primitives/Text Area',
   component: 'zd-text-area',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

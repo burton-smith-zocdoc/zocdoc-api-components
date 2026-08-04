@@ -1,0 +1,113 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as AccordionItemStories from './accordion-item.stories';
+
+<Meta of={AccordionItemStories} />
+
+# Accordion Item
+
+A single collapsible section. It works on its own or inside `zd-accordion`.
+
+## Default
+
+Set the summary with the `heading` attribute; the details content goes in the default slot.
+
+<code-bubble>
+
+```html
+<zd-accordion-item heading="Is my insurance accepted?">
+  Insurance is verified when you book.
+</zd-accordion-item>
+```
+
+</code-bubble>
+
+## Rich heading content
+
+For anything more than plain text, use the `heading` slot instead of the attribute.
+
+<code-bubble>
+
+```html
+<zd-accordion-item>
+  <span slot="heading">
+    Insurance
+    <zd-badge variant="success">Verified</zd-badge>
+  </span>
+  Insurance is verified when you book.
+</zd-accordion-item>
+```
+
+</code-bubble>
+
+## Content around the heading
+
+The `start` and `end` slots add content before and after the heading.
+
+<code-bubble>
+
+```html
+<zd-accordion-item heading="Accepted plans">
+  <zd-icon slot="start" name="checkmark-circle"></zd-icon>
+  Aetna, Cigna, and UnitedHealthcare.
+</zd-accordion-item>
+```
+
+</code-bubble>
+
+## Open
+
+Use the `open` attribute to render the item expanded.
+
+<code-bubble>
+
+```html
+<zd-accordion-item open heading="Before your visit">Arrive 10 minutes early.</zd-accordion-item>
+```
+
+</code-bubble>
+
+## Disabled
+
+Use the `disabled` attribute to stop the item from toggling.
+
+<code-bubble>
+
+```html
+<zd-accordion-item disabled heading="Unavailable">This section can't be opened.</zd-accordion-item>
+```
+
+</code-bubble>
+
+## Animation
+
+Unlike Charm, the open/close height animation is on by default — no `animated` attribute needed.
+It reads the theme's `accordion-item` animation tokens, so override those to retime it:
+
+```css
+zd-accordion-item {
+  --zd-accordion-item-animation-duration: 300ms;
+  --zd-accordion-item-animation-timing-function: ease-out;
+}
+```
+
+The animation relies on `interpolate-size` and `::details-content`, which are Chromium-only as of
+this writing. Other engines snap open with no animation.
+
+# Accessibility
+
+Use `heading-level` to wrap the toggle in a heading element (`1` through `6`). This doesn't change
+the accessible toggle behaviour, but it puts the item in the page's document outline.
+
+<code-bubble>
+
+```html
+<zd-accordion-item heading-level="3" heading="Visit policies">
+  Cancellations are free up to 24 hours before your appointment.
+</zd-accordion-item>
+```
+
+</code-bubble>
+
+# API
+
+<ArgTypes />

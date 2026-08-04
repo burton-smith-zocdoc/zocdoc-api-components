@@ -2,8 +2,19 @@ import type { StorybookConfig } from '@storybook/web-components-vite';
 import { cemAnalyzerPlugin } from '@wc-toolkit/cem-analyzer-plugin/vite';
 
 const config: StorybookConfig = {
-  stories: ['../packages/*/src/**/*.stories.ts'],
-  addons: [],
+  stories: ['../packages/*/src/**/*.mdx', '../packages/*/src/**/*.stories.ts'],
+  addons: [
+    {
+      name: '@storybook/addon-docs',
+      options: {
+        mdxPluginOptions: {
+          mdxCompileOptions: {
+            providerImportSource: false,
+          },
+        },
+      },
+    },
+  ],
   framework: {
     name: '@storybook/web-components-vite',
     options: {},

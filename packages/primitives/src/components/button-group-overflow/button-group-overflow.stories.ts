@@ -13,7 +13,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdButtonGroupOverflow>(
 const meta: Meta<ZdButtonGroupOverflow> = {
   title: 'Primitives/Button Group Overflow',
   component: 'zd-button-group-overflow',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

@@ -1,0 +1,150 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as PushPaneStories from './push-pane.stories';
+
+<Meta of={PushPaneStories} />
+
+# Push Pane
+
+A side pane that pushes the page content over instead of covering it, so both stay usable — search
+filters next to results, for example. Where a dialog demands an answer, a push pane sits alongside.
+
+## Default
+
+The heading goes in the `heading` slot or the `heading` attribute, the body in the default slot. A
+close button is included.
+
+<code-bubble>
+
+```html
+<zd-button shows="filters-pane">Filters</zd-button>
+
+<zd-push-pane id="filters-pane" heading="Filters">
+  <zd-checkbox label="Accepting new patients"></zd-checkbox>
+  <zd-checkbox label="Video visits"></zd-checkbox>
+</zd-push-pane>
+```
+
+</code-bubble>
+
+The pane exposes `show()`, `hide()`, and `toggle()`, and `shows`, `hides`, and `toggles` on
+`zd-button` call those for you — see the button docs.
+
+## Position
+
+`position` takes `end`, `start`, or `bottom`.
+
+<code-bubble>
+
+```html
+<zd-push-pane id="start-pane" position="start" heading="Filters">
+  <p>Narrow your search.</p>
+</zd-push-pane>
+```
+
+</code-bubble>
+
+## Footer
+
+The `footer` slot holds the pane's actions.
+
+<code-bubble>
+
+```html
+<zd-push-pane id="footer-pane" heading="Filters">
+  <zd-checkbox label="Accepting new patients"></zd-checkbox>
+  <div slot="footer">
+    <zd-button variant="ghost">Clear all</zd-button>
+    <zd-button variant="primary" hides="footer-pane">Apply</zd-button>
+  </div>
+</zd-push-pane>
+```
+
+</code-bubble>
+
+## Header actions
+
+The `actions` slot sits in the header toolbar, next to the close button.
+
+<code-bubble>
+
+```html
+<zd-push-pane id="actions-pane" heading="Filters">
+  <zd-button slot="actions" variant="ghost" size="small">Clear</zd-button>
+  <p>Narrow your search.</p>
+</zd-push-pane>
+```
+
+</code-bubble>
+
+## Size
+
+Set `--zd-push-pane-size` for the pane's width.
+
+<code-bubble>
+
+```html
+<zd-push-pane id="wide-pane" heading="Filters" style="--zd-push-pane-size: 420px;">
+  <p>Narrow your search.</p>
+</zd-push-pane>
+```
+
+</code-bubble>
+
+## Hiding the chrome
+
+`hide-close-button` visually hides the close button but keeps it in the DOM and focusable.
+`no-header` drops the header — and with it the heading — leaving only that hidden close button, which
+becomes visible once it takes focus.
+
+<code-bubble>
+
+```html
+<zd-push-pane id="bare-pane" no-header>
+  <p>This pane has no header.</p>
+</zd-push-pane>
+```
+
+</code-bubble>
+
+## Events
+
+`push-pane-show` and `push-pane-hide` fire as the pane opens and closes; `push-pane-after-show` and
+`push-pane-after-hide` fire once transitions finish. `push-pane-request-close` carries a `source` of
+`close-button` or `keyboard` — cancel it to keep the pane open.
+
+<code-bubble>
+
+```html
+<zd-push-pane id="guarded-pane" heading="Filters">
+  <p>Unapplied filters.</p>
+</zd-push-pane>
+<script type="module">
+  document.querySelector('#guarded-pane').addEventListener('push-pane-request-close', (event) => {
+    if (hasUnappliedFilters) event.preventDefault();
+  });
+</script>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The pane renders as an `aside` labelled by its heading, and it's `inert` and `aria-hidden` while
+closed, so nothing inside is reachable until it opens. Escape requests close.
+
+Unlike a dialog, a push pane does **not** trap focus or move focus into itself — that's the point,
+since the page stays usable. What that leaves you:
+
+- Move focus to the pane's heading or its first control when it opens, and back to the trigger when it
+  closes (A11Y-003). Nothing does this for you.
+- Always give the pane a heading. With `no-header` there's no heading to label it, so set `aria-label`
+  on the host.
+- Use `close-button-label` to give the close button a translated label; it defaults to the literal
+  string `close-button`, which is not a usable name.
+- The pane's body slot is wrapped in an `aria-live="polite"` region while open, so content that
+  changes inside an open pane is announced. Keep that content free of patient data you wouldn't want
+  read aloud in a waiting room.
+
+# API
+
+<ArgTypes />

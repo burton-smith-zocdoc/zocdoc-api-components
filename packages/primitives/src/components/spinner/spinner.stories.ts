@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdSpinner>('zd-spinner'
 const meta: Meta<ZdSpinner> = {
   title: 'Primitives/Spinner',
   component: 'zd-spinner',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

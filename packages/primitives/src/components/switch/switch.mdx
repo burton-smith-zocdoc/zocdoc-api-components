@@ -1,0 +1,134 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as SwitchStories from './switch.stories';
+
+<Meta of={SwitchStories} />
+
+# Switch
+
+An on/off control that takes effect immediately — a notification preference, a filter toggle. When the
+choice only applies after a form is submitted, use `zd-checkbox` instead.
+
+## Default
+
+Use the `label` attribute for the label text, or the `label` slot when it needs markup.
+
+<code-bubble>
+
+```html
+<zd-switch label="Text me appointment reminders"></zd-switch>
+```
+
+</code-bubble>
+
+## Checked
+
+<code-bubble>
+
+```html
+<zd-switch label="Show video visits only" checked></zd-switch>
+```
+
+</code-bubble>
+
+The switch is form-associated. When checked it submits `value`, or `on` if you haven't set one; when
+unchecked it submits nothing at all.
+
+## State messages
+
+The `checked-message` and `unchecked-message` slots render text next to the switch for the current
+state.
+
+<code-bubble>
+
+```html
+<zd-switch label="Video visits">
+  <span slot="checked-message">On</span>
+  <span slot="unchecked-message">Off</span>
+</zd-switch>
+```
+
+</code-bubble>
+
+Both are `aria-hidden` — the `switch` role and `aria-checked` already announce the state, so these are
+a visual convenience, not the accessible name. Don't put anything in them that isn't also conveyed by
+the label.
+
+## Label position
+
+`label-position` takes `start`, `end`, or `top`.
+
+<code-bubble>
+
+```html
+<zd-switch label="Text me appointment reminders" label-position="start"></zd-switch>
+```
+
+</code-bubble>
+
+## Help text
+
+Use `help-text`, or the `help-text` slot for markup. It's referenced with `aria-describedby`.
+
+<code-bubble>
+
+```html
+<zd-switch
+  label="Text me appointment reminders"
+  help-text="Message and data rates may apply."
+></zd-switch>
+```
+
+</code-bubble>
+
+## Disabled and readonly
+
+<code-bubble>
+
+```html
+<zd-switch label="Unavailable" disabled></zd-switch>
+<zd-switch label="Managed by your practice" checked readonly></zd-switch>
+```
+
+</code-bubble>
+
+`readonly` keeps the switch focusable but ignores clicks and arrow keys, so people can read the state
+without changing it.
+
+## Validation
+
+`required`, `invalid`, and `error-message` work as they do on the other form controls, and
+`checkValidity()` tests without reporting.
+
+<code-bubble>
+
+```html
+<zd-switch
+  label="I agree to the terms"
+  required
+  invalid
+  error-message="You have to agree to continue."
+></zd-switch>
+```
+
+</code-bubble>
+
+## Events
+
+`change` fires when the checked state changes; `focus` and `blur` fire as the switch gains and loses
+focus. `ready` fires after the first render.
+
+# Accessibility
+
+The control renders `role="switch"` with `aria-checked`, so assistive technology announces it as on or
+off rather than as a checkbox. Space and the arrow keys toggle it.
+
+Label the switch by what it turns on, not by its current state — "Text me appointment reminders", not
+"Reminders off". The state is already announced; a state-shaped label gets read twice and contradicts
+itself.
+
+Because a switch acts immediately, make sure the result is visible. If flipping it changes a list of
+results, announce that change in a live region rather than leaving it to be noticed (A11Y-002).
+
+# API
+
+<ArgTypes />

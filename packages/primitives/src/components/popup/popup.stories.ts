@@ -13,7 +13,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdPopup>('zd-popup', {
 const meta: Meta<ZdPopup> = {
   title: 'Primitives/Popup',
   component: 'zd-popup',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

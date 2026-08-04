@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdIcon>('zd-icon', {
 const meta: Meta<ZdIcon> = {
   title: 'Primitives/Icon',
   component: 'zd-icon',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

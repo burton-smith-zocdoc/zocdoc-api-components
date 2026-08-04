@@ -1,0 +1,133 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as CheckboxStories from './checkbox.stories';
+
+<Meta of={CheckboxStories} />
+
+# Checkbox
+
+A single yes/no choice, or one of several independent choices — insurance filters, appointment
+reminders, consent to a policy.
+
+## Default
+
+Use the `label` attribute for the label text, or the default slot when it needs markup.
+
+<code-bubble>
+
+```html
+<zd-checkbox label="Text me appointment reminders"></zd-checkbox>
+```
+
+</code-bubble>
+
+## Sizes
+
+Use the `size` attribute for density. `small` swaps in the theme's `checkbox.small.*` metrics along
+with the smaller form-control label size.
+
+<code-bubble>
+
+```html
+<zd-checkbox label="Default size"></zd-checkbox>
+<zd-checkbox size="small" label="Small"></zd-checkbox>
+```
+
+</code-bubble>
+
+## Checked
+
+<code-bubble>
+
+```html
+<zd-checkbox label="Accepts new patients" checked></zd-checkbox>
+```
+
+</code-bubble>
+
+## Indeterminate
+
+Use `indeterminate` for a parent checkbox whose children are partly selected. It's a visual state
+only — it clears as soon as the person clicks.
+
+<code-bubble>
+
+```html
+<zd-checkbox label="All insurance plans" indeterminate></zd-checkbox>
+```
+
+</code-bubble>
+
+## Label position
+
+`label-position` takes `start`, `end`, or `top`. The label follows the checkbox by default.
+
+<code-bubble>
+
+```html
+<zd-checkbox label="Video visits only" label-position="start"></zd-checkbox>
+```
+
+</code-bubble>
+
+## Help text
+
+<code-bubble>
+
+```html
+<zd-checkbox
+  label="Text me appointment reminders"
+  help-text="Message and data rates may apply."
+></zd-checkbox>
+```
+
+</code-bubble>
+
+## Required and disabled
+
+<code-bubble>
+
+```html
+<zd-checkbox label="I agree to the terms" required></zd-checkbox>
+<zd-checkbox label="Unavailable option" disabled></zd-checkbox>
+```
+
+</code-bubble>
+
+## Validation
+
+The checkbox is form-associated, so it takes part in native form validation. Use `error-message` to
+set a custom validation message, and `invalid` to render the error styling.
+
+<code-bubble>
+
+```html
+<zd-checkbox
+  label="I agree to the terms"
+  required
+  invalid
+  error-message="You have to agree before booking."
+></zd-checkbox>
+```
+
+</code-bubble>
+
+Never put a submitted value in the error message — describe what's needed, not what was entered
+(PHI-001).
+
+## Events
+
+Emits `change` when the checked state changes, `input` on value change, plus `focus` and `blur`.
+
+# Accessibility
+
+Keep the label visible. `hide-label` exists, but a checkbox with no visible label leaves people
+guessing, and the label text is what browser translation can reach — an `aria-label` isn't
+(I18N-001).
+
+Help text is referenced from the control with `aria-describedby`, and the error message renders in
+a `role="alert"` region with `aria-live="assertive"` — so setting `help-text` and `error-message` is
+enough for both to reach assistive technology (A11Y-002, A11Y-004).
+
+# API
+
+<ArgTypes />

@@ -13,7 +13,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdTabs>('zd-tabs', {
 const meta: Meta<ZdTabs> = {
   title: 'Primitives/Tabs',
   component: 'zd-tabs',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

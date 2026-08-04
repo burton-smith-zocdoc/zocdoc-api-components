@@ -14,7 +14,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdMenuGroup>('zd-menu-g
 const meta: Meta<ZdMenuGroup> = {
   title: 'Primitives/Menu Group',
   component: 'zd-menu-group',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

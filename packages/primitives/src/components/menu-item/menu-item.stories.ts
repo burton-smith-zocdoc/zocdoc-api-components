@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdMenuItem>('zd-menu-it
 const meta: Meta<ZdMenuItem> = {
   title: 'Primitives/Menu Item',
   component: 'zd-menu-item',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args, html`Reschedule`),

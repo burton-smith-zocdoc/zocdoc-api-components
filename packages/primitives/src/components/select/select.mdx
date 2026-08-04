@@ -1,0 +1,177 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as SelectStories from './select.stories';
+
+<Meta of={SelectStories} />
+
+# Select
+
+A dropdown for choosing from a list — a specialty, an insurance carrier, a reason for the visit. It
+renders a native `select`, so the browser supplies the picker, which on a phone is the one people
+already know.
+
+## Default
+
+Put plain `option` elements in the default slot. The select reads them and renders matching options
+inside its shadow root, so `value`, `selected`, and `disabled` all carry over.
+
+<code-bubble>
+
+```html
+<zd-select label="Specialty">
+  <option value="">Select a specialty</option>
+  <option value="dentist">Dentist</option>
+  <option value="dermatologist">Dermatologist</option>
+  <option value="primary-care">Primary care</option>
+</zd-select>
+```
+
+</code-bubble>
+
+Lead with an empty option when nothing should be preselected. Without one the first option is already
+chosen, and a person who scrolls past the field has silently answered the question.
+
+## Option groups
+
+`optgroup` elements work too, and their `label` and `disabled` carry over.
+
+<code-bubble>
+
+```html
+<zd-select label="Reason for visit">
+  <option value="">Select a reason</option>
+  <optgroup label="Routine">
+    <option value="cleaning">Cleaning</option>
+    <option value="checkup">Checkup</option>
+  </optgroup>
+  <optgroup label="Urgent">
+    <option value="pain">Tooth pain</option>
+  </optgroup>
+</zd-select>
+```
+
+</code-bubble>
+
+## Label
+
+Use the `label` attribute, or the `label` slot when the label needs markup.
+
+<code-bubble>
+
+```html
+<zd-select>
+  <span slot="label">
+    Insurance carrier
+    <zd-badge variant="info">Optional</zd-badge>
+  </span>
+  <option value="">No insurance</option>
+  <option value="aetna">Aetna</option>
+  <option value="cigna">Cigna</option>
+</zd-select>
+```
+
+</code-bubble>
+
+## Icons
+
+The `start` and `end` slots take a presentational icon.
+
+<code-bubble>
+
+```html
+<zd-select label="Specialty">
+  <zd-icon slot="start" name="person"></zd-icon>
+  <option value="dentist">Dentist</option>
+  <option value="dermatologist">Dermatologist</option>
+</zd-select>
+```
+
+</code-bubble>
+
+## Help text
+
+Use `help-text`, or the `help-text` slot for markup. It's referenced with `aria-describedby`.
+
+<code-bubble>
+
+```html
+<zd-select label="Insurance carrier" help-text="We'll check your coverage before you book.">
+  <option value="">No insurance</option>
+  <option value="aetna">Aetna</option>
+</zd-select>
+```
+
+</code-bubble>
+
+## Multiple
+
+`multiple` lets several options be selected at once, and `size` sets how many rows are visible.
+
+<code-bubble>
+
+```html
+<zd-select label="Languages spoken" multiple size="4">
+  <option value="en">English</option>
+  <option value="es">Spanish</option>
+  <option value="zh">Chinese</option>
+  <option value="fr">French</option>
+</zd-select>
+```
+
+</code-bubble>
+
+A multi-select is hard to operate — nothing signals that more than one choice is possible, and
+ctrl-clicking isn't discoverable. A set of `zd-checkbox` controls is usually the better answer.
+
+## Required and validation
+
+The select is form-associated. `required` rejects an empty value, `error-message` sets a custom
+message, and `invalid` renders the error state.
+
+<code-bubble>
+
+```html
+<zd-select label="Specialty" required invalid error-message="Choose a specialty to continue.">
+  <option value="">Select a specialty</option>
+  <option value="dentist">Dentist</option>
+</zd-select>
+```
+
+</code-bubble>
+
+## Disabled
+
+Disable the whole control, or a single option.
+
+<code-bubble>
+
+```html
+<zd-select label="Specialty">
+  <option value="dentist">Dentist</option>
+  <option value="orthodontist" disabled>Orthodontist — no availability</option>
+</zd-select>
+```
+
+</code-bubble>
+
+## Events
+
+`change` fires when a selection is committed and `input` fires on selection; read the new value from
+`event.target.value`.
+
+# Accessibility
+
+The internal `select` is labelled by the rendered `label`, and carries `aria-describedby` for help
+text, `aria-invalid`, and `aria-errormessage` when `invalid`.
+
+Keep the label visible — `hide-label` exists, but the label is what browser translation reaches, and
+option text is translatable for the same reason (I18N-001).
+
+Write option text that stands on its own. "Dentist" reads fine out of context; "Yes" does not.
+
+When options come from the API — specialties, insurance carriers — cache the reference data rather
+than refetching per render (CLIENT-004), and never put patient-identifying text in an option label
+(PHI-001).
+
+# API
+
+<ArgTypes />

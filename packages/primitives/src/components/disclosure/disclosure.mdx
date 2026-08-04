@@ -1,0 +1,136 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as DisclosureStories from './disclosure.stories';
+
+<Meta of={DisclosureStories} />
+
+# Disclosure
+
+Shows and hides a region of content from a trigger you supply. Where the accordion owns its heading
+and chevron, the disclosure leaves the trigger entirely up to you — reach for it when you need a
+"show more" affordance that doesn't look like an accordion row.
+
+## Default
+
+Put the control in the `trigger` slot and the content in the default slot. The disclosure wires up
+the click handling and `aria-expanded`.
+
+<code-bubble>
+
+```html
+<zd-disclosure>
+  <zd-button slot="trigger" variant="link">More about this provider</zd-button>
+  <p>Board certified, accepting new patients.</p>
+</zd-disclosure>
+```
+
+</code-bubble>
+
+## Open
+
+<code-bubble>
+
+```html
+<zd-disclosure open>
+  <zd-button slot="trigger" variant="link">More about this provider</zd-button>
+  <p>Board certified, accepting new patients.</p>
+</zd-disclosure>
+```
+
+</code-bubble>
+
+## Expand direction
+
+The content expands above the trigger by default — which is what you want when the trigger is a
+"show more" link under a block of text. Add `content-below` to put the content underneath.
+
+<code-bubble>
+
+```html
+<zd-disclosure content-below>
+  <zd-button slot="trigger" variant="link">Insurance details</zd-button>
+  <p>Aetna, Cigna, and UnitedHealthcare are accepted at this location.</p>
+</zd-disclosure>
+```
+
+</code-bubble>
+
+## Preview mode
+
+Set `--zd-disclosure-closed-max-height` to something other than `0` to leave part of the content
+visible while collapsed.
+
+<code-bubble>
+
+```html
+<div style="max-width: 480px; --zd-disclosure-closed-max-height: 3rem;">
+  <zd-disclosure content-below>
+    <zd-button slot="trigger" variant="link">Show more</zd-button>
+    <p>
+      This practice offers preventive and restorative dentistry, including cleanings, exams, x-rays,
+      fillings, and crowns. Evening and weekend appointments are available at this location.
+    </p>
+  </zd-disclosure>
+</div>
+```
+
+</code-bubble>
+
+## Transitions
+
+Animation is off until you set a transition.
+
+```css
+zd-disclosure {
+  --zd-disclosure-show-transition: max-height 300ms ease-in-out;
+  --zd-disclosure-hide-transition: max-height 200ms ease-in-out;
+  --zd-disclosure-gap: 0.5rem;
+}
+```
+
+## Events
+
+`disclosure-show` and `disclosure-hide` fire as the region begins to open and close;
+`disclosure-after-show` and `disclosure-after-hide` fire once animations finish. Use them to swap
+the trigger's label.
+
+<code-bubble>
+
+```html
+<zd-disclosure id="more" content-below>
+  <zd-button slot="trigger" variant="link">Show more</zd-button>
+  <p>Evening and weekend appointments are available at this location.</p>
+</zd-disclosure>
+<script type="module">
+  const disclosure = document.querySelector('#more');
+  const trigger = disclosure.querySelector('[slot="trigger"]');
+  disclosure.addEventListener('disclosure-show', () => (trigger.textContent = 'Show less'));
+  disclosure.addEventListener('disclosure-hide', () => (trigger.textContent = 'Show more'));
+</script>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The disclosure puts `aria-expanded` and `aria-controls` on the **first element assigned to the
+`trigger` slot**. That element must therefore be the button itself — `zd-button` or a native
+`<button>`. Don't wrap it in a heading: the heading would collect the ARIA state and the button, the
+thing that actually takes focus, would report nothing.
+
+```html
+<!-- The h3 gets aria-expanded; the button doesn't. Avoid. -->
+<zd-disclosure>
+  <h3 slot="trigger"><zd-button variant="link">Insurance details</zd-button></h3>
+  ...
+</zd-disclosure>
+```
+
+If the section needs to appear in the document outline, put the heading outside the disclosure and
+keep the trigger slot for the control.
+
+Keep the trigger's label a text node so swapping "Show more" for "Show less" stays translatable
+(I18N-001).
+
+# API
+
+<ArgTypes />

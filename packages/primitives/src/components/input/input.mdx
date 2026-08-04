@@ -1,0 +1,186 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as InputStories from './input.stories';
+
+<Meta of={InputStories} />
+
+# Input
+
+A single-line text field. It's form-associated, so it participates in native form validation and
+submission.
+
+## Default
+
+Use the `label` attribute for the label, or the `label` slot when it needs markup. Both render
+inside the control's `<label>`, so either is accessible.
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code"></zd-input>
+```
+
+</code-bubble>
+
+## Sizes
+
+`size` takes `default` or `small`; `small` swaps in the theme's `formControl.small.*` metrics.
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code"></zd-input> <zd-input label="ZIP code" size="small"></zd-input>
+```
+
+</code-bubble>
+
+## Type
+
+`type` takes `date`, `datetime-local`, `email`, `number`, `password`, `search`, `tel`, `text`,
+`time`, or `url`. It defaults to `text`.
+
+<code-bubble>
+
+```html
+<zd-input label="Date of birth" type="date"></zd-input>
+<zd-input label="Email" type="email"></zd-input>
+<zd-input label="Phone" type="tel"></zd-input>
+```
+
+</code-bubble>
+
+Pick the type that matches the data — it gives people the right on-screen keyboard and the right
+native validation for free. Reach for `inputmode` only when the type alone isn't enough.
+
+## Icons
+
+The `start` and `end` slots take a presentational icon.
+
+<code-bubble>
+
+```html
+<zd-input label="Search providers">
+  <zd-icon slot="start" name="more"></zd-icon>
+</zd-input>
+```
+
+</code-bubble>
+
+## Help text
+
+Use the `help-text` attribute, or the `help-text` slot for markup. Help text is referenced from the
+input with `aria-describedby`.
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code" help-text="We use this to find providers near you."></zd-input>
+```
+
+</code-bubble>
+
+## Placeholder
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code" placeholder="10001"></zd-input>
+```
+
+</code-bubble>
+
+A placeholder is not a label — it disappears as soon as someone types, and it lives in an attribute
+that browser translation doesn't reach (I18N-001). Always set `label` as well.
+
+## Constraints
+
+`required`, `pattern`, `min`, `max`, `minlength`, `maxlength`, and `step` map to their native
+equivalents.
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code" required minlength="5" maxlength="5" inputmode="numeric"></zd-input>
+```
+
+</code-bubble>
+
+## Validation
+
+Use `error-message` for a custom validation message and `invalid` to render the error state. The
+error renders in a `role="alert"` region, so it's announced when it appears. `checkValidity()` tests
+the control without reporting.
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code" invalid error-message="Enter a 5-digit ZIP code."></zd-input>
+```
+
+</code-bubble>
+
+Write messages that describe what's needed. Never echo what was entered — patient-entered values
+don't belong in messages, logs, or errors (PHI-001).
+
+## Disabled and readonly
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code" value="10001" readonly></zd-input>
+<zd-input label="ZIP code" disabled></zd-input>
+```
+
+</code-bubble>
+
+## Datalist
+
+Elements in the default slot become the input's `datalist` options.
+
+<code-bubble>
+
+```html
+<zd-input label="Specialty">
+  <option value="Dentist"></option>
+  <option value="Primary care doctor"></option>
+  <option value="Dermatologist"></option>
+</zd-input>
+```
+
+</code-bubble>
+
+## Other native attributes
+
+`autocapitalize`, `autocomplete`, `autocorrect`, `autofocus`, and `enterkeyhint` pass through to the
+native input.
+
+<code-bubble>
+
+```html
+<zd-input label="ZIP code" autocomplete="postal-code" enterkeyhint="search"></zd-input>
+```
+
+</code-bubble>
+
+Setting `autocomplete` correctly is the cheapest accessibility win in a booking form — it lets
+browsers fill fields people would otherwise retype (A11Y-004).
+
+## Events
+
+`input` fires as the value changes; `change` fires when the change is committed.
+
+# Accessibility
+
+Keep the label visible. `hide-label` exists, but a field whose only label is a placeholder fails
+WCAG and can't be translated.
+
+Use `type`, `autocomplete`, and `inputmode` together so the field is easy to complete on a phone,
+and pair `help-text` with the field rather than putting instructions in a paragraph above it —
+`aria-describedby` is what ties them together (A11Y-004).
+
+When you use test data in examples or tests, take it from the
+[documented scenarios](https://api-docs.zocdoc.com/guides/testing-data) rather than inventing
+realistic-looking values (PHI-002).
+
+# API
+
+<ArgTypes />

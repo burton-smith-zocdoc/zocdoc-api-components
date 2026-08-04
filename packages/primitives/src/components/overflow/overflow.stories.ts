@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdOverflow>('zd-overflo
 const meta: Meta<ZdOverflow> = {
   title: 'Primitives/Overflow',
   component: 'zd-overflow',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

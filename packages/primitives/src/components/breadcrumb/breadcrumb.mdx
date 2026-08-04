@@ -1,0 +1,52 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as BreadcrumbStories from './breadcrumb.stories';
+
+<Meta of={BreadcrumbStories} />
+
+# Breadcrumb
+
+Shows the hierarchy leading to the current page so people can see where they are and step back
+up — specialty, then location, then provider.
+
+## Default
+
+Put `zd-breadcrumb-item` elements in the default slot. The breadcrumb sets each item's separator
+and `current` state on slot change, so it overwrites whatever you author there.
+
+<code-bubble>
+
+```html
+<zd-breadcrumb>
+  <zd-breadcrumb-item href="/specialties">Specialties</zd-breadcrumb-item>
+  <zd-breadcrumb-item href="/specialties/dentists">Dentists</zd-breadcrumb-item>
+  <zd-breadcrumb-item>New York, NY</zd-breadcrumb-item>
+</zd-breadcrumb>
+```
+
+</code-bubble>
+
+The last item has no `href`, so it renders as the current page rather than a link.
+
+# Accessibility
+
+The breadcrumb is a `nav` landmark labelled "breadcrumb" by default. Use the `label` attribute when
+a page has more than one, so each landmark is distinguishable.
+
+<code-bubble>
+
+```html
+<zd-breadcrumb label="Specialty and location">
+  <zd-breadcrumb-item href="/specialties">Specialties</zd-breadcrumb-item>
+  <zd-breadcrumb-item>Dentists</zd-breadcrumb-item>
+</zd-breadcrumb>
+```
+
+</code-bubble>
+
+`label` becomes an `aria-label`, which browser translation does not reach. Keep the item text
+itself in the DOM (I18N-001) and only reach for `label` when the visible trail can't carry the
+distinction.
+
+# API
+
+<ArgTypes />

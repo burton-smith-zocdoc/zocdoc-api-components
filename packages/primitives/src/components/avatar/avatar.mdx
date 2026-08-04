@@ -1,0 +1,83 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as AvatarStories from './avatar.stories';
+
+<Meta of={AvatarStories} />
+
+# Avatar
+
+Represents a person or practice as a photo, initials, or an icon.
+
+## Default
+
+With no content, the avatar renders empty — give it an icon, `initials`, or an `image`.
+
+<code-bubble>
+
+```html
+<zd-avatar><zd-icon name="person"></zd-icon></zd-avatar>
+```
+
+</code-bubble>
+
+## Initials
+
+Use `initials` for the rendered text. It does not derive the alt text, so set `label` too.
+
+<code-bubble>
+
+```html
+<zd-avatar initials="AB" label="Alice Brown"></zd-avatar>
+<zd-avatar initials="BC" label="Bob Carter"></zd-avatar>
+```
+
+</code-bubble>
+
+## Image
+
+Use `image` for a photo. Keep `initials` set as well so there's something to show if the image
+fails to load.
+
+<code-bubble>
+
+```html
+<zd-avatar image="https://placehold.co/64x64" initials="AB" label="Alice Brown"></zd-avatar>
+```
+
+</code-bubble>
+
+## Status indicator
+
+The `status-indicator` slot takes a badge or icon overlaid on the avatar.
+
+<code-bubble>
+
+```html
+<zd-avatar initials="AB" label="Alice Brown">
+  <zd-icon slot="status-indicator" name="checkmark-circle"></zd-icon>
+</zd-avatar>
+```
+
+</code-bubble>
+
+# Accessibility
+
+Use the `label` attribute for the avatar's alt text. An avatar with no `label` is decorative, which
+is the right call when the person's name is already next to it:
+
+<code-bubble>
+
+```html
+<div style="display: flex; align-items: center; gap: 0.5rem;">
+  <zd-avatar initials="AB"></zd-avatar>
+  <span>Alice Brown, DDS</span>
+</div>
+```
+
+</code-bubble>
+
+Do not use the avatar to convey status on its own — an indicator with no text is invisible to
+assistive technology.
+
+# API
+
+<ArgTypes />

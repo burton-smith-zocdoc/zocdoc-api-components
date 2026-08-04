@@ -1,0 +1,162 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as TabsStories from './tabs.stories';
+
+<Meta of={TabsStories} />
+
+# Tabs
+
+Sections of related content, one visible at a time. The `zd-tabs` element owns the whole pattern — it
+pairs each tab with its panel, wires the ARIA relationships, and handles the keyboard.
+
+## Default
+
+Put `zd-tab` elements in the default slot and `zd-tab-panel` elements after them. Panels assign
+themselves to the `tabpanel` slot, so you don't set `slot` yourself.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab>Availability</zd-tab>
+  <zd-tab>Insurance</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>Next available: tomorrow at 9:00 AM.</zd-tab-panel>
+  <zd-tab-panel>In network with Aetna and Cigna.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+Tabs and panels are paired **by order**, first tab to first panel. Keep the two lists in the same
+sequence, and don't render a tab without its panel.
+
+The first enabled tab is selected on load unless something else says otherwise.
+
+## Selecting a tab
+
+Set `selected` on a tab, or `active-id` on the group pointing at a tab's id. `active-id` is the better
+handle when the selection comes from application state.
+
+<code-bubble>
+
+```html
+<zd-tabs active-id="availability-tab">
+  <zd-tab id="overview-tab">Overview</zd-tab>
+  <zd-tab id="availability-tab">Availability</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>Next available: tomorrow at 9:00 AM.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+Reading `activeId` gives you the selected tab's id, whether it was set by you or by a click.
+
+## Layout
+
+`layout` takes `horizontal` (the default) or `vertical`, and sets `aria-orientation` to match so the
+arrow keys follow the visual direction.
+
+<code-bubble>
+
+```html
+<zd-tabs layout="vertical">
+  <zd-tab>Overview</zd-tab>
+  <zd-tab>Availability</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>Next available: tomorrow at 9:00 AM.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+## Manual activation
+
+By default, moving with the arrow keys selects as it goes. `manual-activation` separates the two:
+arrows move focus, and Enter or Space selects.
+
+<code-bubble>
+
+```html
+<zd-tabs manual-activation>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab>Availability</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>Next available: tomorrow at 9:00 AM.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+Use it when switching tabs is expensive — a panel that fetches, for instance. Otherwise leave it off;
+automatic activation is what people expect.
+
+## Disabled tabs
+
+A disabled tab can't be selected and is skipped when picking the initial tab.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab disabled>Insurance</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>In network with Aetna and Cigna.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+## Events
+
+`tabs-change` fires when the active tab changes, with the new tab in `event.detail.activeTab`. The
+panels emit their own `tab-show` and `tab-hide` — see the tab panel docs.
+
+<code-bubble>
+
+```html
+<zd-tabs id="provider-tabs">
+  <zd-tab id="overview-tab">Overview</zd-tab>
+  <zd-tab id="availability-tab">Availability</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>Next available: tomorrow at 9:00 AM.</zd-tab-panel>
+</zd-tabs>
+<script type="module">
+  document.querySelector('#provider-tabs').addEventListener('tabs-change', (event) => {
+    // Load the panel's data the first time its tab is opened.
+    loadSection(event.detail.activeTab.id);
+  });
+</script>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The group renders `role="tablist"` with `aria-orientation` from `layout`, sets `role="tab"` on each
+tab and `role="tabpanel"` on each panel, gives them ids where they're missing, and cross-links them
+with `aria-controls` and `aria-labelledby`. `aria-selected` and `aria-disabled` stay in sync.
+
+The tab list is one tab stop under a roving tab index: arrow keys move between tabs, Home and End jump
+to the ends, and Tab moves out of the list into the panel.
+
+What's left to you:
+
+- Keep tab labels short and distinct. They're read in sequence, so "Overview" and "Overview details"
+  are hard to tell apart.
+- Don't put a tab's meaning in an icon alone (A11Y-001).
+- Tabs are for peer sections of the same thing, not steps in a flow. A booking flow needs focus moved
+  to each new step's heading, which tabs don't do (A11Y-003).
+- Keep labels as visible text so browser translation reaches them (I18N-001).
+
+# API
+
+<ArgTypes />

@@ -1,0 +1,131 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as ScopedStylesStories from './scoped-styles.stories';
+
+<Meta of={ScopedStylesStories} />
+
+# Scoped Styles
+
+Applies a stylesheet to its own subtree and nothing else. Use it to retheme one region — a booking
+widget embedded in a partner's page, say — without leaking those overrides into the rest of the
+document.
+
+It works by rewriting the CSS you give it so every rule is nested under a selector unique to that
+element, then appending the result as a `<style>` in its light DOM. Two scoped-styles elements on the
+same page don't affect each other.
+
+## Setting the css property
+
+Set the `css` property to a string (or an array of strings) of declarations. Bare declarations with no
+selector apply to the element itself, which is what you want for token overrides.
+
+<code-bubble>
+
+```html
+<zd-scoped-styles id="teal-scope">
+  <zd-button variant="primary">Scoped button</zd-button>
+</zd-scoped-styles>
+
+<zd-button variant="primary">Unscoped button</zd-button>
+
+<script type="module">
+  document.querySelector('#teal-scope').css = `
+    --zd-button-primary-bg-color: teal;
+    --zd-button-primary-fg-color: white;
+  `;
+</script>
+```
+
+</code-bubble>
+
+`css` is a property, not an attribute — set it in JavaScript, or bind it with `.css=` in a Lit
+template.
+
+## Whole stylesheets
+
+A full stylesheet works too. Use `&` or `:root` to target the scope root for variables — `:root` is
+rewritten to `&` for you — and ordinary selectors for anything inside.
+
+<code-bubble>
+
+```html
+<zd-scoped-styles id="sheet-scope">
+  <zd-button variant="primary">Book appointment</zd-button>
+  <zd-button variant="primary" class="subdued">See more times</zd-button>
+</zd-scoped-styles>
+
+<script type="module">
+  document.querySelector('#sheet-scope').css = `
+    :root {
+      --zd-button-primary-bg-color: teal;
+      --zd-button-primary-fg-color: white;
+    }
+
+    .subdued {
+      --zd-button-primary-bg-color: transparent;
+      --zd-button-primary-fg-color: teal;
+    }
+  `;
+</script>
+```
+
+</code-bubble>
+
+## Importing a stylesheet
+
+With a bundler you can import the CSS as a string and hand it straight to `css`. In Vite that's the
+`?inline` query:
+
+```js
+import css from './partner-theme.css?inline';
+
+document.querySelector('zd-scoped-styles').css = css;
+```
+
+Webpack needs a loader that returns the raw text:
+
+```js
+import css from '!!css-loader?{"sourceMap":false,"exportType":"string"}!./partner-theme.css';
+```
+
+## Using the stylesheets slot
+
+Slot `<link>` elements into the `stylesheets` slot as an alternative to `css`. Mark each one `disabled`
+so the browser doesn't apply it globally before the component gets to it — the component enables it,
+reads its rules, then disables it again and writes the scoped copy.
+
+<code-bubble>
+
+```html
+<zd-scoped-styles>
+  <zd-button variant="primary">Book appointment</zd-button>
+  <link disabled slot="stylesheets" rel="stylesheet" href="/partner-theme.css" />
+</zd-scoped-styles>
+```
+
+</code-bubble>
+
+Reading a stylesheet's rules requires same-origin access, so self-host the file. Loading it from a
+third-party host would also mean an outbound request to something other than the configured Zocdoc
+`baseUrl`, which this library doesn't do (PHI-003).
+
+## Events
+
+`styles-loaded` fires once the scoped `<style>` has been written — after every slotted link has
+loaded, so it's the signal that the subtree is fully themed. `ready` fires after the first render.
+
+# Accessibility
+
+Scoped styles don't change any markup, so nothing here affects the accessibility tree — but the
+overrides can undo work the components did:
+
+- Keep text and background contrast at WCAG 2.2 AA when you override color tokens (A11Y-001). Token
+  overrides are the easiest way to break contrast, because the failure is invisible in a happy-path
+  screenshot.
+- Don't remove focus indicators. The `*-focus-outline-color` and `*-focus-outline-offset` tokens exist
+  to be adjusted, not zeroed out.
+- Use logical properties in scoped CSS — `margin-inline-start`, not `margin-left` — so the region still
+  works in a right-to-left layout (I18N-003).
+
+# API
+
+<ArgTypes />

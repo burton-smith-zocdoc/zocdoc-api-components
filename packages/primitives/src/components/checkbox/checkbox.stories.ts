@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdCheckbox>('zd-checkbo
 const meta: Meta<ZdCheckbox> = {
   title: 'Primitives/Checkbox',
   component: 'zd-checkbox',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args, html`Send me appointment reminders`),

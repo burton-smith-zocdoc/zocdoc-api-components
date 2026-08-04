@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdTabPanel>('zd-tab-pan
 const meta: Meta<ZdTabPanel> = {
   title: 'Primitives/Tab Panel',
   component: 'zd-tab-panel',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args, html`Next available: Tuesday at 9:00 AM`),

@@ -1,0 +1,62 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as ButtonGroupOverflowStories from './button-group-overflow.stories';
+
+<Meta of={ButtonGroupOverflowStories} />
+
+# Button Group Overflow
+
+The same collapse-into-a-menu behaviour as `zd-overflow`, but aware of button groups: it keeps the
+connected border treatment intact as buttons move into the menu.
+
+## Default
+
+Put buttons in the default slot. When they don't fit, the ones that overflow appear in the menu.
+
+<code-bubble>
+
+```html
+<div style="max-width: 280px;">
+  <zd-button-group-overflow>
+    <zd-button>Book</zd-button>
+    <zd-button>Reschedule</zd-button>
+    <zd-button>Cancel</zd-button>
+    <zd-button>Message</zd-button>
+  </zd-button-group-overflow>
+</div>
+```
+
+</code-bubble>
+
+## Nested button groups
+
+Slot `zd-button-group` elements to collapse whole groups at a time. A divider separates the groups
+in the menu.
+
+<code-bubble>
+
+```html
+<div style="max-width: 320px;">
+  <zd-button-group-overflow>
+    <zd-button-group>
+      <zd-button>Book</zd-button>
+      <zd-button>Reschedule</zd-button>
+    </zd-button-group>
+    <zd-button-group>
+      <zd-button>Message</zd-button>
+      <zd-button>Directions</zd-button>
+    </zd-button-group>
+  </zd-button-group-overflow>
+</div>
+```
+
+</code-bubble>
+
+## Inherited behaviour
+
+Everything on `zd-overflow` applies here — `min`, `menu-position`, `overflow-direction`,
+`fixed-placement`, the `start` and `end` slots for static content, the `overflow` event, and the
+`label` for the menu trigger. See the Overflow docs for those.
+
+# API
+
+<ArgTypes />

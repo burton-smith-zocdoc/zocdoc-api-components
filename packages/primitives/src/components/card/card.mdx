@@ -1,0 +1,114 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as CardStories from './card.stories';
+
+<Meta of={CardStories} />
+
+# Card
+
+A container for everything about one thing — a provider, a location, an upcoming appointment.
+
+## Default
+
+The main content goes in the default slot.
+
+<code-bubble>
+
+```html
+<zd-card>
+  <h3>Preventive care</h3>
+  <p>Cleanings, exams, and x-rays are covered by most plans.</p>
+</zd-card>
+```
+
+</code-bubble>
+
+## Heading and subheading
+
+Use the `heading` and `subheading` attributes for plain text, or the matching slots for anything
+richer.
+
+<code-bubble>
+
+```html
+<zd-card heading="Midtown Dental" subheading="Dentist">
+  <p>123 Main St, New York, NY</p>
+</zd-card>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<zd-card>
+  <span slot="heading">
+    Midtown Dental
+    <zd-badge variant="success">Available today</zd-badge>
+  </span>
+  <span slot="subheading">Dentist</span>
+  <p>123 Main St, New York, NY</p>
+</zd-card>
+```
+
+</code-bubble>
+
+## Footer
+
+Use the `footer` slot for the card's actions.
+
+<code-bubble>
+
+```html
+<zd-card heading="Midtown Dental" subheading="Dentist">
+  <p>Next available: tomorrow at 9:00 AM</p>
+  <zd-button slot="footer" variant="primary">Book</zd-button>
+  <zd-button slot="footer" variant="ghost">See all times</zd-button>
+</zd-card>
+```
+
+</code-bubble>
+
+## Media
+
+The `media` slot is presentational. Use `media-position` to place it — `top`, `bottom`, `start`, or
+`end`.
+
+<code-bubble>
+
+```html
+<zd-card media-position="start" heading="Midtown Dental" subheading="Dentist">
+  <img slot="media" src="https://placehold.co/96x96" width="96" height="96" alt="" />
+  <p>123 Main St, New York, NY</p>
+</zd-card>
+```
+
+</code-bubble>
+
+Media that carries meaning belongs in the default slot with real alt text. An empty `alt` is right
+here because the heading already names the practice.
+
+# Accessibility
+
+The heading renders inside an `h3` and the subheading inside an `h4` — both slots sit within those
+elements, so slot phrasing content (a `span`) rather than another heading element, which would nest.
+
+Those levels are fixed. If the page outline needs something else, leave `heading` and `subheading`
+unset and write your own heading in the default slot:
+
+<code-bubble>
+
+```html
+<zd-card>
+  <h2>Midtown Dental</h2>
+  <p>123 Main St, New York, NY</p>
+</zd-card>
+```
+
+</code-bubble>
+
+Don't make the whole card clickable — put the action in a `zd-button` in the `footer` slot so
+there's a real focusable control with an accessible name.
+
+# API
+
+<ArgTypes />

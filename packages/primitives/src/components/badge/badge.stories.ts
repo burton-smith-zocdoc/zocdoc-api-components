@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdBadge>('zd-badge', {
 const meta: Meta<ZdBadge> = {
   title: 'Primitives/Badge',
   component: 'zd-badge',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args, html`Badge`),

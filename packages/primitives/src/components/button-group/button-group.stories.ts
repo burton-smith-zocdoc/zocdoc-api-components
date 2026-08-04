@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdButtonGroup>('zd-butt
 const meta: Meta<ZdButtonGroup> = {
   title: 'Primitives/ButtonGroup',
   component: 'zd-button-group',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

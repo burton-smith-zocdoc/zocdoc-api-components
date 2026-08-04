@@ -1,0 +1,99 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as SpinnerStories from './spinner.stories';
+
+<Meta of={SpinnerStories} />
+
+# Spinner
+
+An indeterminate wait — a search running, a slot being held. When you know how far along the work is,
+use `zd-progress-bar` instead.
+
+## Default
+
+With no label, the spinner renders a visually hidden "Loading" so it still announces as a status.
+
+<code-bubble>
+
+```html
+<zd-spinner></zd-spinner>
+```
+
+</code-bubble>
+
+## Label
+
+Use the `label` attribute, or the default slot when the label needs markup. Either way it renders as
+visible text and names the spinner.
+
+<code-bubble>
+
+```html
+<zd-spinner label="Finding available appointments"></zd-spinner>
+```
+
+</code-bubble>
+
+Say what's happening, not that something is. "Finding available appointments" tells someone whether the
+wait is theirs to worry about; "Loading" doesn't.
+
+## Label position
+
+`label-position` takes `below`, `above`, `before`, or `after`.
+
+<code-bubble>
+
+```html
+<zd-spinner label="Checking insurance" label-position="after"></zd-spinner>
+```
+
+</code-bubble>
+
+`after` keeps the spinner inline with its text, which is what you want next to a button or inside a
+row. `below` suits a centered block.
+
+## Size and color
+
+`--zd-spinner-ring-size` sets the diameter and `--zd-spinner-track-width` the stroke;
+`--zd-spinner-indicator-fg-color` and `--zd-spinner-track-color` set the colors.
+
+<code-bubble>
+
+```html
+<zd-spinner style="--zd-spinner-ring-size: 16px; --zd-spinner-track-width: 2px;"></zd-spinner>
+<zd-spinner style="--zd-spinner-ring-size: 48px;"></zd-spinner>
+```
+
+</code-bubble>
+
+## In a button
+
+<code-bubble>
+
+```html
+<zd-button variant="primary" disabled>
+  <zd-spinner slot="start" style="--zd-spinner-ring-size: 16px;"></zd-spinner>
+  Booking…
+</zd-button>
+```
+
+</code-bubble>
+
+Disable the button while the request is in flight, and keep the label as text — the spinner is the
+decoration, the text is the message.
+
+# Accessibility
+
+The spinner renders `role="status"` labelled by its own label, so it's announced politely when it
+appears and doesn't interrupt.
+
+A component's loading state is one of five — `idle`, `loading`, `success`, `empty`, `error` — and each
+needs its own announcement. A spinner covers `loading`; it says nothing about the result, so announce
+success, empty, and error separately, with `role="alert"` for errors (COMP-001, A11Y-002).
+
+Don't leave a spinner in place forever. If a request can fail or come back empty, the spinner has to be
+replaced by something that says so, or a screen reader user is left with "Loading" as the last thing
+they heard.
+
+# API
+
+<ArgTypes />

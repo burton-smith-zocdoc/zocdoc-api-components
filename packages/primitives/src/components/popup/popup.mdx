@@ -1,0 +1,189 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as PopupStories from './popup.stories';
+
+<Meta of={PopupStories} />
+
+# Popup
+
+A low-level utility that anchors floating content to an element and keeps it positioned as the page
+scrolls and resizes. It's built on Floating UI.
+
+Popup is a positioning primitive, not a finished pattern — it has no trigger behavior, no keyboard
+handling, and no roles beyond what you give it. `zd-menu`, `zd-select`, and `zd-tooltip` are built on
+it, and one of those is almost always what you want. Reach for popup directly only when you're
+building a new anchored pattern.
+
+## Default
+
+Put the anchor in the `anchor` slot and the floating content in the default slot. The popup extends the
+dismissible base, so `open` controls visibility and `show()`, `hide()`, and `toggle()` are available.
+
+<code-bubble>
+
+```html
+<zd-popup open style="--zd-popup-z-index: 1;">
+  <zd-button slot="anchor">Anchor</zd-button>
+  <zd-card>Next available: tomorrow at 9:00 AM</zd-card>
+</zd-popup>
+```
+
+</code-bubble>
+
+You can anchor to an element elsewhere in the document instead, by passing its id to the `anchor`
+attribute.
+
+## Placement
+
+`placement` takes `top`, `bottom`, `start`, or `end`, each with an optional alignment. It defaults to
+`top`.
+
+The vocabulary is logical, not physical, so it flips with the writing direction (I18N-003). The
+alignment suffix depends on the side: `top` and `bottom` take `-start` / `-end`, while `start` and
+`end` take `-top` / `-bottom`.
+
+<code-bubble>
+
+```html
+<zd-popup open placement="bottom-start" style="--zd-popup-z-index: 1;">
+  <zd-button slot="anchor">Anchor</zd-button>
+  <zd-card>Aligned to the anchor's start edge</zd-card>
+</zd-popup>
+```
+
+</code-bubble>
+
+The full set is `top`, `top-start`, `top-end`, `bottom`, `bottom-start`, `bottom-end`, `start`,
+`start-top`, `start-bottom`, `end`, `end-top`, and `end-bottom`.
+
+## Distance and skidding
+
+`distance` moves the popup away from the anchor along the placement axis; `skidding` slides it along
+the perpendicular one. Both take pixels and accept negatives.
+
+<code-bubble>
+
+```html
+<zd-popup open placement="bottom" distance="12" skidding="0" style="--zd-popup-z-index: 1;">
+  <zd-button slot="anchor">Anchor</zd-button>
+  <zd-card>12px below the anchor</zd-card>
+</zd-popup>
+```
+
+</code-bubble>
+
+Setting `distance` also renders a hover bridge — an invisible span spanning the gap, so moving the
+pointer from the anchor into the popup doesn't cross dead space and close it.
+
+## Arrow
+
+`arrow` adds a pointer. `arrow-placement` takes `start`, `end`, `center`, or `anchor`, and
+`arrow-padding` keeps it from reaching the popup's corners. Size and color come from
+`--zd-popup-arrow-size` and `--zd-popup-arrow-color`.
+
+<code-bubble>
+
+```html
+<zd-popup open placement="bottom" distance="8" arrow style="--zd-popup-z-index: 1;">
+  <zd-button slot="anchor">Anchor</zd-button>
+  <zd-card>With an arrow</zd-card>
+</zd-popup>
+```
+
+</code-bubble>
+
+## Staying in view
+
+`flip` moves the popup to the opposite side when the preferred placement doesn't fit.
+`flip-fallback-placements` gives it an ordered list to try first, as a space-separated string, and
+`flip-fallback-strategy` takes `best-fit` or `initial` for when nothing fits.
+
+<code-bubble>
+
+```html
+<zd-popup
+  open
+  placement="top"
+  flip
+  flip-fallback-placements="bottom end"
+  style="--zd-popup-z-index: 1;"
+>
+  <zd-button slot="anchor">Anchor</zd-button>
+  <zd-card>Flips when it runs out of room</zd-card>
+</zd-popup>
+```
+
+</code-bubble>
+
+`shift` nudges the popup along its axis to keep it inside the viewport instead of flipping. Use both:
+`flip` handles the side that doesn't fit, `shift` handles the edge that overflows.
+
+`flip-boundary`, `flip-padding`, `shift-boundary`, and `shift-padding` scope those behaviors to a
+container.
+
+## Sizing
+
+`auto-size` takes `horizontal`, `vertical`, or `both`, and constrains the popup to the space
+available. It also publishes the space it measured as read-only custom properties on the host, which
+you can read in your own styles.
+
+<code-bubble>
+
+```html
+<zd-popup open placement="bottom" auto-size="vertical" style="--zd-popup-z-index: 1;">
+  <zd-button slot="anchor">Anchor</zd-button>
+  <zd-card style="max-height: var(--popup-auto-size-available-height); overflow: auto;">
+    A long list of available times
+  </zd-card>
+</zd-popup>
+```
+
+</code-bubble>
+
+Those two are `--popup-auto-size-available-width` and `--popup-auto-size-available-height` — unlike
+the themeable properties, they're set at runtime without the `zd` prefix. They only exist while
+`auto-size` is set.
+
+`auto-size-boundary` and `auto-size-padding` scope the measurement, the same way the flip and shift
+boundaries do.
+
+`sync` takes `width`, `height`, or `both` and matches the popup to the anchor's size — what a combobox
+listbox usually wants.
+
+## Positioning strategy
+
+`strategy` takes `absolute` (the default) or `fixed`. Use `fixed` when the popup is inside a container
+that clips overflow.
+
+## Repositioning
+
+The popup tracks its anchor automatically. Call `reposition()` when its own content changes size in a
+way the observer can't see. `popup-reposition` fires on every reposition and carries the resolved
+placement — it fires often, so keep listeners cheap.
+
+The resolved placement is also reflected to `data-current-placement`, which is what you want for
+styling that depends on which side the popup landed on.
+
+## Events
+
+`popup-show` and `popup-hide` fire as the popup opens and closes; `popup-after-show` and
+`popup-after-hide` fire once transitions finish.
+
+# Accessibility
+
+Popup renders a `dialog` with `role="dialog"` and labels it from the `label` attribute, which defaults
+to the literal string `popup`. Both are yours to set correctly:
+
+- Set `label` to something meaningful, or the popup announces as "popup".
+- Set `content-role` to the role the pattern actually needs — `listbox` for a combobox, `tooltip` for a
+  tooltip, or nothing at all for purely decorative content.
+- Wire the anchor yourself: `aria-expanded`, `aria-haspopup`, and `aria-controls` are not managed for
+  you the way `zd-menu` manages them.
+- Handle the keyboard yourself. `focus-trap` keeps focus inside while open, but Escape, arrow keys, and
+  returning focus to the anchor on close are all up to you (A11Y-003).
+
+That list is the reason to prefer `zd-menu`, `zd-select`, or `zd-tooltip` — each one has already done
+it.
+
+# API
+
+<ArgTypes />

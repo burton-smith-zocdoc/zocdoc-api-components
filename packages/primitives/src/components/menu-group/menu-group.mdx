@@ -1,0 +1,129 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as MenuGroupStories from './menu-group.stories';
+
+<Meta of={MenuGroupStories} />
+
+# Menu Group
+
+A titled section of a menu. Use it to break a long menu into labelled sets, or to turn a set of items
+into a choice.
+
+## Default
+
+Put the items in the default slot and give the group a `heading`.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Filter results</zd-button>
+  <zd-menu-group heading="Sort by">
+    <zd-menu-item>Soonest available</zd-menu-item>
+    <zd-menu-item>Highest rated</zd-menu-item>
+    <zd-menu-item>Nearest to me</zd-menu-item>
+  </zd-menu-group>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Rich heading
+
+Use the `heading` slot when the heading needs markup.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Filter results</zd-button>
+  <zd-menu-group>
+    <span slot="heading">
+      Insurance
+      <zd-badge variant="info">Beta</zd-badge>
+    </span>
+    <zd-menu-item>Aetna</zd-menu-item>
+    <zd-menu-item>Cigna</zd-menu-item>
+  </zd-menu-group>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Single selection
+
+`select="single"` makes the group a radio set — its items become `menuitemradio`.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Visit type</zd-button>
+  <zd-menu-group heading="Visit type" select="single">
+    <zd-menu-item checked>In person</zd-menu-item>
+    <zd-menu-item>Video visit</zd-menu-item>
+  </zd-menu-group>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Multiple selection
+
+`select="multiple"` makes the items `menuitemcheckbox`, so any number can be checked.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Availability</zd-button>
+  <zd-menu-group heading="Time of day" select="multiple">
+    <zd-menu-item checked>Morning</zd-menu-item>
+    <zd-menu-item>Afternoon</zd-menu-item>
+    <zd-menu-item>Evening</zd-menu-item>
+  </zd-menu-group>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Multiple groups
+
+Groups stack inside one menu. Use them to keep filters apart rather than opening a menu per filter.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Filters</zd-button>
+  <zd-menu-group heading="Visit type" select="single">
+    <zd-menu-item checked>In person</zd-menu-item>
+    <zd-menu-item>Video visit</zd-menu-item>
+  </zd-menu-group>
+  <zd-menu-group heading="Time of day" select="multiple">
+    <zd-menu-item>Morning</zd-menu-item>
+    <zd-menu-item>Afternoon</zd-menu-item>
+  </zd-menu-group>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Events
+
+`menu-group-select` fires when an item in the group is selected, with the selected item in the event
+detail.
+
+# Accessibility
+
+The group wraps its items in `role="group"` and points `aria-labelledby` at the heading, so the
+heading names the set for assistive technology — which is why a group with `select` needs a heading,
+not just a visual divider.
+
+The group assigns each item's role from `select`, so don't set `role` on the items yourself.
+
+Keep the heading as visible text rather than an `aria-label` on the group, so browser translation
+reaches it (I18N-001).
+
+# API
+
+<ArgTypes />

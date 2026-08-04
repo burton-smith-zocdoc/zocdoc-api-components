@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdAccordion>('zd-accord
 const meta: Meta<ZdAccordion> = {
   title: 'Primitives/Accordion',
   component: 'zd-accordion',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

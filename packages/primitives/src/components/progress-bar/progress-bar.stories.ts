@@ -10,7 +10,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdProgressBar>('zd-prog
 const meta: Meta<ZdProgressBar> = {
   title: 'Primitives/Progress Bar',
   component: 'zd-progress-bar',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

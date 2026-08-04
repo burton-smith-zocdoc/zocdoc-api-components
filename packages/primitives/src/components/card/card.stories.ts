@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdCard>('zd-card', {
 const meta: Meta<ZdCard> = {
   title: 'Primitives/Card',
   component: 'zd-card',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

@@ -1,0 +1,146 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as ProgressBarStories from './progress-bar.stories';
+
+<Meta of={ProgressBarStories} />
+
+# Progress Bar
+
+A horizontal bar for a task's progress — a booking flow's step count, an upload, an insurance check.
+
+## Default
+
+`value` runs from 0 to `max`, which defaults to 100.
+
+<code-bubble>
+
+```html
+<zd-progress-bar value="60"></zd-progress-bar>
+```
+
+</code-bubble>
+
+## Label
+
+Use the `label` attribute, or the default slot when the label needs markup. Either way it renders as
+visible text above the track and names the bar through `aria-labelledby`.
+
+<code-bubble>
+
+```html
+<zd-progress-bar label="Booking progress" value="40"></zd-progress-bar>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<zd-progress-bar value="40">
+  Booking progress
+  <zd-badge variant="info">Step 2 of 5</zd-badge>
+</zd-progress-bar>
+```
+
+</code-bubble>
+
+## Custom max
+
+Set `max` when your numbers aren't percentages — steps in a flow, for instance.
+
+<code-bubble>
+
+```html
+<zd-progress-bar label="Step 2 of 5" value="2" max="5"></zd-progress-bar>
+```
+
+</code-bubble>
+
+## Help text
+
+Use `help-text`, or the `help-text` slot for markup. It's referenced with `aria-describedby`.
+
+<code-bubble>
+
+```html
+<zd-progress-bar
+  label="Checking insurance"
+  value="70"
+  help-text="This usually takes a few seconds."
+></zd-progress-bar>
+```
+
+</code-bubble>
+
+## Indeterminate
+
+Use `indeterminate` when you don't know how long the wait is. `value` is ignored and no
+`aria-valuenow` is set, so assistive technology reports the bar as busy rather than as a number.
+
+<code-bubble>
+
+```html
+<zd-progress-bar label="Finding available appointments" indeterminate></zd-progress-bar>
+```
+
+</code-bubble>
+
+For an indeterminate wait that isn't a task with a start and an end, `zd-spinner` is usually the
+better fit.
+
+## Hiding the label
+
+`hide-label` visually hides the label and help text while keeping them available to assistive
+technology.
+
+<code-bubble>
+
+```html
+<zd-progress-bar label="Booking progress" value="60" hide-label></zd-progress-bar>
+```
+
+</code-bubble>
+
+## Meter
+
+Use `meter` when the bar shows a level rather than progress toward completion — it swaps
+`role="progressbar"` for `role="meter"`.
+
+<code-bubble>
+
+```html
+<zd-progress-bar label="Appointments booked this week" value="8" max="20" meter></zd-progress-bar>
+```
+
+</code-bubble>
+
+## Styling
+
+`--zd-progress-bar-height` sets the track height; `--zd-progress-bar-track-color` and
+`--zd-progress-bar-indicator-bg-color` set the colors.
+
+<code-bubble>
+
+```html
+<zd-progress-bar
+  value="60"
+  style="--zd-progress-bar-height: 12px; --zd-progress-bar-border-radius: 999px;"
+></zd-progress-bar>
+```
+
+</code-bubble>
+
+# Accessibility
+
+Always give the bar a label. Without one there's no `aria-labelledby`, and the bar is announced as a
+progress bar with a number but no subject.
+
+The bar reports progress but doesn't announce completion. When a step finishes and the content
+changes, put the new state in a live region or move focus to the new step's heading (A11Y-002,
+A11Y-003).
+
+Don't rely on the bar alone to communicate where someone is in a flow — pair it with text, since a
+percentage isn't visible to someone using a screen reader unless it's labelled (A11Y-001).
+
+# API
+
+<ArgTypes />

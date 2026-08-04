@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdSelect>('zd-select', 
 const meta: Meta<ZdSelect> = {
   title: 'Primitives/Select',
   component: 'zd-select',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

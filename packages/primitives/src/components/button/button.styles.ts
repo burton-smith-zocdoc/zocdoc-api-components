@@ -50,6 +50,11 @@ export default css`
     min-height: var(--zd-button-height);
   }
 
+  :host(:not([variant='link'])) a.control {
+    color: inherit;
+    text-decoration: none;
+  }
+
   :host([fluid]) {
     display: block;
     width: 100%;
@@ -201,14 +206,20 @@ export default css`
     --zd-button-pressed-bg-color: var(--zd-button-link-bg-color);
     --zd-button-pressed-fg-color: var(--zd-button-link-active-fg-color);
     --zd-button-pressed-border-color: var(--zd-color-transparent);
-  }
 
-  :host([variant='link']) .control {
-    text-decoration: var(--zd-button-link-decoration);
-  }
+    .control {
+      text-decoration: var(--zd-button-link-decoration);
+      background-color: var(--zd-color-transparent);
+      border-color: var(--zd-color-transparent);
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+      font-size: inherit;
 
-  :host([variant='link']) .control:hover {
-    text-decoration: var(--zd-button-link-hover-decoration);
+      &:hover {
+        text-decoration: var(--zd-button-link-hover-decoration);
+      }
+    }
   }
 
   :host([variant='link']:not([disabled])) .control:active {

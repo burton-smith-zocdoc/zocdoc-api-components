@@ -1,0 +1,126 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as AlertStories from './alert.stories';
+
+<Meta of={AlertStories} />
+
+# Alert
+
+Communicates the state of a surface — a page, a card, a dialog. Use it for information that
+should persist until the person acts on it, not for something that needs immediate attention.
+
+## Default
+
+The alert is hidden until `open` is set.
+
+<code-bubble>
+
+```html
+<zd-alert open>Your appointment has been booked.</zd-alert>
+```
+
+</code-bubble>
+
+## Heading
+
+Use the `heading` attribute — or the `heading` slot for rich content — to title the alert.
+
+<code-bubble>
+
+```html
+<zd-alert open heading="Limited availability">
+  This provider has no openings for the next two weeks.
+</zd-alert>
+```
+
+</code-bubble>
+
+## Dismissible
+
+Use the `dismissible` attribute to add a close button.
+
+<code-bubble>
+
+```html
+<zd-alert open dismissible heading="Booking failed">
+  We couldn't complete your booking. Please try again.
+</zd-alert>
+```
+
+</code-bubble>
+
+## Actions
+
+Use the `action` slot for controls.
+
+<code-bubble>
+
+```html
+<zd-alert open dismissible heading="Insurance not verified">
+  We couldn't confirm your plan with this provider.
+  <zd-button slot="action" variant="secondary" size="small">Update insurance</zd-button>
+  <zd-button slot="action" variant="ghost" size="small">Continue anyway</zd-button>
+</zd-alert>
+```
+
+</code-bubble>
+
+## Icon
+
+Each alert renders an icon. Use the `icon` slot to replace it.
+
+<code-bubble>
+
+```html
+<zd-alert open heading="Insurance not verified">
+  <zd-icon slot="icon" name="warning-shield"></zd-icon>
+  We couldn't confirm your plan with this provider.
+</zd-alert>
+```
+
+</code-bubble>
+
+## Showing and hiding from script
+
+The alert exposes `show()`, `hide()`, and `toggle()`, and emits `alert-show`, `alert-after-show`,
+`alert-hide`, and `alert-after-hide`. The `after-*` events fire once the transition finishes.
+Button invokers work too — see the button docs.
+
+<code-bubble>
+
+```html
+<zd-button toggles="booking-alert">Toggle alert</zd-button>
+<zd-alert id="booking-alert" dismissible>Your appointment has been booked.</zd-alert>
+```
+
+</code-bubble>
+
+Retime the show/hide transition with the `--zd-alert-transition` custom property.
+
+```css
+zd-alert {
+  --zd-alert-transition: 200ms ease-out;
+}
+```
+
+# Accessibility
+
+An alert that appears in response to something the person did needs to be announced. Charm does
+not add a live region for you, so wrap the alert — or the region it appears in — yourself
+(A11Y-002):
+
+<code-bubble>
+
+```html
+<div aria-live="polite">
+  <zd-alert open heading="Appointment booked">You'll get a confirmation email shortly.</zd-alert>
+</div>
+```
+
+</code-bubble>
+
+For failures, use `role="alert"` on the wrapper instead so it interrupts. Never put patient data
+in the message — describe the action that failed, not the values that were submitted (PHI-001).
+
+# API
+
+<ArgTypes />

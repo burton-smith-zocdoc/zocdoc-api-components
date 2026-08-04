@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdTooltip>('zd-tooltip'
 const meta: Meta<ZdTooltip> = {
   title: 'Primitives/Tooltip',
   component: 'zd-tooltip',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

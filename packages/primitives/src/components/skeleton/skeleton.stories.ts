@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdSkeleton>('zd-skeleto
 const meta: Meta<ZdSkeleton> = {
   title: 'Primitives/Skeleton',
   component: 'zd-skeleton',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

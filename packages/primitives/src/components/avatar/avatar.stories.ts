@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdAvatar>('zd-avatar', 
 const meta: Meta<ZdAvatar> = {
   title: 'Primitives/Avatar',
   component: 'zd-avatar',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

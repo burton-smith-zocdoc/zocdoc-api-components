@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdDivider>('zd-divider'
 const meta: Meta<ZdDivider> = {
   title: 'Primitives/Divider',
   component: 'zd-divider',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

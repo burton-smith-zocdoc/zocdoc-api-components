@@ -1,0 +1,169 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as TooltipStories from './tooltip.stories';
+
+<Meta of={TooltipStories} />
+
+# Tooltip
+
+A short hint about the element it's attached to, shown on hover or focus. Built on `zd-popup`, so it
+flips and shifts to stay in view.
+
+## Default
+
+Put the element the tooltip describes in the default slot, and the hint in the `content` attribute or
+the `content` slot.
+
+<code-bubble>
+
+```html
+<zd-tooltip content="Video visits happen over a secure video call.">
+  <zd-button>Video visit</zd-button>
+</zd-tooltip>
+```
+
+</code-bubble>
+
+Attach tooltips to focusable elements. A tooltip on plain text can't be reached by keyboard and won't
+open on a touch screen at all.
+
+## Rich content
+
+Use the `content` slot when the hint needs markup.
+
+<code-bubble>
+
+```html
+<zd-tooltip>
+  <zd-button>Insurance</zd-button>
+  <span slot="content"> In network with <strong>Aetna</strong> and <strong>Cigna</strong>. </span>
+</zd-tooltip>
+```
+
+</code-bubble>
+
+Keep it to a phrase or two. A tooltip can't be scrolled, selected comfortably, or kept open, so
+anything you'd want to read twice belongs in the page — or in help text under a form field.
+
+## Placement
+
+`placement` takes the popup placements and defaults to `bottom`. `flip` and `shift` are always on, so
+the tooltip moves itself when the preferred side doesn't fit.
+
+<code-bubble>
+
+```html
+<zd-tooltip content="Next available: tomorrow at 9:00 AM" placement="top">
+  <zd-button>Availability</zd-button>
+</zd-tooltip>
+```
+
+</code-bubble>
+
+The placement vocabulary is logical — `start` and `end` rather than left and right — so it flips with
+the writing direction (I18N-003). See the popup docs for the full set.
+
+## Distance and skidding
+
+`distance` moves the tooltip away from its anchor, `skidding` slides it along the perpendicular axis.
+
+<code-bubble>
+
+```html
+<zd-tooltip content="Next available: tomorrow at 9:00 AM" distance="8">
+  <zd-button>Availability</zd-button>
+</zd-tooltip>
+```
+
+</code-bubble>
+
+## Arrow
+
+<code-bubble>
+
+```html
+<zd-tooltip content="Video visits happen over a secure video call." arrow distance="8">
+  <zd-button>Video visit</zd-button>
+</zd-tooltip>
+```
+
+</code-bubble>
+
+## Triggers
+
+`trigger` takes `hover`, `focus`, `click`, and `manual`, space-separated. It defaults to
+`hover focus`.
+
+<code-bubble>
+
+```html
+<zd-tooltip content="Tap to see why this slot is unavailable." trigger="click">
+  <zd-button>Why?</zd-button>
+</zd-tooltip>
+```
+
+</code-bubble>
+
+With `manual`, nothing opens the tooltip for you — set `open`, or call `show()`, `hide()`, and
+`toggle()`.
+
+Keep `focus` in the list. Dropping it makes the tooltip mouse-only.
+
+## Inside a scrolling container
+
+`fixed-placement` switches to a fixed positioning strategy so the tooltip isn't clipped by a container
+with `overflow: auto`, `hidden`, or `scroll`.
+
+<code-bubble>
+
+```html
+<div style="max-height: 80px; overflow: auto; border: 1px solid #ddd; padding: 1rem;">
+  <zd-tooltip content="Next available: tomorrow at 9:00 AM" fixed-placement>
+    <zd-button>Availability</zd-button>
+  </zd-tooltip>
+</div>
+```
+
+</code-bubble>
+
+## Disabled
+
+`disabled` stops the tooltip from opening at all, which is easier to manage than adding and removing
+the element.
+
+<code-bubble>
+
+```html
+<zd-tooltip content="This won't show." disabled>
+  <zd-button>No tooltip</zd-button>
+</zd-tooltip>
+```
+
+</code-bubble>
+
+## Events
+
+`tooltip-show` and `tooltip-hide` fire as the tooltip opens and closes; `tooltip-after-show` and
+`tooltip-after-hide` fire once animations finish. `ready` fires after the first render.
+
+# Accessibility
+
+The tooltip's panel carries `role="tooltip"`, and when it opens its text is copied into a visually
+hidden `aria-live="polite"` region so screen reader users hear it.
+
+What that means in practice: the tooltip is **not** wired to its anchor with `aria-describedby`. The
+hint is announced when the tooltip opens, but it isn't part of the anchor's description, and it isn't
+available to someone who reads the control without triggering it.
+
+So treat a tooltip as an extra, never as the only place information lives:
+
+- Never put a control's name in a tooltip. Give the control real text, or an icon `label` for an
+  icon-only button.
+- Never put a form field's requirements in one — use `help-text`, which is properly referenced with
+  `aria-describedby` (A11Y-004).
+- Don't put anything essential in a tooltip on a touch screen, where hover doesn't exist.
+- Tooltip text lives in an attribute or a slot; the slot is what browser translation can reach
+  (I18N-001), so prefer the `content` slot for anything user-facing.
+
+# API
+
+<ArgTypes />

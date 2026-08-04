@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdAlert>('zd-alert', {
 const meta: Meta<ZdAlert> = {
   title: 'Primitives/Alert',
   component: 'zd-alert',
-  tags: ['autodocs'],
   args: { ...args, open: true },
   argTypes,
   render: (args) => template(args, html`Alert message`),

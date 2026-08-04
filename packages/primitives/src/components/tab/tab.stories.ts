@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdTab>('zd-tab', {
 const meta: Meta<ZdTab> = {
   title: 'Primitives/Tab',
   component: 'zd-tab',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args, html`Availability`),

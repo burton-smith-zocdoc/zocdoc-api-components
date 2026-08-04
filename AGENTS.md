@@ -76,6 +76,12 @@ These rules activate when working on matching files. See `.claude/rules/` for th
 | [COMP-003](.agents/rules/component-design/COMP-003.md) | **Emit through base helper.** Use `this.emit()`, never `dispatchEvent(new CustomEvent(...))`. |
 | [COMP-004](.agents/rules/component-design/COMP-004.md) | **Standalone-capable children.** Every child works without its parent. |
 
+### STYLE — Style Authoring
+
+| Rule | Summary |
+|------|---------|
+| [STYLE-001](.agents/rules/styles/STYLE-001.md) | **Prefer CSS nesting.** Nest states, inner parts, and scoped queries under their parent with `&` instead of repeating the selector chain. |
+
 ### TEST — Testing
 
 | Rule | Summary |

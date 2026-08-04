@@ -1,0 +1,105 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as TabPanelStories from './tab-panel.stories';
+
+<Meta of={TabPanelStories} />
+
+# Tab Panel
+
+The content that belongs to one tab. Panels live inside `zd-tabs`, which pairs each one with a tab and
+shows exactly one at a time.
+
+## Default
+
+Put the content in the default slot and list the panels in the same order as the tabs. The panel puts
+itself in the `tabpanel` slot, so you don't set `slot` yourself.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab>Availability</zd-tab>
+
+  <zd-tab-panel>
+    <p>Midtown Dental, 5 blocks away.</p>
+  </zd-tab-panel>
+  <zd-tab-panel>
+    <p>Next available: tomorrow at 9:00 AM.</p>
+  </zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+A panel is hidden until its tab is selected, and it starts out hidden — so don't measure anything
+inside one before it's shown.
+
+## Ids
+
+Give a panel an `id` when you want a stable link — `zd-tabs` generates one otherwise, and generated ids
+change with render order.
+
+<code-bubble>
+
+```html
+<zd-tabs active-id="availability-tab">
+  <zd-tab id="overview-tab">Overview</zd-tab>
+  <zd-tab id="availability-tab">Availability</zd-tab>
+
+  <zd-tab-panel id="overview-panel">
+    <p>Midtown Dental, 5 blocks away.</p>
+  </zd-tab-panel>
+  <zd-tab-panel id="availability-panel">
+    <p>Next available: tomorrow at 9:00 AM.</p>
+  </zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+## Events
+
+`tab-show` and `tab-hide` fire as the panel is shown and hidden; `tab-after-show` and `tab-after-hide`
+fire once transitions finish. Use `tab-show` for work that should happen the first time a panel opens.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab>Availability</zd-tab>
+
+  <zd-tab-panel>
+    <p>Midtown Dental, 5 blocks away.</p>
+  </zd-tab-panel>
+  <zd-tab-panel id="availability-panel">
+    <p>Loading…</p>
+  </zd-tab-panel>
+</zd-tabs>
+<script type="module">
+  const panel = document.querySelector('#availability-panel');
+  panel.addEventListener('tab-show', () => loadAvailability(), { once: true });
+</script>
+```
+
+</code-bubble>
+
+Listening on the panel keeps the fetch next to the content it fills. Listening for `tabs-change` on the
+group works too, when one handler should cover every panel.
+
+# Accessibility
+
+The panel sets `role="tabpanel"` on itself, and `zd-tabs` points `aria-labelledby` at its tab, so the
+tab's label names the panel. Hidden panels use the `hidden` attribute, which keeps their content out of
+the accessibility tree entirely.
+
+Tab moves from the tab list into the panel, so the panel's own focusable content follows the tab in
+reading order. Don't move focus into a panel yourself when the tab changes — that fights the pattern
+people already know.
+
+If a panel loads its content on `tab-show`, announce the result rather than leaving a silent swap:
+give the loading and error states a live region, with `role="alert"` for errors (A11Y-002).
+
+# API
+
+<ArgTypes />

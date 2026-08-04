@@ -1,0 +1,131 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as ButtonGroupStories from './button-group.stories';
+
+<Meta of={ButtonGroupStories} />
+
+# Button Group
+
+Groups related buttons into one connected control — filter sets, view switches, a primary action
+with its alternatives.
+
+## Default
+
+Put `zd-button` elements in the default slot. The group handles the connected borders and corners.
+
+<code-bubble>
+
+```html
+<zd-button-group>
+  <zd-button>Left</zd-button>
+  <zd-button>Center</zd-button>
+  <zd-button>Right</zd-button>
+</zd-button-group>
+```
+
+</code-bubble>
+
+## Vertical
+
+Use the `vertical` attribute to stack the buttons.
+
+<code-bubble>
+
+```html
+<zd-button-group vertical>
+  <zd-button>Morning</zd-button>
+  <zd-button>Afternoon</zd-button>
+  <zd-button>Evening</zd-button>
+</zd-button-group>
+```
+
+</code-bubble>
+
+## Split
+
+Use the `split` attribute to style the group as a single button with multiple actions.
+
+<code-bubble>
+
+```html
+<zd-button-group split>
+  <zd-button variant="primary">Book</zd-button>
+  <zd-menu style="--zd-popup-z-index: 1;">
+    <zd-button variant="primary" slot="trigger">
+      <zd-icon name="chevron-down"></zd-icon>
+    </zd-button>
+    <zd-menu-item>Book for someone else</zd-menu-item>
+    <zd-menu-item>Join the waitlist</zd-menu-item>
+  </zd-menu>
+</zd-button-group>
+```
+
+</code-bubble>
+
+A `zd-menu` can sit in any button group as long as its trigger is a `zd-button`.
+
+## Selection
+
+Set `select` to `single` or `multiple` to make the group behave as a set of choices. Toggling a
+button emits a `change` event from the group.
+
+<code-bubble>
+
+```html
+<zd-button-group select="single">
+  <zd-button>Any time</zd-button>
+  <zd-button>Morning</zd-button>
+  <zd-button>Afternoon</zd-button>
+</zd-button-group>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<zd-button-group select="multiple">
+  <zd-button>In person</zd-button>
+  <zd-button>Video visit</zd-button>
+</zd-button-group>
+```
+
+</code-bubble>
+
+# Accessibility
+
+Use the `label` attribute to name the group; it becomes the `aria-label`.
+
+<code-bubble>
+
+```html
+<zd-button-group label="Appointment time of day" select="single">
+  <zd-button>Morning</zd-button>
+  <zd-button>Afternoon</zd-button>
+  <zd-button>Evening</zd-button>
+</zd-button-group>
+```
+
+</code-bubble>
+
+Use the `toolbar` attribute when the group is a set of controls rather than choices. It applies the
+`toolbar` role and moves focus between buttons with the arrow keys under a roving tab index, so the
+whole group is one tab stop.
+
+<code-bubble>
+
+```html
+<zd-button-group toolbar label="Result view">
+  <zd-button icon-only>
+    <zd-icon slot="start" name="more" label="List view"></zd-icon>
+  </zd-button>
+  <zd-button icon-only>
+    <zd-icon slot="start" name="circle" label="Map view"></zd-icon>
+  </zd-button>
+</zd-button-group>
+```
+
+</code-bubble>
+
+# API
+
+<ArgTypes />

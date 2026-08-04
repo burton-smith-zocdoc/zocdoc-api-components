@@ -23,6 +23,7 @@
     "@charm-ux/theming": "link:../charm-ux/core/packages/theming",
     "@custom-elements-manifest/analyzer": "0.11.0",
     "@oxc-node/cli": "^0.1.0",
+    "@storybook/addon-docs": "^10.5.6",
     "@storybook/web-components": "^10.5.5",
     "@storybook/web-components-vite": "^10.5.5",
     "@types/node": "^24.3.0",

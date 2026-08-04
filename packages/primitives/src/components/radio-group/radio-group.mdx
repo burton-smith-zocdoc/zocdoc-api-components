@@ -1,0 +1,131 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as RadioGroupStories from './radio-group.stories';
+
+<Meta of={RadioGroupStories} />
+
+# Radio Group
+
+A set of mutually exclusive choices. The group is the form control — it holds the value, the name, the
+validation, and the keyboard behavior; the radios inside it are just the options.
+
+## Default
+
+Put `zd-radio` elements in the default slot and set `value` to the option that should be selected.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type" name="visit-type" value="in-person">
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+Use the `label` slot when the group label needs markup.
+
+## Layout
+
+`layout` takes `vertical` (the default), `horizontal`, or `horizontal-stacked`. The stacked variant
+lays the options in a row and puts each control above its own label — good for a short row of times.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Time of day" layout="horizontal">
+  <zd-radio value="morning" label="Morning"></zd-radio>
+  <zd-radio value="afternoon" label="Afternoon"></zd-radio>
+  <zd-radio value="evening" label="Evening"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Time of day" layout="horizontal-stacked">
+  <zd-radio value="morning" label="Morning"></zd-radio>
+  <zd-radio value="afternoon" label="Afternoon"></zd-radio>
+  <zd-radio value="evening" label="Evening"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+Keep horizontal layouts to a handful of short options. A long row wraps unpredictably and is harder to
+scan than a column.
+
+## Help text
+
+Use `help-text`, or the `help-text` slot for markup. It's referenced from the group with
+`aria-describedby`.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type" help-text="Video visits are available for most follow-ups.">
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+## Required and validation
+
+The group is form-associated. `required` means one option has to be chosen; `error-message` sets a
+custom validation message and `invalid` renders the error state. `checkValidity()` tests without
+reporting, `reportValidity()` reports.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type" required invalid error-message="Choose a visit type.">
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+Describe what's needed rather than echoing what was submitted — patient-entered values don't belong in
+messages (PHI-001).
+
+## Disabled
+
+Disable the whole set from the group, or a single option from the radio.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type" disabled>
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+## Events
+
+`change` fires when the selected value changes; `focus` and `blur` fire as the group gains and loses
+focus.
+
+# Accessibility
+
+The group renders `role="radiogroup"` with `aria-required` and `aria-invalid`, points
+`aria-describedby` at the help text, and points `aria-errormessage` at the error region when
+`invalid`.
+
+Arrow keys move between options and Space selects, so the whole set is one tab stop — which is why
+options belong in a group rather than standing alone.
+
+Always give the group a label. Without one there's nothing naming the set, and each option reads as a
+bare choice with no question attached (A11Y-004). Keep it as visible text so browser translation can
+reach it (I18N-001).
+
+# API
+
+<ArgTypes />

@@ -1,0 +1,93 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as DividerStories from './divider.stories';
+
+<Meta of={DividerStories} />
+
+# Divider
+
+A thin rule that separates or groups content.
+
+## Default
+
+Horizontal, solid, 1px.
+
+<code-bubble>
+
+```html
+<zd-divider></zd-divider>
+```
+
+</code-bubble>
+
+## With content
+
+Anything in the default slot renders inline with the rule, centred by default.
+
+<code-bubble>
+
+```html
+<zd-divider>or</zd-divider>
+```
+
+</code-bubble>
+
+## Aligning content
+
+`align-content` takes `center`, `start`, or `end`.
+
+<code-bubble>
+
+```html
+<zd-divider align-content="start">Earlier today</zd-divider>
+<zd-divider align-content="end">Later</zd-divider>
+```
+
+</code-bubble>
+
+## Orientation
+
+Use `orientation="vertical"` to separate items in a row. A vertical divider needs a height from its
+container or from `--zd-divider-vertical-min-height`.
+
+<code-bubble>
+
+```html
+<div style="display: flex; align-items: center; gap: 0.75rem; height: 1.5rem;">
+  <span>Dentist</span>
+  <zd-divider orientation="vertical"></zd-divider>
+  <span>New York, NY</span>
+</div>
+```
+
+</code-bubble>
+
+## Inset
+
+Add `inset` for padding on both sides of the rule. The inset is `0` until you set
+`--zd-divider-inset`.
+
+<code-bubble>
+
+```html
+<zd-divider inset style="--zd-divider-inset: 1rem;"></zd-divider>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The divider has `role="separator"`, which announces it as a meaningful break. When the rule is
+decoration — a line between rows that are already distinct — add `presentation` to drop the role so
+it's skipped.
+
+<code-bubble>
+
+```html
+<zd-divider presentation></zd-divider>
+```
+
+</code-bubble>
+
+# API
+
+<ArgTypes />

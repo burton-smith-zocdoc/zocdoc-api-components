@@ -1,0 +1,154 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './button.stories';
+
+<Meta of={ButtonStories} />
+
+# Button
+
+Interactive button for user actions, with multiple variants and sizes.
+
+## Default
+
+The default button uses the base `button.*` tokens when no variant is specified.
+
+<code-bubble>
+
+```html
+<zd-button>Button</zd-button>
+```
+
+</code-bubble>
+
+## Variants
+
+Use the `variant` attribute to change the button's visual treatment.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary">Primary</zd-button>
+<zd-button variant="secondary">Secondary</zd-button>
+<zd-button variant="inverse">Inverse</zd-button>
+<zd-button variant="ghost">Ghost</zd-button>
+<zd-button variant="destructive">Destructive</zd-button>
+<zd-button variant="link">Link</zd-button>
+```
+
+</code-bubble>
+
+## Sizes
+
+Use the `size` attribute to control the button's density. The default size uses base metrics; `small` swaps in compact metrics.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary">Default</zd-button>
+<zd-button variant="primary" size="small">Small</zd-button>
+```
+
+</code-bubble>
+
+## Fluid
+
+Use the `fluid` attribute to stretch the button to fill its container width.
+
+<code-bubble>
+
+```html
+<div style="max-width: 320px;">
+  <zd-button variant="primary" fluid>Full Width Button</zd-button>
+</div>
+```
+
+</code-bubble>
+
+## With Icons
+
+Buttons support `start` and `end` slots for icons.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary">
+  <zd-icon slot="start" name="person"></zd-icon>
+  View Profile
+</zd-button>
+
+<zd-button variant="secondary">
+  Next
+  <zd-icon slot="end" name="chevron-right"></zd-icon>
+</zd-button>
+```
+
+</code-bubble>
+
+## Icon Only
+
+For icon-only buttons, use the `icon-only` attribute and name the button with the icon's `label`
+attribute.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary" icon-only>
+  <zd-icon slot="start" name="dismiss" label="Close"></zd-icon>
+</zd-button>
+
+<zd-button variant="ghost" icon-only>
+  <zd-icon slot="start" name="more" label="More options"></zd-icon>
+</zd-button>
+```
+
+</code-bubble>
+
+`aria-label` on the host doesn't work: Charm renders the real `<button>` inside the shadow root and
+forwards only `aria-current`, `aria-disabled`, `aria-expanded`, and `aria-pressed` to it. The
+button's accessible name comes from its slotted content, which is why the label belongs on the icon.
+
+## As Link
+
+Set the `href` attribute to render the button as an anchor element.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary" href="https://zocdoc.com">Visit Zocdoc</zd-button>
+
+<zd-button variant="secondary" href="https://zocdoc.com" target="_blank">
+  Open in New Tab
+  <zd-icon slot="end" name="chevron-right"></zd-icon>
+</zd-button>
+```
+
+</code-bubble>
+
+## Toggle
+
+Use the `toggle` attribute to enable toggle behavior. The button emits a `change` event when toggled.
+
+<code-bubble>
+
+```html
+<zd-button variant="secondary" toggle>Toggle me</zd-button>
+<zd-button variant="secondary" toggle pressed>Already pressed</zd-button>
+```
+
+</code-bubble>
+
+## Disabled
+
+Use the `disabled` attribute to disable the button.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary" disabled>Disabled</zd-button>
+<zd-button variant="secondary" disabled>Disabled</zd-button>
+```
+
+</code-bubble>
+
+# API
+
+<ArgTypes />

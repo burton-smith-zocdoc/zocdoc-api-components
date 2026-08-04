@@ -1,0 +1,82 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as BreadcrumbItemStories from './breadcrumb-item.stories';
+
+<Meta of={BreadcrumbItemStories} />
+
+# Breadcrumb Item
+
+One step in a breadcrumb trail. Usually slotted into `zd-breadcrumb`, but it stands on its own.
+
+## Default
+
+Without an `href` the item renders as inert text — the right treatment for the page you're on.
+
+<code-bubble>
+
+```html
+<zd-breadcrumb-item>New York, NY</zd-breadcrumb-item>
+```
+
+</code-bubble>
+
+## As a link
+
+Set `href` to make the item navigable. `target` and `referrerpolicy` apply only when `href` is set.
+
+<code-bubble>
+
+```html
+<zd-breadcrumb-item href="/specialties/dentists">Dentists</zd-breadcrumb-item>
+```
+
+</code-bubble>
+
+## Separator
+
+Every item renders a separator after itself. Set `separator="false"` to drop it, or use the
+`separator` slot to replace it.
+
+<code-bubble>
+
+```html
+<zd-breadcrumb-item href="/specialties">
+  Specialties
+  <zd-icon slot="separator" name="chevron-right"></zd-icon>
+</zd-breadcrumb-item>
+```
+
+</code-bubble>
+
+Inside `zd-breadcrumb` the parent manages separators for you, including removing the trailing one.
+
+## Icons
+
+The `start` and `end` slots take a presentational icon.
+
+<code-bubble>
+
+```html
+<zd-breadcrumb-item href="/">
+  <zd-icon slot="start" name="person"></zd-icon>
+  Your account
+</zd-breadcrumb-item>
+```
+
+</code-bubble>
+
+# Accessibility
+
+Use `current="page"` on the item representing the current page — it sets `aria-current`. When the
+item is inside `zd-breadcrumb`, the parent sets this for you on the last item.
+
+<code-bubble>
+
+```html
+<zd-breadcrumb-item current="page">New York, NY</zd-breadcrumb-item>
+```
+
+</code-bubble>
+
+# API
+
+<ArgTypes />

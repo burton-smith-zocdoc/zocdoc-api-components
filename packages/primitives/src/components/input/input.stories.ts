@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdInput>('zd-input', {
 const meta: Meta<ZdInput> = {
   title: 'Primitives/Input',
   component: 'zd-input',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

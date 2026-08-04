@@ -1,0 +1,83 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as BadgeStories from './badge.stories';
+
+<Meta of={BadgeStories} />
+
+# Badge
+
+A small label for statuses and short pieces of metadata — specialties, availability, review
+counts.
+
+## Default
+
+Put the label text between the tags. Omitting `variant` uses the base `badge.*` tokens.
+
+<code-bubble>
+
+```html
+<zd-badge>Available today</zd-badge>
+```
+
+</code-bubble>
+
+## Variants
+
+Use the `variant` attribute to change the badge's visual treatment. Each one is backed by a
+`badge.<variant>` token group in the Zocdoc theme.
+
+<code-bubble>
+
+```html
+<zd-badge variant="neutral">Neutral</zd-badge>
+<zd-badge variant="inverse">Inverse</zd-badge>
+<zd-badge variant="info">Info</zd-badge>
+<zd-badge variant="success">Success</zd-badge>
+<zd-badge variant="warning">Warning</zd-badge>
+<zd-badge variant="danger">Danger</zd-badge>
+<zd-badge variant="caution">Caution</zd-badge>
+<zd-badge variant="brand">Brand</zd-badge>
+```
+
+</code-bubble>
+
+## In context
+
+Badges sit inline with the content they describe.
+
+<code-bubble>
+
+```html
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+  <zd-badge>Dentist</zd-badge>
+  <zd-badge>Accepts new patients</zd-badge>
+  <zd-badge variant="success">Available today</zd-badge>
+</div>
+```
+
+</code-bubble>
+
+## Style
+
+The variants only re-point the badge's fill tokens, so consumer overrides still win for one-off
+adjustments:
+
+```css
+zd-badge {
+  --zd-badge-bg-color: #eef;
+  --zd-badge-fg-color: #114;
+  --zd-badge-border-color: #ccd;
+}
+```
+
+# Accessibility
+
+A variant is styling only — it carries no meaning for assistive technology. The badge's text has
+to say what the state is, so `variant="danger"` with the text "Booking" tells a screen reader user
+nothing (A11Y-001).
+
+Keep the label in a text node rather than an `aria-label` so browser translation picks it up
+(I18N-001).
+
+# API
+
+<ArgTypes />

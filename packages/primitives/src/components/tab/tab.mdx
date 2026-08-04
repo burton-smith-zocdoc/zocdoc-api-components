@@ -1,0 +1,122 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as TabStories from './tab.stories';
+
+<Meta of={TabStories} />
+
+# Tab
+
+One label in a tab list. A tab only works inside `zd-tabs` — the group pairs it with a panel, wires the
+ARIA relationships, and owns the keyboard behavior.
+
+## Default
+
+Put the label in the default slot.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab>Availability</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>Next available: tomorrow at 9:00 AM.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+## Icons
+
+The `start` and `end` slots take a presentational icon.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>
+    <zd-icon slot="start" name="person"></zd-icon>
+    Overview
+  </zd-tab>
+  <zd-tab>
+    <zd-icon slot="start" name="checkmark-circle"></zd-icon>
+    Insurance
+  </zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>In network with Aetna and Cigna.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+The `end` slot is a good place for a count — but keep it as text, since a badge alone doesn't say what
+it counts.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>
+    Availability
+    <zd-badge slot="end" variant="info">6</zd-badge>
+  </zd-tab>
+
+  <zd-tab-panel>6 openings this week.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+## Selected
+
+`selected` marks the tab as the active one. Setting `active-id` on `zd-tabs` is usually the better
+handle, since it keeps one source of truth.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab selected>Availability</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>Next available: tomorrow at 9:00 AM.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+## Disabled
+
+A disabled tab can't be selected, and setting `disabled` clears `selected`.
+
+<code-bubble>
+
+```html
+<zd-tabs>
+  <zd-tab>Overview</zd-tab>
+  <zd-tab disabled>Insurance</zd-tab>
+
+  <zd-tab-panel>Midtown Dental, 5 blocks away.</zd-tab-panel>
+  <zd-tab-panel>In network with Aetna and Cigna.</zd-tab-panel>
+</zd-tabs>
+```
+
+</code-bubble>
+
+Prefer omitting a tab to disabling it. A disabled tab is still announced, and it rarely explains why
+it's unavailable.
+
+# Accessibility
+
+The tab sets `role="tab"` on itself and keeps `aria-selected` and `aria-disabled` in sync. `zd-tabs`
+supplies the id, the `aria-controls` link to its panel, and the roving `tabindex` — so a tab used
+outside a group has a role but no keyboard behavior and no panel.
+
+Keep the label as a visible text node. It's what browser translation reaches (I18N-001), and it's the
+tab's accessible name.
+
+# API
+
+<ArgTypes />

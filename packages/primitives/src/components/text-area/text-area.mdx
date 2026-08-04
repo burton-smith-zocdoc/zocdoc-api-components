@@ -1,0 +1,168 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as TextAreaStories from './text-area.stories';
+
+<Meta of={TextAreaStories} />
+
+# Text Area
+
+A multi-line text field — a note for the provider, a description of symptoms. It's form-associated, so
+it takes part in native validation and submission.
+
+## Default
+
+Use the `label` attribute for the label, or the `label` slot when it needs markup.
+
+<code-bubble>
+
+```html
+<zd-text-area label="Anything the provider should know?"></zd-text-area>
+```
+
+</code-bubble>
+
+## Rows
+
+`rows` sets the visible height and defaults to 4. Size it to the answer you expect — a two-row box
+invites two lines.
+
+<code-bubble>
+
+```html
+<zd-text-area label="Reason for visit" rows="2"></zd-text-area>
+<zd-text-area label="Symptoms" rows="6"></zd-text-area>
+```
+
+</code-bubble>
+
+## Resize
+
+`resize` takes `none`, `horizontal`, `vertical`, or `both`.
+
+<code-bubble>
+
+```html
+<zd-text-area label="Notes" resize="vertical"></zd-text-area>
+<zd-text-area label="Notes" resize="none"></zd-text-area>
+```
+
+</code-bubble>
+
+Prefer `vertical`. Horizontal resizing lets people drag the field past its container, and `none`
+leaves them stuck with whatever height you picked.
+
+## Help text
+
+Use `help-text`, or the `help-text` slot for markup. It's referenced with `aria-describedby`.
+
+<code-bubble>
+
+```html
+<zd-text-area
+  label="Anything the provider should know?"
+  help-text="Don't include your insurance details here."
+></zd-text-area>
+```
+
+</code-bubble>
+
+## Placeholder
+
+<code-bubble>
+
+```html
+<zd-text-area label="Reason for visit" placeholder="Tooth pain on the upper left"></zd-text-area>
+```
+
+</code-bubble>
+
+A placeholder isn't a label: it disappears as soon as someone types, and it lives in an attribute that
+browser translation doesn't reach (I18N-001). Set `label` too.
+
+## Length limits
+
+`minlength` and `maxlength` map to the native attributes.
+
+<code-bubble>
+
+```html
+<zd-text-area label="Reason for visit" maxlength="500"></zd-text-area>
+```
+
+</code-bubble>
+
+`maxlength` silently stops accepting characters, so show the limit in help text rather than letting
+typing just stop.
+
+## Validation
+
+`required`, `invalid`, and `error-message` work as they do on the other form controls. The error
+renders in a `role="alert"` region, so it's announced when it appears, and `checkValidity()` tests
+without reporting.
+
+<code-bubble>
+
+```html
+<zd-text-area
+  label="Reason for visit"
+  required
+  invalid
+  error-message="Tell us why you're booking."
+></zd-text-area>
+```
+
+</code-bubble>
+
+Never echo what was typed back in an error message. A free-text field is exactly where patient
+information ends up, and it must not reach messages, logs, or debug output (PHI-001).
+
+## Disabled and readonly
+
+<code-bubble>
+
+```html
+<zd-text-area label="Notes" value="Follow-up visit" readonly></zd-text-area>
+<zd-text-area label="Notes" disabled></zd-text-area>
+```
+
+</code-bubble>
+
+## Other native attributes
+
+`autocapitalize`, `autocomplete`, `autofocus`, `enterkeyhint`, and `inputmode` pass through to the
+native textarea. `autocapitalize` defaults to `none`; `sentences` is usually what free text wants.
+
+<code-bubble>
+
+```html
+<zd-text-area
+  label="Reason for visit"
+  autocapitalize="sentences"
+  enterkeyhint="enter"
+></zd-text-area>
+```
+
+</code-bubble>
+
+## Events
+
+`input` fires as the value changes, `change` when the change is committed, and `keydown` on key
+presses. `focus` and `blur` fire as the field gains and loses focus.
+
+Enter inserts a newline rather than submitting, so if the field sits in a form, give that form its own
+submit button.
+
+# Accessibility
+
+Keep the label visible and pair instructions with the field through `help-text` rather than a
+paragraph above it — `aria-describedby` is what ties them together (A11Y-004).
+
+If you show a character counter, put it in a live region with `aria-live="polite"` so it isn't
+announced on every keystroke, and make sure the limit is stated in the help text as well (A11Y-002).
+
+Because free text often contains patient details, don't log it and don't send it anywhere but the
+configured Zocdoc `baseUrl` (PHI-001, PHI-003). Test with data from the
+[documented scenarios](https://api-docs.zocdoc.com/guides/testing-data) (PHI-002).
+
+# API
+
+<ArgTypes />

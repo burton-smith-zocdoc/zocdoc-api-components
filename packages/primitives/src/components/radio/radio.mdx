@@ -1,0 +1,98 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as RadioStories from './radio.stories';
+
+<Meta of={RadioStories} />
+
+# Radio
+
+One option in a set of mutually exclusive choices. A radio only makes sense inside a
+`zd-radio-group` — the group owns the value, the name, and the keyboard behavior.
+
+## Default
+
+Use the `label` attribute for the label text, or the default slot when it needs markup. Give each
+radio a `value`, which is what the group reports when it's selected.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type" value="in-person">
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+## Checked
+
+`checked` draws the selected state. Setting the group's `value` is the better way in — it keeps one
+source of truth for which option is selected.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type">
+  <zd-radio value="in-person" label="In person" checked></zd-radio>
+  <zd-radio value="video" label="Video visit"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+## Rich labels
+
+Use the default slot when a label needs more than text — a badge, a price, a second line.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Appointment time">
+  <zd-radio value="9am">
+    9:00 AM
+    <zd-badge variant="success">Soonest</zd-badge>
+  </zd-radio>
+  <zd-radio value="2pm">2:00 PM</zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+## Disabled and readonly
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type">
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit" disabled></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+`readonly` keeps the radio focusable but stops it changing — useful for showing a choice that was
+made earlier in a flow without making it look unavailable.
+
+## Vertical
+
+`vertical` stacks a single radio's control above its label. For laying out the whole set, use the
+group's `layout` attribute instead.
+
+## Events
+
+`selected` fires when the radio becomes the selected option; `focus` and `blur` fire as it gains and
+loses focus. Listen for `change` on the group when you want the set's value.
+
+# Accessibility
+
+The radio keeps `aria-checked` and `aria-disabled` in sync on the host, and the group provides the
+`radiogroup` role and arrow-key navigation — so a radio outside a group has no keyboard behavior and
+no accessible set.
+
+Keep labels as visible text. `hide-label` exists, but the label text is what browser translation can
+reach (I18N-001), and a radio whose meaning comes only from its position in a row isn't usable.
+
+# API
+
+<ArgTypes />

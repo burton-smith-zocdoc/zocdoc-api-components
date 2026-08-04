@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdAccordionItem>('zd-ac
 const meta: Meta<ZdAccordionItem> = {
   title: 'Primitives/Accordion Item',
   component: 'zd-accordion-item',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args, html`Insurance is verified when you book.`),

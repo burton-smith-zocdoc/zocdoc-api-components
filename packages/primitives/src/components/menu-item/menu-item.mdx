@@ -1,0 +1,183 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as MenuItemStories from './menu-item.stories';
+
+<Meta of={MenuItemStories} />
+
+# Menu Item
+
+One entry in a `zd-menu` — an action, a link, a choice, or a gateway to a submenu.
+
+## Default
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Appointment options</zd-button>
+  <zd-menu-item>Reschedule</zd-menu-item>
+  <zd-menu-item>Cancel</zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Icons
+
+The `start` and `end` slots take a presentational icon.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Appointment options</zd-button>
+  <zd-menu-item>
+    <zd-icon slot="start" name="checkmark-circle"></zd-icon>
+    Confirm
+  </zd-menu-item>
+  <zd-menu-item>
+    <zd-icon slot="start" name="dismiss"></zd-icon>
+    Cancel
+  </zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Links
+
+Set `href` to render the item as an anchor, with `target` for the usual values.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Help</zd-button>
+  <zd-menu-item href="https://api-docs.zocdoc.com">API docs</zd-menu-item>
+  <zd-menu-item href="https://zocdoc.com" target="_blank">Zocdoc.com</zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+Use `current` on a link item to mark the page you're already on. It sets `aria-current` on the
+internal link.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Sections</zd-button>
+  <zd-menu-item href="/providers" current="page">Providers</zd-menu-item>
+  <zd-menu-item href="/appointments">Appointments</zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Disabled
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Appointment options</zd-button>
+  <zd-menu-item>Reschedule</zd-menu-item>
+  <zd-menu-item disabled>Add to calendar</zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+A disabled item keeps `aria-disabled` on the host and stays in the arrow-key order, so people can
+still discover it — which is why the label should say enough on its own.
+
+## Checked
+
+`checked` renders the selected state. It only shows an indicator when the item has a checkbox or
+radio role, which is what `select` on `zd-menu-group` sets up.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Visit type</zd-button>
+  <zd-menu-group heading="Visit type" select="single">
+    <zd-menu-item checked>In person</zd-menu-item>
+    <zd-menu-item>Video visit</zd-menu-item>
+  </zd-menu-group>
+</zd-menu>
+```
+
+</code-bubble>
+
+The `checkbox-indicator` and `radio-indicator` slots replace those icons if you need a different
+mark.
+
+## Submenus
+
+Nest `zd-menu-item` elements directly inside an item. The item finds them on connect, sets
+`has-submenu` itself, and moves them into a popup when it expands — you don't set `has-submenu` or
+wrap them in a `zd-menu`.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Appointment options</zd-button>
+  <zd-menu-item>Reschedule</zd-menu-item>
+  <zd-menu-item>
+    Share
+    <zd-menu-item>Copy link</zd-menu-item>
+    <zd-menu-item>Email</zd-menu-item>
+  </zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+An item with a submenu shows a chevron that rotates when `expanded` is set, and opens on click, on
+hover, and on Right Arrow. `sub-menu-placement` positions the popup.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Appointment options</zd-button>
+  <zd-menu-item sub-menu-placement="end-top">
+    Share
+    <zd-menu-item>Copy link</zd-menu-item>
+    <zd-menu-item>Email</zd-menu-item>
+  </zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+It defaults to `right-start`, which is a physical placement — the submenu opens to the right even in a
+right-to-left layout. Prefer the logical `end-top` and `start-top`, which flip with the writing
+direction (I18N-003). See the popup docs for the full placement vocabulary.
+
+Keep submenus one level deep — a nested menu is hard to hit with a thumb and hard to hold in your
+head.
+
+## Events
+
+`menu-item-change` fires when the item's checked state changes; `expanded-change` fires when a
+submenu opens or closes.
+
+# Accessibility
+
+The parent menu or group assigns the role: `menuitem` by default, `menuitemradio` under
+`select="single"`, `menuitemcheckbox` under `select="multiple"`. The item keeps `aria-checked` in sync
+with `checked`. Don't set `role` yourself unless you're building the whole pattern by hand.
+
+Moving between items is the menu's job — see the menu docs. The item itself handles Enter and Space
+to activate, Right Arrow to open its submenu and focus the first entry, and Left Arrow to close it and
+return focus to the parent item.
+
+Write labels as visible text so browser translation reaches them (I18N-001), and never put patient
+data in an item label: menu labels describe actions, not people (PHI-001).
+
+# API
+
+<ArgTypes />

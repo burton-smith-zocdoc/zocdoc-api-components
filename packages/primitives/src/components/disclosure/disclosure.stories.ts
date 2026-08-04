@@ -12,7 +12,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdDisclosure>('zd-discl
 const meta: Meta<ZdDisclosure> = {
   title: 'Primitives/Disclosure',
   component: 'zd-disclosure',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) =>

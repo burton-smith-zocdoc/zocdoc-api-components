@@ -11,7 +11,6 @@ const { args, argTypes, template } = getStorybookHelpers<ZdSwitch>('zd-switch', 
 const meta: Meta<ZdSwitch> = {
   title: 'Primitives/Switch',
   component: 'zd-switch',
-  tags: ['autodocs'],
   args,
   argTypes,
   render: (args) => template(args),

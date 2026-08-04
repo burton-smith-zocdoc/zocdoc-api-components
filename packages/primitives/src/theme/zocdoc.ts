@@ -463,6 +463,7 @@ const zocdocTokensBase = charmTokens
         paddingX: primitive('spacing', 12),
         paddingY: primitive('spacing', 14),
         inputHeight: '44px',
+        iconGap: primitive('spacing', 8),
         small: {
           inputHeight: '32px',
           paddingY: primitive('spacing', 8),
@@ -473,8 +474,30 @@ const zocdocTokensBase = charmTokens
           dark: primitive('color', 'neutral', 500),
         },
         shadow: 'none',
-        focus: {
+        hover: {
+          bgColor: {
+            light: primitive('color', 'neutral', 50),
+            dark: primitive('color', 'neutral', 700),
+          },
           borderColor: {
+            light: primitive('color', 'neutral', 400),
+            dark: primitive('color', 'neutral', 500),
+          },
+          fgColor: {
+            light: primitive('color', 'neutral', 900),
+            dark: primitive('color', 'neutral', 50),
+          },
+        },
+        focus: {
+          bgColor: {
+            light: semantic('surface', 'default', 'bgColor'),
+            dark: primitive('color', 'neutral', 800),
+          },
+          borderColor: {
+            light: primitive('color', 'neutral', 900),
+            dark: primitive('color', 'neutral', 50),
+          },
+          fgColor: {
             light: primitive('color', 'neutral', 900),
             dark: primitive('color', 'neutral', 50),
           },
@@ -489,6 +512,11 @@ const zocdocTokensBase = charmTokens
             light: primitive('color', 'neutral', 400),
             dark: primitive('color', 'neutral', 500),
           },
+          borderColor: {
+            light: primitive('color', 'neutral', 200),
+            dark: primitive('color', 'neutral', 600),
+          },
+          opacity: '0.6',
         },
         invalid: {
           borderColor: primitive('color', 'danger', 500),
@@ -506,12 +534,22 @@ const zocdocTokensBase = charmTokens
           color: semantic('body', 'fgColor'),
           fontSize: semantic('typography', 'label', 'xl', 'fontSize'),
           fontWeight: semantic('typography', 'label', 'xl', 'fontWeight'),
+          gap: primitive('spacing', 4),
+          requiredIndicatorGap: primitive('spacing', 4),
         },
         /** Zinc's `formControl.description` */
         helpText: {
           color: semantic('surface', 'default', 'secondaryFgColor'),
           fontSize: semantic('typography', 'body', 'sm', 'fontSize'),
+          fontWeight: primitive('fontWeight', 'normal'),
           lineHeight: semantic('typography', 'body', 'sm', 'lineHeight'),
+          gap: primitive('spacing', 4),
+        },
+        /** Slider/range input */
+        range: {
+          trackSize: '4px',
+          thumbSize: '16px',
+          trackMarginTop: '0',
         },
       },
       /** Zinc's `border.default` - Charm's default border group */

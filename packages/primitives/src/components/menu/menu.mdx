@@ -1,0 +1,132 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as MenuStories from './menu.stories';
+
+<Meta of={MenuStories} />
+
+# Menu
+
+A list of actions in a popup, opened from a trigger. Use it for the secondary actions on an
+appointment or a provider — the ones that don't earn a button of their own.
+
+## Default
+
+The trigger goes in the `trigger` slot and the items in the default slot.
+
+<code-bubble>
+
+```html
+<zd-menu>
+  <zd-button slot="trigger">Appointment options</zd-button>
+  <zd-menu-item>Reschedule</zd-menu-item>
+  <zd-menu-item>Cancel</zd-menu-item>
+  <zd-menu-item>Add to calendar</zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+The menu applies `role="menuitem"` to any slotted element that doesn't already have a role, so plain
+elements work — but `zd-menu-item` gets you the hover, focus, and disabled treatment.
+
+## Placement
+
+`placement` takes the full set of popup placements and defaults to `bottom-start`.
+
+<code-bubble>
+
+```html
+<zd-menu placement="bottom-end">
+  <zd-button slot="trigger">Filter results</zd-button>
+  <zd-menu-item>Soonest available</zd-menu-item>
+  <zd-menu-item>Highest rated</zd-menu-item>
+  <zd-menu-item>Nearest to me</zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+## Inside a scrolling container
+
+A menu in a container with `overflow: auto`, `hidden`, or `scroll` gets clipped at the container's
+edge. `fixed-placement` switches the popup to a fixed positioning strategy so it escapes.
+
+<code-bubble>
+
+```html
+<div style="max-height: 120px; overflow: auto; border: 1px solid #ddd; padding: 1rem;">
+  <zd-menu fixed-placement>
+    <zd-button slot="trigger">Options</zd-button>
+    <zd-menu-item>Reschedule</zd-menu-item>
+    <zd-menu-item>Cancel</zd-menu-item>
+  </zd-menu>
+</div>
+```
+
+</code-bubble>
+
+## Stacking
+
+Set `--zd-menu-z-index` when the menu opens behind something — inside a card with its own stacking
+context, for example.
+
+<code-bubble>
+
+```html
+<zd-menu style="--zd-menu-z-index: 10;">
+  <zd-button slot="trigger">Options</zd-button>
+  <zd-menu-item>Reschedule</zd-menu-item>
+</zd-menu>
+```
+
+</code-bubble>
+
+`--zd-menu-width`, `--zd-menu-min-width`, and `--zd-menu-max-width` size the panel.
+
+## Opening and closing
+
+The menu extends the dismissible base, so it has `open`, `show()`, `hide()`, and `toggle()`. It opens
+on trigger click and closes on selection, outside click, Escape, or Tab.
+
+## Events
+
+`menu-show` and `menu-hide` fire as the menu opens and closes; `menu-after-show` and
+`menu-after-hide` fire once transitions finish. `menu-request-close` carries a `source` of `change`,
+`trigger`, `document`, or `keyboard` — cancel it to keep the menu open.
+
+<code-bubble>
+
+```html
+<zd-menu id="sticky-menu">
+  <zd-button slot="trigger">Options</zd-button>
+  <zd-menu-item>Reschedule</zd-menu-item>
+  <zd-menu-item>Cancel</zd-menu-item>
+</zd-menu>
+<script type="module">
+  document.querySelector('#sticky-menu').addEventListener('menu-request-close', (event) => {
+    // Keep the menu open when a selection is made, close it any other way.
+    if (event.detail.source === 'change') event.preventDefault();
+  });
+</script>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The panel carries `role="menu"`, and the menu wires the trigger for you — it sets `aria-haspopup`,
+keeps `aria-expanded` in sync, and gives the trigger an id so the panel can reference it. Don't set
+those yourself.
+
+Keyboard support is built in: Up and Down move between items, Home and End jump to the ends, Enter
+and Space activate, Escape closes and returns focus to the trigger, and Tab closes the menu.
+
+What's left to you:
+
+- Give the trigger a visible text label, or an icon with a `label` if it's icon-only. A `zd-button`
+  host's `aria-label` doesn't reach the real button — see the button docs.
+- Keep item labels as text nodes so browser translation reaches them (I18N-001).
+- Put destructive items last, and confirm them in a dialog rather than acting on selection.
+
+# API
+
+<ArgTypes />

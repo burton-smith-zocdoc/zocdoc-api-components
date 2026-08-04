@@ -1,0 +1,122 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as IconStories from './icon.stories';
+
+<Meta of={IconStories} />
+
+# Icon
+
+Renders an icon from the icon set by name.
+
+## Default
+
+<code-bubble>
+
+```html
+<zd-icon name="checkmark"></zd-icon>
+```
+
+</code-bubble>
+
+The set that ships with Charm is: `checkmark`, `checkmark-circle`, `chevron-down`, `chevron-right`,
+`circle`, `dismiss`, `error-circle`, `more`, `person`, `question`, `square`, `warning`, and
+`warning-shield`. A `name` outside that list falls back to the `question` icon.
+
+## Sizes
+
+Charm's icon is `1em` square, so with no `size` it scales with whatever text it sits in — the right
+default inside a button or a label. Set `size` to pin it to a token instead, for icons that stand on
+their own.
+
+<code-bubble>
+
+```html
+<zd-icon name="checkmark" size="small"></zd-icon>
+<zd-icon name="checkmark"></zd-icon>
+<zd-icon name="checkmark" size="large"></zd-icon>
+```
+
+</code-bubble>
+
+Unlike the form controls, the icon gets three steps — `small`, `default`, and `large`.
+
+## In context
+
+Icons inherit `color` and `font-size` from their surroundings, so an icon in a button matches the
+button's text without any extra styling.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary">
+  <zd-icon slot="start" name="person"></zd-icon>
+  View profile
+</zd-button>
+```
+
+</code-bubble>
+
+## Styling
+
+Standard CSS applies — the icon is just text-shaped.
+
+<code-bubble>
+
+```html
+<zd-icon name="warning" style="color: crimson; font-size: 2rem; rotate: 90deg;"></zd-icon>
+```
+
+</code-bubble>
+
+## External icons
+
+Use `url` to load an SVG that isn't in the set. `name` wins if both are set.
+
+<code-bubble>
+
+```html
+<zd-icon url="/icons/tooth.svg"></zd-icon>
+```
+
+</code-bubble>
+
+Fetching from a third-party icon CDN would send a request to a host other than the configured
+Zocdoc `baseUrl`, which this library doesn't do (PHI-003). Self-host the SVG instead.
+
+## Events
+
+`icon-load` fires when the icon renders; `icon-error` fires when a `name` isn't found or a `url`
+fetch fails, at which point the fallback icon renders.
+
+# Accessibility
+
+Icons are hidden from assistive technology by default, which is correct for decoration — the
+adjacent text carries the meaning.
+
+When an icon is the only content in a control, it has to carry the name — use the `label` attribute,
+which wraps the SVG in `role="img"` with that label.
+
+<code-bubble>
+
+```html
+<zd-button icon-only>
+  <zd-icon slot="start" name="dismiss" label="Close"></zd-icon>
+</zd-button>
+```
+
+</code-bubble>
+
+`aria-label` on the `zd-button` host does **not** work here. Charm renders the real `<button>` inside
+the shadow root and only forwards `aria-current`, `aria-disabled`, `aria-expanded`, and
+`aria-pressed` to it — the host's `aria-label` never reaches it, and the button's name comes from its
+slotted content.
+
+`label` ends up as an `aria-label` inside the shadow root, which browser translation can't reach
+(I18N-001), so prefer a visible text node wherever the design allows one and keep icon-only controls
+for cases where it doesn't.
+
+Never use an icon alone to convey a state, such as insurance being verified. Pair it with text
+(A11Y-001).
+
+# API
+
+<ArgTypes />
