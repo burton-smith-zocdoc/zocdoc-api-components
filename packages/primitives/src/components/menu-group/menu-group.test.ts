@@ -1,10 +1,6 @@
 import { it } from 'vitest';
 import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
 
-interface ZdMenuGroup extends HTMLElement {
-  label?: string;
-}
-
 describeA11y('zd-menu-group', () => {
   it('passes axe checks with label and items', async () => {
     const menu = document.createElement('zd-menu');

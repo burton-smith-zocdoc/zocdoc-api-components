@@ -69,9 +69,7 @@ is gitignored. **Never commit a token.**
 | Command | Does |
 | --- | --- |
 | `pnpm typecheck` | `tsc --noEmit` across the workspace |
-| `pnpm test` | all Vitest projects |
-| `pnpm test:client` | node project — everything outside `components/` and `__tests__/` |
-| `pnpm test:components` | Chromium project — `components/` and `__tests__/` |
+| `pnpm test` | Vitest in Chromium — axe-core accessibility tests run in both light and dark mode |
 | `pnpm storybook` | Storybook on :6006 |
 | `pnpm demo` | the demo site |
 

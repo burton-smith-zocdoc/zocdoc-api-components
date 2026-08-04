@@ -50,6 +50,13 @@ export function getScheme(): ColorScheme {
 }
 
 /**
+ * Vitest types `describe` and `describe.skip` differently — only the plain form
+ * carries `skipIf`/`runIf` — so `typeof describe` rejects `describe.skip`. This is
+ * the narrowest shape both satisfy, and it is all the implementation below calls.
+ */
+type DescribeFn = (name: string, fn: () => void) => void;
+
+/**
  * Wrap a test suite to run in both light and dark mode with automatic setup/cleanup.
  *
  * Use `getContainer()` inside tests to access the container.
@@ -66,11 +73,7 @@ export function getScheme(): ColorScheme {
  *   });
  * });
  */
-function describeA11yImpl(
-  describeFn: typeof describe,
-  name: string,
-  fn: () => void
-): void {
+function describeA11yImpl(describeFn: DescribeFn, name: string, fn: () => void): void {
   describeFn(`${name} accessibility`, () => {
     let cleanup: () => void;
 
@@ -141,9 +144,7 @@ export function formatViolations(violations: Result[]): string {
 
   return violations
     .map((v) => {
-      const nodes = v.nodes
-        .map((n) => `  - ${n.html}\n    ${n.failureSummary}`)
-        .join('\n');
+      const nodes = v.nodes.map((n) => `  - ${n.html}\n    ${n.failureSummary}`).join('\n');
       return `[${v.impact}] ${v.id}: ${v.description}\n${nodes}`;
     })
     .join('\n\n');

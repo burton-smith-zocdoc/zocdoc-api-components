@@ -1,70 +1,77 @@
 import { it } from 'vitest';
 import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import type { ZdRadioGroup } from '../radio-group/radio-group.js';
 import type { ZdRadio } from './radio.js';
+
+/**
+ * Radios are only tested inside a group. `zd-radio` puts `role="radio"` on its host,
+ * and ARIA requires that role to have a `radiogroup` ancestor — a lone radio fails
+ * axe's `aria-required-parent` no matter how it is labelled. The group also owns
+ * `name` and `value`; the radio itself has neither.
+ */
+function createGroup(label: string, name: string): ZdRadioGroup {
+  const group = document.createElement('zd-radio-group') as ZdRadioGroup;
+  group.label = label;
+  group.name = name;
+  return group;
+}
+
+function createRadio(label: string, value: string): ZdRadio {
+  const radio = document.createElement('zd-radio') as ZdRadio;
+  radio.label = label;
+  radio.value = value;
+  return radio;
+}
 
 describeA11y('zd-radio', () => {
   it('passes axe checks with label', async () => {
-    const radio = document.createElement('zd-radio') as ZdRadio;
-    radio.label = 'Option A';
-    radio.name = 'options';
-    radio.value = 'a';
-    getContainer().appendChild(radio);
+    const group = createGroup('Choose an option', 'options');
+    group.appendChild(createRadio('Option A', 'a'));
+    getContainer().appendChild(group);
     await waitForUpdate();
 
     await expectNoViolations();
   });
 
   it('passes axe checks when checked', async () => {
-    const radio = document.createElement('zd-radio') as ZdRadio;
-    radio.label = 'Selected option';
-    radio.name = 'selected';
-    radio.value = 'selected';
+    const group = createGroup('Choose an option', 'selected');
+    const radio = createRadio('Selected option', 'selected');
     radio.checked = true;
-    getContainer().appendChild(radio);
+    group.appendChild(radio);
+    getContainer().appendChild(group);
     await waitForUpdate();
 
     await expectNoViolations();
   });
 
   it('passes axe checks when disabled', async () => {
-    const radio = document.createElement('zd-radio') as ZdRadio;
-    radio.label = 'Disabled option';
-    radio.name = 'disabled';
-    radio.value = 'disabled';
+    const group = createGroup('Choose an option', 'disabled');
+    const radio = createRadio('Disabled option', 'disabled');
     radio.disabled = true;
-    getContainer().appendChild(radio);
+    group.appendChild(radio);
+    getContainer().appendChild(group);
     await waitForUpdate();
 
     await expectNoViolations();
   });
 
   it('passes axe checks with size="small"', async () => {
-    const radio = document.createElement('zd-radio') as ZdRadio;
-    radio.label = 'Small radio';
-    radio.name = 'small';
-    radio.value = 'small';
+    const group = createGroup('Choose an option', 'small');
+    const radio = createRadio('Small radio', 'small');
     radio.size = 'small';
-    getContainer().appendChild(radio);
+    group.appendChild(radio);
+    getContainer().appendChild(group);
     await waitForUpdate();
 
     await expectNoViolations();
   });
 
   it('passes axe checks with multiple radios in group', async () => {
-    const fieldset = document.createElement('fieldset');
-    const legend = document.createElement('legend');
-    legend.textContent = 'Choose an option';
-    fieldset.appendChild(legend);
-
+    const group = createGroup('Choose an option', 'group');
     for (const value of ['a', 'b', 'c']) {
-      const radio = document.createElement('zd-radio') as ZdRadio;
-      radio.label = `Option ${value.toUpperCase()}`;
-      radio.name = 'group';
-      radio.value = value;
-      fieldset.appendChild(radio);
+      group.appendChild(createRadio(`Option ${value.toUpperCase()}`, value));
     }
-
-    getContainer().appendChild(fieldset);
+    getContainer().appendChild(group);
     await waitForUpdate();
 
     await expectNoViolations();

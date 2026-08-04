@@ -29,7 +29,19 @@
       "files": ["**/*.test.ts", "**/__tests__/**", "**/test/**"],
       "plugins": ["vitest"],
       "rules": {
-        "no-console": "off"
+        "no-console": "off",
+        "vitest/expect-expect": [
+          "error",
+          {
+            "assertFunctionNames": [
+              "expect",
+              "expectTypeOf",
+              "assert",
+              "assertType",
+              "expectNoViolations"
+            ]
+          }
+        ]
       }
     },
     {

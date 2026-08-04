@@ -12,8 +12,6 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "test": "vitest run",
-    "test:client": "vitest run --project client",
-    "test:components": "vitest run --project components",
     "analyze": "cem analyze --litelement --globs \"packages/*/src/**/*.ts\" --exclude \"**/*.stories.ts\" --exclude \"**/*.test.ts\"",
     "storybook": "pnpm run analyze && storybook dev -p 6006",
     "storybook:build": "pnpm run analyze && storybook build",
