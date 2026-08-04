@@ -10,3 +10,4 @@ custom-elements.json
 dist
 .vitest-attachments
 __screenshots__
+__fixtures__

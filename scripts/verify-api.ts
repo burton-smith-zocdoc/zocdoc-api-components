@@ -77,10 +77,12 @@ async function discoverTokenEndpoint(): Promise<string[]> {
 
   for (const base of AUTH_BASES) {
     try {
+      // eslint-disable-next-line no-await-in-loop -- sequential discovery with ordered logging
       const res = await fetch(`${base}/.well-known/openid-configuration`, {
         headers: { Accept: 'application/json' },
       });
       if (res.ok) {
+        // eslint-disable-next-line no-await-in-loop -- continuation of sequential discovery
         const doc = (await res.json()) as { token_endpoint?: string };
         if (doc.token_endpoint) {
           console.log(`discovered token_endpoint: ${doc.token_endpoint}`);
@@ -171,6 +173,7 @@ async function mintToken(clientId: string, clientSecret: string): Promise<string
 
         let res: Response;
         try {
+          // eslint-disable-next-line no-await-in-loop -- retry loop with early exits
           res = await fetch(endpoint, {
             method: 'POST',
             headers: attempt.headers,
@@ -190,6 +193,7 @@ async function mintToken(clientId: string, clientSecret: string): Promise<string
           continue endpointLoop;
         }
 
+        // eslint-disable-next-line no-await-in-loop -- continuation of retry loop
         const raw = await res.text();
         if (!res.ok) {
           // Error semantics, established empirically against this tenant rather than
@@ -432,12 +436,14 @@ for (const { guide, openapi, realValue } of pairs) {
 
   for (const name of [guide, openapi]) {
     const bogusPath = `/v1/provider_locations?zip_code=${ZIP}&${name}=${BOGUS}`;
+    // eslint-disable-next-line no-await-in-loop -- sequential probing with ordered output
     const bogus = await probe(bogusPath);
     report(`${name}=<bogus>`, bogusPath, bogus);
 
     let realCount: number | null = null;
     if (realValue) {
       const realPath = `/v1/provider_locations?zip_code=${ZIP}&${name}=${encodeURIComponent(realValue)}`;
+      // eslint-disable-next-line no-await-in-loop -- sequential probing with ordered output
       const real = await probe(realPath);
       report(`${name}=<real>`, realPath, real);
       realCount = countItems(real.body);

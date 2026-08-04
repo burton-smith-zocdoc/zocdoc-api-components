@@ -59,7 +59,8 @@ pnpm typecheck
 pnpm test
 ```
 
-Browser tests need Chromium: `pnpm exec playwright install chromium`.
+Browser tests need Chromium, Firefox, and WebKit:
+`pnpm exec playwright install chromium firefox webkit`.
 
 Copy `.env.local.example` to `.env.local` and add your sandbox token. `.env.local`
 is gitignored. **Never commit a token.**
@@ -69,7 +70,7 @@ is gitignored. **Never commit a token.**
 | Command | Does |
 | --- | --- |
 | `pnpm typecheck` | `tsc --noEmit` across the workspace |
-| `pnpm test` | Vitest in Chromium — axe-core accessibility tests run in both light and dark mode |
+| `pnpm test` | Vitest across Chromium, Firefox, and WebKit — axe-core accessibility tests run in both light and dark mode |
 | `pnpm storybook` | Storybook on :6006 |
 | `pnpm demo` | the demo site |
 

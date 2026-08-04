@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./theme/tokens.css": "./dist/theme/tokens.css",
     "./theme/reset.css": "./dist/theme/reset.css",
     "./theme/utilities.css": "./dist/theme/utilities.css",

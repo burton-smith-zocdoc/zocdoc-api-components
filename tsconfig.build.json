@@ -1,12 +1,10 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "noEmit": false,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "dist",
-    "rootDir": "packages"
-  },
-  "include": ["packages/*/src/**/*.ts"],
-  "exclude": ["**/*.test.ts", "**/*.stories.ts", "**/test/**"]
+  // Solution file — it owns no sources of its own. Each package emits into its own `dist`,
+  // which is what the packages' `exports` maps point at and where `build-theme.ts` already
+  // writes the theme CSS. A single root `dist` cannot satisfy both.
+  "files": [],
+  "references": [
+    { "path": "packages/primitives/tsconfig.build.json" },
+    { "path": "packages/api-components/tsconfig.build.json" }
+  ]
 }

@@ -17,7 +17,8 @@ function pagedBody<T>(items: T[], page: number, pageSize: number, totalCount: nu
     page,
     page_size: pageSize,
     total_count: totalCount,
-    next_url: null,
+    // `''`, not `null` — production sends an empty string on the last page (2026-08-04).
+    next_url: '',
     data: items,
   };
 }
@@ -185,5 +186,64 @@ describe('reference data', () => {
     await getInsurancePlans();
 
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(3);
+  });
+
+  describe('insurance plan filters', () => {
+    // These exist because production reports 10,677 plans. Fetching them all is 22
+    // round-trips and megabytes of JSON, so the filters are the difference between a
+    // usable select and a hung one — a silently-dropped filter is the failure to catch.
+    it('sends each filter under its documented query parameter name', async () => {
+      mockPagedFetch([{ id: 'ip_9111', name: 'A Plan' }]);
+
+      await getInsurancePlans({
+        state: 'NY',
+        careCategory: 'dental',
+        networkType: 'ppo',
+        programType: 'commercial',
+        status: 'active',
+      });
+
+      const params = firstUrl().searchParams;
+      expect(params.get('state')).toBe('NY');
+      // Singular going out, even though the plan objects carry `care_categories`.
+      expect(params.get('care_category')).toBe('dental');
+      expect(params.get('network_type')).toBe('ppo');
+      expect(params.get('program_type')).toBe('commercial');
+      expect(params.get('status')).toBe('active');
+    });
+
+    it('omits filters that were not supplied', async () => {
+      await getInsurancePlans({ state: 'NY' });
+
+      const params = firstUrl().searchParams;
+      expect(params.get('state')).toBe('NY');
+      for (const absent of ['care_category', 'network_type', 'program_type', 'status']) {
+        expect(params.has(absent)).toBe(false);
+      }
+    });
+
+    it('caches each filter combination separately', async () => {
+      await getInsurancePlans({ state: 'NY' });
+      await getInsurancePlans({ state: 'CA' });
+
+      expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
+    });
+
+    it('reuses one entry for a repeated filter', async () => {
+      await getInsurancePlans({ state: 'NY' });
+      await getInsurancePlans({ state: 'NY' });
+
+      expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
+    });
+
+    it('treats an explicit undefined as no filter at all', async () => {
+      // Otherwise `{}` and `{ state: undefined }` would key differently and issue the
+      // same request twice — easy to hit, since a caller forwarding an optional prop
+      // passes undefined rather than omitting the key.
+      await getInsurancePlans();
+      await getInsurancePlans({ state: undefined });
+
+      expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
+    });
   });
 });

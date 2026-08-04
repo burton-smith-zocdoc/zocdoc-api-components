@@ -1,0 +1,17 @@
+{
+  // Emits into this package's own `dist`, which is where its `exports` map points and
+  // where `scripts/build-theme.ts` already writes the theme CSS. `composite` makes the
+  // package referenceable, so api-components typechecks against these declarations
+  // rather than reaching into this package's source.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.test.ts", "**/*.stories.ts", "**/test/**", "**/mock/**"]
+}

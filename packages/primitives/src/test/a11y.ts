@@ -5,15 +5,22 @@ export type ColorScheme = 'light' | 'dark';
 
 const SCHEMES: ColorScheme[] = ['light', 'dark'];
 
+let schemeStyleElement: HTMLStyleElement | null = null;
+
 /**
  * Configure the document's color scheme for testing.
  *
- * The Zocdoc theme uses `light-dark()` and `prefers-color-scheme` media queries.
- * Setting the `color-scheme` property on the root element forces the computed
- * scheme for both mechanisms.
+ * The Zocdoc theme uses `light-dark()` CSS function. Setting `color-scheme`
+ * on :root tells the browser which value to use. We use `!important` to
+ * override the theme's `color-scheme: light dark` declaration.
  */
 export function setColorScheme(scheme: ColorScheme): void {
-  document.documentElement.style.colorScheme = scheme;
+  if (!schemeStyleElement) {
+    schemeStyleElement = document.createElement('style');
+    schemeStyleElement.id = 'test-color-scheme';
+    document.head.appendChild(schemeStyleElement);
+  }
+  schemeStyleElement.textContent = `:root { color-scheme: ${scheme} only !important; }`;
 }
 
 /**
@@ -124,8 +131,15 @@ const EXCLUDED_RULES = [
 /**
  * Run axe-core accessibility checks on the current document.
  * Returns only the violations found.
+ *
+ * Includes delays to ensure browsers have computed `light-dark()` CSS values
+ * correctly in shadow DOM before axe-core reads computed styles.
  */
 export async function checkAccessibility(): Promise<Result[]> {
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
   const results: AxeResults = await axe.run(document, {
     runOnly: {
       type: 'tag',

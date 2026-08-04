@@ -34,7 +34,13 @@ export async function request<T>(path: string, init: ZocdocRequestInit = {}): Pr
   const token = await resolveToken(config);
   const hasBody = init.body !== undefined;
 
-  const response = await fetch(buildUrl(config.baseUrl, path, init.query), {
+  // Resolved per call, and `fetch` is referenced inside the arrow rather than passed
+  // by value, so a test that swaps the global still takes effect and no environment
+  // needs `fetch` bound to a receiver.
+  const send =
+    config.transport ?? ((url: string, requestInit: RequestInit) => fetch(url, requestInit));
+
+  const response = await send(buildUrl(config.baseUrl, path, init.query), {
     method: init.method ?? 'GET',
     signal: init.signal,
     headers: {

@@ -1,5 +1,13 @@
 import { request, type QueryParams } from './http.js';
-import type { InsurancePlan, Specialty, VisitReason, ZocdocPagedResponse } from './types.js';
+import type {
+  CareCategory,
+  InsurancePlan,
+  InsuranceProgramType,
+  InsuranceStatus,
+  Specialty,
+  VisitReason,
+  ZocdocPagedResponse,
+} from './types.js';
 
 /** Documented ceilings on the paged reference-data endpoints. */
 const MAX_PAGE_SIZE = 500;
@@ -81,6 +89,44 @@ export function getVisitReasons(specialtyId?: string): Promise<VisitReason[]> {
   );
 }
 
-export function getInsurancePlans(): Promise<InsurancePlan[]> {
-  return cached('insurance_plans', () => fetchAllPages<InsurancePlan>('/v1/insurance_plans'));
+/**
+ * Narrowing options for `getInsurancePlans`. Every field maps to a documented query
+ * parameter — note `care_category` is singular on the way in even though the plan
+ * objects carry a `care_categories` array on the way out.
+ */
+export interface InsurancePlanFilters {
+  /** Two-letter code, e.g. `NY`. Plans whose coverage area includes the state. */
+  state?: string;
+  careCategory?: CareCategory;
+  networkType?: string;
+  programType?: InsuranceProgramType;
+  /** Defaults to `active` server-side; pass this only to widen. */
+  status?: InsuranceStatus;
+}
+
+/**
+ * Unfiltered, this is a bad idea, and the numbers are why: production reports
+ * `total_count: 10677`. Even at the maximum page size that is 22 sequential
+ * round-trips and several megabytes of JSON, all to populate one select — and it is
+ * paid on the client, over whatever connection the patient happens to have.
+ *
+ * So prefer a filter. `state` is the natural one for a booking flow, since a patient
+ * picks from plans that operate where they are seeking care. The signature keeps the
+ * argument optional to stay compatible with the unfiltered call, not to bless it.
+ *
+ * Each distinct filter combination is cached separately.
+ */
+export function getInsurancePlans(filters: InsurancePlanFilters = {}): Promise<InsurancePlan[]> {
+  const query: QueryParams = {
+    state: filters.state,
+    care_category: filters.careCategory,
+    network_type: filters.networkType,
+    program_type: filters.programType,
+    status: filters.status,
+  };
+
+  // Key on the resolved query rather than the input object, so `{}` and
+  // `{ state: undefined }` share one entry instead of issuing the same request twice.
+  const key = `insurance_plans:${JSON.stringify(query)}`;
+  return cached(key, () => fetchAllPages<InsurancePlan>('/v1/insurance_plans', query));
 }

@@ -31,7 +31,24 @@ Every task's requirements implicitly include this section.
   build only works under Node 24.11.0 (it passes `--disable-warning`, which Node 20
   rejects outright).
 - **Vitest `^4.1.10`**, `@vitest/browser@^4.1.10`, `@vitest/browser-playwright@^4.1.10`. `@charm-ux/theming` already depends on Vitest `^4.1.8`, so stay on the 4.x line.
-- **No build step.** Every package's `exports` points at `./src/index.ts`. Do not add `tsc` emit, `dist/`, or Vite library builds. Typecheck runs as `tsc --noEmit`.
+- **~~No build step.~~ Superseded 2026-08-04 — declarations are built, and `exports` points at
+  `dist/`.** The original constraint said every package's `exports` points at `./src/index.ts`
+  with no `tsc` emit. Burton overruled it: a `package.json` `exports` map is a consumer-facing
+  contract, and pointing it at `.ts` means anything resolving the bare specifier
+  `@powered-by-zocdoc/primitives` gets TypeScript source it has to compile itself. It also hid a
+  real inconsistency — primitives' four `./theme/*.css` entries already pointed at `dist/`, so
+  the CSS half of that package was built while the JS half was not. What holds now:
+  - Both packages export `{ ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } }`.
+    No source fallback and no `development` condition — one resolution path, so what a consumer
+    resolves is what CI resolves.
+  - Each package owns a `composite` `tsconfig.build.json` emitting to its own `dist/` with
+    `rootDir: "src"`; api-components references primitives, so cross-package drift surfaces at
+    build time. Root `tsconfig.build.json` is a references-only solution file — it emits nothing.
+  - **New prerequisite: the declarations must exist before `typecheck`, `test`, or `storybook`.**
+    The root scripts enforce this rather than leaving it to memory: `build:types` runs
+    `tsc --build tsconfig.build.json`, and `typecheck`, `test`, `storybook`, and `storybook:build`
+    all chain from it. `tsc --build` is incremental, so the repeat cost is near zero.
+  - Still no Vite library build and no bundling. `tsc` emit only.
 - **Tag prefix is `zd`.** Never hardcode a tag name in a template. Use `this.scope.tag('name')` with `html` imported from `lit/static-html.js`.
 - **Never import a Charm component barrel (`.../button/index.js`) anywhere.** A
   folder's `index.js` calls `registerComponent()` as an import side effect, which
@@ -424,13 +441,21 @@ The scaffold already created it. Confirm it reads exactly this:
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "dependencies": {
     "@powered-by-zocdoc/primitives": "workspace:*",
     "lit": "^3.2.1"
   }
 }
 ```
+
+The `exports` map above is the corrected one — see the superseded "No build step" bullet in
+Global Constraints. This task originally specified `"exports": { ".": "./src/index.ts" }`.
 
 - [ ] **Step 2: Write the failing tests**
 
@@ -936,7 +961,7 @@ git add packages/api-components/src/client
 
 ---
 
-### Task 7: Provider search and availability endpoints
+### Task 7: Provider search and availability endpoints — ✅ COMPLETE
 
 **Files:**
 - Create: `packages/api-components/src/client/provider-locations.ts`, `packages/api-components/src/client/availability.ts`
@@ -1131,7 +1156,23 @@ git add packages/api-components/src/client
 
 ---
 
-### Task 8: Appointment creation
+### Task 8: Appointment creation — ✅ COMPLETE
+
+> **Deviation from the plan below (2026-08-04).** The `Produces` section specifies
+> `CreatedAppointment { appointment_id: string }` and the Step 1 test mocks a flat
+> `{ appointment_id: 'ap_1' }` body. Both are wrong: the published OpenAPI bundle (v1.177)
+> defines `AppointmentResponse` as `BaseResult` plus `data`, so the id is at
+> `data.appointment_id`. As implemented, `createAppointment` unwraps `data` and returns
+> `AppointmentResponseData`, which also carries `appointment_status` — necessary, because a
+> 200 may be `pending_booking` or even `booking_failed`, and a caller treating a resolved
+> promise as a confirmed booking would be wrong.
+>
+> The plan's example patient also uses phone `5551234567`, which the API rejects: neither
+> the first nor the fourth digit may be 0 or 1, and its fourth digit is 1. The tests use
+> the spec's own `9999999999` example instead.
+>
+> An out-of-plan addition landed alongside this task at Burton's request: `client/mock/`,
+> holding sandbox fixtures and a `ZocdocTransport` that serves them with no credentials.
 
 **Files:**
 - Create: `packages/api-components/src/client/appointments.ts`, `packages/api-components/src/index.ts`

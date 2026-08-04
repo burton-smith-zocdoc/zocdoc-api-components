@@ -11,8 +11,11 @@ describeA11y('zd-dialog', () => {
     const el = document.createElement('zd-dialog') as ZdDialog;
     el.heading = 'Confirm action';
     el.innerHTML = '<p>Are you sure you want to proceed?</p>';
-    el.open = true;
     getContainer().appendChild(el);
+    await waitForUpdate();
+
+    el.open = true;
+    await waitForUpdate();
     await waitForUpdate();
 
     await expectNoViolations();

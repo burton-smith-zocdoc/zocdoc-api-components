@@ -7,11 +7,25 @@ Source of truth for Tasks 5–8. Records the observed Zocdoc sandbox contract.
 These are generated from the spec, not hand-written prose, and they carry per-parameter
 types, requiredness, enums, and full response field paths.
 
-**Live verification: not yet performed.** The sandbox credentials we hold authenticate
-but have no client grant for the sandbox API audience, so no request has been issued
-against a live endpoint. See [Auth status](#auth-status). Everything below is
-spec-derived; items that the spec leaves genuinely underspecified are flagged
-**[NEEDS LIVE CHECK]** rather than guessed.
+**Live verification: partial as of 2026-08-04 — reference data only, against
+production.** Authentication is solved; the credentials were production credentials all
+along, which is why the sandbox token endpoint rejected them. See
+[Auth status](#auth-status). `/v1/specialties` and `/v1/insurance_plans` have been called
+and recorded; see [Verified against production](#verified-against-production-2026-08-04).
+Everything else below is still spec-derived, and items the spec leaves genuinely
+underspecified are flagged **[NEEDS LIVE CHECK]** rather than guessed.
+
+Provider search, availability, and booking remain unverified **by choice, not by
+blocker** — the documented test scenarios exist only in sandbox, and booking against
+production would create real appointments.
+
+Where this file records a place the published docs are *wrong* rather than merely
+underspecified, that discrepancy is also written up in
+[`api-doc-issues.md`](./api-doc-issues.md).
+
+**That file is written to be shared with the team that maintains the API docs.** Keep it
+self-contained — no internal paths, no notes about our own code or plan. Findings about
+our own mistakes belong here or in the plan doc, not there.
 
 ---
 
@@ -60,7 +74,7 @@ consistently an array. Do not write a single generic `{ data: T[] }` type.
   page: number;         // zero-based index of current page
   page_size: number;
   total_count: number;
-  next_url: string;     // null on the last page (typed string, nullable in practice)
+  next_url: string;     // '' on the last page — NOT null; see Verified against production
   data: ...;            // shape varies — see below
 }
 ```
@@ -192,8 +206,11 @@ require (Task 13). Its enum values are not enumerated in the spec.
 | `insurance_plan_id` | string | used only to construct `booking_url` |
 | `insurance_carrier_id` | string | used only to construct `booking_url` |
 
-Note the guide says "30 days or less" while the OpenAPI table says "31 days or less".
-Treat **31** as the limit only if live-confirmed; clamping to 30 is safe either way.
+The OpenAPI description (bundle line 371) says "**31** days or less". An earlier version of
+this note claimed a guide says "30 days or less" and treated the two as contradictory —
+**that guide text could not be located**, and `guides/booking.md` serves the HTML app shell
+rather than markdown, so it is unverifiable. Do not cite the contradiction as established.
+Clamping to 30 is still safe either way, which is what we do.
 
 `data` is an array; each item:
 
@@ -201,9 +218,14 @@ Treat **31** as the limit only if live-confirmed; clamping to 30 is safe either 
 - `first_availability: { start_time, visit_reason_id, booking_url }` —
   `start_time` is ISO-8601 **with a timezone offset in the provider's local zone**
   (`2022-04-27T09:00:00-04:00`). Per I18N-002, render via `Intl.DateTimeFormat`.
-- `timeslots` — array. **[NEEDS LIVE CHECK]** the spec does not document the item
-  fields. Presumably the same shape as `first_availability`, but Task 12
-  (`zd-availability-picker`) depends on this and must not be written against a guess.
+- `timeslots` — array of the **same `Timeslot` schema as `first_availability`**
+  (`items: $ref: '#/components/schemas/Timeslot'`, bundle line 2294). So the item fields are
+  `start_time` (required), `visit_reason_id`, and `booking_url`.
+
+  *Corrected 2026-08-04.* An earlier version of this line said the spec does not document
+  the item fields and flagged it **[NEEDS LIVE CHECK]** before Task 12 could proceed. That
+  was wrong — `Availability.timeslots` is a typed `$ref`, not an untyped array. Task 12
+  (`zd-availability-picker`) is not blocked and does not need a live capture for this.
 
 Empty availability returns an **empty array for that provider location**, not an error —
 which maps cleanly onto the `empty` state required by COMP-001.
@@ -292,6 +314,64 @@ parameters, so they could not have resolved the conflict in any case.
 
 ---
 
+## Verified against production (2026-08-04)
+
+First live responses. Recorded by `scripts/verify-production-reference-data.ts` into
+`client/__fixtures__/`. Both fixtures were scanned for patient-shaped field names before
+staging — 11 and 19 distinct keys respectively, no matches.
+
+**The paged envelope is confirmed exactly as typed:**
+`{ request_id, next_url, page, page_size, total_count, data }`. Two details that were
+guesses and are now measured:
+
+- **`page` is zero-indexed.** `page: 0` came back on a request that omitted it, and
+  `next_url` pointed at `page=1`. `fetchAllPages` starts at 0, so it was already right.
+- **`next_url` is a fully-qualified URL on a non-final page, and `''` on the last one.**
+  The spec says *"null if this is the last page of results"* and that is **wrong** — a
+  one-item response came back with `next_url: ""`. So `next_url === null` is not a valid
+  end-of-pages test; it would loop until `MAX_PAGES`. Prefer falsiness, or page by
+  `total_count` as `fetchAllPages` does. `client/mock/transport.ts` emits `''` to match,
+  since imitating the spec there would hide the discrepancy from anything built on the
+  mock.
+
+**`Specialty`, `VisitReason`, and `InsurancePlan` types needed no changes.** Worth stating
+plainly since it is the reason for the exercise: the shapes derived from the spec matched
+production field for field. The specialty object names its own key `id` — `specialty_id`
+is what *other* endpoints call it when referring to one, and it is what `VisitReason`
+carries.
+
+**Volumes, which are a design input and not a footnote:**
+
+| Endpoint | `total_count` |
+|---|---|
+| `/v1/specialties` | 310 |
+| `/v1/visit_reasons?specialty_id=sp_271` | 1 |
+| `/v1/insurance_plans` | 10,677 |
+
+Visit reasons are narrow once scoped — `sp_271` (Abdominal Radiologist) has exactly one.
+That makes `specialty_id` cheap and worth always sending; unscoped, the list spans every
+specialty.
+
+10,677 plans is 22 sequential round-trips at the maximum page size of 500, and roughly
+6 MB of JSON, paid on the client to populate one select. `getInsurancePlans()` therefore
+takes documented filters (`state`, `care_category`, `network_type`, `program_type`,
+`status`), each cached separately. `state` is the natural one for a booking flow. The
+argument stays optional for compatibility, not as an endorsement of the unfiltered call.
+
+**One place production contradicts the spec.** `network_type` has no enum in the spec, only
+a prose list of **eleven** display names — HMO, PPO, POS, EPO, Indemnity, ASO, ACO, ACP,
+Medicare, Medicaid, Other. A 100-plan sample returned `epo`, `hmo`, `hmo_pos`, `indemnity`,
+`medicaid`, `other`, `pos`, `ppo`, `uncategorized`: lowercase, and **two** of them
+(`hmo_pos`, `uncategorized`) appear nowhere in that list. So the field is typed `string`.
+
+*Corrected 2026-08-04.* An earlier version said the list held eight names and that four
+observed values were absent. Both counts were wrong — `Medicare`, `Medicaid`, and `Other`
+are in the list, which is why only two values are genuinely undocumented. `program_type` and `status` do carry spec enums and every observed value
+fell inside them, so those are closed unions.
+
+`status` returned only `active`, because the endpoint defaults to it rather than because
+the other values are unused.
+
 ## Auth status
 
 Token minting is unresolved and is **not a code problem**.
@@ -334,11 +414,66 @@ credentials are issued rather than self-served, so there is no local workaround 
 `ZOCDOC_CLIENT_SECRET_n` pair in `.env.local` against both hosts and reports which, if
 any, is provisioned. It never prints secrets.
 
+### Addendum (2026-08-04): the credentials are probably production credentials
+
+Do not escalate for sandbox provisioning yet. Burton relayed that these credentials are
+for **production**, not sandbox. That fits every measurement above without contradicting
+any of them: a client of one Auth0 tenant presenting itself to a different tenant's token
+endpoint is denied after secret validation and before grant parsing, which is exactly the
+403 recorded here. `https://api-docs.zocdoc.com/guides/authentication.md` confirms the
+environments are separately credentialed — *"You'll receive unique credentials … for each
+of Zocdoc's environments (sandbox and production)"* and *"Use separate credentials for
+sandbox and production."*
+
+So the conclusion above — "not provisioned to issue machine-to-machine tokens at all …
+fixing it needs Zocdoc-side provisioning" — is **probably wrong**. It is a host and
+audience mismatch, which is fixable locally. Production values, from the docs and the
+OpenAPI `servers` block rather than inferred:
+
+| | Value |
+|---|---|
+| Token endpoint | `POST https://auth.zocdoc.com/oauth/token` |
+| Audience | `https://api-developer.zocdoc.com/` (trailing slash significant) |
+| API base | `https://api-developer.zocdoc.com` |
+
+**Unverified, and it is the load-bearing claim:** that these production credentials are
+themselves scoped to test data. Nothing in the docs supports it, and the docs say the
+opposite about handling — *"Sandbox credentials can be securely distributed to developers
+for use. Production secrets should be used only by secure backend services."* Until
+someone at Zocdoc confirms the scoping, treat production responses as real.
+
+Consequences for testing, which are not symmetric between reads and writes:
+
+- Every sentinel in `client/mock/fixtures.ts` is **sandbox-only**. The testing-data guide
+  opens with *"The sandbox environment includes special-case inputs and predefined
+  provider test data."* On production, `11201` is a real Brooklyn ZIP returning real
+  practices, and `pr_no_availbility` and the eight booking-status ids do not exist.
+- Reference data (specialties, visit reasons, insurance plans) is catalog data with no
+  patient fields, so it is safe to record from production.
+- **`POST /v1/appointments` must not be run against production.** It books a real
+  appointment at a real provider's office — irreversible and outward-facing. There is
+  also no compliant way to do it: PHI-002/TEST-003 require patient data from the
+  documented scenarios, and those exist only in sandbox, so any patient data submitted to
+  production is either a real person or realistic fake data that becomes real PHI once
+  stored.
+
+Authorized scope as of this addendum is reference-data reads only.
+`scripts/verify-production-reference-data.ts` implements exactly that, with a three-path
+allowlist and GET-only enforced in code.
+
 ## Fixtures
 
-`packages/api-components/src/client/__fixtures__/` is **empty**. Recording real responses
-requires a working token, so Task 2 Step 3 and Step 5 remain open. Tasks 5–8 can proceed
-against the contract above; their tests should use hand-written fixtures matching these
-documented shapes, replaced with recorded responses once a token exists.
+*Updated 2026-08-04 — this section previously said the directory was empty and that
+recording was blocked on a token. Both are now out of date.*
 
-No PHI has been recorded anywhere, since no live response has been captured.
+`packages/api-components/src/client/__fixtures__/` holds three recorded reference-data
+responses: `specialties.json`, `visit-reasons.json`, and `insurance_plans.json`. See that
+directory's `README.md` for sources and dates.
+
+Recording is only unblocked for reference data. Provider search, availability, and booking
+fixtures stay hand-written from the documented sandbox scenarios, for the reasons in the
+addendum above.
+
+**No PHI has been recorded.** The three recorded responses are catalog data — specialties,
+carriers, plan names, coverage states — with no patient fields. All three were scanned for
+patient-shaped keys before staging.

@@ -1,0 +1,17 @@
+{
+  // References primitives rather than including its sources, so a build of this package
+  // typechecks against primitives' emitted declarations — the same thing a consumer sees
+  // through its `exports` map. Cross-package drift shows up here instead of at install time.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.test.ts", "**/*.stories.ts", "**/test/**", "**/mock/**"],
+  "references": [{ "path": "../primitives/tsconfig.build.json" }]
+}

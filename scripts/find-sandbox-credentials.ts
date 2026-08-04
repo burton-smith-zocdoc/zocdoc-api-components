@@ -120,6 +120,7 @@ for (const pair of pairs) {
     ['canonical tenant', CANONICAL_URL],
   ] as const) {
     try {
+      // eslint-disable-next-line no-await-in-loop -- sequential logging for credential discovery
       const result = await attempt(url, pair);
       console.log(`  ${name.padEnd(22)} ${result.verdict}`);
       if (result.success && result.token && !winner) {

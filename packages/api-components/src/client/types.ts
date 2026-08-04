@@ -25,7 +25,13 @@ export interface ZocdocPagedResponse<T> extends ZocdocResponse<T> {
   page: number;
   page_size: number;
   total_count: number;
-  /** Null on the last page. Typed as a string in the spec, nullable in practice. */
+  /**
+   * Fully-qualified URL of the next page, or **`''` on the last page** — measured against
+   * production 2026-08-04, not inferred. The spec says "null if this is the last page",
+   * which is wrong, so `=== null` is not a valid end-of-pages test and would loop forever.
+   * `| null` is kept only so the spec's stated shape cannot break parsing; prefer a
+   * falsiness check, or page by `total_count` as `fetchAllPages` does.
+   */
   next_url: string | null;
 }
 
@@ -63,13 +69,35 @@ export interface InsuranceCarrier {
   name: string;
 }
 
+/** Spec enum, corroborated 2026-08-04 against production: every observed value is listed. */
+export type InsuranceProgramType =
+  | 'commercial'
+  | 'commercial_exchange'
+  | 'medicare'
+  | 'medicaid'
+  | 'workers_compensation'
+  | 'uncategorized'
+  | 'medicare_advantage'
+  | 'medicaid_managed_care'
+  | 'federal';
+
+/** Spec enum. Only `active` comes back unfiltered, since the endpoint defaults to it. */
+export type InsuranceStatus = 'inactive' | 'active' | 'deleted';
+
 export interface InsurancePlan {
   id: string;
   name: string;
   carrier?: InsuranceCarrier;
+  /**
+   * Deliberately `string`, not a union. The spec gives no enum for this field — only a
+   * prose list (HMO, PPO, POS, EPO, Indemnity, ASO, ACO, ACP) that production
+   * contradicts: a 100-plan sample returned `epo`, `hmo`, `hmo_pos`, `indemnity`,
+   * `medicaid`, `other`, `pos`, `ppo`, and `uncategorized` — lowercase, and four of
+   * those appear nowhere in the prose. A closed union would reject valid data.
+   */
   network_type?: string;
-  program_type?: string;
-  status?: string;
+  program_type?: InsuranceProgramType;
+  status?: InsuranceStatus;
   care_categories?: CareCategory[];
   coverage_area?: {
     is_national: boolean;
@@ -151,9 +179,12 @@ export interface ProviderLocation {
   };
   booking_requirements?: {
     /**
-     * Drives which fields `zd-patient-form` must require (Task 13). The spec does
-     * not enumerate the values, so this stays `string[]` until a live response is
-     * captured — see the [NEEDS LIVE CHECK] note in docs/api-contract-notes.md.
+     * Drives which fields `zd-patient-form` must require (Task 13). These are dotted
+     * paths into the booking request body, not bare field names — the OpenAPI bundle
+     * documents `data.patient.insurance.insurance_plan_id` and
+     * `data.patient.insurance.insurance_member_id`. It stays `string[]` rather than a
+     * union because the spec calls those examples ("Options include"), not a closed set,
+     * so an unlisted path must not fail to typecheck.
      */
     required_fields?: string[];
     accepts_booking_requests_from?: BookingRequestSource[];
@@ -186,9 +217,8 @@ export interface ProviderLocationAvailability {
   provider_location_id: string;
   first_availability?: AvailabilitySlot;
   /**
-   * **[NEEDS LIVE CHECK]** the spec does not document these item fields. Assumed
-   * to match `first_availability`; Task 12 must not be written against the guess
-   * without a captured response.
+   * Confirmed against the published OpenAPI bundle (v1.177): both this array and
+   * `first_availability` reference the same `Timeslot` schema, so they share a type.
    */
   timeslots?: AvailabilitySlot[];
 }
@@ -225,6 +255,31 @@ export interface PatientAddress {
   zip_code: string;
 }
 
+/**
+ * All eight documented statuses. A booking does not necessarily come back
+ * `confirmed` — `pending_booking` means the practice has yet to accept it, which is
+ * a success the UI has to word differently, and `booking_failed` is a failure that
+ * arrives on a 200.
+ */
+export type AppointmentStatus =
+  | 'pending_booking'
+  | 'confirmed'
+  | 'booking_failed'
+  | 'cancelled'
+  | 'no_show'
+  | 'pending_reschedule'
+  | 'rescheduled'
+  | 'reschedule_failed';
+
+/** Whether the practice confirms automatically or by hand. */
+export type AppointmentConfirmationType = 'auto' | 'manual' | 'pending_evaluation';
+
+/** Note this is not `VisitType` — the search filter and the booked visit differ. */
+export type AppointmentVisitType =
+  | 'in_person'
+  | 'zocdoc_video_service'
+  | 'third_party_video_service';
+
 export interface PatientInsurance {
   insurance_plan_id?: string;
   insurance_group_number?: string;
@@ -250,4 +305,26 @@ export interface Patient {
   developer_patient_id?: string;
   insurance?: PatientInsurance;
   gender?: Gender[];
+}
+
+/**
+ * The `data` of a successful `POST /v1/appointments`, flattened from the spec's three
+ * layers of `allOf` (`AppointmentBaseResponseData` → `SharedAppointmentResponseData` →
+ * `AppointmentResponseData`). Only the fields the spec marks required are required here.
+ *
+ * `notes` is echoed back and is patient-authored free text, so it is PHI: it must not be
+ * logged (PHI-001) even though it arrives from the API rather than from a form.
+ */
+export interface AppointmentResponseData {
+  appointment_id: string;
+  appointment_status: AppointmentStatus;
+  is_provider_resource: boolean;
+  confirmation_type: AppointmentConfirmationType;
+  visit_type: AppointmentVisitType;
+  developer_patient_id?: string;
+  location_phone_number?: string;
+  location_phone_extension?: string;
+  /** Patient-facing URL for a Zocdoc video visit. Absent for in-person appointments. */
+  waiting_room_path?: string;
+  notes?: string;
 }
