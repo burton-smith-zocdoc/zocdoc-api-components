@@ -15,11 +15,26 @@ const BROWSER_TESTS = [
   'packages/*/src/__tests__/**/*.test.ts',
 ];
 
+/**
+ * Empties `mock.calls` before every test. Not a nicety, and set per project because project
+ * configs do not inherit this from the root.
+ *
+ * Without it, call history leaks between tests in a file: `vi.mock(path, { spy: true })`
+ * makes a module export permanently a spy, so a later `vi.spyOn` on it hands back that same
+ * spy rather than a fresh one, and `restoreAllMocks` puts the implementation back without
+ * emptying the recorded calls. `toHaveBeenCalledTimes(1)` then counts every call the whole
+ * file has made, and `mock.calls[0]` belongs to whichever test ran first — both of which
+ * this suite hit. `mockClear` leaves implementations alone, so a `beforeEach` that installs
+ * one still works regardless of hook order.
+ */
+const clearMocks = true;
+
 export default defineConfig({
   test: {
     projects: [
       {
         test: {
+          clearMocks,
           /**
            * The catch-all, and deliberately so (TEST-001). If both projects used
            * allowlists, a package gaining a folder would match neither and its tests
@@ -36,6 +51,7 @@ export default defineConfig({
       },
       {
         test: {
+          clearMocks,
           name: 'components',
           include: BROWSER_TESTS,
           // Registers the zd prefix and injects the theme before any test module

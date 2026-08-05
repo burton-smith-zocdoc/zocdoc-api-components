@@ -138,7 +138,7 @@ describe('createMockTransport', () => {
   describe('availability', () => {
     const PL_ID = 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890';
 
-    it('returns slots on the requested date for a normal provider location', async () => {
+    it('spreads slots across the default window for a normal provider location', async () => {
       const result = await getAvailability({
         providerLocationIds: [PL_ID],
         visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
@@ -147,10 +147,36 @@ describe('createMockTransport', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]?.provider_location_id).toBe(PL_ID);
-      expect(result[0]?.timeslots?.length).toBeGreaterThan(0);
-      for (const slot of result[0]?.timeslots ?? []) {
-        expect(slot.start_time.startsWith(START_DATE)).toBe(true);
+
+      const days = [...new Set((result[0]?.timeslots ?? []).map((s) => s.start_time.slice(0, 10)))];
+
+      // The real endpoint defaults to a week when the request names no window, and the
+      // mock has to match: a picker asking for seven days and getting one back would look
+      // like a component bug. The first day is the pinned one, and every day falls inside
+      // the window — not every day *is* in it, because the generator leaves gaps for
+      // closed days on purpose.
+      expect(days[0]).toBe(START_DATE);
+      expect(days.length).toBeGreaterThan(1);
+      for (const day of days) {
+        const offset =
+          (Date.parse(`${day}T00:00:00Z`) - Date.parse(`${START_DATE}T00:00:00Z`)) / 86_400_000;
+        expect(offset).toBeGreaterThanOrEqual(0);
+        expect(offset).toBeLessThan(7);
       }
+    });
+
+    it('honours an explicitly requested window', async () => {
+      const result = await getAvailability({
+        providerLocationIds: [PL_ID],
+        visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
+        patientType: 'new',
+        startDate: START_DATE,
+        endDate: START_DATE,
+      });
+
+      const days = [...new Set((result[0]?.timeslots ?? []).map((s) => s.start_time.slice(0, 10)))];
+
+      expect(days).toEqual([START_DATE]);
     });
 
     it('generates distinct slot times', async () => {

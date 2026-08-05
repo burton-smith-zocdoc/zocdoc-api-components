@@ -24,9 +24,9 @@ export const Default: Story = {};
 export const Sizes: Story = {
   render: () => html`
     <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <zd-icon name="check" size="small"></zd-icon>
-      <zd-icon name="check"></zd-icon>
-      <zd-icon name="check" size="large"></zd-icon>
+      <zd-icon name="checkmark" size="small"></zd-icon>
+      <zd-icon name="checkmark"></zd-icon>
+      <zd-icon name="checkmark" size="large"></zd-icon>
     </div>
   `,
 };

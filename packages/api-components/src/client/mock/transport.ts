@@ -31,7 +31,11 @@ export interface MockTransportOptions {
    * jumps straight to `success` and a broken spinner looks fine.
    */
   latencyMs?: number;
-  /** Overrides the date the generated timeslots fall on. Defaults to `today`. */
+  /**
+   * Pins the first day of generated availability, overriding the requested window's
+   * start date. Without it the window comes from the request, defaulting to today — set
+   * this only when dates have to hold still, as in a test or a visual snapshot.
+   */
   availabilityStartDate?: string;
 }
 
@@ -40,6 +44,9 @@ export interface MockTransportOptions {
  * escapes the mock transport fails at DNS rather than reaching a real host.
  */
 const MOCK_BASE_URL = 'https://mock.api-developer-sandbox.invalid';
+
+/** What the availability endpoint returns when the request names no window. */
+const DEFAULT_AVAILABILITY_DAYS = 7;
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -137,7 +144,22 @@ function handleProviderLocations(url: URL): Response {
   });
 }
 
-function handleAvailability(url: URL, startDate: string): Response {
+/**
+ * Days between two `YYYY-MM-DD` strings. Parsed as UTC midnight on both sides so the
+ * subtraction is a whole number of days regardless of the browser's zone, and floored at
+ * one day: a window that ends before it starts is the caller's problem, not a reason to
+ * return nothing.
+ */
+function windowDays(startDate: string, endDate: string | null): number {
+  if (!endDate) return DEFAULT_AVAILABILITY_DAYS;
+
+  const span = Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`);
+  if (Number.isNaN(span)) return DEFAULT_AVAILABILITY_DAYS;
+
+  return Math.max(1, Math.round(span / 86_400_000));
+}
+
+function handleAvailability(url: URL, pinnedStartDate?: string): Response {
   const ids = (url.searchParams.get('provider_location_ids') ?? '')
     .split(',')
     .filter((id) => id.length > 0);
@@ -146,9 +168,17 @@ function handleAvailability(url: URL, startDate: string): Response {
     return json(errorBody('Simulated server error.', 'api_error'), 500);
   }
 
+  // The real endpoint reads the window from these two parameters and defaults to 7 days
+  // when they are absent, so the mock has to as well — a picker asking for two weeks and
+  // getting one day back would look like a component bug. `pinnedStartDate` still wins,
+  // because its whole job is holding the dates still for a test or a snapshot.
+  const startDate =
+    pinnedStartDate ?? url.searchParams.get('start_date_in_provider_local_time') ?? todayIso();
+  const days = windowDays(startDate, url.searchParams.get('end_date_in_provider_local_time'));
+
   return json({
     request_id: 'req_mock',
-    data: ids.map((id) => buildAvailability(id, startDate)),
+    data: ids.map((id) => buildAvailability(id, startDate, days)),
   });
 }
 
@@ -268,7 +298,7 @@ export function createMockTransport(options: MockTransportOptions = {}): ZocdocT
     }
 
     if (path === '/v1/provider_locations/availability') {
-      return handleAvailability(url, availabilityStartDate ?? todayIso());
+      return handleAvailability(url, availabilityStartDate);
     }
 
     // An unrouted path is a bug in the mock, not a 404 the component should render, so

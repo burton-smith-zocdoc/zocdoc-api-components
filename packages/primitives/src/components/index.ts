@@ -1,7 +1,7 @@
 export type { ZdControlSize } from './control-size.js';
 export { ZdAccordion } from './accordion/accordion.js';
 export { ZdAccordionItem } from './accordion-item/accordion-item.js';
-export { ZdAlert } from './alert/alert.js';
+export { ZdAlert, type ZdAlertVariant } from './alert/alert.js';
 export { ZdAvatar } from './avatar/avatar.js';
 export { ZdBadge, type ZdBadgeVariant } from './badge/badge.js';
 export { ZdBreadcrumb } from './breadcrumb/breadcrumb.js';

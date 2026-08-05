@@ -16,4 +16,15 @@ export * from './client/types.js';
 // stories inside this package import it by relative path. When the demo site lands
 // (Task 16) it will need a declared subpath — add one then, not before.
 
-// Component exports are appended here as Tasks 10–15 land.
+// Component exports are appended here as Tasks 10–15 land. Each subpath's `index.ts`
+// registers the component as a side effect, so importing it is what defines the tag.
+export { ZdAvailabilityPicker } from './components/availability-picker/index.js';
+export { ZdBookingConfirmation } from './components/booking-confirmation/index.js';
+export { ZdBookingFlow, type BookingStep } from './components/booking-flow/index.js';
+export {
+  ZdPatientForm,
+  type PatientFormErrors,
+  type PatientFormField,
+} from './components/patient-form/index.js';
+export { ZdProviderResults } from './components/provider-results/index.js';
+export { ZdProviderSearch } from './components/provider-search/index.js';

@@ -233,6 +233,31 @@ export function buildTimeslots(startDate: string, times: string[]): Availability
 const SLOT_TIMES = ['09:00', '09:30', '10:00', '11:00', '13:00', '14:00', '15:30', '16:00'];
 
 /**
+ * Adds days to a `YYYY-MM-DD` string, staying in that calendar.
+ *
+ * `new Date('2026-08-05')` parses as UTC midnight while `getDate()` reads the browser's
+ * local date, so the two disagree for anyone west of Greenwich and the walk would repeat
+ * or skip a day. Reading the parts out and letting `Date.UTC` normalise month ends keeps
+ * it correct in every zone.
+ */
+function addDays(date: string, days: number): string {
+  const [year, month, day] = date.split('-').map(Number);
+  const shifted = new Date(Date.UTC(year ?? 1970, (month ?? 1) - 1, (day ?? 1) + days));
+  return shifted.toISOString().slice(0, 10);
+}
+
+/**
+ * Which days of a window carry slots. Deliberately not every day: a real practice is
+ * closed some days, and a picker that only ever sees a contiguous run does not prove its
+ * day strip handles gaps. Deterministic, so the same window always yields the same days.
+ */
+function availableDays(startDate: string, days: number): string[] {
+  return Array.from({ length: days }, (_, offset) => offset)
+    .filter((offset) => offset % 3 !== 2)
+    .map((offset) => addDays(startDate, offset));
+}
+
+/**
  * What booking each documented provider location yields, keyed by provider location id.
  *
  * Both the status and the appointment id are the sandbox's own, so a demo driven through
@@ -281,9 +306,17 @@ export const DEFAULT_BOOKING = {
   appointmentId: 'd2ee5bd8-643a-42c8-8c5a-be450e903430',
 };
 
+/**
+ * One entry for one provider location, with slots spread across `days` of the window.
+ *
+ * `days` defaults to 1 so a caller that only cares about a single date does not have to
+ * think about the window. The transport passes the real span, because a day picker with
+ * one day in it does not exercise anything a picker does.
+ */
 export function buildAvailability(
   providerLocationId: string,
-  startDate: string
+  startDate: string,
+  days = 1
 ): ProviderLocationAvailability {
   // The no-availability sentinel must come back present-but-empty, not absent: the
   // endpoint returns one entry per requested location either way. `first_availability` is
@@ -293,7 +326,9 @@ export function buildAvailability(
     return { provider_location_id: providerLocationId, first_availability: null, timeslots: [] };
   }
 
-  const timeslots = buildTimeslots(startDate, SLOT_TIMES);
+  const timeslots = availableDays(startDate, days).flatMap((date) =>
+    buildTimeslots(date, SLOT_TIMES)
+  );
   return {
     provider_location_id: providerLocationId,
     first_availability: timeslots[0],

@@ -1713,6 +1713,58 @@ const zocdocTokensBase = charmTokens
   .extendComponents(({ primitive: primitiveRef, semantic }) => {
     const primitive = primitiveRef as TokenRef;
 
+    /**
+     * One alert severity, as a tint rather than a fill.
+     *
+     * The 100/200 step is deliberate. An alert hosts controls in its `action`
+     * slot and its own dismiss button, and a `secondary` button on a solid
+     * `danger-500` fill is unreadable - the tint keeps the surface light in the
+     * light scheme and light-on-dark in the dark one, so a control designed for
+     * the page still works on top of it. Pairing each step with
+     * `on-<ramp>-<step>` puts the message text at AA by construction in both
+     * schemes, since those contrast colors are generated against that step.
+     *
+     * `borderColor` and `iconColor` move in the same direction as the tint, three
+     * and six steps darker, so the edge reads as an edge and the glyph carries
+     * the severity. Both are decorative - the icon is `aria-hidden` and the
+     * severity is also in the text - so neither is held to a text ratio. The icon
+     * still clears 3:1 against every tint (4.4:1 at worst, on `warning`); the
+     * border does not, and does not need to, because the tint is what separates
+     * the alert from the page.
+     *
+     * The dismiss button's own background is dropped to transparent in
+     * `alert.styles.ts`; only its hover and active steps are named here.
+     * Charm's default points it at `surface-secondary`, which in the dark scheme
+     * is a dark gray - and the alert's foreground there is a dark
+     * `on-<ramp>-200`, so the glyph would vanish into its own button.
+     */
+    const alertVariant = (ramp: string) => ({
+      bgColor: {
+        light: primitive('color', ramp, 100),
+        dark: primitive('color', ramp, 200),
+      },
+      fgColor: {
+        light: varRef('color', 'on', ramp, 100),
+        dark: varRef('color', 'on', ramp, 200),
+      },
+      borderColor: {
+        light: primitive('color', ramp, 400),
+        dark: primitive('color', ramp, 500),
+      },
+      iconColor: {
+        light: primitive('color', ramp, 700),
+        dark: primitive('color', ramp, 800),
+      },
+      buttonHoverBgColor: {
+        light: primitive('color', ramp, 200),
+        dark: primitive('color', ramp, 300),
+      },
+      buttonActiveBgColor: {
+        light: primitive('color', ramp, 300),
+        dark: primitive('color', ramp, 400),
+      },
+    });
+
     return {
       button: {
         // Shared properties across all variants
@@ -2389,6 +2441,24 @@ const zocdocTokensBase = charmTokens
             dark: semantic('color', 'on', 'brand', 300),
           },
         },
+      },
+      /**
+       * Charm's alert has no severity concept at all: `politeness` changes how
+       * the alert is announced, not how it looks, so a failed request renders on
+       * the same neutral surface as ordinary page content. These groups give
+       * each severity a tint, read by `:host([variant='…'])` in
+       * `alert.styles.ts` - see `alertVariant` above for why they are tints and
+       * not fills.
+       *
+       * Only the colors are named. Charm's padding, font sizes, icon size, and
+       * transition deep-merge through unchanged, so an alert's shape does not
+       * depend on whether it has a severity.
+       */
+      alert: {
+        info: alertVariant('info'),
+        success: alertVariant('success'),
+        warning: alertVariant('warning'),
+        danger: alertVariant('danger'),
       },
       /**
        * Charm ships a full `breadcrumb.item` group, so this only names the

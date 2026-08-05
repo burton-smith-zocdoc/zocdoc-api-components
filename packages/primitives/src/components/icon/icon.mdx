@@ -19,7 +19,9 @@ Renders an icon from the icon set by name.
 
 The set that ships with Charm is: `checkmark`, `checkmark-circle`, `chevron-down`, `chevron-right`,
 `circle`, `dismiss`, `error-circle`, `more`, `person`, `question`, `square`, `warning`, and
-`warning-shield`. A `name` outside that list falls back to the `question` icon.
+`warning-shield`. Zocdoc adds `info-circle`, which Charm has no equivalent of and which
+`zd-alert`'s `info` variant needs. A `name` outside that list falls back to the `question` icon —
+silently, so a typo looks like a question mark rather than an error.
 
 ## Sizes
 

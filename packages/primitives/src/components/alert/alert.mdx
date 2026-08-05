@@ -20,6 +20,31 @@ The alert is hidden until `open` is set.
 
 </code-bubble>
 
+## Severity
+
+Use `variant` to say what kind of message this is: `info`, `success`, `warning`, or `danger`.
+Each one tints the surface, tints the border, and draws its own icon. Omit it for an alert with
+no severity, which keeps the neutral surface and draws no icon.
+
+<code-bubble>
+
+```html
+<zd-alert open variant="danger" heading="Booking failed">
+  We couldn't complete your booking.
+</zd-alert>
+```
+
+</code-bubble>
+
+The tint is a light step of the ramp rather than a solid fill, so a control in the `action` slot
+still reads on top of it — a `secondary` button on a solid red surface would not. The text color
+is generated against the tint, so it meets AA in both color schemes.
+
+`variant` and `politeness` are independent. `variant` is how the alert looks; `politeness` is
+whether and how it is announced. An error usually wants both `variant="danger"` and
+`politeness="assertive"`, but a `danger` alert that has been on the page all along should stay
+`polite`.
+
 ## Heading
 
 Use the `heading` attribute — or the `heading` slot for rich content — to title the alert.
@@ -66,18 +91,23 @@ Use the `action` slot for controls.
 
 ## Icon
 
-Each alert renders an icon. Use the `icon` slot to replace it.
+Each severity draws its own icon: `info-circle`, `checkmark-circle`, `warning`, and
+`error-circle`. Use the `icon` slot to replace it, or to give an alert with no severity an icon.
 
 <code-bubble>
 
 ```html
-<zd-alert open heading="Insurance not verified">
+<zd-alert open variant="warning" heading="Insurance not verified">
   <zd-icon slot="icon" name="warning-shield"></zd-icon>
   We couldn't confirm your plan with this provider.
 </zd-alert>
 ```
 
 </code-bubble>
+
+The severity's own icon is decorative — it carries no label, because the severity is already in
+the message text. A slotted icon should stay decorative for the same reason: don't give it a
+`label` unless it says something the text does not.
 
 ## Showing and hiding from script
 
@@ -104,22 +134,31 @@ zd-alert {
 
 # Accessibility
 
-An alert that appears in response to something the person did needs to be announced. Charm does
-not add a live region for you, so wrap the alert — or the region it appears in — yourself
-(A11Y-002):
+An alert that appears in response to something the person did needs to be announced, and
+`politeness` is what does it (A11Y-002). It renders the live region on the alert itself:
+`polite` gives `role="status"`, `assertive` gives `role="alert"`, and `off` gives neither.
+`polite` is the default.
 
 <code-bubble>
 
 ```html
-<div aria-live="polite">
-  <zd-alert open heading="Appointment booked">You'll get a confirmation email shortly.</zd-alert>
-</div>
+<zd-alert open politeness="polite" heading="Appointment booked">
+  You'll get a confirmation email shortly.
+</zd-alert>
 ```
 
 </code-bubble>
 
-For failures, use `role="alert"` on the wrapper instead so it interrupts. Never put patient data
-in the message — describe the action that failed, not the values that were submitted (PHI-001).
+Use `assertive` for failures, so the message interrupts rather than waiting for a pause. A live
+region only announces content that changes while it is on the page, so an alert already rendered
+at page load is not announced no matter what `politeness` says — that case is `off`.
+
+Color is not the severity. Each variant draws an icon so the distinction survives a monochrome
+display, but the message text still has to say what happened; `variant="danger"` alone tells a
+screen reader nothing.
+
+Never put patient data in the message — describe the action that failed, not the values that were
+submitted (PHI-001).
 
 # API
 
