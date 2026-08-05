@@ -8,12 +8,19 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createAppointment } from '../appointments.js';
 import { getAvailability } from '../availability.js';
 import { configureZocdoc, resetZocdocConfig } from '../configure.js';
-import { BOOKINGS, SCENARIOS } from '../mock/fixtures.js';
+import { BOOKINGS, SCENARIOS, SPECIALTIES } from '../mock/fixtures.js';
 import { createMockTransport } from '../mock/transport.js';
 import { searchProviderLocations } from '../provider-locations.js';
 import type { Patient } from '../types.js';
 
 const START_DATE = '2026-08-10';
+
+/**
+ * `GET /v1/provider_locations` takes a ZIP *and* one of `specialty_id` or `visit_reason_id`, so
+ * every search below carries the specialty the fixture locations are tagged with. Searching on
+ * the ZIP alone is a documented 400, which the mock now enforces.
+ */
+const SEARCH_SPECIALTY_ID = SPECIALTIES[0]!.id;
 
 /** Not a person — see the note in `appointments.test.ts`. */
 const TEST_PATIENT: Patient = {
@@ -53,28 +60,61 @@ describe('createMockTransport', () => {
 
   describe('provider location search', () => {
     it('returns results for the documented populated zip code', async () => {
-      const result = await searchProviderLocations({ zipCode: SCENARIOS.zipWithResults });
+      const result = await searchProviderLocations({
+        zipCode: SCENARIOS.zipWithResults,
+        specialtyId: SEARCH_SPECIALTY_ID,
+      });
 
       expect(result.providerLocations.length).toBeGreaterThan(0);
       expect(result.totalCount).toBe(result.providerLocations.length);
     });
 
+    it('rejects a search that carries neither a specialty nor a visit reason', async () => {
+      // The mock used to answer this with results, which is how `zd-provider-search` shipped a
+      // default state the real API rejects. Keep the mock as strict as the contract.
+      await expect(
+        searchProviderLocations({ zipCode: SCENARIOS.zipWithResults })
+      ).rejects.toBeTruthy();
+    });
+
+    it('rejects a zip code that is not five digits', async () => {
+      await expect(
+        searchProviderLocations({ zipCode: '1120', specialtyId: SEARCH_SPECIALTY_ID })
+      ).rejects.toBeTruthy();
+    });
+
+    it('searches on a visit reason without a specialty', async () => {
+      const result = await searchProviderLocations({
+        zipCode: SCENARIOS.zipWithResults,
+        visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
+      });
+
+      expect(result.providerLocations.length).toBeGreaterThan(0);
+    });
+
     it('returns empty rather than throwing for the documented empty zip code', async () => {
       // COMP-001 treats empty as its own state, so this must not surface as an error.
-      const result = await searchProviderLocations({ zipCode: SCENARIOS.zipEmpty });
+      const result = await searchProviderLocations({
+        zipCode: SCENARIOS.zipEmpty,
+        specialtyId: SEARCH_SPECIALTY_ID,
+      });
 
       expect(result.providerLocations).toEqual([]);
       expect(result.totalCount).toBe(0);
     });
 
     it('throws for the documented error zip code', async () => {
-      await expect(searchProviderLocations({ zipCode: SCENARIOS.zipError })).rejects.toBeTruthy();
+      // The specialty is here so the rejection is the 500 and not the missing-filter 400.
+      await expect(
+        searchProviderLocations({ zipCode: SCENARIOS.zipError, specialtyId: SEARCH_SPECIALTY_ID })
+      ).rejects.toBeTruthy();
     });
 
     it('throws for the documented missing insurance plan', async () => {
       await expect(
         searchProviderLocations({
           zipCode: SCENARIOS.zipWithResults,
+          specialtyId: SEARCH_SPECIALTY_ID,
           insurancePlanId: SCENARIOS.insurancePlanMissing,
         })
       ).rejects.toBeTruthy();
@@ -83,6 +123,7 @@ describe('createMockTransport', () => {
     it('filters to virtual providers on visit_type', async () => {
       const result = await searchProviderLocations({
         zipCode: SCENARIOS.zipWithResults,
+        specialtyId: SEARCH_SPECIALTY_ID,
         visitType: 'video_visit',
       });
 
@@ -104,10 +145,12 @@ describe('createMockTransport', () => {
     it('pages, reporting the unpaged total alongside the page', async () => {
       const first = await searchProviderLocations({
         zipCode: SCENARIOS.zipWithResults,
+        specialtyId: SEARCH_SPECIALTY_ID,
         pageSize: 1,
       });
       const second = await searchProviderLocations({
         zipCode: SCENARIOS.zipWithResults,
+        specialtyId: SEARCH_SPECIALTY_ID,
         pageSize: 1,
         page: 1,
       });
@@ -122,7 +165,10 @@ describe('createMockTransport', () => {
     });
 
     it('exposes a location whose booking requirements force extra form fields', async () => {
-      const result = await searchProviderLocations({ zipCode: SCENARIOS.zipWithResults });
+      const result = await searchProviderLocations({
+        zipCode: SCENARIOS.zipWithResults,
+        specialtyId: SEARCH_SPECIALTY_ID,
+      });
 
       const required = result.providerLocations.find(
         (l) => l.provider_location_id === SCENARIOS.providerLocationInsuranceRequired

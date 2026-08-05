@@ -41,7 +41,12 @@ export default css`
    * page provides, and this component is not in a position to know it contrasts.
    */
   [part='summary'] {
-    margin: 0;
+    display: grid;
+    gap: 0.25rem;
+
+    & [part='summary-time'] {
+      margin: 0;
+    }
   }
 
   /*

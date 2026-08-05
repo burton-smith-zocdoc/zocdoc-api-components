@@ -41,6 +41,48 @@ function pinColorScheme(): void {
   schemeStyleElement.textContent = ':root { color-scheme: light only !important; }';
 }
 
+/**
+ * Every running animation in a tree, including the ones inside shadow roots.
+ *
+ * `document.getAnimations()` stops at the shadow boundary — with `zd-alert` mid-fade it
+ * returns 0 while the wrapper's own `getAnimations()` returns 1 — and the `subtree` option
+ * does not cross it either. Each shadow root has to be asked itself, and recursively, because
+ * these components nest shadow roots several deep.
+ */
+function animationsIn(root: Document | ShadowRoot): Animation[] {
+  const nested = [...root.querySelectorAll('*')]
+    .map((element) => element.shadowRoot)
+    .filter((shadowRoot): shadowRoot is ShadowRoot => shadowRoot !== null)
+    .flatMap((shadowRoot) => animationsIn(shadowRoot));
+
+  return [...root.getAnimations(), ...nested];
+}
+
+/**
+ * Waits out entry transitions before axe reads any colour.
+ *
+ * `zd-alert` fades in over `opacity 0.3s ease`, and axe blends a partly transparent element
+ * against what is behind it, so measured mid-fade an alert reports contrast no token could
+ * produce — black on `#e0edff` came back as `#b6b6b6` on `#f6faff`, 1.93:1, about a third of
+ * the way through the fade. A fixed sleep would have to out-wait the longest transition in the
+ * theme; waiting on the animations themselves cannot be out-grown.
+ *
+ * Infinite animations are excluded, or every loading-state test would wait forever on the
+ * spinner. The overall cap keeps a transition that never settles to a slow test rather than a
+ * hung one.
+ */
+async function settleAnimations(): Promise<void> {
+  const finite = animationsIn(document).filter((animation) => {
+    const { iterations } = animation.effect?.getComputedTiming() ?? {};
+    return iterations !== Number.POSITIVE_INFINITY;
+  });
+
+  await Promise.race([
+    Promise.all(finite.map((animation) => animation.finished.catch(() => undefined))),
+    new Promise((resolve) => setTimeout(resolve, 1000)),
+  ]);
+}
+
 function format(violations: Result[]): string {
   return violations
     .map((violation) => {
@@ -72,6 +114,7 @@ export async function expectNoViolations(element: Element): Promise<void> {
   await new Promise((resolve) => requestAnimationFrame(resolve));
   await new Promise((resolve) => requestAnimationFrame(resolve));
   await new Promise((resolve) => setTimeout(resolve, 50));
+  await settleAnimations();
 
   const { violations } = await axe.run(element, {
     runOnly: {

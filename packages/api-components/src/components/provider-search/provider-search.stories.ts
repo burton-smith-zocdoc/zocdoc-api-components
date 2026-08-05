@@ -1,7 +1,7 @@
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { SCENARIOS } from '../../client/mock/fixtures.js';
+import { SCENARIOS, SPECIALTIES } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import type { ZdProviderResults } from '../provider-results/provider-results.js';
 import type { ZdProviderSearch } from './provider-search.js';
@@ -26,7 +26,7 @@ const { args, argTypes, template } = getStorybookHelpers<ZdProviderSearch>('zd-p
 const meta: Meta<ZdProviderSearch> = {
   title: 'Booking/Provider Search',
   component: 'zd-provider-search',
-  args: { ...args, zipCode: SCENARIOS.zipWithResults },
+  args: { ...args, zipCode: SCENARIOS.zipWithResults, specialtyId: SPECIALTIES[0]!.id },
   argTypes,
   render: (args) => template(args),
 };
@@ -40,6 +40,19 @@ type Story = StoryObj<ZdProviderSearch>;
  * through `provider-results`, which the Actions panel logs.
  */
 export const Default: Story = {};
+
+/**
+ * Nothing chosen. `GET /v1/provider_locations` requires a 5-digit ZIP and one of
+ * `specialty_id` or `visit_reason_id`, so this form cannot search yet — press Search to see
+ * both fields report it rather than the request coming back a 400.
+ *
+ * The visit reason select is disabled until a specialty is chosen. Unscoped it would be every
+ * reason across all 310 specialties, which is neither a list a patient can read nor one worth
+ * fetching.
+ */
+export const NothingChosen: Story = {
+  args: { zipCode: '', specialtyId: undefined },
+};
 
 /** The documented ZIP that matches nothing. Empty is a success, not an error (COMP-001). */
 export const NoResults: Story = {

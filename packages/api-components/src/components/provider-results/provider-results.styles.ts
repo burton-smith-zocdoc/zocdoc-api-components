@@ -38,12 +38,26 @@ export default css`
     }
   }
 
-  [part='provider-name'] {
-    display: block;
-    font-weight: 600;
+  /*
+   * The lines inside the card are laid out by provider-summary.styles.ts, which every
+   * component rendering a provider shares. Nothing to repeat here.
+   */
+
+  /* The list's gap is the only spacing between these blocks, so their margins go. */
+  [part='summary'],
+  [part='pager-position'] {
+    margin: 0;
   }
 
-  [part='provider-specialty'] {
-    display: block;
+  /*
+   * Previous and Next at the edges with the position between them, which puts each control
+   * on the side it moves towards in both writing directions (I18N-003).
+   */
+  [part='pager'] {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    margin-block-start: 0.75rem;
   }
 `;

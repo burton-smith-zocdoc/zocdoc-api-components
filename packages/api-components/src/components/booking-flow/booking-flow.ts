@@ -14,6 +14,8 @@ import { ZdBookingConfirmation } from '../booking-confirmation/booking-confirmat
 import { userFacingError } from '../internal/error-message.js';
 import { providerDisplayName } from '../internal/provider-name.js';
 import { formatAppointmentTime } from '../internal/provider-time.js';
+import { renderProviderSummary } from '../internal/provider-summary.js';
+import summaryStyles from '../internal/provider-summary.styles.js';
 import { requestStateDependencies } from '../internal/request-state.js';
 import { ZdPatientForm } from '../patient-form/patient-form.js';
 import { ZdProviderResults } from '../provider-results/provider-results.js';
@@ -75,7 +77,10 @@ const BOOKED_STATUSES: ReadonlySet<AppointmentStatus> = new Set(['confirmed', 'p
  * @csspart step - The current step's container, and the focus target on every transition.
  * @csspart step-heading - The current step's heading.
  * @csspart back - The button returning to the previous step.
- * @csspart summary - The line naming what is about to be booked.
+ * @csspart summary - The block restating what is about to be booked.
+ * @csspart summary-time - The appointment time, on the patient step.
+ * @csspart provider-summary - The provider block inside the summary, shared with
+ *   `zd-provider-results` — see `internal/provider-summary.ts` for its inner parts.
  * @csspart status - The live region announcing that a booking is in flight.
  * @csspart error - The alert shown when a booking fails.
  * @csspart search - The provider search form.
@@ -87,7 +92,11 @@ const BOOKED_STATUSES: ReadonlySet<AppointmentStatus> = new Set(['confirmed', 'p
 export class ZdBookingFlow extends CharmElement {
   public static override baseName = 'booking-flow';
 
-  public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
+  public static override styles = [
+    ...super.styles,
+    summaryStyles,
+    styles,
+  ] as typeof CharmElement.styles;
 
   /**
    * The five children plus the primitives this component renders itself. Every one has to be
@@ -108,23 +117,33 @@ export class ZdBookingFlow extends CharmElement {
   }
 
   /** The ZIP code the flow opens on. Kept in step with what the patient searched. */
-  @property({ type: String, attribute: 'zip-code' })
+  @property({ attribute: 'zip-code' })
   public zipCode = '';
+
+  /**
+   * The specialty the flow opens on. Kept in step with what the patient searched.
+   *
+   * The search endpoint requires this or a visit reason, so a flow that opens on neither
+   * cannot search until the patient chooses one.
+   */
+  @property({ attribute: 'specialty-id' })
+  public specialtyId?: string;
 
   /**
    * Narrows the search and, more importantly, is required for availability and booking.
    *
    * When the patient searched for "Any reason" this stays undefined, and the flow falls back
-   * to the chosen provider's `default_visit_reason_id` — see {@link effectiveVisitReasonId}.
+   * to the reason the API resolved for the search, then to the chosen provider's
+   * `default_visit_reason_id` — see {@link effectiveVisitReasonId}.
    */
-  @property({ type: String, attribute: 'visit-reason-id' })
+  @property({ attribute: 'visit-reason-id' })
   public visitReasonId?: string;
 
-  @property({ type: String, attribute: 'insurance-plan-id' })
+  @property({ attribute: 'insurance-plan-id' })
   public insurancePlanId?: string;
 
   /** Whether the patient is new to the practice. Affects which slots are bookable. */
-  @property({ type: String, attribute: 'patient-type' })
+  @property({ attribute: 'patient-type' })
   public patientType: PatientType = 'new';
 
   /**
@@ -135,19 +154,37 @@ export class ZdBookingFlow extends CharmElement {
   public providers: ProviderLocation[] = [];
 
   /** The chosen `pr_…|lo_…`. Setting it advances the flow to the time step. */
-  @property({ type: String, attribute: 'provider-location-id' })
+  @property({ attribute: 'provider-location-id' })
   public providerLocationId?: string;
 
   /** The chosen slot's `start_time`, verbatim from the API. Setting it advances to the form. */
-  @property({ type: String, attribute: 'start-time' })
+  @property({ attribute: 'start-time' })
   public startTime?: string;
 
+  /**
+   * The chosen location, kept whole rather than reduced to its name.
+   *
+   * The two steps before the booking restate what is about to be booked, and the production
+   * modal restates the whole card — the address a patient is travelling to matters as much as
+   * the name. Holding the object is also what lets the summary here and the card in the
+   * results list be the same markup.
+   */
   @state()
-  private providerName?: string;
+  private selectedProvider?: ProviderLocation;
 
   /** The chosen provider's own default, used only when no visit reason was selected. */
   @state()
   private defaultVisitReasonId?: string;
+
+  /**
+   * The `visit_reason_id` the search endpoint resolved, from `search_parameters`.
+   *
+   * Preferred over the provider's default because it is the reason the results were actually
+   * produced for: asking for availability with a different one can return slots the search
+   * would not have matched.
+   */
+  @state()
+  private resolvedVisitReasonId?: string;
 
   /** The booking response, and so the confirmation step's whole input. */
   @state()
@@ -178,12 +215,18 @@ export class ZdBookingFlow extends CharmElement {
    *
    * `zd-provider-search` treats the visit reason as optional and its "Any reason" option
    * leaves it undefined, but `GET /v1/availability` and `POST /v1/appointments` both require
-   * one. The provider's own default is the API's answer to that — it is what the search
-   * endpoint fills in when a request omits the field — so the flow uses it rather than
-   * stranding the patient on a picker that will not fetch.
+   * one. The search endpoint fills one in from the specialty and echoes it back in
+   * `search_parameters`, so that is the first fallback; the chosen provider's own default is
+   * the second, for a flow whose results did not come from this component's own search. Either
+   * beats stranding the patient on a picker that will not fetch.
    */
   protected get effectiveVisitReasonId(): string | undefined {
-    return this.visitReasonId ?? this.defaultVisitReasonId;
+    return this.visitReasonId ?? this.resolvedVisitReasonId ?? this.defaultVisitReasonId;
+  }
+
+  /** The chosen provider's name, which is all the confirmation needs of them. */
+  protected get providerName(): string | undefined {
+    return this.selectedProvider ? providerDisplayName(this.selectedProvider) : undefined;
   }
 
   /**
@@ -222,7 +265,7 @@ export class ZdBookingFlow extends CharmElement {
 
     if (this.providerLocationId) {
       this.providerLocationId = undefined;
-      this.providerName = undefined;
+      this.selectedProvider = undefined;
       this.defaultVisitReasonId = undefined;
     }
   }
@@ -295,7 +338,7 @@ export class ZdBookingFlow extends CharmElement {
 
   protected handleProviderSelect(location: ProviderLocation): void {
     this.providerLocationId = location.provider_location_id;
-    this.providerName = providerDisplayName(location);
+    this.selectedProvider = location;
     this.defaultVisitReasonId = location.provider.default_visit_reason_id;
     // A different provider means the old slot is not on offer any more (see `back`).
     this.startTime = undefined;
@@ -318,13 +361,16 @@ export class ZdBookingFlow extends CharmElement {
       <scoped-provider-search
         part="search"
         .zipCode=${this.zipCode}
+        .specialtyId=${this.specialtyId}
         .visitReasonId=${this.visitReasonId}
         .insurancePlanId=${this.insurancePlanId}
         @provider-results=${(event: CustomEvent) => {
           this.providers = event.detail.providers;
           this.zipCode = event.detail.zipCode;
+          this.specialtyId = event.detail.specialtyId;
           this.visitReasonId = event.detail.visitReasonId;
           this.insurancePlanId = event.detail.insurancePlanId;
+          this.resolvedVisitReasonId = event.detail.searchParameters?.visit_reason_id;
         }}
       ></scoped-provider-search>
 
@@ -432,14 +478,26 @@ export class ZdBookingFlow extends CharmElement {
   /**
    * What is about to be booked, restated on the two steps that are about to commit to it.
    *
+   * The provider block is the same markup as the card the patient picked, so the two cannot
+   * describe them differently. The time is added on the patient step only: on the time step it
+   * is the thing being chosen, and restating a selection directly above the control that makes
+   * it is noise.
+   *
    * Not an `aria-label` or a `title`: it is text a patient reads and a browser translates,
    * so it lives in the DOM (I18N-001).
    */
   protected renderSummary(): unknown {
+    const provider = this.selectedProvider;
     const when = this.step === 'patient' ? formatAppointmentTime(this.startTime) : undefined;
-    const parts = [this.providerName, when].filter(Boolean);
 
-    return parts.length ? this.html`<p part="summary">${parts.join(' · ')}</p>` : nothing;
+    if (!provider && !when) return nothing;
+
+    return this.html`
+      <div part="summary">
+        ${provider ? renderProviderSummary(provider) : nothing}
+        ${when ? this.html`<p part="summary-time">${when}</p>` : nothing}
+      </div>
+    `;
   }
 
   protected renderStep(step: BookingStep): unknown {

@@ -106,6 +106,24 @@ function todayIso(): string {
 
 function handleProviderLocations(url: URL): Response {
   const zip = url.searchParams.get('zip_code');
+  const specialtyId = url.searchParams.get('specialty_id');
+  const visitReasonId = url.searchParams.get('visit_reason_id');
+
+  /*
+   * The endpoint's two documented parameter requirements, enforced rather than assumed. The
+   * mock used to answer a ZIP-only request with results, and that is precisely how
+   * `zd-provider-search` shipped a default state the real API rejects: nothing built on the
+   * mock could see the 400. A mock that is more permissive than the API is not a convenience.
+   */
+  if (!zip || !/^\d{5}$/.test(zip)) {
+    return json(errorBody('zip_code must be a 5-digit ZIP code.', 'invalid_request'), 400);
+  }
+  if (!specialtyId && !visitReasonId) {
+    return json(
+      errorBody('One of specialty_id or visit_reason_id is required.', 'invalid_request'),
+      400
+    );
+  }
 
   if (zip === SCENARIOS.zipError) {
     return json(errorBody('Simulated server error.', 'api_error'), 500);
@@ -116,7 +134,6 @@ function handleProviderLocations(url: URL): Response {
     return json(errorBody('Invalid insurance plan.', 'invalid_request'), 400);
   }
 
-  const specialtyId = url.searchParams.get('specialty_id');
   const visitType = url.searchParams.get('visit_type');
 
   let locations = zip === SCENARIOS.zipEmpty ? [] : PROVIDER_LOCATIONS;
@@ -137,8 +154,7 @@ function handleProviderLocations(url: URL): Response {
     // omitted visit reason — a component that reads these back gets the same shape here.
     search_parameters: {
       specialty_id: specialtyId ?? undefined,
-      visit_reason_id:
-        url.searchParams.get('visit_reason_id') ?? locations[0]?.provider.default_visit_reason_id,
+      visit_reason_id: visitReasonId ?? locations[0]?.provider.default_visit_reason_id,
     },
     provider_locations: locations.slice(start, start + p.pageSize),
   });

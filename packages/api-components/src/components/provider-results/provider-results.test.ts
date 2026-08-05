@@ -16,10 +16,19 @@ import './index.js';
 const PROVIDERS: ProviderLocation[] = [
   {
     provider_location_id: 'pr_a|lo_a',
+    accepts_patient_insurance: 'accepted',
     provider: {
       provider_id: 'pr_a',
       full_name: 'Dr. Ada Testerson',
       specialties: ['Dermatologist'],
+      provider_photo_url: '//images.test/ada.jpg',
+    },
+    location: {
+      address1: '1 Sandbox Plaza',
+      city: 'Brooklyn',
+      state: 'NY',
+      zip_code: '11201',
+      distance_to_patient_mi: 0.8,
     },
   },
   {
@@ -28,7 +37,12 @@ const PROVIDERS: ProviderLocation[] = [
   },
 ];
 
-type Results = HTMLElement & { providers: ProviderLocation[]; selectedId?: string };
+type Results = HTMLElement & {
+  providers: ProviderLocation[];
+  selectedId?: string;
+  showPhotos: boolean;
+  insuranceName?: string;
+};
 
 async function mountResults(providers: ProviderLocation[]): Promise<Results> {
   const element = await mount<Results>('<zd-provider-results></zd-provider-results>');
@@ -90,6 +104,43 @@ describe('zd-provider-results', () => {
   it('omits the specialty line for a provider with no specialties', async () => {
     const element = await mountResults(PROVIDERS);
     expect(shadow(element).querySelectorAll('[part="provider-specialty"]')).toHaveLength(1);
+  });
+
+  /*
+   * The card is `renderProviderSummary`, which has its own tests — these cover the wiring, not
+   * the formatting: that the two host properties reach it, and that the shared block is what
+   * lands in this component's shadow root so its parts are stylable from a host page.
+   */
+  it('shows the distance and address on the card', async () => {
+    const element = await mountResults(PROVIDERS);
+    const where = shadow(element).querySelector('[part="provider-location"]')?.textContent;
+
+    expect(where).toContain('1 Sandbox Plaza, Brooklyn, NY 11201');
+  });
+
+  it('renders no photo until asked, even when the API supplied one', async () => {
+    const element = await mountResults(PROVIDERS);
+    expect(shadow(element).querySelector('img')).toBeNull();
+
+    element.showPhotos = true;
+    await settled(element);
+
+    expect(shadow(element).querySelector('img')?.getAttribute('src')).toBe(
+      'https://images.test/ada.jpg'
+    );
+  });
+
+  /* Without a plan named there is nothing for `accepts_patient_insurance` to be relative to. */
+  it('shows the network line only once an insurance plan is named', async () => {
+    const element = await mountResults(PROVIDERS);
+    expect(shadow(element).querySelector('[part="provider-insurance"]')).toBeNull();
+
+    element.insuranceName = 'Test Health PPO';
+    await settled(element);
+
+    expect(shadow(element).querySelector('[part="provider-insurance"]')?.textContent).toContain(
+      'In-network · Test Health PPO'
+    );
   });
 
   it('marks only the selected provider with aria-current', async () => {

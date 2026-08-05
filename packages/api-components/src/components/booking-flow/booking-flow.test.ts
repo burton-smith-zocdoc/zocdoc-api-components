@@ -58,6 +58,12 @@ const PROVIDER: ProviderLocation = {
     full_name: 'Dr. Ada Testerson',
     default_visit_reason_id: 'vr_default',
   },
+  location: {
+    address1: '1 Sandbox Plaza',
+    city: 'Brooklyn',
+    state: 'NY',
+    zip_code: SCENARIOS.zipWithResults,
+  },
 };
 
 /** The confirmed sentinel's own response, so the mock and the real sandbox agree. */
@@ -111,6 +117,7 @@ describe('zd-booking-flow', () => {
   beforeEach(() => {
     vi.spyOn(appointments, 'createAppointment').mockResolvedValue(bookingResponse('confirmed'));
     vi.spyOn(availability, 'getAvailability').mockResolvedValue([]);
+    vi.spyOn(referenceData, 'getSpecialties').mockResolvedValue([]);
     vi.spyOn(referenceData, 'getVisitReasons').mockResolvedValue([]);
     vi.spyOn(referenceData, 'getInsurancePlans').mockResolvedValue([]);
   });
@@ -164,6 +171,41 @@ describe('zd-booking-flow', () => {
     expect(picker.visitReasonId).toBe('vr_1');
   });
 
+  /*
+   * The summary is the same block as the card in the results list (`renderProviderSummary`),
+   * so what the patient is about to book is described the way they chose it — the address
+   * included, since that is what they are travelling to.
+   */
+  it('restates the whole provider, not just their name, before booking', async () => {
+    const element = await mountFlow('visit-reason-id="vr_1"');
+    element.providers = [PROVIDER];
+    await settled(element);
+
+    child(element, 'results').dispatchEvent(
+      new CustomEvent('provider-select', { detail: { provider: PROVIDER } })
+    );
+    await settled(element);
+
+    const summary = child(element, 'summary');
+    expect(summary.querySelector('[part="provider-name"]')?.textContent).toContain(
+      'Dr. Ada Testerson'
+    );
+    expect(summary.querySelector('[part="provider-location"]')?.textContent).toContain(
+      '1 Sandbox Plaza'
+    );
+    // The time step is where the time is being chosen; restating it above the control is noise.
+    expect(summary.querySelector('[part="summary-time"]')).toBeNull();
+  });
+
+  it('adds the chosen time to the summary on the patient step', async () => {
+    const element = await mountFlow('visit-reason-id="vr_1"');
+    await toPatientStep(element);
+
+    const summary = child(element, 'summary');
+    expect(summary.querySelector('[part="provider-name"]')).not.toBeNull();
+    expect(summary.querySelector('[part="summary-time"]')?.textContent).toBeTruthy();
+  });
+
   /**
    * "Any reason" leaves `visitReasonId` undefined, and the picker fetches nothing without one.
    * The provider's own default is what the API itself substitutes, so the flow uses it rather
@@ -181,6 +223,37 @@ describe('zd-booking-flow', () => {
 
     const picker = child(element, 'picker') as HTMLElement & { visitReasonId?: string };
     expect(picker.visitReasonId).toBe('vr_default');
+  });
+
+  /**
+   * The reason the results were produced for beats the provider's own default, which is a
+   * different reason on any location whose default is not the specialty's. Asking for
+   * availability under a reason the search did not use can offer slots it would not have
+   * matched.
+   */
+  it('prefers the visit reason the search resolved over the provider default', async () => {
+    const element = await mountFlow('specialty-id="sp_153"');
+
+    child(element, 'search').dispatchEvent(
+      new CustomEvent('provider-results', {
+        detail: {
+          providers: [PROVIDER],
+          zipCode: SCENARIOS.zipWithResults,
+          specialtyId: 'sp_153',
+          visitReasonId: undefined,
+          searchParameters: { specialty_id: 'sp_153', visit_reason_id: 'vr_resolved' },
+        },
+      })
+    );
+    await settled(element);
+
+    child(element, 'results').dispatchEvent(
+      new CustomEvent('provider-select', { detail: { provider: PROVIDER } })
+    );
+    await settled(element);
+
+    const picker = child(element, 'picker') as HTMLElement & { visitReasonId?: string };
+    expect(picker.visitReasonId).toBe('vr_resolved');
   });
 
   it('books the appointment and emits booking-complete', async () => {

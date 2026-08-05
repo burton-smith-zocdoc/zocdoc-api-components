@@ -79,14 +79,14 @@ export class ZdAvailabilityPicker extends CharmElement {
   }
 
   /** The `pr_…|lo_…` pair to fetch availability for. Nothing is fetched without it. */
-  @property({ type: String, attribute: 'provider-location-id' })
+  @property({ attribute: 'provider-location-id' })
   public providerLocationId?: string;
 
   /** Required by the API — availability is always for a specific visit reason. */
-  @property({ type: String, attribute: 'visit-reason-id' })
+  @property({ attribute: 'visit-reason-id' })
   public visitReasonId?: string;
 
-  @property({ type: String, attribute: 'patient-type' })
+  @property({ attribute: 'patient-type' })
   public patientType: PatientType = 'new';
 
   /** Size of the availability window in days, counted from today. Clamped to 30. */
@@ -97,7 +97,7 @@ export class ZdAvailabilityPicker extends CharmElement {
    * The chosen slot's `start_time`. Settable so a host page that already knows the
    * selection can restore it, which is what makes going back a step work (COMP-004).
    */
-  @property({ type: String, attribute: 'selected-start-time' })
+  @property({ attribute: 'selected-start-time' })
   public selectedStartTime?: string;
 
   @state()

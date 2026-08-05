@@ -1,5 +1,17 @@
+import { existsSync } from 'node:fs';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
+
+/**
+ * The Zocdoc agentic sandbox permits `com.google.Chrome.*` mach ports but not
+ * `org.chromium.Chromium.*` or Playwright's firefox and webkit builds, so in the sandbox the
+ * browser project runs the installed-Chrome instance alone. Outside it, all three run.
+ *
+ * Skipping the project outright would be the easier guard and the wrong one: browser tests are
+ * where every component's axe pass lives (A11Y-005), and an agent working in the sandbox would
+ * have no way to see it break.
+ */
+const IN_SANDBOX = existsSync('/opt/zocdoc');
 
 /**
  * The directories that need a real DOM, shared by both projects so they partition the
@@ -64,7 +76,19 @@ export default defineConfig({
             // factory instead of a string."
             provider: playwright(),
             headless: true,
-            instances: [{ browser: 'chromium' }, { browser: 'firefox' }, { browser: 'webkit' }],
+            instances: [
+              // channel: 'chrome' uses installed Chrome instead of Playwright's bundled
+              // chrome-headless-shell, which the Zocdoc sandbox allows (com.google.Chrome.*
+              // mach ports are permitted, org.chromium.Chromium.* are not). Launch options
+              // belong to the provider, so an instance overrides them by calling the factory
+              // again — a bare `launchOptions` key on the instance is silently ignored and
+              // the headless shell launches anyway.
+              {
+                browser: 'chromium',
+                provider: playwright({ launchOptions: { channel: 'chrome' } }),
+              },
+              ...(IN_SANDBOX ? [] : [{ browser: 'firefox' }, { browser: 'webkit' }]),
+            ],
           },
         },
       },
