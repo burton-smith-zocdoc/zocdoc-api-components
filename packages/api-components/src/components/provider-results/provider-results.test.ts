@@ -78,6 +78,19 @@ type Results = HTMLElement & {
 /** One card's grid, which is a `zd-availability-grid` element with its own shadow root. */
 type Grid = HTMLElement & { timeslots?: readonly unknown[]; startDate?: string };
 
+/** One provider card, which is a `zd-provider-card` element with its own shadow root. */
+type Card = HTMLElement & { provider?: ProviderLocation; showPhoto?: boolean; insuranceName?: string };
+
+/** Get all provider cards in the results. */
+function cards(element: Results): Card[] {
+  return [...shadow(element).querySelectorAll<Card>('zd-provider-card')];
+}
+
+/** Get a part from inside a provider card's shadow DOM. */
+function cardPart(card: Card, partName: string): HTMLElement | null {
+  return card.shadowRoot?.querySelector(`[part="${partName}"]`) ?? null;
+}
+
 async function mountWithAvailability(entries = batch()): Promise<Results> {
   const element = await mountResults(PROVIDERS);
   element.totalCount = 25;
@@ -141,7 +154,7 @@ function isDisabled(element: Results, direction: 'previous' | 'next'): boolean {
 describe('zd-provider-results', () => {
   it('renders one card per provider', async () => {
     const element = await mountResults(PROVIDERS);
-    expect(shadow(element).querySelectorAll('[part="provider"]')).toHaveLength(2);
+    expect(cards(element)).toHaveLength(2);
   });
 
   it('shows an empty state when given no providers', async () => {
@@ -149,119 +162,100 @@ describe('zd-provider-results', () => {
     expect(shadow(element).textContent).toContain('No providers');
   });
 
-  it('emits provider-select with the chosen provider', async () => {
+  it('opens the profile dialog when a provider name is clicked', async () => {
     const element = await mountResults(PROVIDERS);
-    const events: CustomEvent[] = [];
-    element.addEventListener('provider-select', (event) => events.push(event as CustomEvent));
+    const card = cards(element)[1]!;
+    const nameButton = cardPart(card, 'name');
 
-    shadow(element).querySelectorAll<HTMLElement>('[part="provider"]')[1]!.click();
+    nameButton?.click();
+    await settled(element);
 
-    expect(events).toHaveLength(1);
-    expect(events[0]!.detail.provider.provider_location_id).toBe('pr_b|lo_b');
+    const dialog = shadow(element).querySelector('zd-dialog');
+    expect(dialog?.getAttribute('open')).not.toBeNull();
   });
 
-  it('emits a composed event that escapes the shadow root', async () => {
+  it('shows the provider profile in the dialog', async () => {
     const element = await mountResults(PROVIDERS);
-    const events: Event[] = [];
-    // `once` so the listener does not outlive this test — document.body is not
-    // torn down between tests the way the mounted element is.
-    document.body.addEventListener('provider-select', (event) => events.push(event), {
-      once: true,
-    });
+    const card = cards(element)[0]!;
+    const nameButton = cardPart(card, 'name');
 
-    shadow(element).querySelector<HTMLElement>('[part="provider"]')!.click();
+    nameButton?.click();
+    await settled(element);
 
-    expect(events).toHaveLength(1);
+    const profile = shadow(element).querySelector('zd-provider-profile');
+    expect(profile).not.toBeNull();
+  });
+
+  it('closes the dialog on dialog-close event', async () => {
+    const element = await mountResults(PROVIDERS);
+    const card = cards(element)[0]!;
+    cardPart(card, 'name')?.click();
+    await settled(element);
+
+    const dialog = shadow(element).querySelector('zd-dialog') as HTMLElement;
+    dialog.dispatchEvent(new CustomEvent('dialog-close', { bubbles: true, composed: true }));
+    await settled(element);
+
+    expect(dialog.getAttribute('open')).toBeNull();
   });
 
   it('derives a display name from first and last name when full_name is absent', async () => {
     const element = await mountResults(PROVIDERS);
-    const names = [...shadow(element).querySelectorAll('[part="provider-name"]')].map((node) =>
-      node.textContent?.trim()
-    );
+    const names = cards(element).map((card) => cardPart(card, 'name')?.textContent?.trim());
     expect(names).toEqual(['Dr. Ada Testerson', 'Bo Sampleton']);
   });
 
   it('omits the specialty line for a provider with no specialties', async () => {
     const element = await mountResults(PROVIDERS);
-    expect(shadow(element).querySelectorAll('[part="provider-specialty"]')).toHaveLength(1);
+    const specialties = cards(element).map((card) => cardPart(card, 'specialty'));
+    expect(specialties.filter(Boolean)).toHaveLength(1);
   });
 
   /*
-   * The card is `renderProviderSummary`, which has its own tests — these cover the wiring, not
-   * the formatting: that the two host properties reach it, and that the shared block is what
-   * lands in this component's shadow root so its parts are stylable from a host page.
+   * Provider-card is a standalone component — these tests cover the wiring: that host properties
+   * reach the cards and that the cards land inside a semantic list.
    */
   it('shows the distance and address on the card', async () => {
     const element = await mountResults(PROVIDERS);
-    const where = shadow(element).querySelector('[part="provider-location"]')?.textContent;
+    const where = cardPart(cards(element)[0]!, 'location')?.textContent;
 
     expect(where).toContain('1 Sandbox Plaza, Brooklyn, NY 11201');
   });
 
-  it('renders no photo until asked, even when the API supplied one', async () => {
+  it('passes showPhoto to provider cards', async () => {
     const element = await mountResults(PROVIDERS);
-    expect(shadow(element).querySelector('img')).toBeNull();
+    expect(cards(element)[0]!.showPhoto).toBeFalsy();
 
     element.showPhotos = true;
     await settled(element);
 
-    expect(shadow(element).querySelector('img')?.getAttribute('src')).toBe(
-      'https://images.test/ada.jpg'
-    );
+    expect(cards(element)[0]!.showPhoto).toBe(true);
   });
 
   /* Without a plan named there is nothing for `accepts_patient_insurance` to be relative to. */
-  it('shows the network line only once an insurance plan is named', async () => {
+  it('passes insuranceName to provider cards', async () => {
     const element = await mountResults(PROVIDERS);
-    expect(shadow(element).querySelector('[part="provider-insurance"]')).toBeNull();
+    expect(cards(element)[0]!.insuranceName).toBeFalsy();
 
     element.insuranceName = 'Test Health PPO';
     await settled(element);
 
-    expect(shadow(element).querySelector('[part="provider-insurance"]')?.textContent).toContain(
-      'In-network · Test Health PPO'
-    );
+    expect(cards(element)[0]!.insuranceName).toBe('Test Health PPO');
   });
 
-  it('marks only the selected provider with aria-current', async () => {
-    const element = await mountResults(PROVIDERS);
-    element.selectedId = 'pr_b|lo_b';
-    await settled(element);
-
-    const current = [...shadow(element).querySelectorAll('[part="provider"]')].map((node) =>
-      node.getAttribute('aria-current')
-    );
-    expect(current).toEqual([null, 'true']);
-  });
-
-  it('tracks selection when a provider is chosen', async () => {
-    const element = await mountResults(PROVIDERS);
-    shadow(element).querySelectorAll<HTMLElement>('[part="provider"]')[1]!.click();
-    await settled(element);
-
-    expect(element.selectedId).toBe('pr_b|lo_b');
-  });
-
-  // A11Y-001. The provider control is a real <button> inside a real list, which
-  // is what makes Enter and Space work without a keydown handler and what gives
-  // a screen reader the item count. Asserting the tag names keeps someone from
-  // "simplifying" this into a div with role="button".
-  it('uses native list and button semantics', async () => {
+  // A11Y-001. Providers are rendered inside a semantic list for screen reader item counts.
+  it('uses native list semantics', async () => {
     const element = await mountResults(PROVIDERS);
     const root = shadow(element);
 
     expect(root.querySelectorAll('ul > li')).toHaveLength(2);
-    expect(root.querySelector('[part="provider"]')?.tagName).toBe('BUTTON');
-    expect(root.querySelector('[part="provider"]')?.getAttribute('type')).toBe('button');
   });
 
-  it('renders the provider name as text, not as an attribute', async () => {
+  it('passes provider data to cards for rendering', async () => {
     const element = await mountResults(PROVIDERS);
-    for (const node of shadow(element).querySelectorAll('*')) {
-      expect(node.getAttribute('aria-label')).toBeNull();
-    }
-    expect(shadow(element).textContent).toContain('Dr. Ada Testerson');
+    const card = cards(element)[0]!;
+
+    expect(card.provider).toEqual(PROVIDERS[0]);
   });
 
   /*
@@ -453,16 +447,17 @@ describe('zd-provider-results', () => {
     });
 
     /*
-     * The grid is full of buttons and `part="provider"` is a button, so nesting them would be the
-     * axe `nested-interactive` violation and, worse, unreachable by keyboard. The axe check below
-     * would catch it; this pins the structure so a refactor cannot quietly move it back inside.
+     * The grid is full of buttons, so it must not be nested inside another button. The provider
+     * card's clickable name is a button; the availability slot is a sibling in the card layout,
+     * not a child of the name button. The axe check below would catch violations.
      */
-    it('renders the grid beside the provider control rather than inside it', async () => {
+    it('slots the availability grid into the provider card', async () => {
       const element = await mountWithAvailability();
-      const provider = shadow(element).querySelector('[part="provider"]');
+      const card = cards(element)[0]!;
+      const grid = grids(element)[0]!;
 
-      expect(provider!.querySelector('[part="provider-availability"]')).toBeNull();
-      expect(grids(element)[0]!.closest('[part="provider"]')).toBeNull();
+      expect(grid.getAttribute('slot')).toBe('availability');
+      expect(grid.parentElement).toBe(card);
     });
 
     /*
