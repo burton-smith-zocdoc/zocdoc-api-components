@@ -1,6 +1,6 @@
-import { CharmElement, ZdButton, ZdCard } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdCard, ZdDialog } from '@powered-by-zocdoc/primitives';
 import { nothing } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { DEFAULT_PAGE_SIZE } from '../../client/provider-locations.js';
 import type {
   AvailabilitySlot,
@@ -8,6 +8,8 @@ import type {
   ProviderLocationAvailability,
 } from '../../client/types.js';
 import { ZdAvailabilityGrid } from '../availability-grid/availability-grid.js';
+import { ZdProviderCard } from '../provider-card/provider-card.js';
+import { ZdProviderProfile } from '../provider-profile/provider-profile.js';
 import type { AvailabilityWindowDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import {
   nextWindowStart,
@@ -19,7 +21,6 @@ import { formatCount } from '../internal/format.js';
 import { NO_PROVIDERS_MATCH } from '../internal/messages.js';
 import windowStyles from '../internal/availability-window.styles.js';
 import { todayDayKey } from '../internal/provider-time.js';
-import { renderProviderSummary } from '../internal/provider-summary.js';
 import summaryStyles from '../internal/provider-summary.styles.js';
 import styles from './provider-results.styles.js';
 
@@ -127,7 +128,7 @@ export class ZdProviderResults extends CharmElement {
   ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdCard, ZdButton, ZdAvailabilityGrid];
+    return [ZdCard, ZdButton, ZdAvailabilityGrid, ZdProviderCard, ZdDialog, ZdProviderProfile];
   }
 
   /** The provider locations to display. */
@@ -199,6 +200,12 @@ export class ZdProviderResults extends CharmElement {
   /** How many days of availability each card shows. Clamped to the API's 30-day maximum. */
   @property({ type: Number, attribute: 'availability-days' })
   public availabilityDays = 14;
+
+  @state()
+  private profileOpen = false;
+
+  @state()
+  private profileProvider?: ProviderLocation;
 
   /**
    * The last page's zero-index, or `undefined` when there is nothing to derive it from.
@@ -315,6 +322,7 @@ export class ZdProviderResults extends CharmElement {
 
     return this.html`
       <scoped-availability-grid
+        slot="availability"
         part="provider-availability"
         exportparts="days: availability-days, day: availability-day, empty: availability-empty"
         hide-window
@@ -330,6 +338,15 @@ export class ZdProviderResults extends CharmElement {
         }}
       ></scoped-availability-grid>
     `;
+  }
+
+  protected openProfileDialog(provider: ProviderLocation): void {
+    this.profileProvider = provider;
+    this.profileOpen = true;
+  }
+
+  protected closeProfileDialog(): void {
+    this.profileOpen = false;
   }
 
   /**
@@ -359,27 +376,32 @@ export class ZdProviderResults extends CharmElement {
           const badges = this.renderBadges(location);
           return this.html`
             <li>
-              <scoped-card>
-                <button
-                  part="provider"
-                  type="button"
-                  aria-current=${location.provider_location_id === this.selectedId ? 'true' : nothing}
-                  @click=${() => this.select(location)}
-                >
-                  ${renderProviderSummary(location, {
-                    showPhoto: this.showPhotos,
-                    insuranceName: this.insuranceName,
-                  })}
-                  ${badges === nothing ? nothing : this.html`<span part="provider-badges">${badges}</span>`}
-                </button>
+              <scoped-provider-card
+                part="provider"
+                .provider=${location}
+                ?show-photo=${this.showPhotos}
+                insurance-name=${this.insuranceName ?? nothing}
+                @profile-request=${(e: CustomEvent<{ provider: ProviderLocation }>) =>
+                  this.openProfileDialog(e.detail.provider)}
+              >
+                ${badges === nothing ? nothing : this.html`<span slot="badges">${badges}</span>`}
                 ${this.renderAvailability(location)}
-              </scoped-card>
+              </scoped-provider-card>
             </li>
           `;
         })}
       </ul>
 
       ${this.renderPager()}
+
+      <scoped-dialog
+        ?open=${this.profileOpen}
+        @close=${() => this.closeProfileDialog()}
+      >
+        ${this.profileProvider
+          ? this.html`<scoped-provider-profile .provider=${this.profileProvider}></scoped-provider-profile>`
+          : nothing}
+      </scoped-dialog>
     `;
   }
 
