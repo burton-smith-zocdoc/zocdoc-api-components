@@ -23,6 +23,73 @@ The set that ships with Charm is: `checkmark`, `checkmark-circle`, `chevron-down
 `zd-alert`'s `info` variant needs. A `name` outside that list falls back to the `question` icon —
 silently, so a typo looks like a question mark rather than an error.
 
+## All icons
+
+<code-bubble hidecode>
+
+```html
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem;">
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="checkmark" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">checkmark</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="checkmark-circle" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">checkmark-circle</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="chevron-down" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">chevron-down</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="chevron-right" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">chevron-right</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="circle" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">circle</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="dismiss" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">dismiss</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="error-circle" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">error-circle</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="info-circle" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">info-circle</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="more" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">more</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="person" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">person</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="question" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">question</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="square" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">square</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="warning" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">warning</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="warning-shield" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">warning-shield</span>
+  </div>
+</div>
+```
+
+</code-bubble>
+
 ## Sizes
 
 Charm's icon is `1em` square, so with no `size` it scales with whatever text it sits in — the right

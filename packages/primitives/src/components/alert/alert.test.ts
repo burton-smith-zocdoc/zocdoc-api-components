@@ -133,7 +133,9 @@ describeA11y('zd-alert', () => {
    * `secondary` button sitting on the severity's surface. Charm points the dismiss
    * button at `surface-secondary`, which in the dark scheme is a dark gray under a
    * dark `on-danger-200` glyph — this is the case that catches it if the
-   * transparent override is ever dropped.
+   * transparent default is ever dropped. It is also the only case that renders the
+   * dismiss button at all, so it is what holds the button to the 24px WCAG 2.2
+   * target minimum that `alert.buttonPadding` alone no longer reaches.
    */
   it.each(VARIANTS)(
     'passes axe checks with variant="%s", a heading, and actions',

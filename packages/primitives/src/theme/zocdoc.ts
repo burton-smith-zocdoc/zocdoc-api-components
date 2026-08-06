@@ -1721,11 +1721,9 @@ const zocdocTokensBase = charmTokens
      * border does not, and does not need to, because the tint is what separates
      * the alert from the page.
      *
-     * The dismiss button's own background is dropped to transparent in
-     * `alert.styles.ts`; only its hover and active steps are named here.
-     * Charm's default points it at `surface-secondary`, which in the dark scheme
-     * is a dark gray - and the alert's foreground there is a dark
-     * `on-<ramp>-200`, so the glyph would vanish into its own button.
+     * The dismiss button's resting background is transparent for every alert -
+     * see the `alert` group below - so only its hover and active steps are named
+     * here.
      */
     const alertVariant = (ramp: string) => ({
       bgColor: {
@@ -2044,10 +2042,9 @@ const zocdocTokensBase = charmTokens
         },
         borderWidth: primitive('borderWidth', 'sm'),
         bgColor: semantic('surface', 'default', 'bgColor'),
-        /** Zinc's `markColor` - the inner dot */
-        indicatorBgColor: {
-          light: primitive('color', 'neutral', 900),
-          dark: primitive('color', 'white'),
+        label: {
+          checked: { hover: { color: semantic('body', 'fgColor') } },
+          unchecked: { hover: { color: semantic('body', 'fgColor') } },
         },
         controlSize: '20px',
         indicatorSize: '8px',
@@ -2061,7 +2058,15 @@ const zocdocTokensBase = charmTokens
           indicatorSize: '6px',
         },
         checked: {
-          bgColor: semantic('surface', 'default', 'bgColor'),
+          /**
+           * Zinc's `markColor` - the inner dot. Charm paints `.radio-check`
+           * from `checked.bgColor`, not from an indicator-specific token, so
+           * this has to be the dot color rather than the control's surface.
+           */
+          bgColor: {
+            light: primitive('color', 'neutral', 900),
+            dark: primitive('color', 'white'),
+          },
           borderColor: {
             light: primitive('color', 'neutral', 900),
             dark: primitive('color', 'white'),
@@ -2173,6 +2178,7 @@ const zocdocTokensBase = charmTokens
       },
       /** Zinc's `modal` - Charm registers this component as `dialog` */
       dialog: {
+        marginTop: primitive('spacing', 16),
         paddingX: primitive('spacing', 32),
         paddingY: primitive('spacing', 32),
         headerGap: primitive('spacing', 20),
@@ -2445,6 +2451,8 @@ const zocdocTokensBase = charmTokens
        * depend on whether it has a severity.
        */
       alert: {
+        buttonBgColor: 'transparent',
+        buttonPadding: primitive('spacing', 8),
         info: alertVariant('info'),
         success: alertVariant('success'),
         warning: alertVariant('warning'),
@@ -2532,6 +2540,10 @@ const zocdocTokensBase = charmTokens
         fgColor: semantic('elevation', 'raised', 'fgColor'),
         padding: primitive('spacing', 16),
         shadow: semantic('elevation', 'raised', 'shadow'),
+        headingPaddingX: primitive('spacing', 0),
+        headingPaddingY: primitive('spacing', 0),
+        bodyPaddingX: primitive('spacing', 0),
+        bodyPaddingY: primitive('spacing', 0),
       },
       /**
        * Zinc's `popover` values. Charm registers no `popover` component - it

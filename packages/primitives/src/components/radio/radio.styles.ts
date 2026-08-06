@@ -9,6 +9,10 @@ import { css } from 'lit';
  * overflows the smaller control.
  */
 export default css`
+  :host {
+    --zd-form-control-label-font-weight: var(--zd-font-weight-normal);
+  }
+
   :host([size='small']) {
     --zd-radio-control-size: var(--zd-radio-small-control-size);
     --zd-radio-indicator-size: var(--zd-radio-small-indicator-size);
