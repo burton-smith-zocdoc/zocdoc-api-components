@@ -1,6 +1,6 @@
 import { html, render } from 'lit';
 import { describe, expect, it, vi } from 'vitest';
-import { settled, track } from '../../../test/mount.js';
+import { settled, track } from '../../../utils/test/mount.js';
 import { renderRequestState, type RequestState } from '../request-state.js';
 
 function renderTo(state: RequestState, onRetry = vi.fn<() => void>()): HTMLElement {

@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 import type { ZdBadge } from './badge.js';
 
 const VARIANTS = [
@@ -18,7 +18,6 @@ describeA11y('zd-badge', () => {
     const badge = document.createElement('zd-badge') as ZdBadge;
     badge.textContent = 'New';
     getContainer().appendChild(badge);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -28,7 +27,6 @@ describeA11y('zd-badge', () => {
     badge.variant = variant;
     badge.textContent = 'Status';
     getContainer().appendChild(badge);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

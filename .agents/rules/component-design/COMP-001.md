@@ -26,23 +26,47 @@ Empty is distinct from error. "No availability in this range" is a routine outco
 render() {
   switch (this.state) {
     case 'idle':
-      return html`<slot name="idle">Enter a ZIP code to search</slot>`;
+      return this.html`<slot name="idle">Enter a ZIP code to search</slot>`;
     case 'loading':
-      return html`<${this.scope.tag('spinner')}></${this.scope.tag('spinner')}>`;
+      return this.html`<scoped-spinner></scoped-spinner>`;
     case 'empty':
-      return html`<p>No providers found in your area.</p>`;
+      return this.html`<p>No providers found in your area.</p>`;
     case 'error':
-      return html`
-        <${this.scope.tag('alert')} variant="error">
+      return this.html`
+        <scoped-alert variant="error">
           ${this.errorMessage}
-          <${this.scope.tag('button')} @click=${this.retry}>Retry</${this.scope.tag('button')}>
-        </${this.scope.tag('alert')}>
+          <scoped-button @click=${this.retry}>Retry</scoped-button>
+        </scoped-alert>
       `;
     case 'success':
-      return html`...render data...`;
+      return this.html`...render data...`;
   }
 }
 ```
+
+**In practice, don't hand-write that switch.** `components/internal/request-state.ts`
+already renders idle/loading/empty/error and delegates `success` to a `children`
+callback, so a fetching component is:
+
+```ts
+public static override get dependencies(): (typeof CharmElement)[] {
+  return [...requestStateDependencies];
+}
+
+protected override render(): unknown {
+  return renderRequestState(this.requestState, {
+    emptyMessage: 'No providers found in your area.',
+    errorMessage: this.errorMessage,
+    loadingMessage: 'Searching…',
+    onRetry: () => void this.search(),
+    children: () => this.renderResults(),
+  });
+}
+```
+
+Spreading `requestStateDependencies` is required — the helper renders a spinner,
+alert, and button that appear in no template you wrote (PBZD-003). Pass
+`children: () => nothing` when the component renders its success markup elsewhere.
 
 **Don't:**
 

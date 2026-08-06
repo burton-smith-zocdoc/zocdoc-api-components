@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 describeA11y('zd-button-group-overflow', () => {
   it('passes axe checks within button group', async () => {
@@ -13,7 +13,6 @@ describeA11y('zd-button-group-overflow', () => {
       </zd-button-group-overflow>
     `;
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

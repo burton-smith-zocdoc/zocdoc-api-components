@@ -3,8 +3,9 @@ import * as availability from '../../client/availability.js';
 import { ZocdocError } from '../../client/errors.js';
 import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
 import type { AvailabilitySlot, ProviderLocationAvailability } from '../../client/types.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { dayFromToday } from '../../utils/test/dates.js';
+import { mount, part, parts, settled, shadow, texts } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -16,22 +17,6 @@ vi.mock('../../client/availability.js', { spy: true });
 
 const PROVIDER_LOCATION_ID = 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890';
 const VISIT_REASON_ID = 'pc_FRO-18leckytNKtruw5dLR';
-
-/**
- * A day key relative to today, computed here rather than imported from the component's own
- * helper — otherwise a bug in that helper would move the fixtures and the assertions together
- * and the tests would agree with it.
- *
- * The window always starts at today, so fixtures have to be relative: a hard-coded date would
- * fall outside the window tomorrow and every count would read zero.
- */
-function dayFromToday(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
 
 const TODAY = dayFromToday(0);
 const TOMORROW = dayFromToday(1);
@@ -66,21 +51,13 @@ type Grid = HTMLElement & {
   shiftWindow(direction: -1 | 1): void;
 };
 
-function shadow(element: Grid): ShadowRoot {
-  const root = element.shadowRoot;
-  if (!root) throw new Error('zd-availability-grid rendered no shadow root');
-  return root;
-}
-
 /** Native buttons throughout, so these really are `HTMLButtonElement`s. */
 function dayCells(element: Grid): HTMLButtonElement[] {
-  return [...shadow(element).querySelectorAll<HTMLButtonElement>('[part="day"]')];
+  return parts<HTMLButtonElement>(element, 'day');
 }
 
-function texts(element: Grid, part: string): string[] {
-  return [...shadow(element).querySelectorAll(`[part="${part}"]`)].map(
-    (node) => node.textContent?.trim() ?? ''
-  );
+function windowButton(element: Grid, direction: 'previous' | 'next'): HTMLButtonElement {
+  return part<HTMLButtonElement>(element, `window-${direction}`);
 }
 
 /** The prop-driven way in: slots supplied, so nothing is fetched. */
@@ -265,14 +242,6 @@ describe('zd-availability-grid', () => {
   });
 
   describe('the window pager', () => {
-    function windowButton(element: Grid, direction: 'previous' | 'next'): HTMLButtonElement {
-      const button = shadow(element).querySelector<HTMLButtonElement>(
-        `[part="window-${direction}"]`
-      );
-      if (!button) throw new Error(`no window-${direction} control`);
-      return button;
-    }
-
     /*
      * The API returns nothing in the past, so a window that starts behind today comes back
      * empty and reads as no availability at all.

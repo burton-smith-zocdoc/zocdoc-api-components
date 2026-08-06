@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdMenuItem extends HTMLElement {
   disabled?: boolean;
@@ -13,7 +13,6 @@ describeA11y('zd-menu-item', () => {
       <zd-menu-item>Menu item</zd-menu-item>
     `;
     getContainer().appendChild(menu);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -26,7 +25,6 @@ describeA11y('zd-menu-item', () => {
     menu.innerHTML = '<button slot="trigger">Menu</button>';
     menu.appendChild(item);
     getContainer().appendChild(menu);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

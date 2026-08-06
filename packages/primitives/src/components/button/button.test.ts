@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 import type { ZdButton } from './button.js';
 
 const VARIANTS = ['primary', 'secondary', 'inverse', 'ghost', 'destructive', 'link'] as const;
@@ -9,7 +9,6 @@ describeA11y('zd-button', () => {
     const button = document.createElement('zd-button') as ZdButton;
     button.textContent = 'Click me';
     getContainer().appendChild(button);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -19,7 +18,6 @@ describeA11y('zd-button', () => {
     button.variant = variant;
     button.textContent = 'Click me';
     getContainer().appendChild(button);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -29,7 +27,6 @@ describeA11y('zd-button', () => {
     button.textContent = 'Disabled button';
     button.disabled = true;
     getContainer().appendChild(button);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -39,7 +36,6 @@ describeA11y('zd-button', () => {
     button.textContent = 'Small button';
     button.size = 'small';
     getContainer().appendChild(button);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

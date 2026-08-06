@@ -1,4 +1,4 @@
-import { css } from 'lit';
+import { css, unsafeCSS, type CSSResult } from "lit";
 
 /**
  * Zocdoc button style overrides.
@@ -33,6 +33,58 @@ import { css } from 'lit';
  * `size` uses the same trick against the `button.small.*` group, and `fluid`
  * only widens the host.
  */
+
+/**
+ * The variants whose `button.<variant>.*` group carries every leaf the flat
+ * properties need, so the mapping is mechanical. `ghost` and `link` are written
+ * out below precisely because theirs do not — keeping them separate is what
+ * makes their deviations visible rather than buried in a list of near-identical
+ * blocks.
+ */
+const COMPLETE_VARIANTS = [
+  "primary",
+  "secondary",
+  "inverse",
+  "destructive",
+] as const;
+
+const completeVariant = (name: string): CSSResult => {
+  const v = unsafeCSS(name);
+  return css`
+    :host([variant="${v}"]) {
+      --zd-button-bg-color: var(--zd-button-${v}-bg-color);
+      --zd-button-fg-color: var(--zd-button-${v}-fg-color);
+      --zd-button-border-color: var(--zd-button-${v}-border-color);
+      --zd-button-hover-bg-color: var(--zd-button-${v}-hover-bg-color);
+      --zd-button-hover-fg-color: var(--zd-button-${v}-hover-fg-color);
+      --zd-button-hover-border-color: var(--zd-button-${v}-hover-border-color);
+      --zd-button-active-bg-color: var(--zd-button-${v}-active-bg-color);
+      --zd-button-active-fg-color: var(--zd-button-${v}-active-fg-color);
+      --zd-button-active-border-color: var(
+        --zd-button-${v}-active-border-color
+      );
+      --zd-button-disabled-bg-color: var(--zd-button-${v}-disabled-bg-color);
+      --zd-button-disabled-fg-color: var(--zd-button-${v}-disabled-fg-color);
+      --zd-button-disabled-border-color: var(
+        --zd-button-${v}-disabled-border-color
+      );
+      --zd-button-focus-bg-color: var(--zd-button-${v}-bg-color);
+      --zd-button-focus-fg-color: var(--zd-button-${v}-fg-color);
+      --zd-button-pressed-bg-color: var(--zd-button-${v}-active-bg-color);
+      --zd-button-pressed-fg-color: var(--zd-button-${v}-active-fg-color);
+      --zd-button-pressed-border-color: var(
+        --zd-button-${v}-active-border-color
+      );
+    }
+  `;
+};
+
+const completeVariants = COMPLETE_VARIANTS.map(completeVariant).reduce(
+  (all, one) => css`
+    ${all} ${one}
+  `,
+);
+
 export default css`
   /*
    * Charm's button takes its text size from the page (\`font-size: inherit\`) and
@@ -48,9 +100,20 @@ export default css`
   .control {
     box-sizing: border-box;
     min-height: var(--zd-button-height);
+    padding-block: max(
+      0px,
+      calc(var(--zd-button-padding-y, 0px) - var(--zd-button-border-width)),
+      calc(
+        (
+            var(--zd-button-height) - 1em - var(--zd-button-border-width) *
+              2
+          ) /
+          2
+      )
+    );
   }
 
-  :host(:not([variant='link'])) a.control {
+  :host(:not([variant="link"])) a.control {
     color: inherit;
     text-decoration: none;
   }
@@ -60,7 +123,7 @@ export default css`
     width: 100%;
   }
 
-  :host([size='small']) {
+  :host([size="small"]) {
     --zd-button-font-size: var(--zd-button-small-font-size);
     --zd-button-height: var(--zd-button-small-height);
     --zd-button-icon-size: var(--zd-button-small-icon-size);
@@ -70,85 +133,7 @@ export default css`
     --zd-button-icon-padding-y: var(--zd-button-small-padding-y);
   }
 
-  :host([variant='primary']) {
-    --zd-button-bg-color: var(--zd-button-primary-bg-color);
-    --zd-button-fg-color: var(--zd-button-primary-fg-color);
-    --zd-button-border-color: var(--zd-button-primary-border-color);
-    --zd-button-hover-bg-color: var(--zd-button-primary-hover-bg-color);
-    --zd-button-hover-fg-color: var(--zd-button-primary-hover-fg-color);
-    --zd-button-hover-border-color: var(--zd-button-primary-hover-border-color);
-    --zd-button-active-bg-color: var(--zd-button-primary-active-bg-color);
-    --zd-button-active-fg-color: var(--zd-button-primary-active-fg-color);
-    --zd-button-active-border-color: var(--zd-button-primary-active-border-color);
-    --zd-button-disabled-bg-color: var(--zd-button-primary-disabled-bg-color);
-    --zd-button-disabled-fg-color: var(--zd-button-primary-disabled-fg-color);
-    --zd-button-disabled-border-color: var(--zd-button-primary-disabled-border-color);
-    --zd-button-focus-bg-color: var(--zd-button-primary-bg-color);
-    --zd-button-focus-fg-color: var(--zd-button-primary-fg-color);
-    --zd-button-pressed-bg-color: var(--zd-button-primary-active-bg-color);
-    --zd-button-pressed-fg-color: var(--zd-button-primary-active-fg-color);
-    --zd-button-pressed-border-color: var(--zd-button-primary-active-border-color);
-  }
-
-  :host([variant='secondary']) {
-    --zd-button-bg-color: var(--zd-button-secondary-bg-color);
-    --zd-button-fg-color: var(--zd-button-secondary-fg-color);
-    --zd-button-border-color: var(--zd-button-secondary-border-color);
-    --zd-button-hover-bg-color: var(--zd-button-secondary-hover-bg-color);
-    --zd-button-hover-fg-color: var(--zd-button-secondary-hover-fg-color);
-    --zd-button-hover-border-color: var(--zd-button-secondary-hover-border-color);
-    --zd-button-active-bg-color: var(--zd-button-secondary-active-bg-color);
-    --zd-button-active-fg-color: var(--zd-button-secondary-active-fg-color);
-    --zd-button-active-border-color: var(--zd-button-secondary-active-border-color);
-    --zd-button-disabled-bg-color: var(--zd-button-secondary-disabled-bg-color);
-    --zd-button-disabled-fg-color: var(--zd-button-secondary-disabled-fg-color);
-    --zd-button-disabled-border-color: var(--zd-button-secondary-disabled-border-color);
-    --zd-button-focus-bg-color: var(--zd-button-secondary-bg-color);
-    --zd-button-focus-fg-color: var(--zd-button-secondary-fg-color);
-    --zd-button-pressed-bg-color: var(--zd-button-secondary-active-bg-color);
-    --zd-button-pressed-fg-color: var(--zd-button-secondary-active-fg-color);
-    --zd-button-pressed-border-color: var(--zd-button-secondary-active-border-color);
-  }
-
-  :host([variant='inverse']) {
-    --zd-button-bg-color: var(--zd-button-inverse-bg-color);
-    --zd-button-fg-color: var(--zd-button-inverse-fg-color);
-    --zd-button-border-color: var(--zd-button-inverse-border-color);
-    --zd-button-hover-bg-color: var(--zd-button-inverse-hover-bg-color);
-    --zd-button-hover-fg-color: var(--zd-button-inverse-hover-fg-color);
-    --zd-button-hover-border-color: var(--zd-button-inverse-hover-border-color);
-    --zd-button-active-bg-color: var(--zd-button-inverse-active-bg-color);
-    --zd-button-active-fg-color: var(--zd-button-inverse-active-fg-color);
-    --zd-button-active-border-color: var(--zd-button-inverse-active-border-color);
-    --zd-button-disabled-bg-color: var(--zd-button-inverse-disabled-bg-color);
-    --zd-button-disabled-fg-color: var(--zd-button-inverse-disabled-fg-color);
-    --zd-button-disabled-border-color: var(--zd-button-inverse-disabled-border-color);
-    --zd-button-focus-bg-color: var(--zd-button-inverse-bg-color);
-    --zd-button-focus-fg-color: var(--zd-button-inverse-fg-color);
-    --zd-button-pressed-bg-color: var(--zd-button-inverse-active-bg-color);
-    --zd-button-pressed-fg-color: var(--zd-button-inverse-active-fg-color);
-    --zd-button-pressed-border-color: var(--zd-button-inverse-active-border-color);
-  }
-
-  :host([variant='destructive']) {
-    --zd-button-bg-color: var(--zd-button-destructive-bg-color);
-    --zd-button-fg-color: var(--zd-button-destructive-fg-color);
-    --zd-button-border-color: var(--zd-button-destructive-border-color);
-    --zd-button-hover-bg-color: var(--zd-button-destructive-hover-bg-color);
-    --zd-button-hover-fg-color: var(--zd-button-destructive-hover-fg-color);
-    --zd-button-hover-border-color: var(--zd-button-destructive-hover-border-color);
-    --zd-button-active-bg-color: var(--zd-button-destructive-active-bg-color);
-    --zd-button-active-fg-color: var(--zd-button-destructive-active-fg-color);
-    --zd-button-active-border-color: var(--zd-button-destructive-active-border-color);
-    --zd-button-disabled-bg-color: var(--zd-button-destructive-disabled-bg-color);
-    --zd-button-disabled-fg-color: var(--zd-button-destructive-disabled-fg-color);
-    --zd-button-disabled-border-color: var(--zd-button-destructive-disabled-border-color);
-    --zd-button-focus-bg-color: var(--zd-button-destructive-bg-color);
-    --zd-button-focus-fg-color: var(--zd-button-destructive-fg-color);
-    --zd-button-pressed-bg-color: var(--zd-button-destructive-active-bg-color);
-    --zd-button-pressed-fg-color: var(--zd-button-destructive-active-fg-color);
-    --zd-button-pressed-border-color: var(--zd-button-destructive-active-border-color);
-  }
+  ${completeVariants}
 
   /* Ghost has no hover/active foreground of its own - it keeps its base color. */
   :host([variant='ghost']) {
@@ -172,7 +157,9 @@ export default css`
       var(--zd-button-ghost-bg-color)
     );
     --zd-button-disabled-fg-color: var(--zd-button-ghost-disabled-fg-color);
-    --zd-button-disabled-border-color: var(--zd-button-ghost-disabled-border-color);
+    --zd-button-disabled-border-color: var(
+      --zd-button-ghost-disabled-border-color
+    );
     --zd-button-focus-bg-color: var(--zd-button-ghost-bg-color);
     --zd-button-focus-fg-color: var(--zd-button-ghost-fg-color);
     --zd-button-pressed-bg-color: var(--zd-button-ghost-active-bg-color);
@@ -180,7 +167,9 @@ export default css`
       --zd-button-ghost-active-fg-color,
       var(--zd-button-ghost-fg-color)
     );
-    --zd-button-pressed-border-color: var(--zd-button-ghost-active-border-color);
+    --zd-button-pressed-border-color: var(
+      --zd-button-ghost-active-border-color
+    );
   }
 
   /*
@@ -188,7 +177,7 @@ export default css`
    * primitive so Charm's shorthand still resolves, and adds the underline
    * Charm's button never declares.
    */
-  :host([variant='link']) {
+  :host([variant="link"]) {
     --zd-button-bg-color: var(--zd-button-link-bg-color);
     --zd-button-fg-color: var(--zd-button-link-fg-color);
     --zd-button-border-color: var(--zd-color-transparent);
@@ -222,7 +211,7 @@ export default css`
     }
   }
 
-  :host([variant='link']:not([disabled])) .control:active {
+  :host([variant="link"]:not([disabled])) .control:active {
     text-decoration: var(--zd-button-link-active-decoration);
   }
 `;

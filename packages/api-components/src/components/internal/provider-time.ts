@@ -72,9 +72,7 @@ export function addDays(key: string, days: number): string {
 }
 
 /**
- * Built once rather than per render, and pinned to UTC so it reports the provider's own wall
- * clock — see {@link providerLocalTime}. `undefined` for the locale means the user's, which
- * is what supplies the translated weekday and month and the 12- or 24-hour clock (I18N-002).
+ * UTC so it reports the provider's own wall clock — see {@link providerLocalTime}.
  *
  * The year is here where the availability picker's formatter omits it: a picker only ever
  * shows the next few weeks, while a confirmation is something a patient keeps.

@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 import type { ZdRadioGroup } from '../radio-group/radio-group.js';
 import type { ZdRadio } from './radio.js';
 
@@ -28,7 +28,6 @@ describeA11y('zd-radio', () => {
     const group = createGroup('Choose an option', 'options');
     group.appendChild(createRadio('Option A', 'a'));
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -39,7 +38,6 @@ describeA11y('zd-radio', () => {
     radio.checked = true;
     group.appendChild(radio);
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -50,7 +48,6 @@ describeA11y('zd-radio', () => {
     radio.disabled = true;
     group.appendChild(radio);
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -61,7 +58,6 @@ describeA11y('zd-radio', () => {
     radio.size = 'small';
     group.appendChild(radio);
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -72,7 +68,6 @@ describeA11y('zd-radio', () => {
       group.appendChild(createRadio(`Option ${value.toUpperCase()}`, value));
     }
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 describeA11y('zd-menu-group', () => {
   it('passes axe checks with label and items', async () => {
@@ -12,7 +12,6 @@ describeA11y('zd-menu-group', () => {
       </zd-menu-group>
     `;
     getContainer().appendChild(menu);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

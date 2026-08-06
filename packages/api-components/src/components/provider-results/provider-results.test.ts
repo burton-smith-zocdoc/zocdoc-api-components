@@ -2,8 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 import * as availability from '../../client/availability.js';
 import { buildTimeslots } from '../../client/mock/fixtures.js';
 import type { ProviderLocation, ProviderLocationAvailability } from '../../client/types.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { dayFromToday } from '../../utils/test/dates.js';
+import { mount, part, settled, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -46,20 +47,6 @@ const PROVIDERS: ProviderLocation[] = [
     provider: { provider_id: 'pr_b', first_name: 'Bo', last_name: 'Sampleton' },
   },
 ];
-
-/**
- * A day key relative to today, computed here rather than imported from the component's own
- * helper — otherwise a bug in that helper would move the fixtures and the assertions together and
- * the tests would agree with it. The window starts at today, so a hard-coded date would fall
- * outside it tomorrow and every count would read zero.
- */
-function dayFromToday(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
 
 /**
  * Two slots for the first provider and none at all for the second — the second has no entry
@@ -139,9 +126,7 @@ async function mountPaged(page = 0): Promise<Results> {
 }
 
 function pagerButton(element: Results, direction: 'previous' | 'next'): HTMLElement {
-  const node = shadow(element).querySelector<HTMLElement>(`[part="pager-${direction}"]`);
-  if (!node) throw new Error(`zd-provider-results rendered no [part='pager-${direction}']`);
-  return node;
+  return part(element, `pager-${direction}`);
 }
 
 /**
@@ -151,12 +136,6 @@ function pagerButton(element: Results, direction: 'previous' | 'next'): HTMLElem
  */
 function isDisabled(element: Results, direction: 'previous' | 'next'): boolean {
   return pagerButton(element, direction).hasAttribute('disabled');
-}
-
-function shadow(element: Results): ShadowRoot {
-  const root = element.shadowRoot;
-  if (!root) throw new Error('zd-provider-results rendered no shadow root');
-  return root;
 }
 
 describe('zd-provider-results', () => {

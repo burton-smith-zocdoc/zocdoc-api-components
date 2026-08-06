@@ -18,10 +18,9 @@ export type ZdBadgeVariant =
   | 'brand';
 
 /**
- * Badge component for labels and status indicators.
+ * A small label or status indicator.
  *
  * @tag zd-badge
- * @summary Displays a small label or status indicator.
  */
 export class ZdBadge extends CoreBadge {
   static override styles = [...super.styles, styles] as typeof CoreBadge.styles;

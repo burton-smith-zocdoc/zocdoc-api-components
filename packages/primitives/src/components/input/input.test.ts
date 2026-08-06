@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 import type { ZdInput } from './input.js';
 
 describeA11y('zd-input', () => {
@@ -7,7 +7,6 @@ describeA11y('zd-input', () => {
     const input = document.createElement('zd-input') as ZdInput;
     input.label = 'Email address';
     getContainer().appendChild(input);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -17,7 +16,6 @@ describeA11y('zd-input', () => {
     input.label = 'Search';
     input.placeholder = 'Type to search...';
     getContainer().appendChild(input);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -27,7 +25,6 @@ describeA11y('zd-input', () => {
     input.label = 'Required field';
     input.required = true;
     getContainer().appendChild(input);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -37,7 +34,6 @@ describeA11y('zd-input', () => {
     input.label = 'Disabled field';
     input.disabled = true;
     getContainer().appendChild(input);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -47,7 +43,6 @@ describeA11y('zd-input', () => {
     input.label = 'Small input';
     input.size = 'small';
     getContainer().appendChild(input);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -57,7 +52,6 @@ describeA11y('zd-input', () => {
     input.label = 'Password';
     input.helpText = 'Must be at least 8 characters';
     getContainer().appendChild(input);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

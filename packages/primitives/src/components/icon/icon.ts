@@ -10,10 +10,9 @@ import styles from './icon.styles.js';
 export type ZdIconSize = 'small' | 'default' | 'large';
 
 /**
- * Renders an icon from the configured icon set.
+ * Renders a named icon from the configured icon set, at a token-driven size.
  *
  * @tag zd-icon
- * @summary Displays a named icon at a token-driven size.
  */
 export class ZdIcon extends CoreIcon {
   static override styles = [...super.styles, styles] as typeof CoreIcon.styles;

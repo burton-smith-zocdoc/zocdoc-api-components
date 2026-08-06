@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdSelect extends HTMLElement {
   label?: string;
@@ -18,7 +18,6 @@ describeA11y('zd-select', () => {
       <option value="ca">Canada</option>
     `;
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -29,7 +28,6 @@ describeA11y('zd-select', () => {
     el.disabled = true;
     el.innerHTML = '<option value="">Select...</option>';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -40,7 +38,6 @@ describeA11y('zd-select', () => {
     el.required = true;
     el.innerHTML = '<option value="">Select...</option>';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

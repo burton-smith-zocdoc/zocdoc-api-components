@@ -14,12 +14,12 @@ import type {
 } from '../../client/types.js';
 import { ZdAvailabilityPicker } from '../availability-picker/availability-picker.js';
 import { ZdBookingConfirmation } from '../booking-confirmation/booking-confirmation.js';
+import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import { resolveWindowStart, windowEndDate } from '../internal/availability-window.js';
 import { userFacingError } from '../internal/error-message.js';
-import { providerDisplayName } from '../internal/provider-name.js';
-import { formatAppointmentTime } from '../internal/provider-time.js';
-import { renderProviderSummary } from '../internal/provider-summary.js';
+import { providerHeading, renderProviderSummary } from '../internal/provider-summary.js';
 import summaryStyles from '../internal/provider-summary.styles.js';
+import { formatAppointmentTime } from '../internal/provider-time.js';
 import { requestStateDependencies } from '../internal/request-state.js';
 import { ZdPatientForm } from '../patient-form/patient-form.js';
 import { ZdProviderResults } from '../provider-results/provider-results.js';
@@ -60,6 +60,37 @@ const BOOKED_STATUSES: ReadonlySet<AppointmentStatus> = new Set(['confirmed', 'p
  * of counts fetched over seven would report an empty second week.
  */
 const AVAILABILITY_DAYS = 14;
+
+/**
+ * The appointment the API took.
+ *
+ * `status` rides along because `confirmed` and `pending_booking` are both bookings and the
+ * difference matters to the patient: one is accepted, the other is waiting on the practice. A host
+ * page that treats them alike tells some patients the wrong thing.
+ */
+export interface BookingCompleteDetail {
+  appointmentId: string;
+  status: AppointmentStatus;
+}
+
+/**
+ * A booking that did not happen.
+ *
+ * `status` is present when the API answered **200** with a status that is not a booking —
+ * `booking_failed` above all — and absent when the request itself failed. Either way the `error` is
+ * developer-facing and must not be shown or logged wholesale (CLIENT-003, PHI-001); on the 200 path
+ * it is a synthetic error naming the status, which carries no patient data.
+ */
+export interface BookingErrorDetail {
+  error: unknown;
+  status?: AppointmentStatus;
+}
+
+export interface ZdBookingFlowEventMap {
+  'booking-complete': CustomEvent<BookingCompleteDetail>;
+  'booking-error': CustomEvent<BookingErrorDetail>;
+  'availability-error': CustomEvent<ErrorDetail>;
+}
 
 /**
  * Coordinates the booking funnel: search → time → details → confirmation.
@@ -107,6 +138,10 @@ const AVAILABILITY_DAYS = 14;
  */
 export class ZdBookingFlow extends CharmElement {
   public static override baseName = 'booking-flow';
+
+  declare public addEventListener: TypedEventTarget<ZdBookingFlowEventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<ZdBookingFlowEventMap>['removeEventListener'];
+  declare protected emit: TypedEmit<ZdBookingFlowEventMap>;
 
   public static override styles = [
     ...super.styles,
@@ -217,6 +252,18 @@ export class ZdBookingFlow extends CharmElement {
   private defaultVisitReasonId?: string;
 
   /**
+   * The day the patient pressed on a card, carried to the picker as its `startDate`.
+   *
+   * Undefined when they pressed the card itself rather than one of its cells, which is what makes
+   * the picker open on the provider's first available day instead. That distinction is the whole
+   * reason this is separate from {@link availabilityStart}: the window the *list* is showing is not
+   * the day the patient asked for, and reusing it would make every card press open the picker on
+   * whatever Monday the pager happened to be parked on.
+   */
+  @state()
+  private selectedDay?: string;
+
+  /**
    * The `visit_reason_id` the search endpoint resolved, from `search_parameters`.
    *
    * Preferred over the provider's default because it is the reason the results were actually
@@ -286,9 +333,16 @@ export class ZdBookingFlow extends CharmElement {
     return this.visitReasonId ?? this.resolvedVisitReasonId ?? this.defaultVisitReasonId;
   }
 
-  /** The chosen provider's name, which is all the confirmation needs of them. */
+  /**
+   * The chosen provider's name, which is all the confirmation needs of them.
+   *
+   * `providerHeading` rather than `providerDisplayName`, so the confirmation names them exactly as
+   * the card the patient pressed did — credential included. Formatted the other way, a flow whose
+   * list said "Avery Sandoval, MD" confirms an appointment with "Avery Sandoval", and a patient
+   * reading carefully has to work out whether those are the same person.
+   */
   protected get providerName(): string | undefined {
-    return this.selectedProvider ? providerDisplayName(this.selectedProvider) : undefined;
+    return this.selectedProvider ? providerHeading(this.selectedProvider) : undefined;
   }
 
   /**
@@ -329,6 +383,8 @@ export class ZdBookingFlow extends CharmElement {
       this.providerLocationId = undefined;
       this.selectedProvider = undefined;
       this.defaultVisitReasonId = undefined;
+      // The day was a cell on that provider's card, so it goes back with the provider.
+      this.selectedDay = undefined;
     }
   }
 
@@ -389,8 +445,9 @@ export class ZdBookingFlow extends CharmElement {
         },
       });
     } catch (error: unknown) {
-      // Never `error.message` — it is developer-facing and its body can echo a submitted
-      // patient field (CLIENT-003, PHI-001). The raw error rides the event instead.
+      // The raw error rides the event on purpose: the host page's handling of it is
+      // developer-facing, while what reaches the DOM goes through userFacingError. Here that
+      // matters most — a failed booking's body can echo the patient's own fields (PHI-001).
       this.bookingError = userFacingError(error);
       this.emit('booking-error', { detail: { error } });
     } finally {
@@ -445,10 +502,18 @@ export class ZdBookingFlow extends CharmElement {
     }
   }
 
-  protected handleProviderSelect(location: ProviderLocation): void {
+  /**
+   * Moves to the time step.
+   *
+   * `day` is the cell the patient pressed, when a cell is how they got here. Passing it on as the
+   * picker's start day is what makes a day cell mean something: pressing Thursday and landing on
+   * Monday is a worse answer than the cell not being pressable at all.
+   */
+  protected handleProviderSelect(location: ProviderLocation, day?: string): void {
     this.providerLocationId = location.provider_location_id;
     this.selectedProvider = location;
     this.defaultVisitReasonId = location.provider.default_visit_reason_id;
+    this.selectedDay = day;
     // A different provider means the old slot is not on offer any more (see `back`).
     this.startTime = undefined;
   }
@@ -519,11 +584,9 @@ export class ZdBookingFlow extends CharmElement {
                 @window-change=${(event: CustomEvent) =>
                   void this.loadAvailability(event.detail.startDate)}
                 @day-select=${(event: CustomEvent) =>
-                  // Treated as picking the provider, which is what the day was on. The day itself
-                  // is dropped: the picker opens on its own first available day and has no way to
-                  // be told otherwise yet, and advancing to a step that ignores what was pressed
-                  // is better than a day cell that does nothing at all.
-                  this.handleProviderSelect(event.detail.provider)}
+                  // Both halves of the cell are used: the provider it belonged to, and the day
+                  // itself, which the picker opens on.
+                  this.handleProviderSelect(event.detail.provider, event.detail.day)}
               ></scoped-provider-results>
             `
           : nothing
@@ -540,8 +603,15 @@ export class ZdBookingFlow extends CharmElement {
         .providerLocationId=${this.providerLocationId}
         .visitReasonId=${this.effectiveVisitReasonId}
         .patientType=${this.patientType}
+        .startDate=${this.selectedDay}
         @slot-select=${(event: CustomEvent) => {
           this.startTime = event.detail.startTime;
+        }}
+        @patient-type-change=${(event: CustomEvent) => {
+          // Followed rather than ignored because the same value goes to POST /v1/appointments:
+          // a patient who says they are returning and is then booked as new is a wrong booking,
+          // not a cosmetic mismatch.
+          this.patientType = event.detail.patientType;
         }}
       ></scoped-availability-picker>
     `;

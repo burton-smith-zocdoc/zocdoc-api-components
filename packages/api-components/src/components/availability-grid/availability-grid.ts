@@ -1,9 +1,15 @@
 import { CharmElement } from '@powered-by-zocdoc/primitives';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { getAvailability } from '../../client/availability.js';
 import type { AvailabilitySlot, PatientType } from '../../client/types.js';
+import type {
+  AvailabilityWindowDetail,
+  ErrorDetail,
+  TypedEmit,
+  TypedEventTarget,
+} from '../events.js';
 import {
+  getLocationSlots,
   nextWindowStart,
   renderAvailabilityWindow,
   resolveWindowStart,
@@ -12,6 +18,7 @@ import {
 } from '../internal/availability-window.js';
 import windowStyles from '../internal/availability-window.styles.js';
 import { userFacingError } from '../internal/error-message.js';
+import { formatCount } from '../internal/format.js';
 import {
   addDays,
   dayKey,
@@ -26,16 +33,7 @@ import {
 } from '../internal/request-state.js';
 import styles from './availability-grid.styles.js';
 
-/** Counts get thousands separators from the user's locale, not from us (I18N-002). */
-const countLabel = new Intl.NumberFormat();
-
-/**
- * Built once rather than per render: constructing an `Intl.DateTimeFormat` is the expensive
- * part, and this grid formats two of these per cell on every update. `undefined` for the locale
- * means the user's own, which is what supplies the translated weekday and month names.
- *
- * Pinned to UTC because the day keys are read as UTC midnight — see `providerLocalTime`.
- */
+/** Split in two because a cell stacks the weekday over the date as separate lines. */
 const weekdayLabel = new Intl.DateTimeFormat(undefined, { weekday: 'short', timeZone: 'UTC' });
 
 const dateLabel = new Intl.DateTimeFormat(undefined, {
@@ -53,7 +51,27 @@ const dateLabel = new Intl.DateTimeFormat(undefined, {
  */
 function countPhrase(count: number): string {
   if (count === 0) return 'No appts';
-  return count === 1 ? '1 appt' : `${countLabel.format(count)} appts`;
+  return count === 1 ? '1 appt' : `${formatCount(count)} appts`;
+}
+
+/**
+ * The day cell the patient pressed.
+ *
+ * `providerLocationId` is whatever this grid was given, and so is absent on a grid rendering
+ * counts a host page supplied by hand. A page showing several grids should prefer
+ * `zd-provider-results`' own `day-select`, which carries the whole provider.
+ */
+export interface DaySelectDetail {
+  day: string;
+  providerLocationId?: string;
+}
+
+export interface ZdAvailabilityGridEventMap {
+  'day-select': CustomEvent<DaySelectDetail>;
+  'window-change': CustomEvent<AvailabilityWindowDetail>;
+  /** No payload: the request is simply to widen the window. */
+  'more-select': CustomEvent<Record<string, never>>;
+  'availability-error': CustomEvent<ErrorDetail>;
 }
 
 /**
@@ -98,6 +116,10 @@ function countPhrase(count: number): string {
  */
 export class ZdAvailabilityGrid extends CharmElement {
   public static override baseName = 'availability-grid';
+
+  declare public addEventListener: TypedEventTarget<ZdAvailabilityGridEventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<ZdAvailabilityGridEventMap>['removeEventListener'];
+  declare protected emit: TypedEmit<ZdAvailabilityGridEventMap>;
 
   public static override styles = [
     ...super.styles,
@@ -258,24 +280,19 @@ export class ZdAvailabilityGrid extends CharmElement {
     this.errorMessage = undefined;
 
     try {
-      const entries = await getAvailability({
-        providerLocationIds: [providerLocationId],
+      this.fetched = await getLocationSlots({
+        providerLocationId,
         visitReasonId: this.visitReasonId,
         patientType: this.patientType,
         startDate: this.windowStart,
         endDate: this.windowEnd,
       });
 
-      // One entry per requested location, and exactly one was requested. The entry comes back
-      // even with no open slots, so its absence means a different location answered.
-      const entry = entries.find((item) => item.provider_location_id === providerLocationId);
-
-      this.fetched = entry?.timeslots ?? [];
       this.requestState = this.fetched.length === 0 ? 'empty' : 'success';
     } catch (error: unknown) {
       this.requestState = 'error';
-      // Never `error.message` — it is developer-facing and its body can echo a submitted value
-      // (CLIENT-003, PHI-001). The raw error still rides the event.
+      // The raw error rides the event on purpose: the host page's handling of it is
+      // developer-facing, while what reaches the DOM goes through userFacingError (PHI-001).
       this.errorMessage = userFacingError(error);
       this.emit('availability-error', { detail: { error } });
     }
@@ -375,7 +392,7 @@ export class ZdAvailabilityGrid extends CharmElement {
           this.showMore
             ? this.html`
                 <li>
-                  <button part="more" type="button" @click=${() => this.emit('more-select')}>
+                  <button part="more" type="button" @click=${() => this.emit('more-select', { detail: {} })}>
                     More
                   </button>
                 </li>

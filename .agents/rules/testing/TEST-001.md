@@ -59,7 +59,7 @@ export default defineConfig({
         test: {
           name: 'components',
           include: BROWSER_TESTS,
-          setupFiles: ['./packages/api-components/src/test/setup-browser.ts'],
+          setupFiles: ['./packages/api-components/src/utils/test/setup-browser.ts'],
           browser: {
             enabled: true,
             provider: playwright(),

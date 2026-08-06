@@ -5,10 +5,9 @@ import type { ZdControlSize } from '../control-size.js';
 import styles from './radio.styles.js';
 
 /**
- * Radio button component for single selection.
+ * A single radio button option within a group.
  *
  * @tag zd-radio
- * @summary A single radio button option within a group.
  */
 export class ZdRadio extends CoreRadio {
   static override styles = [...super.styles, styles] as typeof CoreRadio.styles;

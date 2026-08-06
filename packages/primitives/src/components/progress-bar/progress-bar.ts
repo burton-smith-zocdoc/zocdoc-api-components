@@ -3,10 +3,9 @@ import { project } from '@charm-ux/core';
 import styles from './progress-bar.styles.js';
 
 /**
- * Progress indicator for multi-step flows and uploads.
+ * Shows determinate or indeterminate progress, for multi-step flows and uploads.
  *
  * @tag zd-progress-bar
- * @summary Shows determinate or indeterminate progress.
  */
 export class ZdProgressBar extends CoreProgressBar {
   static override styles = [...super.styles, styles] as typeof CoreProgressBar.styles;

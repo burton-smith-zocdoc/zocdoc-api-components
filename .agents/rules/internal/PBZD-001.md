@@ -26,42 +26,54 @@ export { project, CharmElement } from '@charm-ux/core';
 
 Importing `@charm-ux/core`'s root entry is safe: it exports base, controller, internal, theme, and utilities — no components.
 
-## 2. Import Charm class modules, never Charm barrels
+## 2. Import `Zd*` classes from the primitives package, never a Charm barrel
 
-A component folder's `index.js` **barrel** calls `registerComponent()` as an import side effect. The sibling **class module** (`button/button.js`) exports the class and registers nothing.
-
-`packages/primitives/src/charm.ts` re-exports the class modules, and that is the only place they are imported:
+Each primitive is a `Zd*` subclass of a Charm `Core*` class, defined in
+`packages/primitives/src/components/<name>/<name>.ts`, which registers itself at
+the bottom of its own module:
 
 ```ts
-export { default as button } from '@charm-ux/core/components/button/button.js';
-export { default as input } from '@charm-ux/core/components/input/input.js';
+// packages/primitives/src/components/button/button.ts
+export class ZdButton extends CoreButton { … }
+
+project.scope.registerComponent(ZdButton);
 ```
 
-Components declare them in `dependencies()`. The `CharmElement` constructor registers them at construction time, long after the prefix is set:
+`components/index.ts` re-exports them all, so importing the package registers
+every primitive eagerly under `zd-`. That is safe **only** because `index.ts`
+imports `./configure.js` first — which is what makes rule 1 load-bearing rather
+than a nicety.
+
+Consumers import the class and declare it in `dependencies()`:
 
 ```ts
-import { button, CharmElement, input } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdInput } from '@powered-by-zocdoc/primitives';
 
-export default class ProviderSearch extends CharmElement {
+export class ZdProviderSearch extends CharmElement {
   public static override baseName = 'provider-search';
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [input, button];
+    return [ZdInput, ZdButton];
   }
 }
 ```
 
-No casts. The class-module exports satisfy `typeof CharmElement` directly.
+No casts. The `Zd*` classes satisfy `typeof CharmElement` directly.
+
+`dependencies()` is still required even though the package registered the class
+already: it is the declaration `<scoped-*>` tag rewriting is checked against
+(PBZD-003), and registration is idempotent, so the overlap costs nothing.
 
 **Don't:**
 
 ```ts
-// ❌ A barrel — registers at import time under whatever prefix is current
+// ❌ A Charm barrel — registers ch-button at import time, and a ch-* component
+//    can never be re-registered as zd-*
 import '@charm-ux/core/components/button/index.js';
 
-// ❌ A class module imported for side effect — registers nothing, so <zd-button>
-//    is never defined and the template renders an unknown element
-import '@charm-ux/core/components/button/button.js';
+// ❌ Reaching past the primitives package for the Core class — you get Charm's
+//    button without the Zocdoc stylesheet
+import CoreButton from '@charm-ux/core/components/button/button.js';
 
 // ❌ Mixing config and component imports — the button is already ch-button
 import { project } from '@charm-ux/core';
@@ -70,8 +82,6 @@ import '@charm-ux/core/components/button/index.js';
 project.updateProject({ prefix: 'zd' });
 ```
 
-The one exception is a story or demo that renders a bare `zd-*` primitive with no host component to declare it. There, call `project.scope.registerComponent(button)` explicitly — safe, because importing the primitives package has already run `configure.js`.
-
-Guarded by `packages/primitives/src/__tests__/prefix.test.ts`, which asserts that a class-module import registers nothing until a host declaring it is constructed, and that nothing ever registers under `ch-`.
+Guarded by `packages/primitives/src/__tests__/prefix.test.ts`, which asserts that importing a primitive's module registers it under `zd-`, that a class named only in `dependencies()` registers when the host is constructed, and that nothing ever registers under `ch-`.
 
 See also: [PBZD-004](./PBZD-004.md), [PBZD-005](./PBZD-005.md)

@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 describeA11y('zd-breadcrumb', () => {
   it('passes axe checks with breadcrumb items', async () => {
@@ -11,7 +11,6 @@ describeA11y('zd-breadcrumb', () => {
       <zd-breadcrumb-item current>Current Page</zd-breadcrumb-item>
     `;
     getContainer().appendChild(breadcrumb);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

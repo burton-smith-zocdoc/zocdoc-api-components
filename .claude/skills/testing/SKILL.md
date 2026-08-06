@@ -22,20 +22,14 @@ Run one: `pnpm test --project=components`
 ```typescript
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as clientModule from '../../client/<endpoint>.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { mount, part, settled } from '../../utils/test/mount.js';
 import './index.js';
 
 // spy: true keeps real impl but makes exports spyable
 vi.mock('../../client/<endpoint>.js', { spy: true });
 
 type Element = HTMLElement & { load(): Promise<void> };
-
-function shadow(el: Element): ShadowRoot {
-  const root = el.shadowRoot;
-  if (!root) throw new Error('no shadow root');
-  return root;
-}
 
 describe('zd-component', () => {
   beforeEach(() => {
@@ -50,29 +44,53 @@ describe('zd-component', () => {
     const el = await mount<Element>(`<zd-component></zd-component>`);
     await el.load();
     await settled(el);
-    expect(shadow(el).querySelector('[part="content"]')).not.toBeNull();
+    expect(part(el, 'content')).toBeDefined();
   });
 });
 ```
 
 ## Test Helpers
 
-### mount(markup)
+**Don't hand-roll `shadow`, a part query, or a relative-date helper in a test
+file** — they all live in `src/utils/test/`, and every component test imports them from
+there. A local copy is the thing this package most often accumulates.
 
-Renders HTML into `document.body`, waits for `updateComplete`, registers for teardown:
+### `utils/test/mount.ts`
 
-```typescript
-const el = await mount<MyElement>(`<zd-foo id="123"></zd-foo>`);
-```
+| Helper | Returns |
+|---|---|
+| `mount<T>(markup)` | Renders into `document.body`, awaits the first update, registers teardown |
+| `track(element)` | Registers an element for teardown — for the cases `mount()` can't express |
+| `settled(element)` | Awaits Lit's next update cycle |
+| `shadow(element)` | The shadow root, throwing and naming the element if there is none |
+| `part<T>(element, name)` | The one `[part~="name"]`, throwing if absent |
+| `queryPart<T>(element, name)` | Same, nullable — for assertions *about* absence |
+| `parts<T>(element, name)` | Every `[part~="name"]`, in render order |
+| `texts(element, name)` | The trimmed text of each, in render order |
 
-### settled(element)
+Part queries use `~=` because `part` is a space-separated list: `part="section contact"`
+is one element in two parts, and an exact match misses it.
 
-Awaits Lit's next update cycle:
+Wrap these in a domain-named local when it reads better —
+`field(el, name) { return part<Control>(el, name); }` — rather than reimplementing
+the query.
 
-```typescript
-el.someProperty = 'new value';
-await settled(el);
-```
+### `utils/test/dates.ts`
+
+`dayFromToday(offset)` → a `YYYY-MM-DD` key relative to today.
+
+Availability fixtures must be relative: the window starts at today, so a
+hard-coded date falls outside it tomorrow and every count reads zero.
+
+**This deliberately reimplements `internal/provider-time.js` rather than importing
+it.** If the tests used the component's own helper, a bug in it would move the
+fixtures and the assertions together and the suite would agree with it. The
+duplication is the oracle — don't "fix" it.
+
+That reasoning stops at the test files. `.stories.ts` needs the same relative
+dates but asserts nothing, so the three that need it define
+`dayFromToday = (offset) => addDays(todayDayKey(), offset)` over the component's
+own helpers. Stories import from `internal/provider-time.js`, never from `test/`.
 
 ### expectNoViolations(element)
 

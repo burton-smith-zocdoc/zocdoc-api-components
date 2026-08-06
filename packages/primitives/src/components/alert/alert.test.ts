@@ -5,7 +5,7 @@ import {
   expectNoViolations,
   getContainer,
   waitForUpdate,
-} from '../../test/a11y.js';
+} from '../../utils/test/a11y.js';
 import type { ZdAlert, ZdAlertVariant } from './alert.js';
 
 const VARIANTS: ZdAlertVariant[] = ['info', 'success', 'warning', 'danger'];
@@ -116,7 +116,6 @@ describeA11y('zd-alert', () => {
   it('passes axe checks with default variant', async () => {
     const el = makeAlert('This is an alert message.');
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -124,7 +123,6 @@ describeA11y('zd-alert', () => {
   it.each(VARIANTS)('passes axe checks with variant="%s"', async (variant) => {
     const el = makeAlert(`This is a ${variant} alert.`, variant);
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -153,7 +151,6 @@ describeA11y('zd-alert', () => {
       el.appendChild(action);
 
       getContainer().appendChild(el);
-      await waitForUpdate();
 
       await expectNoViolations();
     }

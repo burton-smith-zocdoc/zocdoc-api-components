@@ -10,8 +10,9 @@ import type {
   Patient,
   ProviderLocation,
 } from '../../client/types.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { dayFromToday } from '../../utils/test/dates.js';
+import { mount, part, settled, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -29,6 +30,7 @@ type Flow = HTMLElement & {
   providerLocationId?: string;
   startTime?: string;
   visitReasonId?: string;
+  patientType: 'new' | 'existing';
   step: string;
   back(): void;
 };
@@ -77,28 +79,9 @@ function bookingResponse(status: AppointmentStatus): AppointmentResponseData {
   };
 }
 
-function shadow(element: Flow): ShadowRoot {
-  const root = element.shadowRoot;
-  if (!root) throw new Error('zd-booking-flow rendered no shadow root');
-  return root;
-}
-
-/**
- * A day key relative to today, computed here rather than imported from the component's own helper
- * — otherwise a bug in that helper would move the expectations along with the code under test.
- */
-function dayFromToday(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
-
-function child(element: Flow, part: string): HTMLElement {
-  const found = shadow(element).querySelector<HTMLElement>(`[part="${part}"]`);
-  if (!found) throw new Error(`no [part="${part}"] in the current step`);
-  return found;
+/** The component the flow renders for the current step — there is only ever one. */
+function child(element: Flow, name: string): HTMLElement {
+  return part(element, name);
 }
 
 /** Drives the flow to the patient step the way the children do, by event. */
@@ -181,6 +164,42 @@ describe('zd-booking-flow', () => {
     expect(element.step).toBe('time');
     expect(picker.providerLocationId).toBe(PROVIDER.provider_location_id);
     expect(picker.visitReasonId).toBe('vr_1');
+  });
+
+  /*
+   * The picker renders the New/Existing control, but the same value has to go to
+   * POST /v1/appointments — which this component sends. A patient who says they are returning and
+   * is then booked as new is a wrong booking, so following the event is not cosmetic.
+   */
+  it('follows the picker’s patient type through to the booking', async () => {
+    const element = await mountFlow('visit-reason-id="vr_1"');
+    element.providers = [PROVIDER];
+    await settled(element);
+
+    child(element, 'results').dispatchEvent(
+      new CustomEvent('provider-select', { detail: { provider: PROVIDER } })
+    );
+    await settled(element);
+
+    child(element, 'picker').dispatchEvent(
+      new CustomEvent('patient-type-change', { detail: { patientType: 'existing' } })
+    );
+    await settled(element);
+
+    expect(element.patientType).toBe('existing');
+
+    child(element, 'picker').dispatchEvent(
+      new CustomEvent('slot-select', {
+        detail: { startTime: START_TIME, providerLocationId: PROVIDER.provider_location_id },
+      })
+    );
+    await settled(element);
+    submitPatient(element);
+
+    await vi.waitFor(() => expect(appointments.createAppointment).toHaveBeenCalled());
+    expect(vi.mocked(appointments.createAppointment).mock.calls.at(-1)![0].patientType).toBe(
+      'existing'
+    );
   });
 
   /*
@@ -530,10 +549,12 @@ describe('zd-booking-flow', () => {
     });
 
     /*
-     * A day cell is a way into the provider, not a way past them. The day itself is dropped
-     * because the picker cannot yet be told to open on one — see the handler's own comment.
+     * Both halves of a day cell have to survive the step change. Landing on the right provider but
+     * the wrong day is the failure this asserts against: the patient pressed a date, and a picker
+     * that opens on the provider's first available one instead has quietly answered a different
+     * question.
      */
-    it('treats a day chosen on a card as choosing that provider', async () => {
+    it('opens the picker on the day chosen on a card', async () => {
       const element = await mountFlow('visit-reason-id="vr_1"');
       searchReturned(element);
       await settled(element);
@@ -547,6 +568,54 @@ describe('zd-booking-flow', () => {
 
       expect(element.step).toBe('time');
       expect(element.providerLocationId).toBe(OTHER_PROVIDER.provider_location_id);
+      expect((child(element, 'picker') as HTMLElement & { startDate?: string }).startDate).toBe(
+        dayFromToday(2)
+      );
+    });
+
+    /* Pressing the card rather than one of its cells asks for no particular day. */
+    it('leaves the picker on its own first available day when the card itself is chosen', async () => {
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      searchReturned(element);
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('provider-select', { detail: { provider: OTHER_PROVIDER } })
+      );
+      await settled(element);
+
+      expect(
+        (child(element, 'picker') as HTMLElement & { startDate?: string }).startDate
+      ).toBeUndefined();
+    });
+
+    /*
+     * And going back past the provider takes the day with it, so a second card pressed plainly does
+     * not inherit the first card's cell.
+     */
+    it('drops the chosen day when going back past the provider', async () => {
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      searchReturned(element);
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('day-select', {
+          detail: { day: dayFromToday(2), provider: OTHER_PROVIDER },
+        })
+      );
+      await settled(element);
+
+      element.back();
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('provider-select', { detail: { provider: PROVIDER } })
+      );
+      await settled(element);
+
+      expect(
+        (child(element, 'picker') as HTMLElement & { startDate?: string }).startDate
+      ).toBeUndefined();
     });
   });
 

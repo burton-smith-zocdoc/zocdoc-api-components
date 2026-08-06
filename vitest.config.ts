@@ -68,7 +68,7 @@ export default defineConfig({
           include: BROWSER_TESTS,
           // Registers the zd prefix and injects the theme before any test module
           // renders. Must be this project's first evaluation (PBZD-001).
-          setupFiles: ['./packages/api-components/src/test/setup-browser.ts'],
+          setupFiles: ['./packages/api-components/src/utils/test/setup-browser.ts'],
           browser: {
             enabled: true,
             // A factory, not a string. Vitest 4 changed this; `provider: 'playwright'`

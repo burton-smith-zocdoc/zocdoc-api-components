@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../utils/test/a11y.js';
 
 interface ZdDialog extends HTMLElement {
   open?: boolean;
@@ -15,8 +15,6 @@ describeA11y('zd-dialog', () => {
     await waitForUpdate();
 
     el.open = true;
-    await waitForUpdate();
-    await waitForUpdate();
 
     await expectNoViolations();
   });

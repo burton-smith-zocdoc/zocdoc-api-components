@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 // Skip: Charm tabs has a cleanup bug that throws after test completion.
 // TODO: Re-enable when Charm fixes handlePanelSlotChange error.
@@ -13,8 +13,6 @@ describeA11y.skip('zd-tabs', () => {
       <zd-tab-panel>Content for tab 2</zd-tab-panel>
     `;
     getContainer().appendChild(tabs);
-    await waitForUpdate();
-    await waitForUpdate();
 
     await expectNoViolations();
   });

@@ -1,8 +1,20 @@
 /// <reference types="vite/client" />
 import type { CSSResult } from 'lit';
 import { describe, expect, it } from 'vitest';
-import { sheet, tokenReferences } from '../../test/css.js';
 import { zocdocThemeCss } from '../zocdoc.js';
+
+/** A stylesheet as text, minus comments — which would otherwise read as token references. */
+const sheet = (styles: CSSResult): string => styles.cssText.replace(/\/\*[\s\S]*?\*\//g, '');
+
+/**
+ * Every `var(--zd-…)` reference, paired with its fallback target if it has one.
+ * A reference with a fallback is satisfied by either name resolving — that's the
+ * point of the fallback.
+ */
+const tokenReferences = (css: string): { name: string; fallback?: string }[] => {
+  const pattern = /var\(\s*(--zd-[a-z0-9-]+)\s*(?:,\s*var\(\s*(--zd-[a-z0-9-]+)\s*\)\s*)?\)/g;
+  return [...css.matchAll(pattern)].map((match) => ({ name: match[1], fallback: match[2] }));
+};
 
 /**
  * Every `var(--zd-…)` in every component stylesheet has to name a property the

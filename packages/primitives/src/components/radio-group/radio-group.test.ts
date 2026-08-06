@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdRadioGroup extends HTMLElement {
   label?: string;
@@ -23,7 +23,6 @@ describeA11y('zd-radio-group', () => {
     }
 
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

@@ -62,6 +62,10 @@ export const Default: Story = {};
  * Opened past the search, the way a host page resumes a booking it already has a provider for.
  * The step is derived from the properties that are set, so setting `provider-location-id`
  * *is* navigating to the time step.
+ *
+ * The picker's New/Existing control belongs to the picker, but the answer belongs here: switching
+ * it refetches the times *and* updates what this component will send to `POST /v1/appointments`,
+ * since a patient booked as new when they said they were returning is a wrong booking.
  */
 export const StartAtTimeSelection: Story = {
   args: {

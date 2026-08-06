@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdSwitch extends HTMLElement {
   label?: string;
@@ -12,7 +12,6 @@ describeA11y('zd-switch', () => {
     const el = document.createElement('zd-switch') as ZdSwitch;
     el.label = 'Enable notifications';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -22,7 +21,6 @@ describeA11y('zd-switch', () => {
     el.label = 'Dark mode';
     el.checked = true;
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -32,7 +30,6 @@ describeA11y('zd-switch', () => {
     el.label = 'Disabled toggle';
     el.disabled = true;
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

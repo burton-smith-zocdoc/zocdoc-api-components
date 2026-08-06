@@ -1,12 +1,13 @@
 import { html, nothing, type TemplateResult } from 'lit';
-import { MAX_AVAILABILITY_DAYS } from '../../client/availability.js';
+import {
+  getAvailability,
+  MAX_AVAILABILITY_DAYS,
+  type AvailabilityParams,
+} from '../../client/availability.js';
+import type { AvailabilitySlot } from '../../client/types.js';
 import { addDays, isValidDate, providerLocalTime, todayDayKey } from './provider-time.js';
 
-/**
- * Built once rather than per render, and pinned to UTC so it reports the provider's own wall
- * clock — see {@link providerLocalTime}. `undefined` for the locale means the user's own, which
- * is what supplies the translated weekday and month names (I18N-002).
- */
+/** UTC so it reports the provider's own wall clock — see {@link providerLocalTime}. */
 const rangeLabel = new Intl.DateTimeFormat(undefined, {
   weekday: 'short',
   month: 'short',
@@ -50,6 +51,26 @@ export function nextWindowStart(startDate: string, direction: -1 | 1, days: numb
   const today = todayDayKey();
   const target = addDays(startDate, direction * windowSpan(days));
   return target < today ? today : target;
+}
+
+/**
+ * One location's slots for a window, for the components that fetch their own.
+ *
+ * `GET /v1/availability` takes a list and answers with a list, so a caller wanting one location
+ * has to pick its entry back out. The entry comes back even with no open slots, which is why
+ * this matches on the id rather than taking `entries[0]`: an absent entry means a *different*
+ * location answered, and reading position zero would quietly show one provider's times under
+ * another's name. No match and no slots both yield `[]` — an empty window, not an error.
+ */
+export async function getLocationSlots(
+  params: Omit<AvailabilityParams, 'providerLocationIds'> & { providerLocationId: string }
+): Promise<AvailabilitySlot[]> {
+  const { providerLocationId, ...rest } = params;
+  const entries = await getAvailability({ ...rest, providerLocationIds: [providerLocationId] });
+
+  return (
+    entries.find((entry) => entry.provider_location_id === providerLocationId)?.timeslots ?? []
+  );
 }
 
 export interface AvailabilityWindowOptions {

@@ -76,9 +76,11 @@ is gitignored. **Never commit a token.**
 
 ## Conventions
 
-**Tag prefix is `zd`.** Never hardcode a tag name in a template — use
-`this.scope.tag('name')` with `html` from `lit/static-html.js`, so a consumer that
-rescopes the project still gets working markup.
+**Tag prefix is `zd`.** Never hardcode a tag name in a template — write
+`<scoped-button>` inside `this.html` and `CharmElement` rewrites it to the
+registered prefix, so a consumer that rescopes the project still gets working
+markup. Every `<scoped-*>` also needs its class in `dependencies()`; without it
+the tag is rewritten but never defined, and the element renders empty.
 
 **Register Charm primitives through `dependencies()`, not barrel imports.** A
 component folder's `index.js` barrel calls `registerComponent()` at import time,

@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 import type { ZdIcon } from './icon.js';
 
 const SIZES = ['small', 'default', 'large'] as const;
@@ -10,7 +10,6 @@ describeA11y('zd-icon', () => {
     icon.name = 'check';
     icon.setAttribute('aria-hidden', 'true');
     getContainer().appendChild(icon);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -21,7 +20,6 @@ describeA11y('zd-icon', () => {
     icon.setAttribute('role', 'img');
     icon.setAttribute('aria-label', 'Completed');
     getContainer().appendChild(icon);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -32,7 +30,6 @@ describeA11y('zd-icon', () => {
     icon.size = size;
     icon.setAttribute('aria-hidden', 'true');
     getContainer().appendChild(icon);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

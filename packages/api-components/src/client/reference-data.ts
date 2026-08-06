@@ -1,3 +1,4 @@
+import { whenZocdocConfigured } from './configure.js';
 import { request, type QueryParams } from './http.js';
 import type {
   CareCategory,
@@ -24,16 +25,31 @@ const MAX_PAGES = 200;
  */
 const cache = new Map<string, Promise<unknown>>();
 
+/**
+ * These lists, alone among the endpoints, wait for the client to be configured rather than failing
+ * when it is not — see `whenZocdocConfigured`.
+ *
+ * They are the only ones a component asks for on its own initiative: `zd-provider-search` fills its
+ * selects the moment it connects, which on a page carrying it in static markup is *during* the
+ * evaluation of the components module, before any host script importing `configureZocdoc` from that
+ * same module can have run. Waiting is also cheap to reason about here because these requests are
+ * idempotent reads with no arguments a caller could get wrong in the meantime.
+ *
+ * Everything the host asks for by setting a property — a search, availability, an appointment —
+ * still throws through `getZocdocConfig`, so forgetting to configure remains a loud mistake.
+ */
 function cached<T>(key: string, load: () => Promise<T>): Promise<T> {
   const existing = cache.get(key) as Promise<T> | undefined;
   if (existing) {
     return existing;
   }
 
-  const pending = load().catch((error: unknown) => {
-    cache.delete(key);
-    throw error;
-  });
+  const pending = whenZocdocConfigured()
+    .then(load)
+    .catch((error: unknown) => {
+      cache.delete(key);
+      throw error;
+    });
   cache.set(key, pending);
   return pending;
 }

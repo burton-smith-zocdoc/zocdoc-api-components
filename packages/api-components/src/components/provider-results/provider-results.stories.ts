@@ -2,6 +2,7 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { buildAvailability, PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
+import { addDays, todayDayKey } from '../internal/provider-time.js';
 import type { ZdProviderResults } from './provider-results.js';
 import './index.js';
 
@@ -17,16 +18,10 @@ const PLACEHOLDER_PHOTO =
  * A `YYYY-MM-DD` key relative to today, which is what the availability fixtures are built around:
  * a hard-coded date would fall behind the window and every count would read zero tomorrow.
  *
- * Read off the local date rather than through `toISOString`, which would use UTC and name tomorrow
- * for anyone west of Greenwich in the evening.
+ * `todayDayKey` reads the local date rather than going through `toISOString`, which would use
+ * UTC and name tomorrow for anyone west of Greenwich in the evening.
  */
-function dayFromToday(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
+const dayFromToday = (offset: number): string => addDays(todayDayKey(), offset);
 
 /**
  * What one batched `getAvailability` for this page would return: one entry per provider, built by

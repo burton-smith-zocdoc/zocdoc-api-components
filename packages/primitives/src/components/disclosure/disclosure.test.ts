@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdDisclosure extends HTMLElement {
   open?: boolean;
@@ -12,7 +12,6 @@ describeA11y('zd-disclosure', () => {
     el.summary = 'Show more details';
     el.innerHTML = '<p>Hidden content here.</p>';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -23,7 +22,6 @@ describeA11y('zd-disclosure', () => {
     el.innerHTML = '<p>Visible content here.</p>';
     el.open = true;
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

@@ -25,8 +25,48 @@ export interface ZocdocConfig {
 
 let current: ZocdocConfig | undefined;
 
+/**
+ * Resolvers handed out by `whenZocdocConfigured` before there was a configuration to give.
+ *
+ * Emptied on every `configureZocdoc`, so a page that configures before anything fetches — which
+ * is nearly all of them — never holds anything here.
+ */
+let waiting: (() => void)[] = [];
+
 export function configureZocdoc(config: ZocdocConfig): void {
   current = config;
+
+  // Swapped out before resolving: a resolver that synchronously asks to wait again would
+  // otherwise be pushed onto the list this loop is walking.
+  const resume = waiting;
+  waiting = [];
+  for (const resolve of resume) {
+    resolve();
+  }
+}
+
+/**
+ * Resolves once the client has been configured, immediately if it already has been.
+ *
+ * This exists for the one ordering a host page cannot control. An element in a page's static
+ * markup is upgraded the instant the components module is evaluated, and a host script that
+ * imports `configureZocdoc` from that same module cannot run any earlier than that — so a
+ * component fetching on connect always fetches first, and a swallowed failure there looks like a
+ * working page with empty selects rather than like a bug.
+ *
+ * Only for fetches an element starts on its own initiative. A request the host asked for by
+ * setting a property should still fail loudly through `getZocdocConfig`, because waiting instead
+ * would leave a genuinely unconfigured page loading forever with nothing on screen, and nothing
+ * in the console, to say why.
+ */
+export function whenZocdocConfigured(): Promise<void> {
+  if (current) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    waiting.push(resolve);
+  });
 }
 
 export function getZocdocConfig(): ZocdocConfig {

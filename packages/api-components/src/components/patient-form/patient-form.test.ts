@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { SCENARIOS } from '../../client/mock/fixtures.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { mount, part, settled, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 type FormEl = HTMLElement & {
@@ -33,16 +33,8 @@ const COMPLETE = {
   zip_code: SCENARIOS.zipWithResults,
 } as const;
 
-function shadow(element: HTMLElement): ShadowRoot {
-  const root = element.shadowRoot;
-  if (!root) throw new Error('zd-patient-form rendered no shadow root');
-  return root;
-}
-
-function field(element: FormEl, part: string): Control {
-  const control = shadow(element).querySelector<Control>(`[part="${part}"]`);
-  if (!control) throw new Error(`no field with part="${part}"`);
-  return control;
+function field(element: FormEl, name: string): Control {
+  return part<Control>(element, name);
 }
 
 /**

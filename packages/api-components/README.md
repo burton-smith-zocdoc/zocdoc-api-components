@@ -43,8 +43,8 @@ typed errors on failure; components catch and render.
 ## Components
 
 Each component extends `CharmElement`, declares its Charm primitives in
-`static get dependencies()`, and renders with `lit/static-html.js` +
-`this.scope.tag(baseName)` so tags resolve under the configured prefix.
+`static get dependencies()`, and writes them as `<scoped-*>` tags inside
+`this.html`, which rewrites them to the configured prefix as it renders.
 
 Composition is attributes in, events out. No context protocol — a host page wires
 components together by listening for events and setting attributes, which works in
@@ -67,7 +67,7 @@ Every test file is plain `*.test.ts`; its directory decides the environment. The
 project is a catch-all, so a new folder runs by default rather than being silently
 collected by neither project.
 
-`src/test/setup-browser.ts` imports the primitives package before any test module
+`src/utils/test/setup-browser.ts` imports the primitives package before any test module
 evaluates, so the prefix is configured first.
 
 Client tests stub `fetch` and assert on request shape and error mapping. No live API

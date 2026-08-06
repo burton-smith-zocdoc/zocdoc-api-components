@@ -144,16 +144,50 @@ export const PROVIDER_LOCATIONS: ProviderLocation[] = [
       first_name: 'Avery',
       last_name: 'Sandoval',
       title: 'MD',
+      specialties: ['Primary Care Doctor'],
       specialty_ids: ['sp_153'],
       default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR',
+      /*
+       * The profile fields, populated on this location only — a second location with none of
+       * them is what lets `zd-provider-profile` be shown doing the thing it does most often,
+       * which is dropping a section it has no data for.
+       *
+       * Provider-authored copy, not patient copy: a `statement` is marketing text a practice
+       * writes about itself, so there is no patient in it to redact (PHI-002). The newlines
+       * are deliberate — production returns them, and the profile is what has to keep them.
+       */
+      statement:
+        'I have practised primary care in Brooklyn for twelve years, and most of the people I see I have seen before.\n\nMy approach is unhurried: I would rather spend the visit understanding what changed than work through a checklist.',
+      languages: ['English', 'Spanish'],
+      credentials: {
+        certifications: ['American Board of Family Medicine', 'Advanced Cardiac Life Support'],
+        education: {
+          institutions: [
+            'Sandbox University School of Medicine',
+            'Sandbox General Hospital — Family Medicine Residency',
+          ],
+        },
+      },
+    },
+    practice: {
+      practice_id: 'pt_abc123-def456_wxyz7890',
+      practice_name: 'Sandbox Health Partners',
     },
     location: {
+      location_name: 'Sandbox Plaza Family Medicine',
       address1: '1 Sandbox Plaza',
       city: 'Brooklyn',
       state: 'NY',
       zip_code: '11201',
       latitude: 40.6955,
       longitude: -73.9909,
+      /*
+       * The 555-0100 block is reserved for fiction, so this number cannot reach anyone
+       * (PHI-002). It is punctuated the way a practice would type it rather than normalised,
+       * because normalising it here would hide the fact that `telHref` has to.
+       */
+      phone_number: '(555) 555-0100',
+      phone_extension: null,
       time_zone: 'America/New_York',
       distance_to_patient_mi: 0.8,
     },
@@ -172,6 +206,7 @@ export const PROVIDER_LOCATIONS: ProviderLocation[] = [
       first_name: 'Rowan',
       last_name: 'Okonkwo',
       title: 'DO',
+      specialties: ['Primary Care Doctor'],
       specialty_ids: ['sp_153'],
       default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR',
     },

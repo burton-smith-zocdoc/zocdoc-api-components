@@ -93,6 +93,25 @@ describe('reference data', () => {
     expect(a).toBe(b);
   });
 
+  it('waits for configuration instead of failing without it', async () => {
+    /*
+     * The ordering `zd-provider-search` is in when a page carries it in static markup: it asks as
+     * the components module is evaluated, which is before a host script importing `configureZocdoc`
+     * from that module can run. Failing here is invisible — the component swallows it and shows
+     * empty selects — so these lists wait.
+     */
+    resetZocdocConfig();
+    clearReferenceDataCache();
+
+    const pending = getSpecialties();
+    await Promise.resolve();
+    expect(vi.mocked(fetch)).not.toHaveBeenCalled();
+
+    configureZocdoc({ baseUrl: 'https://example.test', getToken: 'tok' });
+
+    await expect(pending).resolves.toEqual([SPECIALTY]);
+  });
+
   it('refetches after the cache is cleared', async () => {
     await getSpecialties();
     clearReferenceDataCache();

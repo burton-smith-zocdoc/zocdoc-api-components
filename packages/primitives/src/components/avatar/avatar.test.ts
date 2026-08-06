@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdAvatar extends HTMLElement {
   initials?: string;
@@ -13,7 +13,6 @@ describeA11y('zd-avatar', () => {
     el.initials = 'JD';
     el.setAttribute('aria-label', 'John Doe');
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -23,7 +22,6 @@ describeA11y('zd-avatar', () => {
     el.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
     el.alt = 'Profile picture';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

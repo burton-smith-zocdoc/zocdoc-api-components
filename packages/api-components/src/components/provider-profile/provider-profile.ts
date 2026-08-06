@@ -11,6 +11,14 @@ import {
 import styles from './provider-profile.styles.js';
 
 /**
+ * The name heading's id, which the surrounding `<article>` points `aria-labelledby` at.
+ *
+ * A constant and not a generated id: ids are scoped to the shadow root, so two profiles on one
+ * page cannot collide however many of them there are.
+ */
+const NAME_ID = 'provider-name';
+
+/**
  * An RFC 3966 `tel:` URI for a number the API returned in whatever shape the practice
  * typed it — `(555) 555-0100`, `555.555.0100`, `+1 555 555 0100`.
  *
@@ -21,14 +29,6 @@ import styles from './provider-profile.styles.js';
  * Returns `undefined` when nothing dialable survives, so a number of "call for details" does
  * not become a link that dials the empty string.
  */
-/**
- * The name heading's id, which the surrounding `<article>` points `aria-labelledby` at.
- *
- * A constant and not a generated id: ids are scoped to the shadow root, so two profiles on one
- * page cannot collide however many of them there are.
- */
-const NAME_ID = 'provider-name';
-
 function telHref(number: string | undefined, extension?: string | null): string | undefined {
   if (!number) return undefined;
 

@@ -38,7 +38,7 @@ Rules are delivered to agents in two tiers:
 | ------------------------------ | --------------------------------------------- |
 | [PBZD-001](internal/PBZD-001.md) | Configure prefix before importing components  |
 | [PBZD-002](internal/PBZD-002.md) | Extend CharmElement for API components        |
-| [PBZD-003](internal/PBZD-003.md) | Use scope.tag() for tag names in templates    |
+| [PBZD-003](internal/PBZD-003.md) | Write `<scoped-*>` tags in templates          |
 | [PBZD-004](internal/PBZD-004.md) | Register components through project scope     |
 | [PBZD-005](internal/PBZD-005.md) | Package dependency direction                  |
 

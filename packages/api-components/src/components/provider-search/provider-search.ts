@@ -1,10 +1,21 @@
 import { CharmElement, ZdButton, ZdInput, ZdSelect } from '@powered-by-zocdoc/primitives';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { searchProviderLocations } from '../../client/provider-locations.js';
+import {
+  searchProviderLocations,
+  type ProviderSearchResult,
+} from '../../client/provider-locations.js';
 import { getInsurancePlans, getSpecialties, getVisitReasons } from '../../client/reference-data.js';
-import type { InsurancePlan, Specialty, VisitReason, VisitType } from '../../client/types.js';
+import type {
+  InsurancePlan,
+  ProviderLocation,
+  Specialty,
+  VisitReason,
+  VisitType,
+} from '../../client/types.js';
+import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import { userFacingError } from '../internal/error-message.js';
+import { NO_PROVIDERS_MATCH } from '../internal/messages.js';
 import {
   renderRequestState,
   requestStateDependencies,
@@ -14,6 +25,37 @@ import styles from './provider-search.styles.js';
 
 /** The API takes a 5-digit ZIP and 400s on anything else, including a 4-digit one. */
 const ZIP_PATTERN = /^\d{5}$/;
+
+/**
+ * One page of results, plus the criteria they were fetched with.
+ *
+ * The criteria are echoed back so a coordinator learns what the patient settled on without reading
+ * properties off this element or pushing its own stale values back down (COMP-002).
+ *
+ * `searchParameters` is the API's own echo, and it is the field that matters most: it carries the
+ * `visit_reason_id` the API filled in from the specialty's default when the patient chose "Any
+ * reason". Both availability and booking require a visit reason, so for those searches this is the
+ * only place one can be had.
+ */
+export interface ProviderResultsDetail {
+  providers: ProviderLocation[];
+  /** From the paged envelope. `providers` holds one page; this counts them all. */
+  totalCount: number;
+  /** The size the response was built with, not the one asked for. Pair with `totalCount`. */
+  pageSize: number;
+  page: number;
+  searchParameters: ProviderSearchResult['searchParameters'];
+  zipCode: string;
+  specialtyId?: string;
+  visitReasonId?: string;
+  insurancePlanId?: string;
+  visitType?: VisitType;
+}
+
+export interface ZdProviderSearchEventMap {
+  'provider-results': CustomEvent<ProviderResultsDetail>;
+  'provider-search-error': CustomEvent<ErrorDetail>;
+}
 
 /** The fields this form validates, in render order — which is the order errors are visited. */
 const VALIDATED_FIELDS = ['specialty', 'zip'] as const;
@@ -50,6 +92,10 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  */
 export class ZdProviderSearch extends CharmElement {
   public static override baseName = 'provider-search';
+
+  declare public addEventListener: TypedEventTarget<ZdProviderSearchEventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<ZdProviderSearchEventMap>['removeEventListener'];
+  declare protected emit: TypedEmit<ZdProviderSearchEventMap>;
 
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
@@ -311,9 +357,8 @@ export class ZdProviderSearch extends CharmElement {
       });
     } catch (error: unknown) {
       this.requestState = 'error';
-      // Never `error.message` — that string is developer-facing and its body can echo a
-      // submitted value (CLIENT-003, PHI-001). The raw error still rides the event so a
-      // host page can decide what to do with it.
+      // The raw error rides the event on purpose: the host page's handling of it is
+      // developer-facing, while what reaches the DOM goes through userFacingError (PHI-001).
       this.errorMessage = userFacingError(error);
       this.emit('provider-search-error', { detail: { error } });
     }
@@ -338,7 +383,7 @@ export class ZdProviderSearch extends CharmElement {
    * each option's `selected`, which covers reference data arriving after first paint. It
    * does not re-clone when only the selection changes, so the host's `value` is bound too.
    */
-  protected filterOptions(
+  protected optionsFor(
     items: (Specialty | VisitReason | InsurancePlan)[],
     selectedId: string | undefined
   ): unknown {
@@ -380,7 +425,7 @@ export class ZdProviderSearch extends CharmElement {
           }}
         >
           <option value="" .selected=${!this.specialtyId}>Choose a specialty</option>
-          ${this.filterOptions(this.specialties, this.specialtyId)}
+          ${this.optionsFor(this.specialties, this.specialtyId)}
         </scoped-select>
 
         <scoped-input
@@ -409,7 +454,7 @@ export class ZdProviderSearch extends CharmElement {
             this.specialtyId
               ? this.html`
                   <option value="" .selected=${!this.visitReasonId}>Any reason</option>
-                  ${this.filterOptions(this.visitReasons, this.visitReasonId)}
+                  ${this.optionsFor(this.visitReasons, this.visitReasonId)}
                 `
               : this.html`<option value="">Choose a specialty first</option>`
           }
@@ -424,7 +469,7 @@ export class ZdProviderSearch extends CharmElement {
           }}
         >
           <option value="" .selected=${!this.insurancePlanId}>Any insurance</option>
-          ${this.filterOptions(this.insurancePlans, this.insurancePlanId)}
+          ${this.optionsFor(this.insurancePlans, this.insurancePlanId)}
         </scoped-select>
 
         <scoped-button part="submit" type="submit" variant="primary" ?disabled=${loading}>
@@ -433,7 +478,7 @@ export class ZdProviderSearch extends CharmElement {
       </form>
 
       ${renderRequestState(this.requestState, {
-        emptyMessage: 'No providers match this search.',
+        emptyMessage: NO_PROVIDERS_MATCH,
         errorMessage: this.errorMessage,
         loadingMessage: 'Searching…',
         onRetry: () => void this.search(),

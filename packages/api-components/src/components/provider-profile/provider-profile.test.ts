@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { ProviderLocation } from '../../client/types.js';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, parts, queryPart, settled, shadow } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { mount, parts, queryPart, settled, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**

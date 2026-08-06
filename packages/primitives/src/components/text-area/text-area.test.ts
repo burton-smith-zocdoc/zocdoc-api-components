@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 import type { ZdTextArea } from './text-area.js';
 
 describeA11y('zd-text-area', () => {
@@ -7,7 +7,6 @@ describeA11y('zd-text-area', () => {
     const textarea = document.createElement('zd-text-area') as ZdTextArea;
     textarea.label = 'Message';
     getContainer().appendChild(textarea);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -17,7 +16,6 @@ describeA11y('zd-text-area', () => {
     textarea.label = 'Comments';
     textarea.placeholder = 'Enter your comments...';
     getContainer().appendChild(textarea);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -27,7 +25,6 @@ describeA11y('zd-text-area', () => {
     textarea.label = 'Required feedback';
     textarea.required = true;
     getContainer().appendChild(textarea);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -37,7 +34,6 @@ describeA11y('zd-text-area', () => {
     textarea.label = 'Disabled field';
     textarea.disabled = true;
     getContainer().appendChild(textarea);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -47,7 +43,6 @@ describeA11y('zd-text-area', () => {
     textarea.label = 'Small textarea';
     textarea.size = 'small';
     getContainer().appendChild(textarea);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -57,7 +52,6 @@ describeA11y('zd-text-area', () => {
     textarea.label = 'Description';
     textarea.helpText = 'Maximum 500 characters';
     getContainer().appendChild(textarea);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -67,7 +61,6 @@ describeA11y('zd-text-area', () => {
     textarea.label = 'Long text';
     textarea.rows = 10;
     getContainer().appendChild(textarea);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

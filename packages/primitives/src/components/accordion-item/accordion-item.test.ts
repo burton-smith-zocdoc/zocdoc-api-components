@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdAccordionItem extends HTMLElement {
   heading?: string;
@@ -14,7 +14,6 @@ describeA11y('zd-accordion-item', () => {
     item.innerHTML = '<p>Hidden content.</p>';
     accordion.appendChild(item);
     getContainer().appendChild(accordion);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -27,7 +26,6 @@ describeA11y('zd-accordion-item', () => {
     item.open = true;
     accordion.appendChild(item);
     getContainer().appendChild(accordion);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

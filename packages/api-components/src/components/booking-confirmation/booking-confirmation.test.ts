@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BOOKINGS, DEFAULT_BOOKING, SCENARIOS } from '../../client/mock/fixtures.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { mount, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -22,12 +22,6 @@ const PROVIDER = 'Dr. Avery Sandoval, MD';
 const START_TIME = '2026-08-05T09:00:00-04:00';
 
 type Confirmation = HTMLElement & { status: string; startTime?: string };
-
-function shadow(element: HTMLElement): ShadowRoot {
-  const root = element.shadowRoot;
-  if (!root) throw new Error('zd-booking-confirmation rendered no shadow root');
-  return root;
-}
 
 /**
  * Recursively collects text content from an element and all nested shadow roots.

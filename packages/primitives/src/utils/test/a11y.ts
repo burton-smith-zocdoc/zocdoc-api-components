@@ -1,7 +1,7 @@
 import axe, { type AxeResults, type Result } from 'axe-core';
 import { afterEach, beforeEach, describe } from 'vitest';
 
-export type ColorScheme = 'light' | 'dark';
+type ColorScheme = 'light' | 'dark';
 
 const SCHEMES: ColorScheme[] = ['light', 'dark'];
 
@@ -14,7 +14,7 @@ let schemeStyleElement: HTMLStyleElement | null = null;
  * on :root tells the browser which value to use. We use `!important` to
  * override the theme's `color-scheme: light dark` declaration.
  */
-export function setColorScheme(scheme: ColorScheme): void {
+function setColorScheme(scheme: ColorScheme): void {
   if (!schemeStyleElement) {
     schemeStyleElement = document.createElement('style');
     schemeStyleElement.id = 'test-color-scheme';
@@ -24,20 +24,9 @@ export function setColorScheme(scheme: ColorScheme): void {
 }
 
 /**
- * Test context passed to accessibility test functions.
- */
-export interface A11yTestContext {
-  container: HTMLElement;
-  scheme: ColorScheme;
-}
-
-/**
  * Shared context for accessibility tests, populated by beforeEach hooks.
  */
-const testContext: { container: HTMLElement | null; scheme: ColorScheme } = {
-  container: null,
-  scheme: 'light',
-};
+const testContext: { container: HTMLElement | null } = { container: null };
 
 /**
  * Get the current test container. Throws if called outside a test.
@@ -47,13 +36,6 @@ export function getContainer(): HTMLElement {
     throw new Error('getContainer() called outside of describeA11y test context');
   }
   return testContext.container;
-}
-
-/**
- * Get the current color scheme being tested.
- */
-export function getScheme(): ColorScheme {
-  return testContext.scheme;
 }
 
 /**
@@ -97,10 +79,7 @@ function describeA11yImpl(describeFn: DescribeFn, name: string, fn: () => void):
     });
 
     describe.each(SCHEMES)('%s mode', (scheme) => {
-      beforeEach(() => {
-        testContext.scheme = scheme;
-        setColorScheme(scheme);
-      });
+      beforeEach(() => setColorScheme(scheme));
 
       fn();
     });
@@ -135,7 +114,7 @@ const EXCLUDED_RULES = [
  * Includes delays to ensure browsers have computed `light-dark()` CSS values
  * correctly in shadow DOM before axe-core reads computed styles.
  */
-export async function checkAccessibility(): Promise<Result[]> {
+async function checkAccessibility(): Promise<Result[]> {
   await new Promise((resolve) => requestAnimationFrame(resolve));
   await new Promise((resolve) => requestAnimationFrame(resolve));
   await new Promise((resolve) => setTimeout(resolve, 100));
@@ -153,7 +132,7 @@ export async function checkAccessibility(): Promise<Result[]> {
 /**
  * Format axe violations for readable test output.
  */
-export function formatViolations(violations: Result[]): string {
+function formatViolations(violations: Result[]): string {
   if (violations.length === 0) return 'No accessibility violations found';
 
   return violations
@@ -167,6 +146,11 @@ export function formatViolations(violations: Result[]): string {
 /**
  * Assert that a rendered component has no axe violations.
  * Throws with formatted output if violations are found.
+ *
+ * This waits before it reads the document, so appending an element and calling
+ * this is enough — a `waitForUpdate()` immediately beforehand is redundant. Only
+ * reach for that when a test has to act *between* two renders, or when it asserts
+ * on the DOM itself rather than running axe.
  */
 export async function expectNoViolations(): Promise<void> {
   const violations = await checkAccessibility();

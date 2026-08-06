@@ -9,12 +9,12 @@ Composition model: attributes and properties in, events out. No context protocol
 ```ts
 // Parent binds properties and listens for events
 render() {
-  return html`
-    <${this.scope.tag('availability-picker')}
+  return this.html`
+    <scoped-availability-picker
       .providerLocationId=${this.state.providerLocationId}
       .visitReasonId=${this.visitReasonId}
       @slot-select=${this.#onSlotSelect}
-    ></${this.scope.tag('availability-picker')}>
+    ></scoped-availability-picker>
   `;
 }
 

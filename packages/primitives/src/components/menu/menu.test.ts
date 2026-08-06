@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdMenu extends HTMLElement {
   open?: boolean;
@@ -15,7 +15,6 @@ describeA11y('zd-menu', () => {
       <zd-menu-item>Action 3</zd-menu-item>
     `;
     getContainer().appendChild(menu);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

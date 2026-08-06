@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdProgressBar extends HTMLElement {
   value?: number;
@@ -15,7 +15,6 @@ describeA11y('zd-progress-bar', () => {
     el.max = 100;
     el.label = 'Upload progress';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });
@@ -25,7 +24,6 @@ describeA11y('zd-progress-bar', () => {
     el.indeterminate = true;
     el.label = 'Loading';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

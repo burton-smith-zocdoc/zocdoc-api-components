@@ -5,3 +5,8 @@ project.scope.registerComponent(ZdBookingFlow);
 
 export { ZdBookingFlow };
 export type { BookingStep } from './booking-flow.js';
+export type {
+  BookingCompleteDetail,
+  BookingErrorDetail,
+  ZdBookingFlowEventMap,
+} from './booking-flow.js';

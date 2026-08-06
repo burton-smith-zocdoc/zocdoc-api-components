@@ -7,6 +7,8 @@ storybook-static/
 coverage/
 test-results/
 custom-elements.json
+packages/primitives/TOKENS.md
+packages/api-components/assets/
 dist
 .vitest-attachments
 __screenshots__

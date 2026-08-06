@@ -8,20 +8,20 @@ import type {
   ProviderLocationAvailability,
 } from '../../client/types.js';
 import { ZdAvailabilityGrid } from '../availability-grid/availability-grid.js';
+import type { AvailabilityWindowDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import {
   nextWindowStart,
   renderAvailabilityWindow,
   resolveWindowStart,
   windowEndDate,
 } from '../internal/availability-window.js';
+import { formatCount } from '../internal/format.js';
+import { NO_PROVIDERS_MATCH } from '../internal/messages.js';
 import windowStyles from '../internal/availability-window.styles.js';
 import { todayDayKey } from '../internal/provider-time.js';
 import { renderProviderSummary } from '../internal/provider-summary.js';
 import summaryStyles from '../internal/provider-summary.styles.js';
 import styles from './provider-results.styles.js';
-
-/** Counts get thousands separators from the user's locale, not from us (I18N-002). */
-const countLabel = new Intl.NumberFormat();
 
 /**
  * What a card whose location the batch did not answer for gets.
@@ -35,6 +35,34 @@ const countLabel = new Intl.NumberFormat();
  * it would reach all of them.
  */
 const NO_TIMESLOTS: readonly AvailabilitySlot[] = Object.freeze([]);
+
+/** The card the patient chose. */
+export interface ProviderSelectDetail {
+  provider: ProviderLocation;
+}
+
+/**
+ * A day cell pressed on one of the cards.
+ *
+ * The provider travels with the day, which is what the grid's own `day-select` cannot say: a page
+ * showing ten cards needs to know *whose* Tuesday was pressed.
+ */
+export interface ProviderDaySelectDetail {
+  day: string;
+  provider: ProviderLocation;
+}
+
+/** The page the patient asked for. Zero-indexed, as the API counts pages. */
+export interface PageChangeDetail {
+  page: number;
+}
+
+export interface ZdProviderResultsEventMap {
+  'provider-select': CustomEvent<ProviderSelectDetail>;
+  'day-select': CustomEvent<ProviderDaySelectDetail>;
+  'page-change': CustomEvent<PageChangeDetail>;
+  'window-change': CustomEvent<AvailabilityWindowDetail>;
+}
 
 /**
  * Renders a list of provider locations and emits the one the user picks.
@@ -86,6 +114,10 @@ const NO_TIMESLOTS: readonly AvailabilitySlot[] = Object.freeze([]);
  */
 export class ZdProviderResults extends CharmElement {
   public static override baseName = 'provider-results';
+
+  declare public addEventListener: TypedEventTarget<ZdProviderResultsEventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<ZdProviderResultsEventMap>['removeEventListener'];
+  declare protected emit: TypedEmit<ZdProviderResultsEventMap>;
 
   public static override styles = [
     ...super.styles,
@@ -186,7 +218,7 @@ export class ZdProviderResults extends CharmElement {
    * the standalone case reaches here.
    */
   protected renderEmpty(): unknown {
-    return this.html`<p part="empty" role="status">No providers match this search.</p>`;
+    return this.html`<p part="empty" role="status">${NO_PROVIDERS_MATCH}</p>`;
   }
 
   /**
@@ -203,7 +235,7 @@ export class ZdProviderResults extends CharmElement {
 
     // One text node rather than a number in its own span: it is one phrase, and splitting it
     // is what stops a browser translating it (I18N-004).
-    const count = countLabel.format(this.totalCount);
+    const count = formatCount(this.totalCount);
     const label = this.totalCount === 1 ? `${count} provider` : `${count} providers`;
 
     return this.html`<p part="summary" role="status" aria-live="polite">${label}</p>`;
@@ -362,7 +394,7 @@ export class ZdProviderResults extends CharmElement {
     const lastPage = this.lastPage;
     if (lastPage === undefined || lastPage === 0) return nothing;
 
-    const position = `Page ${countLabel.format(this.page + 1)} of ${countLabel.format(lastPage + 1)}`;
+    const position = `Page ${formatCount(this.page + 1)} of ${formatCount(lastPage + 1)}`;
 
     return this.html`
       <div part="pager">

@@ -10,22 +10,63 @@ export * from './client/provider-locations.js';
 export * from './client/reference-data.js';
 export * from './client/types.js';
 
-// `./client/mock` is deliberately absent, and is not in this package's `exports` either,
-// so nothing outside the package can reach the fixtures or the fake transport. It is
-// excluded from `tsconfig.build.json` too, so it never reaches build output. Tests and
-// stories inside this package import it by relative path. When the demo site lands
-// (Task 16) it will need a declared subpath — add one then, not before.
+// `./client/mock` is deliberately absent from this entry point, so importing the package
+// pulls in no fixtures and no fake transport. It is reachable only through the `./mock`
+// subpath, which exists for `packages/demo` — see `client/mock/index.ts` for what that
+// subpath does and does not expose. Tests and stories inside this package go on importing
+// the mock modules by relative path.
 
-// Component exports are appended here as Tasks 10–15 land. Each subpath's `index.ts`
-// registers the component as a side effect, so importing it is what defines the tag.
-export { ZdAvailabilityGrid } from './components/availability-grid/index.js';
-export { ZdAvailabilityPicker } from './components/availability-picker/index.js';
+// One formatting helper out of `components/internal` is public, and only for host pages that
+// compose their own funnel: naming the provider on a confirmation has to agree with how the
+// results list named them. Every `Provider` name field is optional, so a display name is a
+// fallback chain rather than a field read — derived independently, it is how a patient ends up
+// confirming a provider whose name does not match the one they picked.
+export { providerHeading } from './components/internal/provider-summary.js';
+
+// Every event's payload, so a host page wiring components by hand reads `event.detail` against the
+// type the component is compiled against instead of describing the shape itself. `TypedEventTarget`
+// and `TypedEmit` are deliberately absent: they are how those payloads get onto `addEventListener`
+// and `emit`, and a consumer has no call to reach for either.
+export type { AvailabilityWindowDetail, DetailOf, ErrorDetail } from './components/events.js';
+
+// Component exports. Each subpath's `index.ts` registers the component as a side effect, so
+// importing it is what defines the tag.
+export {
+  ZdAvailabilityGrid,
+  type DaySelectDetail,
+  type ZdAvailabilityGridEventMap,
+} from './components/availability-grid/index.js';
+export {
+  ZdAvailabilityPicker,
+  type PatientTypeChangeDetail,
+  type SlotSelectDetail,
+  type ZdAvailabilityPickerEventMap,
+} from './components/availability-picker/index.js';
 export { ZdBookingConfirmation } from './components/booking-confirmation/index.js';
-export { ZdBookingFlow, type BookingStep } from './components/booking-flow/index.js';
+export {
+  ZdBookingFlow,
+  type BookingCompleteDetail,
+  type BookingErrorDetail,
+  type BookingStep,
+  type ZdBookingFlowEventMap,
+} from './components/booking-flow/index.js';
 export {
   ZdPatientForm,
   type PatientFormErrors,
   type PatientFormField,
+  type PatientSubmitDetail,
+  type ZdPatientFormEventMap,
 } from './components/patient-form/index.js';
-export { ZdProviderResults } from './components/provider-results/index.js';
-export { ZdProviderSearch } from './components/provider-search/index.js';
+export { ZdProviderProfile } from './components/provider-profile/index.js';
+export {
+  ZdProviderResults,
+  type PageChangeDetail,
+  type ProviderDaySelectDetail,
+  type ProviderSelectDetail,
+  type ZdProviderResultsEventMap,
+} from './components/provider-results/index.js';
+export {
+  ZdProviderSearch,
+  type ProviderResultsDetail,
+  type ZdProviderSearchEventMap,
+} from './components/provider-search/index.js';

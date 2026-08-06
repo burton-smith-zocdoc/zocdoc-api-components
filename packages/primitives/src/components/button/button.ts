@@ -17,10 +17,9 @@ export type ZdButtonVariant =
   | 'link';
 
 /**
- * Button component for user interactions.
+ * An interactive button, with a variant per visual treatment and two densities.
  *
  * @tag zd-button
- * @summary Interactive button with multiple variants and sizes.
  */
 export class ZdButton extends CoreButton {
   static override styles = [...super.styles, styles] as typeof CoreButton.styles;
@@ -30,7 +29,7 @@ export class ZdButton extends CoreButton {
    * which is what an unstyled Charm button renders.
    */
   @property({ reflect: true })
-  public variant?: ZdButtonVariant;
+  public variant?: ZdButtonVariant = 'secondary';
 
   /**
    * The button's density. `small` swaps in the theme's `button.small.*` metrics;

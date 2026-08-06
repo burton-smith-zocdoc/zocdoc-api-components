@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdPushPane extends HTMLElement {
   open?: boolean;
@@ -13,7 +13,6 @@ describeA11y('zd-push-pane', () => {
     pane.innerHTML = '<p>Panel content.</p>';
     pane.open = true;
     getContainer().appendChild(pane);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

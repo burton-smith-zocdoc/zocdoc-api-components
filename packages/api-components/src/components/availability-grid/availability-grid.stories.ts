@@ -4,6 +4,7 @@ import { html } from 'lit';
 import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import type { AvailabilitySlot } from '../../client/types.js';
+import { addDays, todayDayKey } from '../internal/provider-time.js';
 import type { ZdAvailabilityGrid } from './availability-grid.js';
 import './index.js';
 
@@ -24,14 +25,11 @@ const VISIT_REASON_ID = 'pc_FRO-18leckytNKtruw5dLR';
 /**
  * A day key relative to today. The window always starts at today, so a hard-coded date would
  * fall out of it and every count would read zero the following morning.
+ *
+ * Through the component's own helpers on purpose: unlike the tests, a story asserts nothing,
+ * so there is no reason for it to hold an independent implementation of the same arithmetic.
  */
-function dayFromToday(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
+const dayFromToday = (offset: number): string => addDays(todayDayKey(), offset);
 
 /**
  * An uneven fortnight, built with the same generator the mock transport uses so the shape and

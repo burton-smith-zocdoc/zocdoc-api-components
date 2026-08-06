@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 describeA11y('zd-button-group', () => {
   it('passes axe checks with buttons', async () => {
@@ -10,7 +10,6 @@ describeA11y('zd-button-group', () => {
       <zd-button>Cancel</zd-button>
     `;
     getContainer().appendChild(group);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

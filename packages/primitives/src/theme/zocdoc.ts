@@ -369,14 +369,8 @@ const zocdocTokensBase = charmTokens
         outlineOffset: primitive('spacing', 2),
       },
       defaultButton: {
-        bgColor: {
-          light: primitive('color', 'neutral', 200),
-          dark: primitive('color', 'neutral', 700),
-        },
-        fgColor: {
-          light: semantic('color', 'on', 'neutral', 200),
-          dark: semantic('color', 'on', 'neutral', 700),
-        },
+        bgColor: primitive('color', 'transparent'),
+        fgColor: semantic('body', 'fgColor'),
         borderColor: primitive('color', 'transparent'),
         borderWidth: semantic('defaultBorder', 'width'),
         borderStyle: semantic('defaultBorder', 'style'),
@@ -403,36 +397,31 @@ const zocdocTokensBase = charmTokens
         shadow: 'none',
         hover: {
           bgColor: {
-            light: primitive('color', 'neutral', 400),
+            light: primitive('color', 'neutral', 100),
             dark: primitive('color', 'neutral', 800),
           },
-          borderColor: 'transparent',
+          borderColor: {
+            light: primitive('color', 'neutral', 100),
+            dark: primitive('color', 'neutral', 800),
+          },
         },
         active: {
           bgColor: {
-            light: primitive('color', 'neutral', 700),
-            dark: primitive('color', 'neutral', 800),
+            light: primitive('color', 'neutral', 200),
+            dark: primitive('color', 'neutral', 700),
           },
-          fgColor: {
-            light: semantic('color', 'on', 'neutral', 700),
-            dark: semantic('color', 'on', 'neutral', 800),
+          borderColor: {
+            light: primitive('color', 'neutral', 200),
+            dark: primitive('color', 'neutral', 700),
           },
-          borderColor: 'transparent',
         },
         focus: {
           // Charm compatibility: inherited value is brand 500 (yellow).
           borderColor: primitive('color', 'info', 500),
         },
         disabled: {
-          bgColor: {
-            light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 600),
-          },
-          fgColor: {
-            light: primitive('color', 'neutral', 400),
-            dark: primitive('color', 'neutral', 800),
-          },
-          borderColor: 'transparent',
+          fgColor: primitive('color', 'neutral', 400),
+          borderColor: primitive('color', 'transparent'),
         },
       },
       /** Not defined in Figma */
@@ -1778,6 +1767,7 @@ const zocdocTokensBase = charmTokens
         height: semantic('defaultButton', 'height'),
         paddingX: semantic('defaultButton', 'paddingX'),
         paddingY: semantic('defaultButton', 'paddingY'),
+        shadow: semantic('defaultButton', 'shadow'),
         small: {
           fontSize: semantic('defaultButton', 'small', 'fontSize'),
           iconSize: semantic('defaultButton', 'small', 'iconSize'),

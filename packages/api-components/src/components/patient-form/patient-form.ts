@@ -8,6 +8,7 @@ import {
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import type { Patient, SexAtBirth } from '../../client/types.js';
+import type { TypedEmit, TypedEventTarget } from '../events.js';
 import styles from './patient-form.styles.js';
 
 /**
@@ -33,6 +34,25 @@ export type PatientFormField = (typeof REQUIRED_FIELDS)[number];
 
 /** The errors a field can carry, keyed by API field name. */
 export type PatientFormErrors = Partial<Record<PatientFormField, string>>;
+
+/**
+ * The patient's details, ready to book with.
+ *
+ * **This is the one event detail in the package that carries PHI.** A listener may pass it to
+ * `createAppointment` and nothing else: not to a log, not to an error message, not to any
+ * destination other than the configured `baseUrl` (PHI-001, PHI-003).
+ *
+ * `notes` is absent rather than empty when the patient wrote nothing, so a caller can forward it
+ * without having to decide what a blank string should mean to the API.
+ */
+export interface PatientSubmitDetail {
+  patient: Patient;
+  notes?: string;
+}
+
+export interface ZdPatientFormEventMap {
+  'patient-submit': CustomEvent<PatientSubmitDetail>;
+}
 
 interface FieldConfig {
   /**
@@ -161,6 +181,10 @@ function partName(field: PatientFormField): string {
 export class ZdPatientForm extends CharmElement {
   public static override baseName = 'patient-form';
 
+  declare public addEventListener: TypedEventTarget<ZdPatientFormEventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<ZdPatientFormEventMap>['removeEventListener'];
+  declare protected emit: TypedEmit<ZdPatientFormEventMap>;
+
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
@@ -246,20 +270,19 @@ export class ZdPatientForm extends CharmElement {
    */
   protected validate(): PatientFormErrors {
     const errors: PatientFormErrors = {};
-    const valueOf = (field: PatientFormField) => (this.values[field] ?? '').trim();
 
     for (const field of REQUIRED_FIELDS) {
-      if (!valueOf(field)) {
+      if (!this.trimmed(field)) {
         errors[field] = `${FIELDS[field].label} is required.`;
       }
     }
 
-    const phone = valueOf('phone_number');
+    const phone = this.trimmed('phone_number');
     if (phone && !/^\d{10}$/.test(phone)) {
       errors.phone_number = 'Phone number must be 10 digits with no spaces or dashes.';
     }
 
-    const dateOfBirth = valueOf('date_of_birth');
+    const dateOfBirth = this.trimmed('date_of_birth');
     if (dateOfBirth && !/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth)) {
       errors.date_of_birth = 'Date of birth must use the YYYY-MM-DD format.';
     }
@@ -272,28 +295,35 @@ export class ZdPatientForm extends CharmElement {
    * optional parts of `Patient` — `insurance`, `gender`, the two ids — are left off rather
    * than sent empty, because this form does not collect them.
    *
-   * Values are trimmed, and the state code upper-cased, on the way out. A trailing space
-   * in a ZIP or a lower-case state code is a rejected booking rather than a typo the API
-   * forgives, and normalising here rather than on input means the patient's own text is
-   * still in the field they are looking at.
+   * The state code is upper-cased on the way out, for the same reason {@link trimmed} exists:
+   * a lower-case state code is a rejected booking rather than a typo the API forgives.
    */
   protected toPatient(): Patient {
-    const valueOf = (field: PatientFormField) => (this.values[field] ?? '').trim();
-
     return {
-      first_name: valueOf('first_name'),
-      last_name: valueOf('last_name'),
-      date_of_birth: valueOf('date_of_birth'),
-      sex_at_birth: valueOf('sex_at_birth') as SexAtBirth,
-      phone_number: valueOf('phone_number'),
-      email_address: valueOf('email_address'),
+      first_name: this.trimmed('first_name'),
+      last_name: this.trimmed('last_name'),
+      date_of_birth: this.trimmed('date_of_birth'),
+      sex_at_birth: this.trimmed('sex_at_birth') as SexAtBirth,
+      phone_number: this.trimmed('phone_number'),
+      email_address: this.trimmed('email_address'),
       patient_address: {
-        address1: valueOf('address1'),
-        city: valueOf('city'),
-        state: valueOf('state').toUpperCase(),
-        zip_code: valueOf('zip_code'),
+        address1: this.trimmed('address1'),
+        city: this.trimmed('city'),
+        state: this.trimmed('state').toUpperCase(),
+        zip_code: this.trimmed('zip_code'),
       },
     };
+  }
+
+  /**
+   * One field's value, trimmed, and `''` for one never typed in.
+   *
+   * Both callers want the same thing and neither wants the raw value: `validate()` would
+   * otherwise accept a space as a first name, and `toPatient()` would send it. Trimming
+   * here rather than on input leaves the patient's own text in the field they are looking at.
+   */
+  private trimmed(field: PatientFormField): string {
+    return (this.values[field] ?? '').trim();
   }
 
   /**

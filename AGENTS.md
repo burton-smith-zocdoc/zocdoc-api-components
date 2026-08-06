@@ -23,7 +23,7 @@ These rules are always loaded. Full details and examples are in [`.agents/rules/
 |------|---------|
 | [PBZD-001](.agents/rules/internal/PBZD-001.md) | **Configure the prefix first, and never import a Charm barrel.** `configure.ts` runs before anything else; Charm primitives come from `@powered-by-zocdoc/primitives` as classes and register via `dependencies()`, not via `.../button/index.js`. |
 | [PBZD-002](.agents/rules/internal/PBZD-002.md) | **Extend CharmElement.** API components extend `CharmElement` from `@powered-by-zocdoc/primitives`, not `LitElement` directly. |
-| [PBZD-003](.agents/rules/internal/PBZD-003.md) | **Use scope.tag() for tag names.** Templates use `this.scope.tag('button')`, never hardcoded `zd-button`. |
+| [PBZD-003](.agents/rules/internal/PBZD-003.md) | **Write `<scoped-*>` in templates.** `this.html` rewrites `<scoped-button>` to the registered prefix — never hardcode `zd-button`, and don't interpolate `scope.tag()`. Every `<scoped-*>` needs a matching entry in `dependencies()` or it renders as an undefined element, silently. |
 | [PBZD-004](.agents/rules/internal/PBZD-004.md) | **Register through project scope.** Components declare `static override baseName` and register via `project.scope.registerComponent()`. |
 | [PBZD-005](.agents/rules/internal/PBZD-005.md) | **Package dependency direction.** Strictly `primitives` ← `api-components` ← `demo`. |
 
@@ -99,6 +99,11 @@ When making architectural decisions, follow [ADR-001](.agents/rules/adr/ADR-001.
 ### Design Spec
 
 The full design specification is at [`docs/superpowers/specs/2026-07-31-powered-by-zocdoc-web-components-design.md`](docs/superpowers/specs/2026-07-31-powered-by-zocdoc-web-components-design.md).
+
+It and the plan beside it are **point-in-time records, not live guidance.** Their
+template examples predate the `<scoped-*>` convention and show `scope.tag()`
+interpolation with `lit/static-html.js`; PBZD-003 supersedes them. Read them for
+intent, never copy their code.
 
 ### Component Events
 

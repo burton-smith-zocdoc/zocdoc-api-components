@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 describeA11y('zd-accordion', () => {
   it('passes axe checks with accordion items', async () => {
@@ -13,7 +13,6 @@ describeA11y('zd-accordion', () => {
       </zd-accordion-item>
     `;
     getContainer().appendChild(accordion);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

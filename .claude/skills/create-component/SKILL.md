@@ -23,6 +23,7 @@ packages/api-components/src/components/<name>/
 ```typescript
 import { CharmElement, ZdButton } from '@powered-by-zocdoc/primitives';
 import { property, state } from 'lit/decorators.js';
+import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import { userFacingError } from '../internal/error-message.js';
 import {
   renderRequestState,
@@ -31,20 +32,35 @@ import {
 } from '../internal/request-state.js';
 import styles from './<name>.styles.js';
 
+/** What the host page reads off the event. Exported through the barrel. */
+export interface <Name>ResultDetail {
+  data: Thing[];
+}
+
+export interface Zd<Name>EventMap {
+  '<name>-result': CustomEvent<<Name>ResultDetail>;
+  '<name>-error': CustomEvent<ErrorDetail>;
+}
+
 /**
  * Description.
  *
  * @tag zd-<name>
- * @event <name>-action - Fires when action happens
+ * @event <name>-result - Fires when the fetch succeeds
  * @csspart content - Main content area
  */
 export class Zd<Name> extends CharmElement {
   public static override baseName = '<name>';
 
+  declare public addEventListener: TypedEventTarget<Zd<Name>EventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<Zd<Name>EventMap>['removeEventListener'];
+  declare protected emit: TypedEmit<Zd<Name>EventMap>;
+
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
+  /** One entry per `<scoped-*>` in the template, plus the request state's own. */
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [...requestStateDependencies];
+    return [ZdButton, ...requestStateDependencies];
   }
 
   @property({ attribute: 'some-id' })
@@ -66,7 +82,10 @@ export class Zd<Name> extends CharmElement {
       this.emit('<name>-result', { detail: { data: result } });
     } catch (error: unknown) {
       this.requestState = 'error';
+      // userFacingError() for the patient; the raw error goes only to the host page,
+      // whose handling is developer-facing (CLIENT-003, PHI-001).
       this.errorMessage = userFacingError(error);
+      this.emit('<name>-error', { detail: { error } });
     }
   }
 
@@ -81,15 +100,24 @@ export class Zd<Name> extends CharmElement {
   }
 
   private renderContent(): unknown {
-    const button = this.scope.tag('button');
     return this.html`
       <div part="content">
-        <${button} variant="primary">Action</${button}>
+        <scoped-button variant="primary">Action</scoped-button>
       </div>
     `;
   }
 }
 ```
+
+`this.html` rewrites `<scoped-button>` to the registered prefix. Never hardcode
+`zd-button`, and never interpolate `scope.tag()` into markup (PBZD-003). Every
+`<scoped-*>` you write needs its class in `dependencies()` above, or it renders as
+an undefined element with no error.
+
+The `declare` triple is what keeps the event map honest: `emit` is narrowed to the
+map, so emitting a name the map doesn't list — or a detail of the wrong shape —
+stops compiling. Skipping it lets the map drift from what the component emits,
+which is the exact thing it exists to prevent.
 
 ## 3. Styles (`<name>.styles.ts`)
 
@@ -124,26 +152,25 @@ Add to `packages/api-components/src/index.ts`:
 
 ```typescript
 export { Zd<Name> } from './components/<name>/index.js';
+export type { <Name>ResultDetail, Zd<Name>EventMap } from './components/<name>/<name>.js';
 ```
+
+Export the detail types, not just the class. A host page reads `event.detail`, and
+without the type it has to hand-copy the shape — which typechecks against nothing
+and goes stale on the first added field.
 
 ## 6. Tests (`<name>.test.ts`)
 
 ```typescript
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as clientModule from '../../client/<client>.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { mount, part, settled } from '../../utils/test/mount.js';
 import './index.js';
 
 vi.mock('../../client/<client>.js', { spy: true });
 
 type Element = HTMLElement & { someId?: string; load(): Promise<void> };
-
-function shadow(el: Element): ShadowRoot {
-  const root = el.shadowRoot;
-  if (!root) throw new Error('no shadow root');
-  return root;
-}
 
 describe('zd-<name>', () => {
   beforeEach(() => {
@@ -159,7 +186,7 @@ describe('zd-<name>', () => {
     await el.load();
     await settled(el);
 
-    expect(shadow(el).querySelector('[part="content"]')).not.toBeNull();
+    expect(part(el, 'content')).toBeDefined();
   });
 
   describe('accessibility', () => {
@@ -215,13 +242,15 @@ export const Default: Story = {};
 
 - [ ] Component class extends `CharmElement`
 - [ ] `baseName` declared as static property
-- [ ] Dependencies declared in `static get dependencies()`
+- [ ] Markup uses `<scoped-*>` inside `this.html` — no `zd-` prefix, no `scope.tag()`
+- [ ] **Every `<scoped-*>` in the template has its class in `dependencies()`**, plus `...requestStateDependencies` if `renderRequestState()` is called
 - [ ] State machine: idle → loading → success/empty/error
 - [ ] Uses `renderRequestState()` for loading/error/empty
+- [ ] Event map interface declared, with the `declare addEventListener / removeEventListener / emit` triple
 - [ ] Events via `this.emit()`, not `dispatchEvent`
-- [ ] Tag names via `this.scope.tag()`, not hardcoded
-- [ ] `userFacingError()` for error messages
+- [ ] `userFacingError()` for error messages — never `error.message`
 - [ ] Registered via `project.scope.registerComponent()`
-- [ ] Exported from package index
+- [ ] Class **and detail types** exported from package index
 - [ ] Tests cover success, empty, error states
 - [ ] Axe accessibility tests for each state
+- [ ] Row added to the Component Events table in `AGENTS.md`

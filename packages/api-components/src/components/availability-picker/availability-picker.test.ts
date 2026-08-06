@@ -3,8 +3,9 @@ import * as availability from '../../client/availability.js';
 import { ZocdocError } from '../../client/errors.js';
 import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
 import type { ProviderLocationAvailability } from '../../client/types.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { dayFromToday } from '../../utils/test/dates.js';
+import { mount, parts, settled, shadow, texts } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -45,20 +46,32 @@ type Picker = HTMLElement & {
   providerLocationId?: string;
   visitReasonId?: string;
   selectedStartTime?: string;
+  patientType: 'new' | 'existing';
+  layout: 'strip' | 'stacked';
+  startDate?: string;
   days: number;
   load(): Promise<void>;
 };
 
-function shadow(element: Picker): ShadowRoot {
-  const root = element.shadowRoot;
-  if (!root) throw new Error('zd-availability-picker rendered no shadow root');
-  return root;
+/**
+ * The window the component asked for on its most recent call — not its first, so these stay right
+ * if setting the ids ever costs more than one fetch.
+ */
+function lastParams(): Parameters<typeof availability.getAvailability>[0] {
+  const [params] = vi.mocked(availability.getAvailability).mock.calls.at(-1)!;
+  return params;
 }
 
-function texts(element: Picker, part: string): string[] {
-  return [...shadow(element).querySelectorAll(`[part="${part}"]`)].map(
-    (node) => node.textContent?.trim() ?? ''
-  );
+/** How many days lie between the requested `startDate` and `endDate`. */
+function windowLength(): number {
+  const params = lastParams();
+  const start = Date.parse(`${params.startDate}T00:00:00Z`);
+  const end = Date.parse(`${params.endDate}T00:00:00Z`);
+  return (end - start) / 86_400_000;
+}
+
+function options(element: Picker): HTMLElement[] {
+  return parts(element, 'patient-type-option');
 }
 
 /** Sets both ids at once, which is the only combination that fetches. */
@@ -107,14 +120,59 @@ describe('zd-availability-picker', () => {
     const element = await mountReady('days="90"');
     await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalled());
 
-    // The most recent call, not the first: this asserts on the window the component just
-    // asked for, and stays right if setting the ids ever costs more than one fetch.
-    const [params] = vi.mocked(availability.getAvailability).mock.calls.at(-1)!;
-    const start = Date.parse(`${params.startDate}T00:00:00Z`);
-    const end = Date.parse(`${params.endDate}T00:00:00Z`);
-
-    expect((end - start) / 86_400_000).toBe(30);
+    // 29, not 30: `days` counts the first day, so a thirty-day window ends twenty-nine days
+    // along. The endpoint's own limit is that `endDate` be within thirty days of `startDate`,
+    // which this is — and the stacked layout renders one group per day, so an off-by-one here
+    // would show a day the request never covered.
+    expect(windowLength()).toBe(29);
     expect(element.days).toBe(90);
+  });
+
+  it('asks for as many days as it was told to show, counting the first', async () => {
+    await mountReady('days="7"');
+    await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalled());
+
+    expect(windowLength()).toBe(6);
+  });
+
+  describe('the start of the window', () => {
+    it('starts today by default', async () => {
+      await mountReady();
+      await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalled());
+
+      expect(lastParams().startDate).toBe(dayFromToday(0));
+    });
+
+    /*
+     * The production detail panel opens on tomorrow rather than today, which is a host page's
+     * decision — hence a day key rather than a flag. This is that case.
+     */
+    it('starts where it is told to', async () => {
+      await mountReady(`start-date="${dayFromToday(1)}"`);
+      await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalled());
+
+      expect(lastParams().startDate).toBe(dayFromToday(1));
+    });
+
+    it('refetches when the start moves', async () => {
+      const element = await mountReady();
+      await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalledTimes(1));
+
+      element.startDate = dayFromToday(7);
+      await settled(element);
+
+      await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalledTimes(2));
+      expect(lastParams().startDate).toBe(dayFromToday(7));
+    });
+
+    // An attribute written by hand can be anything. Today's window is not the one that was
+    // asked for, but it is a window — where `Invalid Date` would ask for `NaN-NaN-NaN`.
+    it('falls back to today for a start it cannot parse', async () => {
+      await mountReady('start-date="next Tuesday"');
+      await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalled());
+
+      expect(lastParams().startDate).toBe(dayFromToday(0));
+    });
   });
 
   it('groups slots into one day button per distinct date', async () => {
@@ -263,6 +321,186 @@ describe('zd-availability-picker', () => {
     await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalledTimes(2));
   });
 
+  /*
+   * The window is pinned to the fixtures' own days rather than to today's, so the groups are the
+   * same whenever this runs. Nothing here reaches the API — `getAvailability` is mocked — so a
+   * window in the past is as good as one in the future for deciding what gets rendered.
+   */
+  describe('the stacked layout', () => {
+    /** Aug 5 – Aug 11: two days with times, then five closed ones. */
+    function mountStacked(markup = `start-date="${FIRST_DAY}" days="7"`): Promise<Picker> {
+      return mountReady(`layout="stacked" ${markup}`);
+    }
+
+    it('drops the day strip, since every day is already on show', async () => {
+      const element = await mountStacked();
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="day-group"]')).not.toBeNull()
+      );
+
+      expect(shadow(element).querySelector('[part="days"]')).toBeNull();
+      expect(shadow(element).querySelector('[part="day"]')).toBeNull();
+    });
+
+    it('keeps the day strip in the strip layout', async () => {
+      const element = await mountReady();
+      await vi.waitFor(() => expect(shadow(element).querySelector('[part="day"]')).not.toBeNull());
+
+      expect(shadow(element).querySelector('[part="day-groups"]')).toBeNull();
+    });
+
+    it('gives every day with times its own group, and collapses the closed run', async () => {
+      const element = await mountStacked();
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="day-group"]')).not.toBeNull()
+      );
+
+      // Aug 5, Aug 6, then Aug 7–11 as one — not seven groups, and not two.
+      expect(texts(element, 'day-heading')).toHaveLength(3);
+      expect(shadow(element).querySelectorAll('[part="day-empty"]')).toHaveLength(1);
+    });
+
+    /*
+     * Matched loosely because the locale decides the separator and whether the range repeats the
+     * month; what must hold is that one heading names both ends of the run rather than only its
+     * first day, which is what would make the other four days look like they were dropped.
+     */
+    it('names both ends of a collapsed run', async () => {
+      const element = await mountStacked();
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="day-empty"]')).not.toBeNull()
+      );
+
+      const [, , run] = texts(element, 'day-heading');
+      expect(run).toMatch(/\b7\b/);
+      expect(run).toMatch(/\b11\b/);
+    });
+
+    it('shows every day’s times at once rather than one day’s', async () => {
+      const element = await mountStacked();
+      await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
+
+      // Three across two days, where the strip would show the first day's two.
+      expect(shadow(element).querySelectorAll('[part="slot"]')).toHaveLength(3);
+      expect(shadow(element).querySelectorAll('[part="slots"]')).toHaveLength(2);
+    });
+
+    // A closed day before the first open one is the case that would go missing if the groups came
+    // from the data instead of from the window.
+    it('collapses a run that starts the window', async () => {
+      const element = await mountStacked('start-date="2026-08-01" days="7"');
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="day-group"]')).not.toBeNull()
+      );
+
+      // Aug 1–4 closed, Aug 5, Aug 6, then Aug 7 closed on its own.
+      expect(texts(element, 'day-heading')).toHaveLength(4);
+      expect(texts(element, 'day-empty')).toEqual([
+        'No available appointments',
+        'No available appointments',
+      ]);
+    });
+
+    it('counts a slot outside the window as being outside it', async () => {
+      const element = await mountStacked('start-date="2026-09-01" days="7"');
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="day-group"]')).not.toBeNull()
+      );
+
+      // The whole window is one closed run — the August slots are not in it. Still a success
+      // rather than the empty state, since the request did come back with slots.
+      expect(texts(element, 'day-heading')).toHaveLength(1);
+      expect(shadow(element).querySelectorAll('[part="slot"]')).toHaveLength(0);
+    });
+
+    it('emits slot-select from a stacked day', async () => {
+      const element = await mountStacked();
+      await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
+
+      const events: CustomEvent[] = [];
+      element.addEventListener('slot-select', (event) => events.push(event as CustomEvent));
+
+      // The last of the three, which is the second day's — proof the groups are wired up and not
+      // just the first one.
+      [...shadow(element).querySelectorAll<HTMLElement>('[part="slot"]')].at(-1)!.click();
+
+      expect(events).toHaveLength(1);
+      expect(events[0]!.detail.startTime).toBe(`${SECOND_DAY}T09:00:00-04:00`);
+    });
+  });
+
+  describe('the patient type control', () => {
+    it('renders both answers as a labelled group', async () => {
+      const element = await mountReady();
+
+      expect(options(element).map((option) => option.textContent?.trim())).toEqual([
+        'New patient',
+        'Existing patient',
+      ]);
+      // The label is a text node rather than an attribute, so a browser can translate it
+      // (I18N-001).
+      expect(shadow(element).querySelector('[slot="label"]')?.textContent).toBe('Patient type');
+    });
+
+    it('refetches for the chosen type and reports the change', async () => {
+      const element = await mountReady();
+      await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalledTimes(1));
+
+      const events: CustomEvent[] = [];
+      element.addEventListener('patient-type-change', (event) => events.push(event as CustomEvent));
+
+      options(element)[1]!.click();
+
+      await vi.waitFor(() => expect(lastParams().patientType).toBe('existing'));
+      expect(element.patientType).toBe('existing');
+      expect(events).toHaveLength(1);
+      expect(events[0]!.detail.patientType).toBe('existing');
+    });
+
+    // The group's own `change` is composed and would otherwise surface on the host page as a
+    // `change` from this component, which means nothing here.
+    it('does not let the group’s change event out', async () => {
+      const element = await mountReady();
+
+      const changes: Event[] = [];
+      element.addEventListener('change', (event) => changes.push(event));
+
+      options(element)[1]!.click();
+      await vi.waitFor(() => expect(element.patientType).toBe('existing'));
+
+      expect(changes).toHaveLength(0);
+    });
+
+    /*
+     * The state where it matters most: nothing is bookable for a new patient, and switching to
+     * "Existing patient" is the thing that might find something. A control inside the request
+     * state's children would be gone exactly when it is needed.
+     */
+    it('stays rendered when the window comes back empty', async () => {
+      vi.mocked(availability.getAvailability).mockResolvedValue([
+        {
+          provider_location_id: PROVIDER_LOCATION_ID,
+          first_availability: null,
+          timeslots: [],
+        },
+      ]);
+
+      const element = await mountReady();
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="empty"]')).not.toBeNull()
+      );
+
+      expect(options(element)).toHaveLength(2);
+    });
+
+    it('drops the control on hide-patient-type, keeping the times', async () => {
+      const element = await mountReady('hide-patient-type');
+      await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
+
+      expect(shadow(element).querySelector('[part="patient-type"]')).toBeNull();
+    });
+  });
+
   // A11Y-005 asks for more than the default state, and each of these renders different
   // markup: a nested list of buttons, a status region, and an alert with a retry.
   describe('accessibility', () => {
@@ -281,6 +519,17 @@ describe('zd-availability-picker', () => {
     it('has no violations with days and times rendered', async () => {
       const element = await mountReady();
       await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
+
+      await expectNoViolations(element);
+    });
+
+    // Different markup again: a list of groups, each with a line of its own and either times or
+    // the closed-span message under it.
+    it('has no violations in the stacked layout', async () => {
+      const element = await mountReady(`layout="stacked" start-date="${FIRST_DAY}" days="7"`);
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="day-empty"]')).not.toBeNull()
+      );
 
       await expectNoViolations(element);
     });

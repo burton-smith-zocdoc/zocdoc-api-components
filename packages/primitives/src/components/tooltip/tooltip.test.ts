@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../test/a11y.js';
+import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 
 interface ZdTooltip extends HTMLElement {
   content?: string;
@@ -11,7 +11,6 @@ describeA11y('zd-tooltip', () => {
     el.content = 'Helpful information';
     el.innerHTML = '<button>Hover me</button>';
     getContainer().appendChild(el);
-    await waitForUpdate();
 
     await expectNoViolations();
   });

@@ -3,9 +3,16 @@ import type { ProviderLocation } from '../../client/types.js';
 import { providerDisplayName } from './provider-name.js';
 
 /**
- * The provider block that appears in the results list, on a profile header, and again in the
- * booking summary — one implementation, so the card a patient picked and the summary they
- * confirm describe the same provider in the same words.
+ * The provider block that appears in the results list and again in the booking summary — one
+ * implementation, so the card a patient picked and the summary they confirm describe the same
+ * provider in the same words.
+ *
+ * `zd-provider-profile` deliberately does *not* use the block, though it uses the formatting
+ * helpers below. Its header needs the name as an `<h2>` rather than the `<span>` a card wants,
+ * and it needs the address without `distance_to_patient_mi` — a distance from a ZIP code a
+ * profile reached by link was never given. Sharing the phrasing while not sharing the markup is
+ * why `providerHeading`, `providerAddress`, `providerLocationLine`, and `providerPhotoUrl` are
+ * exported individually.
  *
  * **A function returning a template, not a component.** The markup lands in the *caller's*
  * shadow root, so its `part` attributes are the caller's own and each consumer styles it

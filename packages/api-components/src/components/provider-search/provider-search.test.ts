@@ -5,8 +5,8 @@ import * as referenceData from '../../client/reference-data.js';
 import { DEFAULT_PAGE_SIZE, type ProviderSearchResult } from '../../client/provider-locations.js';
 import { SCENARIOS, SPECIALTIES, VISIT_REASONS } from '../../client/mock/fixtures.js';
 import type { VisitType } from '../../client/types.js';
-import { expectNoViolations } from '../../test/a11y.js';
-import { mount, settled } from '../../test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { mount, part, settled, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -59,20 +59,12 @@ type Search = HTMLElement & {
 /** Charm's form controls, as far as these tests need them. */
 type FormControl = HTMLElement & { label?: string; errorMessage: string; disabled: boolean };
 
-function shadow(element: Search): ShadowRoot {
-  const root = element.shadowRoot;
-  if (!root) throw new Error('zd-provider-search rendered no shadow root');
-  return root;
+function control(element: Search, name: string): FormControl {
+  return part<FormControl>(element, name);
 }
 
-function control(element: Search, part: string): FormControl {
-  const node = shadow(element).querySelector<FormControl>(`[part='${part}']`);
-  if (!node) throw new Error(`zd-provider-search rendered no [part='${part}']`);
-  return node;
-}
-
-function options(element: Search, part: string): HTMLOptionElement[] {
-  return [...shadow(element).querySelectorAll<HTMLOptionElement>(`[part='${part}'] option`)];
+function options(element: Search, name: string): HTMLOptionElement[] {
+  return [...control(element, name).querySelectorAll<HTMLOptionElement>('option')];
 }
 
 /**
