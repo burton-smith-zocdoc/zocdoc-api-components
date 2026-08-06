@@ -121,4 +121,21 @@ describe('zd-provider-card', () => {
       expect(initials?.length).toBe(2);
     });
   });
+
+  describe('events', () => {
+    it('emits profile-request when name is clicked', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const events: CustomEvent[] = [];
+      card.addEventListener('profile-request', (e) => events.push(e as CustomEvent));
+
+      const nameButton = part<HTMLElement>(card, 'name');
+      nameButton?.click();
+
+      expect(events).toHaveLength(1);
+      expect(events[0].detail.provider).toBe(PROVIDER);
+    });
+  });
 });

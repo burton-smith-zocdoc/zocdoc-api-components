@@ -109,6 +109,11 @@ export class ZdProviderCard extends CharmElement {
     return this.html`<span part="insurance">${status} · ${this.insuranceName}</span>`;
   }
 
+  protected handleNameClick(): void {
+    if (!this.provider) return;
+    this.emit('profile-request', { detail: { provider: this.provider } });
+  }
+
   protected override render(): unknown {
     if (!this.provider) return nothing;
 
@@ -121,7 +126,11 @@ export class ZdProviderCard extends CharmElement {
         <div class="provider-card">
           ${this.renderAvatar()}
           <div part="details">
-            <scoped-button part="name" variant="link">
+            <scoped-button
+              part="name"
+              variant="link"
+              @click=${() => this.handleNameClick()}
+            >
               ${heading}
             </scoped-button>
             ${specialty ? this.html`<span part="specialty">${specialty}</span>` : nothing}
