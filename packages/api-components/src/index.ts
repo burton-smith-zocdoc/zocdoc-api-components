@@ -59,6 +59,11 @@ export {
 } from './components/patient-form/index.js';
 export { ZdProviderProfile } from './components/provider-profile/index.js';
 export {
+  ZdProviderCard,
+  type ProfileRequestDetail,
+  type ZdProviderCardEventMap,
+} from './components/provider-card/index.js';
+export {
   ZdProviderResults,
   type PageChangeDetail,
   type ProviderDaySelectDetail,
