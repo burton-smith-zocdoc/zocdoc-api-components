@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import type { ProviderLocation } from '../../client/types.js';
-import { mount, shadow } from '../../utils/test/mount.js';
+import { expectNoViolations } from '../../utils/test/a11y.js';
+import { mount, part, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -29,6 +30,62 @@ describe('zd-provider-card', () => {
     const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
     card.provider = PROVIDER;
     await card.updateComplete;
-    expect(shadow(card).textContent).toContain('TODO');
+    expect(shadow(card).querySelector('zd-card')).not.toBeNull();
+  });
+
+  describe('rendering', () => {
+    it('renders provider name with title', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const name = part(card, 'name');
+      expect(name?.textContent).toContain(PROVIDER.provider.full_name ?? PROVIDER.provider.last_name);
+    });
+
+    it('renders specialty', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const specialty = part(card, 'specialty');
+      expect(specialty?.textContent).toContain(PROVIDER.provider.specialties?.[0]);
+    });
+
+    it('renders location with distance', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const location = part(card, 'location');
+      expect(location?.textContent).toBeTruthy();
+    });
+
+    it('renders insurance status when insuranceName provided', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      card.insuranceName = 'Anthem Blue Cross';
+      await card.updateComplete;
+
+      const insurance = part(card, 'insurance');
+      expect(insurance?.textContent).toContain('Anthem Blue Cross');
+    });
+
+    it('does not render insurance without insuranceName', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const insurance = part(card, 'insurance');
+      expect(insurance).toBeNull();
+    });
+
+    it('passes axe', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      await expectNoViolations(card);
+    });
   });
 });

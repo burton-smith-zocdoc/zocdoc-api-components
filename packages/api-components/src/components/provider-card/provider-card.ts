@@ -69,8 +69,41 @@ export class ZdProviderCard extends CharmElement {
   @property({ attribute: 'insurance-name' })
   public insuranceName?: string;
 
+  /**
+   * The network line, rendered only when the patient named a plan.
+   */
+  protected renderInsurance(): unknown {
+    if (!this.insuranceName || !this.provider) return nothing;
+
+    const acceptance = this.provider.accepts_patient_insurance;
+    if (acceptance !== 'accepted' && acceptance !== 'not_accepted') return nothing;
+
+    const status = acceptance === 'accepted' ? 'In-network' : 'Out-of-network';
+    return this.html`<span part="insurance">${status} · ${this.insuranceName}</span>`;
+  }
+
   protected override render(): unknown {
     if (!this.provider) return nothing;
-    return this.html`<scoped-card>TODO</scoped-card>`;
+
+    const heading = providerHeading(this.provider);
+    const specialty = this.provider.provider.specialties?.[0];
+    const location = providerLocationLine(this.provider);
+
+    return this.html`
+      <scoped-card>
+        <div class="provider-card">
+          <div part="details">
+            <scoped-button part="name" variant="link">
+              ${heading}
+            </scoped-button>
+            ${specialty ? this.html`<span part="specialty">${specialty}</span>` : nothing}
+            ${location ? this.html`<span part="location">${location}</span>` : nothing}
+            ${this.renderInsurance()}
+            <slot name="badges"></slot>
+          </div>
+          <slot name="availability"></slot>
+        </div>
+      </scoped-card>
+    `;
   }
 }
