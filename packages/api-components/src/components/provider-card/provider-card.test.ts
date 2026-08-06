@@ -138,4 +138,30 @@ describe('zd-provider-card', () => {
       expect(events[0].detail.provider).toBe(PROVIDER);
     });
   });
+
+  describe('slots', () => {
+    it('renders slotted availability content', async () => {
+      const card = await mount<Card>(
+        '<zd-provider-card><span slot="availability" id="test-avail">Availability here</span></zd-provider-card>'
+      );
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const slotted = card.querySelector('#test-avail');
+      expect(slotted).not.toBeNull();
+      expect(slotted?.textContent).toBe('Availability here');
+    });
+
+    it('renders slotted badges content', async () => {
+      const card = await mount<Card>(
+        '<zd-provider-card><span slot="badges" id="test-badge">Badge here</span></zd-provider-card>'
+      );
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const slotted = card.querySelector('#test-badge');
+      expect(slotted).not.toBeNull();
+      expect(slotted?.textContent).toBe('Badge here');
+    });
+  });
 });
