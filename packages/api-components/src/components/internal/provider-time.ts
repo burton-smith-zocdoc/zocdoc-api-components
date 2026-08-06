@@ -30,6 +30,48 @@ export function isValidDate(date: Date): boolean {
 }
 
 /**
+ * The day an API timestamp belongs to, as `YYYY-MM-DD`.
+ *
+ * Taken off the front of the string rather than from a parsed `Date`, so a slot belongs to
+ * the day the *provider* calls it. A 9pm Eastern slot read in Berlin would otherwise move to
+ * the following morning and split one evening across two days.
+ */
+export function dayKey(isoTime: string): string {
+  return isoTime.slice(0, 10);
+}
+
+/**
+ * Today as a `YYYY-MM-DD` day key, read from the browser's local date.
+ *
+ * `toISOString()` would use UTC and, for anyone west of Greenwich in the evening, name
+ * tomorrow — asking for a window that starts a day late and dropping the rest of today's
+ * slots. This is a wire format rather than anything a user reads, so I18N-002 does not apply.
+ */
+export function todayDayKey(): string {
+  const now = new Date();
+  const month = `${now.getMonth() + 1}`.padStart(2, '0');
+  const day = `${now.getDate()}`.padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
+/**
+ * A day key `days` later, which may be negative to go back.
+ *
+ * Done in UTC — via {@link providerLocalTime}, so a bare key is read as midnight — because
+ * these keys are calendar dates with no zone of their own. Local arithmetic would land an hour
+ * either side of midnight on a DST boundary and shift the whole window by a day. Returns the
+ * key unchanged if it is not one this can parse, so a bad `start-date` attribute produces a
+ * window that goes nowhere rather than a run of `NaN-NaN-NaN`.
+ */
+export function addDays(key: string, days: number): string {
+  const date = providerLocalTime(key);
+  if (!isValidDate(date)) return key;
+
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+/**
  * Built once rather than per render, and pinned to UTC so it reports the provider's own wall
  * clock — see {@link providerLocalTime}. `undefined` for the locale means the user's, which
  * is what supplies the translated weekday and month and the 12- or 24-hour clock (I18N-002).

@@ -1,6 +1,14 @@
 import { request } from './http.js';
 import type { PatientType, ProviderLocationAvailability, ZocdocResponse } from './types.js';
 
+/**
+ * The widest window the endpoint accepts: `end_date_in_provider_local_time` must be within 30
+ * days of the start. Exported because every component that renders a window has to clamp to it —
+ * a 400 would reach the patient as a generic failure with nothing to act on — and a second copy
+ * of the number is how the two drift apart.
+ */
+export const MAX_AVAILABILITY_DAYS = 30;
+
 export interface AvailabilityParams {
   /**
    * Each id is a literal `pr_…|lo_…` pair. `request` comma-joins the array, and the

@@ -18,6 +18,13 @@ export interface ProviderSearchParams {
   pageSize?: number;
 }
 
+/**
+ * What `page_size` is when nothing asks for another, per the endpoint's documentation. Exported
+ * because a pager has to know it to work out how many pages a `total_count` is, and deriving
+ * that from a second copy of the number is how the two drift apart.
+ */
+export const DEFAULT_PAGE_SIZE = 10;
+
 export interface ProviderSearchResult {
   providerLocations: ProviderLocation[];
   /**
@@ -25,6 +32,11 @@ export interface ProviderSearchResult {
    * without parsing `next_url`.
    */
   totalCount: number;
+  /**
+   * The page size the response was actually built with, which is not necessarily the one that
+   * was asked for — a caller pairs it with `totalCount` to count pages.
+   */
+  pageSize: number;
   /** The API echoes these back, filling in defaults it chose for omitted filters. */
   searchParameters: ProviderLocationsData['search_parameters'];
 }
@@ -62,6 +74,8 @@ export async function searchProviderLocations(
     // `undefined` and crash its render instead of showing the empty state.
     providerLocations: response.data?.provider_locations ?? [],
     totalCount: response.total_count ?? 0,
+    // A response that omits the echo was still built with the default, so that is what it was.
+    pageSize: response.page_size ?? DEFAULT_PAGE_SIZE,
     searchParameters: response.data?.search_parameters,
   };
 }

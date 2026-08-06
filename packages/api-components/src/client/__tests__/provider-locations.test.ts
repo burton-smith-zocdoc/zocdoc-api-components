@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { configureZocdoc, resetZocdocConfig } from '../configure.js';
-import { searchProviderLocations } from '../provider-locations.js';
+import { DEFAULT_PAGE_SIZE, searchProviderLocations } from '../provider-locations.js';
 import type { ProviderLocation } from '../types.js';
 
 /**
@@ -102,6 +102,27 @@ describe('searchProviderLocations', () => {
     const result = await searchProviderLocations({ zipCode: '11201' });
 
     expect(result.totalCount).toBe(42);
+  });
+
+  /*
+   * The size the response was built with, not the size that was asked for. A pager divides
+   * `total_count` by this to count pages, so reporting a requested 5 against a served 25 would
+   * offer five times the pages that exist.
+   */
+  it('reports the page size the response was built with', async () => {
+    const result = await searchProviderLocations({ zipCode: '11201', pageSize: 5 });
+
+    expect(result.pageSize).toBe(25);
+  });
+
+  it('falls back to the documented default when the envelope omits the page size', async () => {
+    mockSearch(
+      JSON.stringify({ request_id: 'req_test', total_count: 1, data: { provider_locations: [] } })
+    );
+
+    const result = await searchProviderLocations({ zipCode: '11201' });
+
+    expect(result.pageSize).toBe(DEFAULT_PAGE_SIZE);
   });
 
   it('returns an empty list for a zip code with no providers', async () => {

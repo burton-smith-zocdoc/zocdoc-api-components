@@ -104,11 +104,18 @@ The full design specification is at [`docs/superpowers/specs/2026-07-31-powered-
 
 | Component | Event | Detail |
 |-----------|-------|--------|
-| `zd-provider-search` | `provider-results` | `{ providers: ProviderLocation[] }` |
+| `zd-provider-search` | `provider-results` | `{ providers, totalCount, page, pageSize, …criteria }` |
 | `zd-provider-results` | `provider-select` | `{ provider: ProviderLocation }` |
-| `zd-availability-picker` | `slot-select` | `{ slot: TimeSlot }` |
+| `zd-provider-results` | `page-change` | `{ page: number }` |
+| `zd-provider-results` | `day-select` | `{ day: string, provider: ProviderLocation }` |
+| `zd-provider-results` | `window-change` | `{ startDate: string, endDate: string }` |
+| `zd-availability-grid` | `day-select` | `{ day: string, providerLocationId?: string }` |
+| `zd-availability-grid` | `window-change` | `{ startDate: string, endDate: string }` |
+| `zd-availability-grid` | `more-select` | — |
+| `zd-availability-picker` | `slot-select` | `{ startTime: string, providerLocationId: string }` |
 | `zd-patient-form` | `patient-submit` | `{ patient: Patient }` |
 | `zd-booking-flow` | `booking-complete` | `{ appointmentId: string }` |
+| `zd-booking-flow` | `availability-error` | `{ error: unknown }` — nothing is rendered for it |
 | (any) | `error` | `{ message: string, code: string }` |
 
 ### Tooling

@@ -1,7 +1,7 @@
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
+import { buildAvailability, PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import type { ZdProviderResults } from './provider-results.js';
 import './index.js';
 
@@ -12,6 +12,30 @@ const { args, argTypes, template } = getStorybookHelpers<ZdProviderResults>('zd-
 /** A grey circle, inline, so the photo story fetches nothing. See `WithPhotos`. */
 const PLACEHOLDER_PHOTO =
   'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" fill="%23d8d8d8"/%3E%3C/svg%3E';
+
+/**
+ * A `YYYY-MM-DD` key relative to today, which is what the availability fixtures are built around:
+ * a hard-coded date would fall behind the window and every count would read zero tomorrow.
+ *
+ * Read off the local date rather than through `toISOString`, which would use UTC and name tomorrow
+ * for anyone west of Greenwich in the evening.
+ */
+function dayFromToday(offset: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+/**
+ * What one batched `getAvailability` for this page would return: one entry per provider, built by
+ * the same generator the mock transport uses. The list never fetches this itself — see
+ * `WithAvailability`.
+ */
+const AVAILABILITY = PROVIDER_LOCATIONS.map((location) =>
+  buildAvailability(location.provider_location_id, dayFromToday(0), 14)
+);
 
 /**
  * Providers come from the documented sandbox fixtures rather than invented names, so a
@@ -82,6 +106,57 @@ export const NarrowContainer: Story = {
  */
 export const WithInsurance: Story = {
   args: { insuranceName: 'Anthem – Blue Card PPO' },
+};
+
+/**
+ * The count line and the pager, both of which need `total-count`.
+ *
+ * `providers` is one page, so it is the only thing this component cannot count for itself —
+ * "2 providers" for page four of 334 would be worse than saying nothing, which is what it does
+ * when no total is given. Paging is reported rather than performed: `page-change` shows up in
+ * the Actions panel and the list stays put, because fetching the next page belongs to whatever
+ * ran the search.
+ */
+export const Paged: Story = {
+  args: { totalCount: 334, page: 3, pageSize: 10 },
+};
+
+/** A total that fits on one page gets the count and no pager — one page is nothing to page. */
+export const SinglePage: Story = {
+  args: { totalCount: PROVIDER_LOCATIONS.length },
+};
+
+/**
+ * The production card: a summary with a fortnight of day counts under it and one range control
+ * for the whole list.
+ *
+ * Nothing here fetches. `availability` is a batch a parent already made — the endpoint takes an
+ * array of `provider_location_ids`, so one request covers the page, and the cards count what they
+ * are handed (COMP-002). Pressing the arrows moves the dates and logs `window-change` in the
+ * Actions panel without the counts changing, which is exactly what the component promises: the
+ * range is reported, and refetching it belongs to whoever owns the search. `zd-booking-flow` is
+ * where that circle closes.
+ *
+ * The last fixture provider is the no-availability sentinel, so its card shows a full window of
+ * "No appts" — the state a practice with a closed book really returns.
+ */
+export const WithAvailability: Story = {
+  args: { totalCount: 334, availability: AVAILABILITY, availabilityDays: 14 },
+};
+
+/**
+ * The same page a week out, which is what a host page binds back down after `window-change`.
+ *
+ * The counts are the same fixtures, so most cells read "No appts" here — the batch was fetched
+ * for the first window and the cards only count the days on show. That mismatch is the reason
+ * `zd-booking-flow` refetches on every move rather than paging the data it already has.
+ */
+export const AvailabilityLaterWindow: Story = {
+  args: {
+    totalCount: 334,
+    availability: AVAILABILITY,
+    availabilityStart: dayFromToday(7),
+  },
 };
 
 /**

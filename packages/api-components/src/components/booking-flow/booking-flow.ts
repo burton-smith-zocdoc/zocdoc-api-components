@@ -2,15 +2,19 @@ import { CharmElement, ZdButton } from '@powered-by-zocdoc/primitives';
 import { nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { createAppointment } from '../../client/appointments.js';
+import { getAvailability } from '../../client/availability.js';
+import { DEFAULT_PAGE_SIZE } from '../../client/provider-locations.js';
 import type {
   AppointmentResponseData,
   AppointmentStatus,
   Patient,
   PatientType,
   ProviderLocation,
+  ProviderLocationAvailability,
 } from '../../client/types.js';
 import { ZdAvailabilityPicker } from '../availability-picker/availability-picker.js';
 import { ZdBookingConfirmation } from '../booking-confirmation/booking-confirmation.js';
+import { resolveWindowStart, windowEndDate } from '../internal/availability-window.js';
 import { userFacingError } from '../internal/error-message.js';
 import { providerDisplayName } from '../internal/provider-name.js';
 import { formatAppointmentTime } from '../internal/provider-time.js';
@@ -49,6 +53,15 @@ const STEP_HEADINGS: Record<BookingStep, string> = {
 const BOOKED_STATUSES: ReadonlySet<AppointmentStatus> = new Set(['confirmed', 'pending_booking']);
 
 /**
+ * How many days of availability the results list shows at once.
+ *
+ * Bound down to the list rather than left to its own default, because this component is what
+ * requests the window and the two numbers have to be the same one — a list showing fourteen days
+ * of counts fetched over seven would report an empty second week.
+ */
+const AVAILABILITY_DAYS = 14;
+
+/**
  * Coordinates the booking funnel: search → time → details → confirmation.
  *
  * It owns the flow's state and the only write call in the library, and it talks to its
@@ -74,6 +87,9 @@ const BOOKED_STATUSES: ReadonlySet<AppointmentStatus> = new Set(['confirmed', 'p
  *   loads, and a listener could not tell the two apart (COMP-003).
  *   The `error` it carries is the client's own, whose body can echo submitted values — do not
  *   log it wholesale (PHI-001).
+ * @event availability-error - Emitted with `{ error }` when the batched availability request for
+ *   the results list fails. Nothing is rendered for it — the list keeps working without day
+ *   counts — so this event is the only notice a host page gets. Same caution about the `error`.
  * @csspart step - The current step's container, and the focus target on every transition.
  * @csspart step-heading - The current step's heading.
  * @csspart back - The button returning to the previous step.
@@ -149,9 +165,33 @@ export class ZdBookingFlow extends CharmElement {
   /**
    * The last search's results. Public so a host page that ran its own search can hand them in
    * and start the flow at the list.
+   *
+   * One page of them. `totalCount` is how many the search matched.
    */
   @property({ attribute: false })
   public providers: ProviderLocation[] = [];
+
+  /**
+   * How many providers the search matched in total, which is what the results list needs to
+   * count them and to know where its pager ends.
+   *
+   * Undefined until a search returns, and left undefined by a host page handing in `providers`
+   * with no total — in which case the list renders neither the count nor the pager rather than
+   * presenting one page as the whole answer.
+   */
+  @property({ type: Number, attribute: 'total-count' })
+  public totalCount?: number;
+
+  /** The zero-indexed page in hand. Bound down to both children so they cannot disagree. */
+  @property({ type: Number })
+  public page = 0;
+
+  /**
+   * Results per page, forwarded to the search that requests them and to the list that pages
+   * through them. Updated from what the API says it used, since it is free to clamp.
+   */
+  @property({ type: Number, attribute: 'page-size' })
+  public pageSize = DEFAULT_PAGE_SIZE;
 
   /** The chosen `pr_…|lo_…`. Setting it advances the flow to the time step. */
   @property({ attribute: 'provider-location-id' })
@@ -185,6 +225,28 @@ export class ZdBookingFlow extends CharmElement {
    */
   @state()
   private resolvedVisitReasonId?: string;
+
+  /**
+   * Day counts for every provider on the page, from one request rather than one per card.
+   *
+   * Undefined until a batch succeeds, and undefined again if one fails — the results list draws
+   * no grids at all in that state, which is the point. See {@link loadAvailability}.
+   */
+  @state()
+  private availability?: ProviderLocationAvailability[];
+
+  /** The first day of the window `availability` covers, and the one the list is told to show. */
+  @state()
+  private availabilityStart?: string;
+
+  /**
+   * Which availability request is the current one.
+   *
+   * The window pager is a button a patient can press faster than the API answers, and responses
+   * are not guaranteed to arrive in the order they were asked for. Without this, an overtaken
+   * response lands last and leaves the counts showing a window nobody is looking at.
+   */
+  private availabilityRequest = 0;
 
   /** The booking response, and so the confirmation step's whole input. */
   @state()
@@ -336,6 +398,53 @@ export class ZdBookingFlow extends CharmElement {
     }
   }
 
+  /**
+   * Fetches day counts for the whole page in one call.
+   *
+   * The endpoint takes an array of `provider_location_ids` and answers for all of them, so this
+   * is one request where ten self-fetching cards would be ten. That is the only reason the counts
+   * live here rather than in the cards that show them (COMP-002).
+   *
+   * **Failure is silent, and takes the grids with it.** No message, no retry: the counts are an
+   * enhancement over a list that already works, and the patient still gets real times on the next
+   * step. Dropping `availability` rather than keeping the stale set is what stops the list showing
+   * one window's dates over another window's counts — the one outcome worse than showing none.
+   * The raw error rides `availability-error` for a host page that wants to say more.
+   */
+  protected async loadAvailability(startDate: string): Promise<void> {
+    const visitReasonId = this.effectiveVisitReasonId;
+    const providerLocationIds = this.providers.map((location) => location.provider_location_id);
+
+    // No visit reason is a real state, not an oversight: the search's "Any reason" option leaves
+    // one undefined and the endpoint requires it. The list simply goes without counts.
+    if (!visitReasonId || providerLocationIds.length === 0) return;
+
+    const request = (this.availabilityRequest += 1);
+
+    try {
+      const entries = await getAvailability({
+        providerLocationIds,
+        visitReasonId,
+        patientType: this.patientType,
+        startDate,
+        endDate: windowEndDate(startDate, AVAILABILITY_DAYS),
+        insurancePlanId: this.insurancePlanId,
+      });
+
+      if (request !== this.availabilityRequest) return;
+
+      this.availability = entries;
+      this.availabilityStart = startDate;
+    } catch (error: unknown) {
+      if (request !== this.availabilityRequest) return;
+
+      this.availability = undefined;
+      // The error is passed on untouched but never rendered — its body can echo request values
+      // (CLIENT-003, PHI-001), and there is no message for this failure by design.
+      this.emit('availability-error', { detail: { error } });
+    }
+  }
+
   protected handleProviderSelect(location: ProviderLocation): void {
     this.providerLocationId = location.provider_location_id;
     this.selectedProvider = location;
@@ -355,6 +464,11 @@ export class ZdBookingFlow extends CharmElement {
    * three fields once the patient touches them, and it echoes what it used back on
    * `provider-results` — which is what stops this binding from pushing a stale ZIP back down
    * over a typed one.
+   *
+   * Paging is the same shape and completes a circle: the list emits `page-change`, this sets
+   * `page`, and the search refetches because its own `page` moved. No sibling talks to a
+   * sibling and nothing calls a method on a child (COMP-002) — which is also why the list can
+   * be swapped for a host page's own without paging stopping working.
    */
   protected renderSearchStep(): unknown {
     return this.html`
@@ -364,13 +478,24 @@ export class ZdBookingFlow extends CharmElement {
         .specialtyId=${this.specialtyId}
         .visitReasonId=${this.visitReasonId}
         .insurancePlanId=${this.insurancePlanId}
+        .page=${this.page}
+        .pageSize=${this.pageSize}
         @provider-results=${(event: CustomEvent) => {
           this.providers = event.detail.providers;
+          this.totalCount = event.detail.totalCount;
+          this.page = event.detail.page;
+          this.pageSize = event.detail.pageSize;
           this.zipCode = event.detail.zipCode;
           this.specialtyId = event.detail.specialtyId;
           this.visitReasonId = event.detail.visitReasonId;
           this.insurancePlanId = event.detail.insurancePlanId;
           this.resolvedVisitReasonId = event.detail.searchParameters?.visit_reason_id;
+
+          // Cleared before the new batch is asked for, not after it lands: these are different
+          // providers, and last page's counts matched against this page's ids would put "No
+          // appointments" on every card until the answer arrived.
+          this.availability = undefined;
+          void this.loadAvailability(resolveWindowStart(this.availabilityStart));
         }}
       ></scoped-provider-search>
 
@@ -380,7 +505,24 @@ export class ZdBookingFlow extends CharmElement {
               <scoped-provider-results
                 part="results"
                 .providers=${this.providers}
+                .totalCount=${this.totalCount}
+                .page=${this.page}
+                .pageSize=${this.pageSize}
+                .availability=${this.availability}
+                .availabilityStart=${this.availabilityStart}
+                .availabilityDays=${AVAILABILITY_DAYS}
                 @provider-select=${(event: CustomEvent) =>
+                  this.handleProviderSelect(event.detail.provider)}
+                @page-change=${(event: CustomEvent) => {
+                  this.page = event.detail.page;
+                }}
+                @window-change=${(event: CustomEvent) =>
+                  void this.loadAvailability(event.detail.startDate)}
+                @day-select=${(event: CustomEvent) =>
+                  // Treated as picking the provider, which is what the day was on. The day itself
+                  // is dropped: the picker opens on its own first available day and has no way to
+                  // be told otherwise yet, and advancing to a step that ignores what was pressed
+                  // is better than a day cell that does nothing at all.
                   this.handleProviderSelect(event.detail.provider)}
               ></scoped-provider-results>
             `

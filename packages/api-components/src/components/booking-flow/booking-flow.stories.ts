@@ -110,6 +110,34 @@ export const BookingFails: Story = {
 };
 
 /**
+ * Paging, wound down to two per page so the five fixture locations make three of them.
+ *
+ * Press Search, then Next: the list reports the page change, the flow hands it to the search,
+ * and the search fetches it. Neither child knows the other exists — which is why the same
+ * pager works when a host page supplies its own list.
+ */
+export const Paged: Story = {
+  args: { pageSize: 2 },
+};
+
+/**
+ * Day counts on the cards, which is the circle the other stories only show half of.
+ *
+ * Press Search. The results arrive, this component makes **one** `getAvailability` call for every
+ * location on the page, and each card counts the slots it was handed — ten cards, one request.
+ * Then press the range arrows above the list: the list reports `window-change`, this refetches
+ * that range, and every card moves together. Nothing calls a method on a child in either
+ * direction (COMP-002).
+ *
+ * A visit reason is required, because the availability endpoint requires one. Without it the list
+ * renders with no grids at all rather than sending a request that would fail — which is also what
+ * happens if the batch errors, and why there is no error state to show here.
+ */
+export const AvailabilityOnResults: Story = {
+  args: { visitReasonId: VISIT_REASON_ID },
+};
+
+/**
  * The ZIP code that returns a 500. The search's own error state handles it and the flow stays
  * on the first step — user-facing copy only, never the developer-facing message (CLIENT-003).
  */

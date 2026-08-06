@@ -83,6 +83,18 @@ function shadow(element: Flow): ShadowRoot {
   return root;
 }
 
+/**
+ * A day key relative to today, computed here rather than imported from the component's own helper
+ * — otherwise a bug in that helper would move the expectations along with the code under test.
+ */
+function dayFromToday(offset: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 function child(element: Flow, part: string): HTMLElement {
   const found = shadow(element).querySelector<HTMLElement>(`[part="${part}"]`);
   if (!found) throw new Error(`no [part="${part}"] in the current step`);
@@ -254,6 +266,288 @@ describe('zd-booking-flow', () => {
 
     const picker = child(element, 'picker') as HTMLElement & { visitReasonId?: string };
     expect(picker.visitReasonId).toBe('vr_resolved');
+  });
+
+  /*
+   * Paging is a circle through this component and nothing else: the list emits `page-change`,
+   * the flow moves `page`, and the search refetches because its own `page` moved. Neither child
+   * knows the other exists (COMP-002), which is what lets a host page swap either one out.
+   */
+  describe('paging', () => {
+    /** The paging numbers only exist on the envelope, so only the search event carries them. */
+    function searchReturned(element: Flow, page: number, totalCount = 25): void {
+      child(element, 'search').dispatchEvent(
+        new CustomEvent('provider-results', {
+          detail: {
+            providers: [PROVIDER],
+            totalCount,
+            page,
+            pageSize: 10,
+            zipCode: SCENARIOS.zipWithResults,
+            specialtyId: 'sp_153',
+          },
+        })
+      );
+    }
+
+    it('hands the results list the totals it needs to page', async () => {
+      const element = await mountFlow('specialty-id="sp_153"');
+      searchReturned(element, 0);
+      await settled(element);
+
+      const results = child(element, 'results') as HTMLElement & {
+        totalCount?: number;
+        page: number;
+        pageSize: number;
+      };
+      expect(results.totalCount).toBe(25);
+      expect(results.page).toBe(0);
+      expect(results.pageSize).toBe(10);
+    });
+
+    it('passes a page the list asked for down to the search', async () => {
+      const element = await mountFlow('specialty-id="sp_153"');
+      searchReturned(element, 0);
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('page-change', { detail: { page: 1 } })
+      );
+      await settled(element);
+
+      const search = child(element, 'search') as HTMLElement & { page: number };
+      expect(search.page).toBe(1);
+    });
+
+    /*
+     * The list keeps the page in hand rather than the page requested. Showing page two's number
+     * over page one's providers would tell the patient the wrong thing about what they are
+     * looking at, and the search's own loading state is what covers the gap.
+     */
+    it('keeps the criteria a page change did not touch', async () => {
+      const element = await mountFlow('specialty-id="sp_153"');
+      searchReturned(element, 0);
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('page-change', { detail: { page: 2 } })
+      );
+      searchReturned(element, 2);
+      await settled(element);
+
+      const search = child(element, 'search') as HTMLElement & {
+        page: number;
+        zipCode: string;
+        specialtyId?: string;
+      };
+      expect(search.page).toBe(2);
+      expect(search.zipCode).toBe(SCENARIOS.zipWithResults);
+      expect(search.specialtyId).toBe('sp_153');
+    });
+  });
+
+  describe('availability for the results list', () => {
+    /** A second location, so a batch has more than one id to prove it batched. */
+    const OTHER_PROVIDER: ProviderLocation = {
+      provider_location_id: SCENARIOS.providerLocationNoAvailability,
+      provider: { provider_id: 'pr_other', full_name: 'Dr. Bo Sampleton' },
+    };
+
+    /**
+     * The visit reason is part of the detail because the search echoes back what it used, and the
+     * handler takes the criteria from the event — an event that omits it is a search that ran
+     * without one, which is the "Any reason" case rather than an incomplete fixture.
+     *
+     * A flag rather than an optional id, because passing `undefined` for a parameter with a
+     * default gets the default — which is how this helper first reported the opposite of the truth.
+     */
+    function searchReturned(
+      element: Flow,
+      providers = [PROVIDER, OTHER_PROVIDER],
+      withVisitReason = true
+    ): void {
+      child(element, 'search').dispatchEvent(
+        new CustomEvent('provider-results', {
+          detail: {
+            providers,
+            totalCount: 25,
+            page: 0,
+            pageSize: 10,
+            visitReasonId: withVisitReason ? 'vr_1' : undefined,
+          },
+        })
+      );
+    }
+
+    function resultsList(element: Flow): HTMLElement & {
+      availability?: unknown[];
+      availabilityStart?: string;
+      availabilityDays: number;
+    } {
+      return child(element, 'results') as HTMLElement & {
+        availability?: unknown[];
+        availabilityStart?: string;
+        availabilityDays: number;
+      };
+    }
+
+    /*
+     * The whole reason this lives in the coordinator: the endpoint takes an array, so a page of
+     * providers is one request. Ten cards fetching for themselves would be ten.
+     */
+    it('asks for the whole page in one request', async () => {
+      const getAvailability = vi.spyOn(availability, 'getAvailability');
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      searchReturned(element);
+      await settled(element);
+
+      expect(getAvailability).toHaveBeenCalledTimes(1);
+      expect(getAvailability.mock.calls[0]![0]).toMatchObject({
+        providerLocationIds: [PROVIDER.provider_location_id, OTHER_PROVIDER.provider_location_id],
+        visitReasonId: 'vr_1',
+        startDate: dayFromToday(0),
+        endDate: dayFromToday(13),
+      });
+    });
+
+    /*
+     * "Any reason" is a real choice in the search form and leaves no visit reason behind, but the
+     * availability endpoint requires one. The list goes without counts rather than the flow
+     * sending a request that would 400.
+     */
+    it('asks for nothing when no visit reason can be resolved', async () => {
+      const getAvailability = vi.spyOn(availability, 'getAvailability');
+      const element = await mountFlow('specialty-id="sp_153"');
+      searchReturned(
+        element,
+        [{ provider_location_id: 'pr_x|lo_x', provider: { provider_id: 'pr_x' } }],
+        false
+      );
+      await settled(element);
+
+      expect(getAvailability).not.toHaveBeenCalled();
+      expect(resultsList(element).availability).toBeUndefined();
+    });
+
+    it('hands the batch down to the list with the window it covers', async () => {
+      vi.spyOn(availability, 'getAvailability').mockResolvedValue([
+        { provider_location_id: PROVIDER.provider_location_id, timeslots: [] },
+      ]);
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      searchReturned(element);
+      await settled(element);
+
+      const results = resultsList(element);
+      expect(results.availability).toHaveLength(1);
+      expect(results.availabilityStart).toBe(dayFromToday(0));
+      expect(results.availabilityDays).toBe(14);
+    });
+
+    /* The list moves its own dates; fetching the range it moved to is this component's half. */
+    it('refetches the window the list moved to', async () => {
+      const getAvailability = vi.spyOn(availability, 'getAvailability');
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      searchReturned(element);
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('window-change', {
+          detail: { startDate: dayFromToday(14), endDate: dayFromToday(27) },
+        })
+      );
+      await settled(element);
+
+      expect(getAvailability).toHaveBeenCalledTimes(2);
+      expect(getAvailability.mock.calls[1]![0]).toMatchObject({
+        startDate: dayFromToday(14),
+        endDate: dayFromToday(27),
+      });
+    });
+
+    /*
+     * Silent by design. The counts are an enhancement over a list that already works, so the
+     * grids go and nothing is said — and dropping the entries rather than keeping the stale set is
+     * what stops the list showing one window's dates over another window's counts.
+     */
+    it('drops the grids and emits availability-error when the batch fails', async () => {
+      vi.spyOn(availability, 'getAvailability').mockRejectedValue(
+        new ZocdocError('Availability unavailable', 500)
+      );
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      const events: CustomEvent[] = [];
+      element.addEventListener('availability-error', (event) => events.push(event as CustomEvent));
+
+      searchReturned(element);
+      await settled(element);
+      await settled(element);
+
+      expect(events).toHaveLength(1);
+      expect(resultsList(element).availability).toBeUndefined();
+      // The failure is not rendered anywhere, which is the part worth pinning: no message means
+      // no risk of putting the API's own words in front of a patient (CLIENT-003).
+      expect(shadow(element).textContent).not.toContain('unavailable');
+    });
+
+    /*
+     * The window pager is a button a patient can press faster than the API answers, and responses
+     * are not guaranteed to arrive in order. The first request here resolves last; if it were
+     * allowed to land, the counts would be for a window nobody is looking at.
+     */
+    it('ignores a response that has been overtaken', async () => {
+      const first: unknown[] = [
+        { provider_location_id: PROVIDER.provider_location_id, timeslots: [] },
+      ];
+      const second: unknown[] = [];
+      let releaseFirst: (() => void) | undefined;
+
+      vi.spyOn(availability, 'getAvailability')
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              releaseFirst = () => resolve(first as never);
+            })
+        )
+        .mockResolvedValueOnce(second as never);
+
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      searchReturned(element);
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('window-change', {
+          detail: { startDate: dayFromToday(14), endDate: dayFromToday(27) },
+        })
+      );
+      await settled(element);
+
+      releaseFirst?.();
+      await settled(element);
+      await settled(element);
+
+      const results = resultsList(element);
+      expect(results.availability).toBe(second);
+      expect(results.availabilityStart).toBe(dayFromToday(14));
+    });
+
+    /*
+     * A day cell is a way into the provider, not a way past them. The day itself is dropped
+     * because the picker cannot yet be told to open on one — see the handler's own comment.
+     */
+    it('treats a day chosen on a card as choosing that provider', async () => {
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      searchReturned(element);
+      await settled(element);
+
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('day-select', {
+          detail: { day: dayFromToday(2), provider: OTHER_PROVIDER },
+        })
+      );
+      await settled(element);
+
+      expect(element.step).toBe('time');
+      expect(element.providerLocationId).toBe(OTHER_PROVIDER.provider_location_id);
+    });
   });
 
   it('books the appointment and emits booking-complete', async () => {

@@ -18,6 +18,7 @@ export * from './client/types.js';
 
 // Component exports are appended here as Tasks 10–15 land. Each subpath's `index.ts`
 // registers the component as a side effect, so importing it is what defines the tag.
+export { ZdAvailabilityGrid } from './components/availability-grid/index.js';
 export { ZdAvailabilityPicker } from './components/availability-picker/index.js';
 export { ZdBookingConfirmation } from './components/booking-confirmation/index.js';
 export { ZdBookingFlow, type BookingStep } from './components/booking-flow/index.js';

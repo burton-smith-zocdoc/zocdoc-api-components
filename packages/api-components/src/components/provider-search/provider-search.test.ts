@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ZocdocError } from '../../client/errors.js';
 import * as providerLocations from '../../client/provider-locations.js';
 import * as referenceData from '../../client/reference-data.js';
-import type { ProviderSearchResult } from '../../client/provider-locations.js';
+import { DEFAULT_PAGE_SIZE, type ProviderSearchResult } from '../../client/provider-locations.js';
 import { SCENARIOS, SPECIALTIES, VISIT_REASONS } from '../../client/mock/fixtures.js';
 import type { VisitType } from '../../client/types.js';
 import { expectNoViolations } from '../../test/a11y.js';
@@ -26,13 +26,20 @@ const REASON = SPECIALTY_REASONS[0]!;
 const OTHER_SPECIALTY = SPECIALTIES[1]!;
 const OTHER_REASON = VISIT_REASONS.find((reason) => reason.specialty_id === OTHER_SPECIALTY.id)!;
 
+/**
+ * `envelope` overrides the paging numbers, which for a single-page result are just the length.
+ * A paging test needs a total larger than the page it hands back — that mismatch is the whole
+ * point of `total_count`.
+ */
 function searchResult(
   providers: ProviderSearchResult['providerLocations'],
-  searchParameters?: ProviderSearchResult['searchParameters']
+  searchParameters?: ProviderSearchResult['searchParameters'],
+  envelope?: { totalCount?: number; pageSize?: number }
 ): ProviderSearchResult {
   return {
     providerLocations: providers,
-    totalCount: providers.length,
+    totalCount: envelope?.totalCount ?? providers.length,
+    pageSize: envelope?.pageSize ?? DEFAULT_PAGE_SIZE,
     searchParameters,
   };
 }
@@ -296,6 +303,99 @@ describe('zd-provider-search', () => {
     expect(providerLocations.searchProviderLocations).toHaveBeenCalledWith(
       expect.objectContaining({ page: 0 })
     );
+  });
+
+  /*
+   * How a pager elsewhere on the page turns into a request. `zd-provider-results` emits
+   * `page-change`, a parent binds the new page back down here, and this refetches — so nothing
+   * has to call a method on this element and the two components never talk to each other
+   * (COMP-002).
+   */
+  describe('paging', () => {
+    it('re-searches when the page it is given moves', async () => {
+      const element = await mountSearch();
+      await element.search();
+      vi.mocked(providerLocations.searchProviderLocations).mockClear();
+
+      element.page = 1;
+      await settled(element);
+
+      expect(providerLocations.searchProviderLocations).toHaveBeenCalledTimes(1);
+      expect(providerLocations.searchProviderLocations).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 1 })
+      );
+    });
+
+    /*
+     * A submit sets `page` to 0 and searches, so an unguarded watcher would see the page move
+     * and search a second time for the same thing.
+     */
+    it('searches once for a submit that also resets the page', async () => {
+      const element = await mountSearch();
+      element.page = 3;
+      await settled(element);
+      await element.search();
+      vi.mocked(providerLocations.searchProviderLocations).mockClear();
+
+      shadow(element).querySelector('form')?.requestSubmit();
+      await settled(element);
+      await settled(element);
+
+      expect(providerLocations.searchProviderLocations).toHaveBeenCalledTimes(1);
+    });
+
+    /* A host page configuring where to start is not asking for a search. */
+    it('stays inert when the page is set before anything has been searched', async () => {
+      const element = await mountSearch();
+
+      element.page = 2;
+      await settled(element);
+
+      expect(providerLocations.searchProviderLocations).not.toHaveBeenCalled();
+    });
+
+    /*
+     * The refused search still counts as having acted on the page. Left unrecorded, the render
+     * that puts the field message in place would look like another page change and search again,
+     * and again.
+     */
+    it('does not loop when a page change hits a form that cannot search', async () => {
+      const element = await mount<Search>(
+        `<zd-provider-search zip-code="1120" specialty-id="${SPECIALTY.id}"></zd-provider-search>`
+      );
+      await element.search();
+
+      element.page = 1;
+      await settled(element);
+      await settled(element);
+
+      expect(providerLocations.searchProviderLocations).not.toHaveBeenCalled();
+      expect(control(element, 'zip').errorMessage).toBe('Enter a 5-digit ZIP code.');
+    });
+
+    /*
+     * The size the response was built with, not `pageSize`, which is usually unset. A pager
+     * dividing a total by the wrong one offers pages that do not exist.
+     */
+    it('emits the page size the API used', async () => {
+      vi.mocked(providerLocations.searchProviderLocations).mockResolvedValue(
+        searchResult(
+          [{ provider_location_id: 'pr_a|lo_a', provider: { provider_id: 'pr_a' } }],
+          {
+            specialty_id: SPECIALTY.id,
+          },
+          { totalCount: 25, pageSize: 10 }
+        )
+      );
+
+      const element = await mountSearch();
+      const events: CustomEvent[] = [];
+      element.addEventListener('provider-results', (event) => events.push(event as CustomEvent));
+
+      await element.search();
+
+      expect(events[0]!.detail).toMatchObject({ totalCount: 25, pageSize: 10 });
+    });
   });
 
   // Plan names are not unique across carriers, so a bare list of them gives a patient no way

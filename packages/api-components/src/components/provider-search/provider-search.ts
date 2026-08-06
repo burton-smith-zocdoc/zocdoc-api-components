@@ -35,10 +35,11 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  *
  * @tag zd-provider-search
  * @event provider-results - Emitted with `{ providers, totalCount, searchParameters, zipCode,
- *   specialtyId, visitReasonId, insurancePlanId, visitType, page }` on a successful search,
- *   including a search that matched nothing, so a listener can clear a stale list. The
+ *   specialtyId, visitReasonId, insurancePlanId, visitType, page, pageSize }` on a successful
+ *   search, including a search that matched nothing, so a listener can clear a stale list. The
  *   criteria are the ones actually used, which is how a parent learns what the patient
- *   changed in these fields.
+ *   changed in these fields. `totalCount` and `pageSize` are what a pager needs, and only the
+ *   envelope has them — `providers` holds one page.
  * @event provider-search-error - Emitted with `{ error }` when the request fails.
  * @csspart form - The search form.
  * @csspart specialty - The specialty select.
@@ -267,16 +268,17 @@ export class ZdProviderSearch extends CharmElement {
     this.errorMessage = undefined;
 
     try {
-      const { providerLocations, totalCount, searchParameters } = await searchProviderLocations({
-        zipCode: this.zipCode,
-        specialtyId: this.specialtyId,
-        visitReasonId: this.visitReasonId,
-        insurancePlanId: this.insurancePlanId,
-        visitType: this.visitType,
-        maxDistanceToPatientMi: this.maxDistanceToPatientMi,
-        page: this.page,
-        pageSize: this.pageSize,
-      });
+      const { providerLocations, totalCount, pageSize, searchParameters } =
+        await searchProviderLocations({
+          zipCode: this.zipCode,
+          specialtyId: this.specialtyId,
+          visitReasonId: this.visitReasonId,
+          insurancePlanId: this.insurancePlanId,
+          visitType: this.visitType,
+          maxDistanceToPatientMi: this.maxDistanceToPatientMi,
+          page: this.page,
+          pageSize: this.pageSize,
+        });
 
       this.requestState = providerLocations.length === 0 ? 'empty' : 'success';
 
@@ -302,6 +304,9 @@ export class ZdProviderSearch extends CharmElement {
           insurancePlanId: this.insurancePlanId,
           visitType: this.visitType,
           page: this.page,
+          // The size the response was built with, not `this.pageSize`, which is usually unset —
+          // a pager needs the real one to know how many pages `totalCount` is.
+          pageSize,
         },
       });
     } catch (error: unknown) {

@@ -1,16 +1,40 @@
 import { CharmElement, ZdButton, ZdCard } from '@powered-by-zocdoc/primitives';
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { ProviderLocation } from '../../client/types.js';
+import { DEFAULT_PAGE_SIZE } from '../../client/provider-locations.js';
+import type {
+  AvailabilitySlot,
+  ProviderLocation,
+  ProviderLocationAvailability,
+} from '../../client/types.js';
+import { ZdAvailabilityGrid } from '../availability-grid/availability-grid.js';
+import {
+  nextWindowStart,
+  renderAvailabilityWindow,
+  resolveWindowStart,
+  windowEndDate,
+} from '../internal/availability-window.js';
+import windowStyles from '../internal/availability-window.styles.js';
+import { todayDayKey } from '../internal/provider-time.js';
 import { renderProviderSummary } from '../internal/provider-summary.js';
 import summaryStyles from '../internal/provider-summary.styles.js';
 import styles from './provider-results.styles.js';
 
-/** The API's own default, and so the page size in effect when nothing asked for another. */
-const DEFAULT_PAGE_SIZE = 10;
-
 /** Counts get thousands separators from the user's locale, not from us (I18N-002). */
 const countLabel = new Intl.NumberFormat();
+
+/**
+ * What a card whose location the batch did not answer for gets.
+ *
+ * One shared frozen array rather than a fresh `[]` per render: a new array every time would look
+ * to Lit like a changed value and set the grid's `willUpdate` running on every redraw. It still
+ * has to be an array and not `undefined`, which is what would put the grid into self-fetching
+ * mode — ten cards each making their own request is the thing the batch exists to avoid.
+ *
+ * Frozen as well as `readonly`, since every empty card is handed this same array and a write to
+ * it would reach all of them.
+ */
+const NO_TIMESLOTS: readonly AvailabilitySlot[] = Object.freeze([]);
 
 /**
  * Renders a list of provider locations and emits the one the user picks.
@@ -20,14 +44,26 @@ const countLabel = new Intl.NumberFormat();
  * **Paging is reported, not performed.** `page-change` says which page the patient asked for
  * and the component updates `page` to match, but fetching it belongs to whatever owns the
  * request — this component never learns the search criteria, so it could not refetch if it
- * wanted to (COMP-002).
+ * wanted to (COMP-002). `window-change` works the same way.
+ *
+ * Supply `availability` and each card grows a `zd-availability-grid` of day counts, with one
+ * shared window control above the list driving all of them.
  *
  * @tag zd-provider-results
  * @event provider-select - Emitted with `{ provider }` when a provider is chosen.
  * @event page-change - Emitted with `{ page }` when the patient pages. Zero-indexed, matching
  *   the API. The owner of the search is expected to fetch that page and hand back new
  *   `providers`; nothing here changes until it does.
+ * @event day-select - Emitted with `{ day, provider }` when a day is chosen on a card, forwarded
+ *   from that card's grid with the provider attached.
+ * @event window-change - Emitted with `{ startDate, endDate }` when the shared window moves. The
+ *   owner of `availability` is expected to refetch that window; the dates on show move regardless.
+ * @csspart header - The count line and the window control together, present only with availability.
  * @csspart summary - The line counting what the search found.
+ * @csspart window - The shared availability window control.
+ * @csspart window-range - The dates the window covers.
+ * @csspart window-previous - The control stepping the window back.
+ * @csspart window-next - The control stepping the window forward.
  * @csspart list - The list wrapper.
  * @csspart provider - The selectable control for one provider.
  * @csspart provider-summary - The summary block for one provider.
@@ -38,6 +74,10 @@ const countLabel = new Intl.NumberFormat();
  * @csspart provider-location - The distance and address, or the video-visit line.
  * @csspart provider-insurance - The network line, when `insurance-name` is set.
  * @csspart provider-badges - The per-card slot for anything `renderBadges` adds.
+ * @csspart provider-availability - One card's availability grid.
+ * @csspart availability-days - The day list inside a card's grid.
+ * @csspart availability-day - One day cell inside a card's grid.
+ * @csspart availability-empty - A card's no-availability message.
  * @csspart pager - The paging controls.
  * @csspart pager-previous - The button going back a page.
  * @csspart pager-next - The button going forward a page.
@@ -50,11 +90,12 @@ export class ZdProviderResults extends CharmElement {
   public static override styles = [
     ...super.styles,
     summaryStyles,
+    windowStyles,
     styles,
   ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdCard, ZdButton];
+    return [ZdCard, ZdButton, ZdAvailabilityGrid];
   }
 
   /** The provider locations to display. */
@@ -98,9 +139,44 @@ export class ZdProviderResults extends CharmElement {
   @property({ type: Number, attribute: 'page-size' })
   public pageSize = DEFAULT_PAGE_SIZE;
 
-  /** The last page's zero-index, or `undefined` when there is no total to derive it from. */
+  /**
+   * Day counts per card, from one batched availability request for the whole page.
+   *
+   * Batched by whoever owns the search, not by the cards: the endpoint takes an array of
+   * `provider_location_ids` and answers for all of them at once, so ten cards fetching for
+   * themselves would be ten requests for one screen. Left undefined by a host page with no
+   * availability to show, in which case no card renders a grid at all — which is the standalone
+   * case, and the list still works (COMP-004).
+   *
+   * Entries the batch did not answer for get {@link NO_TIMESLOTS} rather than nothing, so a card
+   * says "no appointments" instead of quietly going and asking on its own.
+   */
+  @property({ attribute: false })
+  public availability?: ProviderLocationAvailability[];
+
+  /**
+   * The first day of the availability window, as `YYYY-MM-DD`. Defaults to today.
+   *
+   * Set by this component's own window control and read by every card, which is what keeps them
+   * showing the same dates. Whoever supplies `availability` is expected to bind this back down
+   * after a `window-change` so the counts and the dates above them cannot disagree.
+   */
+  @property({ attribute: 'availability-start' })
+  public availabilityStart?: string;
+
+  /** How many days of availability each card shows. Clamped to the API's 30-day maximum. */
+  @property({ type: Number, attribute: 'availability-days' })
+  public availabilityDays = 14;
+
+  /**
+   * The last page's zero-index, or `undefined` when there is nothing to derive it from.
+   *
+   * Written as `!(pageSize > 0)` rather than `pageSize <= 0` so that a `NaN` — which is what
+   * `page-size="ten"` parses to — is caught as well. It would otherwise pass the guard and make
+   * every page count `NaN`.
+   */
   protected get lastPage(): number | undefined {
-    if (this.totalCount === undefined || this.pageSize <= 0) return undefined;
+    if (this.totalCount === undefined || !(this.pageSize > 0)) return undefined;
     return Math.max(0, Math.ceil(this.totalCount / this.pageSize) - 1);
   }
 
@@ -134,6 +210,97 @@ export class ZdProviderResults extends CharmElement {
   }
 
   /**
+   * The count line and, when there is availability to page through, the window control beside it.
+   *
+   * One control for the whole list rather than one per card, which is what the production search
+   * page does and the only arrangement that makes sense: ten pagers stepping independently would
+   * put every card on different dates, and a patient comparing them would be comparing nothing.
+   * The cards get `hide-window` for the same reason.
+   */
+  protected renderHeader(): unknown {
+    const summary = this.renderSummary();
+    if (this.availability === undefined) return summary;
+
+    const startDate = resolveWindowStart(this.availabilityStart);
+
+    return this.html`
+      <div part="header">
+        ${summary}
+        ${renderAvailabilityWindow({
+          startDate,
+          endDate: windowEndDate(startDate, this.availabilityDays),
+          canGoEarlier: startDate > todayDayKey(),
+          onShift: (direction) => this.shiftWindow(direction),
+        })}
+      </div>
+    `;
+  }
+
+  /**
+   * Moves every card's window at once.
+   *
+   * Reported, not performed — the same shape as paging. This component never learns the visit
+   * reason, so it could not refetch even if it wanted to (COMP-002); `availability-start` moves so
+   * the dates on show are honest immediately, and whoever owns the request is expected to answer
+   * with new `availability` for that window.
+   */
+  public shiftWindow(direction: -1 | 1): void {
+    const current = resolveWindowStart(this.availabilityStart);
+    const startDate = nextWindowStart(current, direction, this.availabilityDays);
+
+    // Clamped at today, so there is nowhere to go and nothing to announce.
+    if (startDate === current) return;
+
+    this.availabilityStart = startDate;
+    this.emit('window-change', {
+      detail: { startDate, endDate: windowEndDate(startDate, this.availabilityDays) },
+    });
+  }
+
+  /**
+   * One card's slots, or {@link NO_TIMESLOTS} when the batch did not answer for it.
+   *
+   * The distinction matters: the grid treats an absent `timeslots` as permission to fetch for
+   * itself, so returning nothing here would turn one batched request into one per card.
+   */
+  private timeslotsFor(location: ProviderLocation): readonly AvailabilitySlot[] {
+    const entry = this.availability?.find(
+      (item) => item.provider_location_id === location.provider_location_id
+    );
+
+    return entry?.timeslots ?? NO_TIMESLOTS;
+  }
+
+  /**
+   * A card's day counts.
+   *
+   * Rendered as a **sibling** of `part="provider"`, never inside it: that part is a `<button>`,
+   * and a grid of buttons nested in a button is the axe `nested-interactive` violation — and, more
+   * to the point, unreachable by keyboard (A11Y-001).
+   */
+  protected renderAvailability(location: ProviderLocation): unknown {
+    if (this.availability === undefined) return nothing;
+
+    return this.html`
+      <scoped-availability-grid
+        part="provider-availability"
+        exportparts="days: availability-days, day: availability-day, empty: availability-empty"
+        hide-window
+        provider-location-id=${location.provider_location_id}
+        start-date=${resolveWindowStart(this.availabilityStart)}
+        days=${this.availabilityDays}
+        .timeslots=${this.timeslotsFor(location)}
+        @day-select=${(event: CustomEvent<{ day: string }>) => {
+          // Restated with the provider attached: a bare day key is not actionable by a parent
+          // that has ten cards and no way to tell which one it came from.
+          event.stopPropagation();
+          this.emit('day-select', { detail: { day: event.detail.day, provider: location } });
+        }}
+      ></scoped-availability-grid>
+    `;
+  }
+
+  /**
    * Anything a host page wants on a card that the API does not supply — the "Sponsored" mark,
    * an award, a practice badge. Returns nothing by default.
    *
@@ -153,7 +320,7 @@ export class ZdProviderResults extends CharmElement {
     }
 
     return this.html`
-      ${this.renderSummary()}
+      ${this.renderHeader()}
 
       <ul part="list">
         ${this.providers.map((location) => {
@@ -173,6 +340,7 @@ export class ZdProviderResults extends CharmElement {
                   })}
                   ${badges === nothing ? nothing : this.html`<span part="provider-badges">${badges}</span>`}
                 </button>
+                ${this.renderAvailability(location)}
               </scoped-card>
             </li>
           `;

@@ -1,31 +1,16 @@
 import { CharmElement, ZdButton } from '@powered-by-zocdoc/primitives';
 import type { PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { getAvailability } from '../../client/availability.js';
+import { getAvailability, MAX_AVAILABILITY_DAYS } from '../../client/availability.js';
 import type { AvailabilitySlot, PatientType } from '../../client/types.js';
 import { userFacingError } from '../internal/error-message.js';
-import { providerLocalTime } from '../internal/provider-time.js';
+import { addDays, dayKey, providerLocalTime, todayDayKey } from '../internal/provider-time.js';
 import {
   renderRequestState,
   requestStateDependencies,
   type RequestState,
 } from '../internal/request-state.js';
 import styles from './availability-picker.styles.js';
-
-/** The API rejects a window wider than 30 days, so a larger `days` is clamped to it. */
-const MAX_DAYS = 30;
-
-/**
- * `YYYY-MM-DD` for the wire, taken from the browser's local date. `toISOString()` would
- * use UTC and, for anyone west of Greenwich in the evening, ask for a window that starts
- * tomorrow — dropping the rest of today's slots. This is a wire format rather than
- * anything a user reads, so I18N-002 does not apply.
- */
-function isoDate(date: Date): string {
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
 
 /**
  * Built once rather than per render: constructing an `Intl.DateTimeFormat` is the
@@ -141,17 +126,15 @@ export class ZdAvailabilityPicker extends CharmElement {
     this.requestState = 'loading';
     this.errorMessage = undefined;
 
-    const start = new Date();
-    const end = new Date(start);
-    end.setDate(end.getDate() + Math.min(this.days, MAX_DAYS));
+    const startDate = todayDayKey();
 
     try {
       const entries = await getAvailability({
         providerLocationIds: [providerLocationId],
         visitReasonId: this.visitReasonId,
         patientType: this.patientType,
-        startDate: isoDate(start),
-        endDate: isoDate(end),
+        startDate,
+        endDate: addDays(startDate, Math.min(this.days, MAX_AVAILABILITY_DAYS)),
       });
 
       // One entry per requested location, and exactly one was requested. The entry comes
@@ -170,15 +153,9 @@ export class ZdAvailabilityPicker extends CharmElement {
     }
   }
 
-  /**
-   * The distinct days that have slots, in the order the API returned them.
-   *
-   * Grouped on the date portion of the string rather than on a parsed `Date`, so a slot
-   * belongs to the day the provider calls it. A 9pm Eastern slot read in Berlin would
-   * otherwise move to the following morning and split one evening across two days.
-   */
+  /** The distinct days that have slots, in the order the API returned them. */
   private get dayKeys(): string[] {
-    return [...new Set(this.slots.map((slot) => slot.start_time.slice(0, 10)))];
+    return [...new Set(this.slots.map((slot) => dayKey(slot.start_time)))];
   }
 
   protected select(slot: AvailabilitySlot): void {
@@ -218,7 +195,7 @@ export class ZdAvailabilityPicker extends CharmElement {
   }
 
   protected renderSlots(): unknown {
-    const slots = this.slots.filter((slot) => slot.start_time.slice(0, 10) === this.activeDay);
+    const slots = this.slots.filter((slot) => dayKey(slot.start_time) === this.activeDay);
 
     return this.html`
       <ul part="slots">
