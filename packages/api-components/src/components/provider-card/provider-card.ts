@@ -70,6 +70,33 @@ export class ZdProviderCard extends CharmElement {
   public insuranceName?: string;
 
   /**
+   * Derives initials from the provider's name for the avatar fallback.
+   */
+  protected providerInitials(): string {
+    const provider = this.provider?.provider;
+    const first = provider?.first_name?.[0] ?? '';
+    const last = provider?.last_name?.[0] ?? '';
+    return (first + last).toUpperCase() || '?';
+  }
+
+  protected renderAvatar(): unknown {
+    if (!this.provider) return nothing;
+
+    const photo = this.showPhoto ? providerPhotoUrl(this.provider) : undefined;
+    const label = providerHeading(this.provider);
+    const initials = this.providerInitials();
+
+    return this.html`
+      <scoped-avatar
+        part="photo"
+        .image=${photo ?? nothing}
+        initials=${initials}
+        label=${label}
+      ></scoped-avatar>
+    `;
+  }
+
+  /**
    * The network line, rendered only when the patient named a plan.
    */
   protected renderInsurance(): unknown {
@@ -92,6 +119,7 @@ export class ZdProviderCard extends CharmElement {
     return this.html`
       <scoped-card>
         <div class="provider-card">
+          ${this.renderAvatar()}
           <div part="details">
             <scoped-button part="name" variant="link">
               ${heading}

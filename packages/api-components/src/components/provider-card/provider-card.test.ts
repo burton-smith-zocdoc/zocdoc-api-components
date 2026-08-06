@@ -88,4 +88,37 @@ describe('zd-provider-card', () => {
       await expectNoViolations(card);
     });
   });
+
+  describe('avatar', () => {
+    it('shows avatar with initials when showPhoto is false', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const avatar = shadow(card).querySelector('zd-avatar');
+      expect(avatar).not.toBeNull();
+      expect(avatar?.getAttribute('initials')).toBeTruthy();
+      expect(avatar?.getAttribute('image')).toBeNull();
+    });
+
+    it('shows avatar with image when showPhoto is true', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      card.showPhoto = true;
+      await card.updateComplete;
+
+      const avatar = shadow(card).querySelector('zd-avatar');
+      expect(avatar?.getAttribute('image')).toBeTruthy();
+    });
+
+    it('derives initials from first and last name', async () => {
+      const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      const avatar = shadow(card).querySelector('zd-avatar');
+      const initials = avatar?.getAttribute('initials');
+      expect(initials?.length).toBe(2);
+    });
+  });
 });
