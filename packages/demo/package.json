@@ -1,0 +1,18 @@
+{
+  "name": "demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@powered-by-zocdoc/api-components": "workspace:*",
+    "@powered-by-zocdoc/primitives": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
+  }
+}

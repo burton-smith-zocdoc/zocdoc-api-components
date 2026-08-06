@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Powered by Zocdoc — composed by hand</title>
+    <!-- See index.html: an empty data URL keeps a missing favicon out of the console. -->
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <h1>Composed by hand</h1>
+    <p class="lede">
+      The same five components, with the wiring a host page has to do for itself: properties down,
+      events up, and the one write call to the API.
+    </p>
+
+    <p id="mode"></p>
+
+    <!--
+      Each step is revealed as the one before it completes, which is what `zd-booking-flow` does
+      internally. The sections are in the markup rather than created in script so the page's
+      structure is readable without running it, and so each heading exists before its step does.
+    -->
+    <section class="step" id="step-search">
+      <h2>Find a provider</h2>
+      <zd-provider-search zip-code="11201"></zd-provider-search>
+      <zd-provider-results></zd-provider-results>
+    </section>
+
+    <section class="step" id="step-time" hidden>
+      <h2>Choose a time</h2>
+      <zd-availability-picker layout="stacked"></zd-availability-picker>
+    </section>
+
+    <section class="step" id="step-patient" hidden>
+      <h2>Your details</h2>
+      <zd-patient-form></zd-patient-form>
+      <p class="warning" id="booking-error" role="alert" hidden></p>
+    </section>
+
+    <section class="step" id="step-booked" hidden>
+      <h2>Your appointment</h2>
+      <zd-booking-confirmation></zd-booking-confirmation>
+    </section>
+
+    <section class="scenarios">
+      <h2>Try a different outcome</h2>
+      <p>Search with one of these ZIP codes:</p>
+      <dl id="scenarios"></dl>
+      <p><a href="/">Back to the single-element version</a></p>
+    </section>
+
+    <script type="module" src="/src/composed.ts"></script>
+  </body>
+</html>

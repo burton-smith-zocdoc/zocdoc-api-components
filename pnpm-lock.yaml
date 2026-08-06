@@ -96,6 +96,19 @@ importers:
         specifier: ^3.2.1
         version: 3.3.3
 
+  packages/demo:
+    dependencies:
+      '@powered-by-zocdoc/api-components':
+        specifier: workspace:*
+        version: link:../api-components
+      '@powered-by-zocdoc/primitives':
+        specifier: workspace:*
+        version: link:../primitives
+    devDependencies:
+      vite:
+        specifier: ^7.1.5
+        version: 7.3.6(@types/node@24.13.3)(tsx@4.23.5)
+
   packages/primitives:
     dependencies:
       '@charm-ux/core':

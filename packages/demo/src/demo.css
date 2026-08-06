@@ -1,0 +1,81 @@
+/*
+ * The host page's own stylesheet, and deliberately thin. Everything inside a component is styled
+ * by the component; this file only does what a real host page does — a column, some spacing, and
+ * the chrome around the demo.
+ *
+ * It uses the theme's tokens rather than its own values, which is the point worth demonstrating:
+ * a host page picks up the same palette and type scale the components use, because both resolve
+ * against the custom properties in `@powered-by-zocdoc/primitives/theme/all.css`.
+ */
+
+body {
+  margin-inline: auto;
+  max-inline-size: 46rem;
+  padding: 2rem 1rem 4rem;
+}
+
+h1 {
+  margin-block: 0 0.25rem;
+}
+
+.lede {
+  color: var(--zd-text-primary);
+  margin-block: 0 1.5rem;
+}
+
+/* The mode banner. Its wording is set by config.ts; the colour follows what it landed on. */
+#mode {
+  border-inline-start: 0.25rem solid var(--zd-border-secondary);
+  font-size: var(--zd-font-size-sm);
+  margin-block: 0 1.5rem;
+  padding: 0.5rem 0.75rem;
+
+  /* Live mode is the state worth noticing, so it is the one that gets a colour. */
+  &[data-mode='live'] {
+    border-inline-start-color: var(--zd-surface-warning-border-color);
+  }
+}
+
+.warning {
+  background: var(--zd-surface-warning-bg-color);
+  color: var(--zd-surface-warning-fg-color);
+  font-size: var(--zd-font-size-sm);
+  margin-block: -1rem 1.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/*
+ * The steps of the hand-wired page. Each is revealed as the one before it completes, which is the
+ * progressive disclosure zd-booking-flow does internally — done out here so the composed page
+ * shows what a host page has to do for itself.
+ */
+.step {
+  margin-block-start: 2rem;
+
+  & h2 {
+    font-size: var(--zd-font-size-lg);
+    margin-block: 0 0.75rem;
+  }
+}
+
+.scenarios {
+  border-block-start: var(--zd-border-width-thin) solid var(--zd-border-secondary);
+  font-size: var(--zd-font-size-sm);
+  margin-block-start: 3rem;
+  padding-block-start: 1rem;
+
+  & dl {
+    display: grid;
+    gap: 0.25rem 1rem;
+    grid-template-columns: auto 1fr;
+    margin-block: 0.5rem 0;
+  }
+
+  & dt {
+    font-family: var(--zd-font-family-mono);
+  }
+
+  & dd {
+    margin: 0;
+  }
+}

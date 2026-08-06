@@ -102,24 +102,41 @@ The full design specification is at [`docs/superpowers/specs/2026-07-31-powered-
 
 ### Component Events
 
+Every detail below is an exported type, and every component types its own `addEventListener`, so
+`event.detail` is inferred from the element the listener is on — a host page never describes these
+shapes itself. `emit` is typed the same way, which is what stops a component's event map from
+drifting from what it emits. See `components/events.ts`.
+
 | Component | Event | Detail |
 |-----------|-------|--------|
-| `zd-provider-search` | `provider-results` | `{ providers, totalCount, page, pageSize, …criteria }` |
-| `zd-provider-results` | `provider-select` | `{ provider: ProviderLocation }` |
-| `zd-provider-results` | `page-change` | `{ page: number }` |
-| `zd-provider-results` | `day-select` | `{ day: string, provider: ProviderLocation }` |
-| `zd-provider-results` | `window-change` | `{ startDate: string, endDate: string }` |
-| `zd-availability-grid` | `day-select` | `{ day: string, providerLocationId?: string }` |
-| `zd-availability-grid` | `window-change` | `{ startDate: string, endDate: string }` |
-| `zd-availability-grid` | `more-select` | — |
-| `zd-availability-picker` | `slot-select` | `{ startTime: string, providerLocationId: string }` |
-| `zd-patient-form` | `patient-submit` | `{ patient: Patient }` |
-| `zd-booking-flow` | `booking-complete` | `{ appointmentId: string }` |
-| `zd-booking-flow` | `availability-error` | `{ error: unknown }` — nothing is rendered for it |
-| (any) | `error` | `{ message: string, code: string }` |
+| `zd-provider-search` | `provider-results` | `ProviderResultsDetail` — `{ providers, totalCount, page, pageSize, searchParameters, …criteria }` |
+| `zd-provider-search` | `provider-search-error` | `ErrorDetail` |
+| `zd-provider-results` | `provider-select` | `ProviderSelectDetail` — `{ provider: ProviderLocation }` |
+| `zd-provider-results` | `page-change` | `PageChangeDetail` — `{ page: number }` |
+| `zd-provider-results` | `day-select` | `ProviderDaySelectDetail` — `{ day: string, provider: ProviderLocation }` |
+| `zd-provider-results` | `window-change` | `AvailabilityWindowDetail` — `{ startDate: string, endDate: string }` |
+| `zd-availability-grid` | `day-select` | `DaySelectDetail` — `{ day: string, providerLocationId?: string }` |
+| `zd-availability-grid` | `window-change` | `AvailabilityWindowDetail` |
+| `zd-availability-grid` | `more-select` | — (an empty detail) |
+| `zd-availability-grid` | `availability-error` | `ErrorDetail` |
+| `zd-availability-picker` | `slot-select` | `SlotSelectDetail` — `{ startTime: string, providerLocationId: string }` |
+| `zd-availability-picker` | `patient-type-change` | `PatientTypeChangeDetail` — `{ patientType: 'new' \| 'existing' }` |
+| `zd-availability-picker` | `availability-error` | `ErrorDetail` |
+| `zd-patient-form` | `patient-submit` | `PatientSubmitDetail` — `{ patient: Patient, notes?: string }`. **The one detail carrying PHI:** pass it to `createAppointment` and nowhere else (PHI-001, PHI-003). |
+| `zd-booking-flow` | `booking-complete` | `BookingCompleteDetail` — `{ appointmentId: string, status: AppointmentStatus }` |
+| `zd-booking-flow` | `booking-error` | `BookingErrorDetail` — `{ error: unknown, status?: AppointmentStatus }` |
+| `zd-booking-flow` | `availability-error` | `ErrorDetail` — nothing is rendered for it |
+
+`day-select` and `window-change` are each emitted by two components with different payloads, which
+is why these live in per-component event maps rather than a global `HTMLElementEventMap`
+augmentation — a global map allows one entry per name. Every `error` payload is developer-facing:
+its body can echo request values, so it is never rendered or logged wholesale (CLIENT-003,
+PHI-001).
 
 ### Tooling
 
-- **No build step.** Package `exports` point at `./src/index.ts`. Vite transpiles directly.
+- **`tsc --build` emits declarations and JS to `dist/`,** which is where both packages' `exports` point. `pnpm build:types` is a prerequisite of `test`, `typecheck`, and `storybook`, because a stale `dist` is what makes a cross-package import fail on a change that is already on disk.
+- **`@powered-by-zocdoc/api-components` has one extra subpath, `./mock`** — a fake transport and the documented sentinel inputs, for a host page that wants the funnel without a token. Importing `.` pulls in none of it.
 - **Storybook** on `@storybook/web-components-vite`, globbing `packages/{primitives,api-components}/src/**/*.stories.ts`.
 - **Vitest browser mode** with `@vitest/browser-playwright` for component tests.
+- **`pnpm demo`** serves two pages: `/` is `zd-booking-flow` alone, `/composed.html` is the same five components wired by a host page. Both serve fixtures unless `VITE_ZOCDOC_MODE=live` **and** `VITE_ZOCDOC_TOKEN` are set in `.env.local` at the workspace root — a demo that reached the live sandbox by default would post a patient's details the first time anyone clicked through it.

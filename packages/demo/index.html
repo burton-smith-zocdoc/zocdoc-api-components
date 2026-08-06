@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Powered by Zocdoc — one element</title>
+    <!--
+      An empty data URL, so the browser asks for no favicon at all. Without it the console carries a
+      failed request on every load, which is noise on a page whose claim is that nothing leaves it.
+    -->
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <h1>One tag</h1>
+    <p class="lede">The whole booking funnel from a single custom element.</p>
+
+    <p id="mode"></p>
+
+    <!--
+      The `<h1>` above is the page's, which is why `zd-booking-flow` heads each of its steps at
+      `<h2>`. A host page that gave this component the page's only heading would have a document
+      whose outline starts at level two.
+    -->
+    <zd-booking-flow zip-code="11201"></zd-booking-flow>
+
+    <section class="scenarios">
+      <h2>Try a different outcome</h2>
+      <p>Search with one of these ZIP codes:</p>
+      <dl id="scenarios"></dl>
+      <p><a href="/composed.html">See the same five components wired by hand</a></p>
+    </section>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

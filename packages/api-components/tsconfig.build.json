@@ -12,6 +12,10 @@
     "outDir": "dist"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["**/*.test.ts", "**/*.stories.ts", "**/test/**", "**/mock/**"],
+  // `mock/` is built, unlike `test/`: the demo site reaches it through the `./mock` subpath, so
+  // it has to exist in `dist`. It stays out of the main entry point and out of anything the
+  // components import, which is what keeps fixtures out of a consumer's bundle — importing `.`
+  // pulls in none of it.
+  "exclude": ["**/*.test.ts", "**/*.stories.ts", "**/test/**"],
   "references": [{ "path": "../primitives/tsconfig.build.json" }]
 }
