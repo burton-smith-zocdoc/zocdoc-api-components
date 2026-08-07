@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import type { ProviderLocation } from '../../client/types.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
-import { mount, part, shadow } from '../../utils/test/mount.js';
+import { mount, part, queryPart, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -76,7 +76,7 @@ describe('zd-provider-card', () => {
       card.provider = PROVIDER;
       await card.updateComplete;
 
-      const insurance = part(card, 'insurance');
+      const insurance = queryPart(card, 'insurance');
       expect(insurance).toBeNull();
     });
 
@@ -103,12 +103,15 @@ describe('zd-provider-card', () => {
 
     it('shows avatar with image when showPhoto is true', async () => {
       const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
-      card.provider = PROVIDER;
+      card.provider = {
+        ...PROVIDER,
+        provider: { ...PROVIDER.provider, provider_photo_url: '//images.test/photo.jpg' },
+      };
       card.showPhoto = true;
       await card.updateComplete;
 
       const avatar = shadow(card).querySelector('zd-avatar');
-      expect(avatar?.getAttribute('image')).toBeTruthy();
+      expect(avatar?.getAttribute('image')).toBe('https://images.test/photo.jpg');
     });
 
     it('derives initials from first and last name', async () => {

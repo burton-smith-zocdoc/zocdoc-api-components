@@ -186,17 +186,17 @@ describe('zd-provider-results', () => {
     expect(profile).not.toBeNull();
   });
 
-  it('closes the dialog on dialog-close event', async () => {
+  it('closes the dialog on close event', async () => {
     const element = await mountResults(PROVIDERS);
     const card = cards(element)[0]!;
     cardPart(card, 'name')?.click();
     await settled(element);
 
     const dialog = shadow(element).querySelector('zd-dialog') as HTMLElement;
-    dialog.dispatchEvent(new CustomEvent('dialog-close', { bubbles: true, composed: true }));
+    dialog.dispatchEvent(new Event('close', { bubbles: true, composed: true }));
     await settled(element);
 
-    expect(dialog.getAttribute('open')).toBeNull();
+    expect(dialog.hasAttribute('open')).toBe(false);
   });
 
   it('derives a display name from first and last name when full_name is absent', async () => {
