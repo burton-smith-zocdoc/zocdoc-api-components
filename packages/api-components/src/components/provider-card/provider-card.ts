@@ -124,19 +124,21 @@ export class ZdProviderCard extends CharmElement {
     return this.html`
       <scoped-card>
         <div class="provider-card">
-          ${this.renderAvatar()}
-          <div part="details">
-            <scoped-button
-              part="name"
-              variant="link"
-              @click=${() => this.handleNameClick()}
-            >
-              ${heading}
-            </scoped-button>
-            ${specialty ? this.html`<span part="specialty">${specialty}</span>` : nothing}
-            ${location ? this.html`<span part="location">${location}</span>` : nothing}
-            ${this.renderInsurance()}
-            <slot name="badges"></slot>
+          <div class="provider-info">
+            ${this.renderAvatar()}
+            <div part="details">
+              <scoped-button
+                part="name"
+                variant="link"
+                @click=${() => this.handleNameClick()}
+              >
+                ${heading}
+              </scoped-button>
+              ${specialty ? this.html`<span part="specialty">${specialty}</span>` : nothing}
+              ${location ? this.html`<span part="location">${location}</span>` : nothing}
+              ${this.renderInsurance()}
+              <slot name="badges"></slot>
+            </div>
           </div>
           <slot name="availability"></slot>
         </div>

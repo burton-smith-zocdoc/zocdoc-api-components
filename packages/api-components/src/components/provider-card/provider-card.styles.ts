@@ -1,12 +1,23 @@
 import { css } from 'lit';
 
 export default css`
+  :host {
+    display: block;
+  }
+
   .provider-card {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--zd-spacing-md, 1rem);
-    align-items: start;
+    align-items: flex-start;
+  }
+
+  .provider-info {
+    display: flex;
+    gap: var(--zd-spacing-md, 1rem);
+    align-items: flex-start;
+    flex: 0 1 auto;
+    min-width: 200px;
   }
 
   [part='details'] {
@@ -27,6 +38,6 @@ export default css`
   }
 
   ::slotted([slot='availability']) {
-    grid-column: 1 / -1;
+    flex: 1 1 300px;
   }
 `;
