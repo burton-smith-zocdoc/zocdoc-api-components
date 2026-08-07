@@ -3,7 +3,8 @@ import { css } from 'lit';
 export default css`
   .provider-card {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
     gap: var(--zd-spacing-md, 1rem);
     align-items: start;
   }
@@ -23,5 +24,9 @@ export default css`
   [part='insurance'] {
     color: var(--zd-color-text-secondary, #666);
     font-size: var(--zd-font-size-sm, 0.875rem);
+  }
+
+  ::slotted([slot='availability']) {
+    grid-column: 1 / -1;
   }
 `;
