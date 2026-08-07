@@ -3,24 +3,24 @@ import {
   ZdAvatar,
   ZdButton,
   ZdCard,
-} from '@powered-by-zocdoc/primitives';
-import { nothing } from 'lit';
-import { property } from 'lit/decorators.js';
-import type { ProviderLocation } from '../../client/types.js';
-import type { TypedEmit, TypedEventTarget } from '../events.js';
+} from "@powered-by-zocdoc/primitives";
+import { nothing } from "lit";
+import { property } from "lit/decorators.js";
+import type { ProviderLocation } from "../../client/types.js";
+import type { TypedEmit, TypedEventTarget } from "../events.js";
 import {
   providerHeading,
   providerLocationLine,
   providerPhotoUrl,
-} from '../internal/provider-summary.js';
-import styles from './provider-card.styles.js';
+} from "../internal/provider-summary.js";
+import styles from "./provider-card.styles.js";
 
 export interface ProfileRequestDetail {
   provider: ProviderLocation;
 }
 
 export interface ZdProviderCardEventMap {
-  'profile-request': CustomEvent<ProfileRequestDetail>;
+  "profile-request": CustomEvent<ProfileRequestDetail>;
 }
 
 /**
@@ -39,13 +39,16 @@ export interface ZdProviderCardEventMap {
  * @csspart insurance - The network status line.
  */
 export class ZdProviderCard extends CharmElement {
-  public static override baseName = 'provider-card';
+  public static override baseName = "provider-card";
 
-  declare public addEventListener: TypedEventTarget<ZdProviderCardEventMap>['addEventListener'];
-  declare public removeEventListener: TypedEventTarget<ZdProviderCardEventMap>['removeEventListener'];
+  declare public addEventListener: TypedEventTarget<ZdProviderCardEventMap>["addEventListener"];
+  declare public removeEventListener: TypedEventTarget<ZdProviderCardEventMap>["removeEventListener"];
   declare protected emit: TypedEmit<ZdProviderCardEventMap>;
 
-  public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
+  public static override styles = [
+    ...super.styles,
+    styles,
+  ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [ZdCard, ZdAvatar, ZdButton];
@@ -59,14 +62,14 @@ export class ZdProviderCard extends CharmElement {
    * Renders the provider's photo from CDN. Off by default because the photo
    * comes from an external CDN, not the configured baseUrl (PHI-003 note).
    */
-  @property({ type: Boolean, attribute: 'show-photo' })
+  @property({ type: Boolean, attribute: "show-photo" })
   public showPhoto = false;
 
   /**
    * The insurance plan name the search was run with. Enables the network
    * status line when provided.
    */
-  @property({ attribute: 'insurance-name' })
+  @property({ attribute: "insurance-name" })
   public insuranceName?: string;
 
   /**
@@ -74,9 +77,9 @@ export class ZdProviderCard extends CharmElement {
    */
   protected providerInitials(): string {
     const provider = this.provider?.provider;
-    const first = provider?.first_name?.[0] ?? '';
-    const last = provider?.last_name?.[0] ?? '';
-    return (first + last).toUpperCase() || '?';
+    const first = provider?.first_name?.[0] ?? "";
+    const last = provider?.last_name?.[0] ?? "";
+    return (first + last).toUpperCase() || "?";
   }
 
   protected renderAvatar(): unknown {
@@ -103,15 +106,17 @@ export class ZdProviderCard extends CharmElement {
     if (!this.insuranceName || !this.provider) return nothing;
 
     const acceptance = this.provider.accepts_patient_insurance;
-    if (acceptance !== 'accepted' && acceptance !== 'not_accepted') return nothing;
+    if (acceptance !== "accepted" && acceptance !== "not_accepted")
+      return nothing;
 
-    const status = acceptance === 'accepted' ? 'In-network' : 'Out-of-network';
-    return this.html`<span part="insurance">${status} · ${this.insuranceName}</span>`;
+    const status = acceptance === "accepted" ? "In-network" : "Out-of-network";
+    return this
+      .html`<span class="insurance" part="insurance">${status} · ${this.insuranceName}</span>`;
   }
 
   protected handleNameClick(): void {
     if (!this.provider) return;
-    this.emit('profile-request', { detail: { provider: this.provider } });
+    this.emit("profile-request", { detail: { provider: this.provider } });
   }
 
   protected override render(): unknown {
@@ -122,20 +127,26 @@ export class ZdProviderCard extends CharmElement {
     const location = providerLocationLine(this.provider);
 
     return this.html`
-      <scoped-card>
+      <scoped-card class="wrapper-card">
         <div class="provider-card">
           <div class="provider-info">
-            ${this.renderAvatar()}
-            <div part="details">
-              <scoped-button
-                part="name"
-                variant="link"
-                @click=${() => this.handleNameClick()}
-              >
-                ${heading}
-              </scoped-button>
-              ${specialty ? this.html`<span part="specialty">${specialty}</span>` : nothing}
-              ${location ? this.html`<span part="location">${location}</span>` : nothing}
+            <div class="provider-profile">
+              ${this.renderAvatar()}
+              <div class="details" part="details">
+                <h3 class="name">
+                  <button
+                    part="name"
+                    variant="link"
+                    @click=${() => this.handleNameClick()}
+                  >
+                    ${heading}
+                  </button>
+                </h3>
+                ${specialty ? this.html`<h4 class="specialty" part="specialty">${specialty}</h4>` : nothing}
+              </div>
+            </div>
+            <div class="details">
+              ${location ? this.html`<span class="location" part="location">${location}</span>` : nothing}
               ${this.renderInsurance()}
               <slot name="badges"></slot>
             </div>
