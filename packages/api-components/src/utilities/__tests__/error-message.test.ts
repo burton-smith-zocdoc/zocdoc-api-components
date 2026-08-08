@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ZocdocAuthError, ZocdocError, ZocdocNotFoundError } from '../../../client/errors.js';
+import { ZocdocAuthError, ZocdocError, ZocdocNotFoundError } from '../../client/errors.js';
 import { userFacingError } from '../error-message.js';
 
 describe('userFacingError', () => {

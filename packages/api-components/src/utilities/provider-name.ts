@@ -1,4 +1,4 @@
-import type { ProviderLocation } from '../../client/types.js';
+import type { ProviderLocation } from '../client/types.js';
 
 /**
  * Derives a provider's display name.

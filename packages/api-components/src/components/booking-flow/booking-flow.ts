@@ -15,12 +15,12 @@ import type {
 import { ZdAvailabilityPicker } from '../availability-picker/availability-picker.js';
 import { ZdBookingConfirmation } from '../booking-confirmation/booking-confirmation.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
-import { resolveWindowStart, windowEndDate } from '../internal/availability-window.js';
-import { userFacingError } from '../internal/error-message.js';
-import { providerHeading, renderProviderSummary } from '../internal/provider-summary.js';
-import summaryStyles from '../internal/provider-summary.styles.js';
-import { formatAppointmentTime } from '../internal/provider-time.js';
-import { requestStateDependencies } from '../internal/request-state.js';
+import { resolveWindowStart, windowEndDate } from '../../utilities/availability-window.js';
+import { userFacingError } from '../../utilities/error-message.js';
+import { providerHeading, renderProviderSummary } from '../../utilities/provider-summary.js';
+import summaryStyles from '../../utilities/provider-summary.styles.js';
+import { formatAppointmentTime } from '../../utilities/provider-time.js';
+import { requestStateDependencies } from '../../utilities/request-state.js';
 import { ZdPatientForm } from '../patient-form/patient-form.js';
 import { ZdProviderResults } from '../provider-results/provider-results.js';
 import { ZdProviderSearch } from '../provider-search/provider-search.js';
@@ -638,7 +638,7 @@ export class ZdBookingFlow extends CharmElement {
           void this.book(event.detail.patient, event.detail.notes)}
       ></scoped-patient-form>
 
-      <div part="status" role="status" aria-live="polite" aria-atomic="true">
+      <div class="status" part="status" role="status" aria-live="polite" aria-atomic="true">
         ${
           this.booking
             ? this.html`
@@ -681,7 +681,7 @@ export class ZdBookingFlow extends CharmElement {
   /** The escape hatch back one step, labelled with where it goes rather than just "Back". */
   protected renderBack(step: BookingStep): unknown {
     return this.html`
-      <scoped-button part="back" variant="secondary" size="small" @click=${() => this.back()}>
+      <scoped-button class="back" part="back" variant="secondary" size="small" @click=${() => this.back()}>
         ${step === 'time' ? 'Back to search' : 'Back to times'}
       </scoped-button>
     `;
@@ -705,9 +705,9 @@ export class ZdBookingFlow extends CharmElement {
     if (!provider && !when) return nothing;
 
     return this.html`
-      <div part="summary">
+      <div class="summary" part="summary">
         ${provider ? renderProviderSummary(provider) : nothing}
-        ${when ? this.html`<p part="summary-time">${when}</p>` : nothing}
+        ${when ? this.html`<p class="summary-time" part="summary-time">${when}</p>` : nothing}
       </div>
     `;
   }
@@ -740,8 +740,8 @@ export class ZdBookingFlow extends CharmElement {
     const step = this.step;
 
     return this.html`
-      <section part="step" tabindex="-1" aria-labelledby="step-heading">
-        <h2 part="step-heading" id="step-heading">${STEP_HEADINGS[step]}</h2>
+      <section class="step" part="step" tabindex="-1" aria-labelledby="step-heading">
+        <h2 class="step-heading" part="step-heading" id="step-heading">${STEP_HEADINGS[step]}</h2>
 
         ${step === 'search' || step === 'booked' ? nothing : this.renderBack(step)}
 

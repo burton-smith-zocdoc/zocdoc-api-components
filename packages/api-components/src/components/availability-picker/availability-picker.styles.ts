@@ -10,8 +10,8 @@ export default css`
    * times there are before the user starts moving through them. That means undoing
    * the user agent's list styling here.
    */
-  [part='days'],
-  [part='slots'] {
+  .days,
+  .slots {
     display: flex;
     gap: 0.5rem;
     list-style: none;
@@ -24,7 +24,7 @@ export default css`
    * one row. padding-block-end leaves room for the scrollbar instead of letting it
    * overlap the buttons.
    */
-  [part='days'] {
+  .days {
     overflow-x: auto;
     padding-block-end: 0.5rem;
 
@@ -34,7 +34,7 @@ export default css`
     }
   }
 
-  [part='slots'] {
+  .slots {
     flex-wrap: wrap;
     margin-block-start: 0.75rem;
   }
@@ -44,11 +44,11 @@ export default css`
    * times sit under the whole day strip. Written as a sibling rule rather than against a layout
    * attribute on the host, so it does not depend on when Lit reflects that attribute.
    */
-  [part='day-heading'] + [part='slots'] {
+  .day-heading + .slots {
     margin-block-start: 0.5rem;
   }
 
-  [part='patient-type'] {
+  .patient-type {
     display: block;
     margin-block-end: 1rem;
   }
@@ -57,7 +57,7 @@ export default css`
    * The groups are a list for the count a screen reader reads out, so the user agent's markers
    * and indent come off here.
    */
-  [part='day-groups'] {
+  .day-groups {
     display: grid;
     gap: 1.25rem;
     list-style: none;
@@ -65,7 +65,7 @@ export default css`
     padding: 0;
   }
 
-  [part='day-heading'] {
+  .day-heading {
     color: var(--zd-text-primary);
     font-size: var(--zd-font-size-md);
     font-weight: var(--zd-font-weight-semibold);
@@ -78,7 +78,7 @@ export default css`
    * white and fails AA for body copy (A11Y-001). The weight of the heading above is what carries
    * the hierarchy instead.
    */
-  [part='day-empty'] {
+  .day-empty {
     color: var(--zd-text-primary);
     margin: 0.5rem 0 0;
   }

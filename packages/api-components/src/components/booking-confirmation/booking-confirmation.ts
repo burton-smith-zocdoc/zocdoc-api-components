@@ -2,7 +2,7 @@ import { CharmElement, ZdAlert } from '@powered-by-zocdoc/primitives';
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { AppointmentStatus } from '../../client/types.js';
-import { formatAppointmentTime } from '../internal/provider-time.js';
+import { formatAppointmentTime } from '../../utilities/provider-time.js';
 import styles from './booking-confirmation.styles.js';
 
 /**
@@ -99,6 +99,7 @@ export class ZdBookingConfirmation extends CharmElement {
      */
     return this.html`
       <scoped-alert
+        class="confirmation"
         part="confirmation"
         variant=${outcome.variant}
         heading=${outcome.heading}
@@ -108,7 +109,7 @@ export class ZdBookingConfirmation extends CharmElement {
         ${outcome.detail ? this.html`<p part="detail">${outcome.detail}</p>` : nothing}
         ${this.providerName ? this.html`<p part="provider">With ${this.providerName}</p>` : nothing}
         ${when ? this.html`<p part="when">${when}</p>` : nothing}
-        <p part="reference">Confirmation number: ${this.appointmentId}</p>
+        <p class="reference" part="reference">Confirmation number: ${this.appointmentId}</p>
       </scoped-alert>
     `;
   }

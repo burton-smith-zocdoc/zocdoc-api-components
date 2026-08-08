@@ -12,7 +12,7 @@ import {
   providerHeading,
   providerLocationLine,
   providerPhotoUrl,
-} from "../internal/provider-summary.js";
+} from "../../utilities/provider-summary.js";
 import styles from "./provider-card.styles.js";
 
 export interface ProfileRequestDetail {

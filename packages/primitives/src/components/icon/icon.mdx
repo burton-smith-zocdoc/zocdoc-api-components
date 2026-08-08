@@ -19,9 +19,10 @@ Renders an icon from the icon set by name.
 
 The set that ships with Charm is: `checkmark`, `checkmark-circle`, `chevron-down`, `chevron-right`,
 `circle`, `dismiss`, `error-circle`, `more`, `person`, `question`, `square`, `warning`, and
-`warning-shield`. Zocdoc adds `info-circle`, which Charm has no equivalent of and which
-`zd-alert`'s `info` variant needs. A `name` outside that list falls back to the `question` icon —
-silently, so a typo looks like a question mark rather than an error.
+`warning-shield`. Zocdoc adds `chevron-left`, `info-circle`, `insurance-accepted`, `insurance-add`,
+`location-pin`, `search`, `star`, and `stethoscope`. A `name`
+outside that list falls back to the `question` icon — silently, so a typo looks like a question
+mark rather than an error.
 
 ## All icons
 
@@ -46,6 +47,10 @@ silently, so a typo looks like a question mark rather than an error.
     <span style="font-size: 0.75rem;">chevron-right</span>
   </div>
   <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="chevron-left" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">chevron-left</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
     <zd-icon name="circle" size="large"></zd-icon>
     <span style="font-size: 0.75rem;">circle</span>
   </div>
@@ -60,6 +65,14 @@ silently, so a typo looks like a question mark rather than an error.
   <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
     <zd-icon name="info-circle" size="large"></zd-icon>
     <span style="font-size: 0.75rem;">info-circle</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="insurance-accepted" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">insurance-accepted</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="insurance-add" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">insurance-add</span>
   </div>
   <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
     <zd-icon name="more" size="large"></zd-icon>
@@ -84,6 +97,22 @@ silently, so a typo looks like a question mark rather than an error.
   <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
     <zd-icon name="warning-shield" size="large"></zd-icon>
     <span style="font-size: 0.75rem;">warning-shield</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="location-pin" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">location-pin</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="search" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">search</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="star" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">star</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+    <zd-icon name="stethoscope" size="large"></zd-icon>
+    <span style="font-size: 0.75rem;">stethoscope</span>
   </div>
 </div>
 ```

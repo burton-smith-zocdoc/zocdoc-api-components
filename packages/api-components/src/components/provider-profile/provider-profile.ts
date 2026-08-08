@@ -7,7 +7,7 @@ import {
   providerHeading,
   providerLocationLine,
   providerPhotoUrl,
-} from '../internal/provider-summary.js';
+} from '../../utilities/provider-summary.js';
 import styles from './provider-profile.styles.js';
 
 /**
@@ -166,11 +166,11 @@ export class ZdProviderProfile extends CharmElement {
      * twice.
      */
     return this.html`
-      <header part="header">
-        ${photo ? this.html`<img part="photo" src=${photo} alt="" />` : nothing}
-        <div part="identity">
-          <h2 id=${NAME_ID} part="name">${providerHeading(provider)}</h2>
-          ${specialty ? this.html`<p part="specialty">${specialty}</p>` : nothing}
+      <header class="header" part="header">
+        ${photo ? this.html`<img class="photo" part="photo" src=${photo} alt="" />` : nothing}
+        <div class="identity" part="identity">
+          <h2 id=${NAME_ID} class="name" part="name">${providerHeading(provider)}</h2>
+          ${specialty ? this.html`<p class="specialty" part="specialty">${specialty}</p>` : nothing}
           ${where ? this.html`<p part="header-location">${where}</p>` : nothing}
         </div>
         <slot name="actions"></slot>
@@ -189,8 +189,8 @@ export class ZdProviderProfile extends CharmElement {
     if (body === nothing) return nothing;
 
     return this.html`
-      <section part="section ${name}">
-        <h3 part="section-heading">${heading}</h3>
+      <section class="section ${name}" part="section ${name}">
+        <h3 class="section-heading" part="section-heading">${heading}</h3>
         ${body}
       </section>
     `;
@@ -208,7 +208,7 @@ export class ZdProviderProfile extends CharmElement {
     if (present.length === 0) return nothing;
 
     return this.html`
-      <ul part="list">
+      <ul class="list" part="list">
         ${present.map((item) => this.html`<li part="list-item">${item}</li>`)}
       </ul>
     `;
@@ -225,7 +225,7 @@ export class ZdProviderProfile extends CharmElement {
     const statement = provider.provider.statement?.trim();
     if (!statement) return nothing;
 
-    return this.renderSection('about', 'About', this.html`<p part="statement">${statement}</p>`);
+    return this.renderSection('about', 'About', this.html`<p class="statement" part="statement">${statement}</p>`);
   }
 
   /**
@@ -277,14 +277,14 @@ export class ZdProviderProfile extends CharmElement {
       'location',
       'Location',
       this.html`
-        <address part="contact">
+        <address class="contact" part="contact">
           ${names.map((name) => this.html`<p part="place">${name}</p>`)}
           ${address ? this.html`<p part="address">${address}</p>` : nothing}
           ${
             phone
               ? this.html`
                   <p>
-                    <a part="phone" href=${phone}>
+                    <a class="phone" part="phone" href=${phone}>
                       ${extension ? `${dialable} ext. ${extension}` : dialable}
                     </a>
                   </p>
@@ -319,7 +319,7 @@ export class ZdProviderProfile extends CharmElement {
      * profiles. The headings already make the outline walkable.
      */
     return this.html`
-      <article part="profile" aria-labelledby=${NAME_ID}>
+      <article class="profile" part="profile" aria-labelledby=${NAME_ID}>
         ${this.renderHeader(provider)}
         <slot name="highlights"></slot>
         ${this.renderAbout(provider)}

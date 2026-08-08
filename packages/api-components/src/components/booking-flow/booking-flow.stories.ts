@@ -39,7 +39,7 @@ const START_TIME = '2026-08-05T09:00:00-04:00';
  * host page would receive.
  */
 const meta: Meta<ZdBookingFlow> = {
-  title: 'Booking/Booking Flow',
+  title: 'API Components/Booking Flow',
   component: 'zd-booking-flow',
   args: {
     ...args,

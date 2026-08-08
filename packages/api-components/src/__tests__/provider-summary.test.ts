@@ -1,13 +1,13 @@
 import { render } from 'lit';
 import { describe, expect, it } from 'vitest';
-import type { ProviderLocation } from '../../../client/types.js';
+import type { ProviderLocation } from '../client/types.js';
 import {
   providerAddress,
   providerHeading,
   providerLocationLine,
   providerPhotoUrl,
   renderProviderSummary,
-} from '../provider-summary.js';
+} from '../utilities/provider-summary.js';
 
 /**
  * Unmistakably fake, per PHI-002 — providers are directory data rather than patient data, but

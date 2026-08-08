@@ -416,7 +416,7 @@ export class ZdPatientForm extends CharmElement {
 
   protected override render(): unknown {
     return this.html`
-      <form part="form" novalidate @submit=${(event: Event) => this.handleSubmit(event)}>
+      <form class="form" part="form" novalidate @submit=${(event: Event) => this.handleSubmit(event)}>
         ${GROUPS.map(
           (group) => this.html`
             <fieldset part=${group.part}>
@@ -443,7 +443,7 @@ export class ZdPatientForm extends CharmElement {
           }}
         ></scoped-text-area>
 
-        <scoped-button part="submit" type="submit" variant="primary" ?disabled=${this.busy}>
+        <scoped-button class="submit" part="submit" type="submit" variant="primary" ?disabled=${this.busy}>
           Continue
         </scoped-button>
       </form>

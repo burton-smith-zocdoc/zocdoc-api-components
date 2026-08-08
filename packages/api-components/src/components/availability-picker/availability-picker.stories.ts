@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
-import { addDays, todayDayKey } from '../internal/provider-time.js';
+import { addDays, todayDayKey } from '../../utilities/provider-time.js';
 import type { ZdAvailabilityPicker } from './availability-picker.js';
 import './index.js';
 
@@ -42,7 +42,7 @@ const dayFromToday = (offset: number): string => addDays(todayDayKey(), offset);
  * panel — choosing a time logs the `startTime` that would go to `POST /v1/appointments`.
  */
 const meta: Meta<ZdAvailabilityPicker> = {
-  title: 'Booking/Availability Picker',
+  title: 'API Components/Availability Picker',
   component: 'zd-availability-picker',
   args: {
     ...args,

@@ -1,5 +1,5 @@
 import { html, nothing, type TemplateResult } from 'lit';
-import type { ProviderLocation } from '../../client/types.js';
+import type { ProviderLocation } from '../client/types.js';
 import { providerDisplayName } from './provider-name.js';
 
 /**
@@ -158,10 +158,10 @@ export function renderProviderSummary(
   const photo = options.showPhoto ? providerPhotoUrl(location) : undefined;
 
   return html`
-    <div part="provider-summary">
-      ${photo ? html`<img part="provider-photo" src=${photo} alt="" />` : nothing}
-      <div part="provider-detail">
-        <span part="provider-name">${providerHeading(location)}</span>
+    <div class="provider-summary" part="provider-summary">
+      ${photo ? html`<img class="provider-photo" part="provider-photo" src=${photo} alt="" />` : nothing}
+      <div class="provider-detail" part="provider-detail">
+        <span class="provider-name" part="provider-name">${providerHeading(location)}</span>
         ${specialty ? html`<span part="provider-specialty">${specialty}</span>` : nothing}
         ${where ? html`<span part="provider-location">${where}</span>` : nothing}
         ${renderProviderInsurance(location, options.insuranceName)}

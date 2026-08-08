@@ -10,32 +10,32 @@ import { css } from 'lit';
  * card and whose booking summary want the same information at different emphasis.
  */
 export default css`
-  [part='provider-summary'] {
+  .provider-summary {
     display: flex;
     gap: 0.75rem;
-  }
 
-  /*
-   * A fixed box so a row of cards lines up before the images have loaded, and so a portrait
-   * and a landscape photo occupy the same space. Logical properties throughout (I18N-003).
-   */
-  [part='provider-photo'] {
-    block-size: 3.5rem;
-    border-radius: 50%;
-    flex: 0 0 auto;
-    inline-size: 3.5rem;
-    object-fit: cover;
-  }
+    /*
+     * A fixed box so a row of cards lines up before the images have loaded, and so a portrait
+     * and a landscape photo occupy the same space. Logical properties throughout (I18N-003).
+     */
+    .provider-photo {
+      block-size: 3.5rem;
+      border-radius: 50%;
+      flex: 0 0 auto;
+      inline-size: 3.5rem;
+      object-fit: cover;
+    }
 
-  [part='provider-detail'] {
-    display: grid;
-    gap: 0.125rem;
-    /* Without this the grid takes the photo's width as its floor and the address wraps
-     * one word at a time. */
-    min-inline-size: 0;
-  }
+    .provider-detail {
+      display: grid;
+      gap: 0.125rem;
+      /* Without this the grid takes the photo's width as its floor and the address wraps
+       * one word at a time. */
+      min-inline-size: 0;
+    }
 
-  [part='provider-name'] {
-    font-weight: 600;
+    .provider-name {
+      font-weight: 600;
+    }
   }
 `;

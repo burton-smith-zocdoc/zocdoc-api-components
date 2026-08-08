@@ -225,7 +225,7 @@ const { args, argTypes, template } = getStorybookHelpers<Zd<Name>>(
 );
 
 const meta: Meta<Zd<Name>> = {
-  title: 'Components/<Name>',
+  title: 'API Components/<Name>',
   component: 'zd-<name>',
   args,
   argTypes,

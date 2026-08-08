@@ -5,7 +5,7 @@ export default css`
     display: block;
   }
 
-  [part='list'] {
+  .list {
     display: grid;
     gap: 0.75rem;
     list-style: none;
@@ -20,7 +20,7 @@ export default css`
    * (I18N-003). Backticks cannot appear in this comment — they would close the
    * css template literal.
    */
-  [part='provider'] {
+  .provider {
     appearance: none;
     background: none;
     border: 0;
@@ -44,8 +44,8 @@ export default css`
    */
 
   /* The list's gap is the only spacing between these blocks, so their margins go. */
-  [part='summary'],
-  [part='pager-position'] {
+  .summary,
+  .pager-position {
     margin: 0;
   }
 
@@ -54,7 +54,7 @@ export default css`
    * is not room for both — the range and its arrows are wide, and squeezing the count next to
    * them is what makes it truncate in the languages that need more words for it.
    */
-  [part='header'] {
+  .header {
     align-items: baseline;
     column-gap: 0.75rem;
     display: flex;
@@ -66,7 +66,7 @@ export default css`
      * because a host page with no total renders no count line and the control would then be the
      * only child - which space-between leaves at the start, on the wrong side of the list.
      */
-    [part='window'] {
+    .window {
       margin-inline-start: auto;
     }
   }
@@ -75,7 +75,7 @@ export default css`
    * Sits under the provider control rather than inside it — see renderAvailability. The rule the
    * grid needs from its host is the separation, since the card supplies no gap of its own.
    */
-  [part='provider-availability'] {
+  .provider-availability {
     display: block;
     margin-block-start: 0.75rem;
   }
@@ -84,7 +84,7 @@ export default css`
    * Previous and Next at the edges with the position between them, which puts each control
    * on the side it moves towards in both writing directions (I18N-003).
    */
-  [part='pager'] {
+  .pager {
     align-items: center;
     display: flex;
     gap: 0.5rem;

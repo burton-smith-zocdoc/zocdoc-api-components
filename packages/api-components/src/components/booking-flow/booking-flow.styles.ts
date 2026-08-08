@@ -5,7 +5,7 @@ export default css`
     display: block;
   }
 
-  [part='step'] {
+  .step {
     display: grid;
     gap: 1.5rem;
 
@@ -19,19 +19,19 @@ export default css`
         var(--zd-focus-outline-color);
       outline-offset: var(--zd-focus-outline-offset);
     }
-  }
 
-  [part='step-heading'] {
-    font-size: var(--zd-font-size-lg);
-    font-weight: var(--zd-font-weight-semibold);
-    margin: 0;
+    .step-heading {
+      font-size: var(--zd-font-size-lg);
+      font-weight: var(--zd-font-weight-semibold);
+      margin: 0;
+    }
   }
 
   /*
    * Back sizes to its label and sits at the inline start, which is where a step's escape
    * hatch belongs in both directions (I18N-003).
    */
-  [part='back'] {
+  .back {
     justify-self: start;
   }
 
@@ -40,11 +40,11 @@ export default css`
    * rather than added to it. No colour: the summary sits on whatever background the host
    * page provides, and this component is not in a position to know it contrasts.
    */
-  [part='summary'] {
+  .summary {
     display: grid;
     gap: 0.25rem;
 
-    & [part='summary-time'] {
+    .summary-time {
       margin: 0;
     }
   }
@@ -54,7 +54,7 @@ export default css`
    * the announcement land — a live region inserted at the same moment as its content is
    * routinely missed (A11Y-002). Empty it has no height of its own; it costs one grid gap.
    */
-  [part='status'] {
+  .status {
     align-items: center;
     display: flex;
     gap: 0.5rem;

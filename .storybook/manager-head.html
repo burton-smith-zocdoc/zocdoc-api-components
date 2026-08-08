@@ -1,0 +1,33 @@
+<script>
+  // Fix for Storybook 10.x + React Aria conflict: Storybook's focus getter
+  // throws "Illegal invocation" when accessed on HTMLElement.prototype
+  // (rather than an element instance). Pre-patch with a safe getter that
+  // handles prototype access gracefully.
+  // This runs in the manager frame (sidebar/navigation) to catch early init.
+  (function() {
+    const originalFocus = HTMLElement.prototype.focus;
+    let currentFocus = originalFocus;
+    const focusingElements = new Set();
+
+    Object.defineProperty(HTMLElement.prototype, 'focus', {
+      configurable: true,
+      enumerable: false,
+      get() {
+        // When accessed on prototype (not an element), return the original
+        if (this === HTMLElement.prototype || !this.ownerDocument) {
+          return originalFocus;
+        }
+        // Storybook's debounce logic for element instances
+        if (focusingElements.has(this)) {
+          return originalFocus;
+        }
+        focusingElements.add(this);
+        setTimeout(() => focusingElements.delete(this), 0);
+        return currentFocus;
+      },
+      set(newFocus) {
+        currentFocus = newFocus;
+      }
+    });
+  })();
+</script>

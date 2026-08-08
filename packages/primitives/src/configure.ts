@@ -19,4 +19,4 @@ import { project } from '@charm-ux/core';
 import { zocdocIcons } from './icons.js';
 import { tokenPrefix } from './theme/prefix.js';
 
-project.updateProject({ prefix: 'zd', tokenPrefix, icons: zocdocIcons });
+project.updateProject({ prefix: 'zd', tokenPrefix, icons: { ...project.iconSet, ...zocdocIcons } });

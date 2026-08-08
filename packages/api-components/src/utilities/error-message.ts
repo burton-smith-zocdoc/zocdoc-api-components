@@ -1,4 +1,4 @@
-import { ZocdocAuthError, ZocdocNotFoundError } from '../../client/errors.js';
+import { ZocdocAuthError, ZocdocNotFoundError } from '../client/errors.js';
 
 /**
  * Maps a thrown client error onto copy a patient can read.

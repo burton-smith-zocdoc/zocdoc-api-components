@@ -26,7 +26,7 @@ const FULL = PROVIDER_LOCATIONS[0]!;
 const VIRTUAL = PROVIDER_LOCATIONS[1]!;
 
 const meta: Meta<ZdProviderProfile> = {
-  title: 'Providers/Provider Profile',
+  title: 'API Components/Provider Profile',
   component: 'zd-provider-profile',
   args: { ...args, provider: FULL },
   argTypes,

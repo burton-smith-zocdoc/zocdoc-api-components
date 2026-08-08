@@ -9,7 +9,7 @@ export default css`
     display: block;
   }
 
-  [part='confirmation'] {
+  .confirmation {
     /*
      * The lines are slotted into the alert, so they sit in this shadow tree and these rules
      * reach them directly. Nothing here sets a colour: the alert's variant owns the
@@ -24,7 +24,7 @@ export default css`
      * The confirmation number is the value a patient may need to read back to the practice,
      * so it gets a gap above rather than sitting in the run of sentences.
      */
-    [part='reference'] {
+    .reference {
       margin-block-start: 0.75rem;
     }
   }

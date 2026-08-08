@@ -33,7 +33,7 @@ const { args, argTypes, template } = getStorybookHelpers<ZdPatientForm>('zd-pati
 });
 
 const meta: Meta<ZdPatientForm> = {
-  title: 'Booking/Patient Form',
+  title: 'API Components/Patient Form',
   component: 'zd-patient-form',
   args,
   argTypes,

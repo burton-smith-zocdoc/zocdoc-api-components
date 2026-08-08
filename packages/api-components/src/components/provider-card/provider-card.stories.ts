@@ -2,7 +2,7 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { buildTimeslots, PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
-import { addDays, todayDayKey } from '../internal/provider-time.js';
+import { addDays, todayDayKey } from '../../utilities/provider-time.js';
 import type { ZdProviderCard } from './provider-card.js';
 import '../availability-grid/index.js';
 import './index.js';
@@ -27,7 +27,7 @@ const TIMESLOTS = buildTimeslots(TODAY, ['09:00', '09:30', '10:00', '11:00', '14
  * panel — clicking the provider name logs the event.
  */
 const meta: Meta<ZdProviderCard> = {
-  title: 'Components/Provider Card',
+  title: 'API Components/Provider Card',
   component: 'zd-provider-card',
   args: { ...args, provider: PROVIDER },
   argTypes,

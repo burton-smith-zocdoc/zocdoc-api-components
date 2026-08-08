@@ -27,6 +27,7 @@ export default css`
 
     .provider-profile {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: var(--zd-spacing-md, 1rem);
     }
@@ -53,6 +54,7 @@ export default css`
       margin: 0;
       font-size: inherit;
       font-weight: inherit;
+      text-align: start;
     }
   }
 

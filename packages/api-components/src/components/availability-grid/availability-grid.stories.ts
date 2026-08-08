@@ -4,7 +4,7 @@ import { html } from 'lit';
 import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import type { AvailabilitySlot } from '../../client/types.js';
-import { addDays, todayDayKey } from '../internal/provider-time.js';
+import { addDays, todayDayKey } from '../../utilities/provider-time.js';
 import type { ZdAvailabilityGrid } from './availability-grid.js';
 import './index.js';
 
@@ -50,6 +50,10 @@ const SUPPLIED_SLOTS: AvailabilitySlot[] = [
  * Two weeks of day counts — the view a patient scans to pick a day worth opening, before
  * caring what the times on it are.
  *
+ * The days are a listbox with roving tabindex: Tab enters the grid once, arrow keys navigate
+ * between available days, and Home/End jump to first/last. Unavailable days show
+ * `cursor: not-allowed` and are skipped by keyboard navigation.
+ *
  * `day-select`, `window-change`, and `more-select` are declared on the component, so the
  * helpers wire all three into the Actions panel.
  *
@@ -59,7 +63,7 @@ const SUPPLIED_SLOTS: AvailabilitySlot[] = [
  * own window, which is what a profile page needs.
  */
 const meta: Meta<ZdAvailabilityGrid> = {
-  title: 'Booking/Availability Grid',
+  title: 'API Components/Availability Grid',
   component: 'zd-availability-grid',
   args: { ...args, timeslots: SUPPLIED_SLOTS },
   argTypes,

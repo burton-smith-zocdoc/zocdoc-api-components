@@ -24,7 +24,7 @@ const PROVIDER = 'Dr. Avery Sandoval, MD';
 const START_TIME = '2026-08-05T09:00:00-04:00';
 
 const meta: Meta<ZdBookingConfirmation> = {
-  title: 'Booking/Booking Confirmation',
+  title: 'API Components/Booking Confirmation',
   component: 'zd-booking-confirmation',
   args: {
     ...args,

@@ -1,7 +1,7 @@
 import { html, render } from 'lit';
 import { describe, expect, it, vi } from 'vitest';
-import { settled, track } from '../../../utils/test/mount.js';
-import { renderRequestState, type RequestState } from '../request-state.js';
+import { settled, track } from '../utils/test/mount.js';
+import { renderRequestState, type RequestState } from '../utilities/request-state.js';
 
 function renderTo(state: RequestState, onRetry = vi.fn<() => void>()): HTMLElement {
   const host = document.createElement('div');

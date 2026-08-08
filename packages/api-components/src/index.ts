@@ -21,7 +21,7 @@ export * from './client/types.js';
 // results list named them. Every `Provider` name field is optional, so a display name is a
 // fallback chain rather than a field read — derived independently, it is how a patient ends up
 // confirming a provider whose name does not match the one they picked.
-export { providerHeading } from './components/internal/provider-summary.js';
+export { providerHeading } from './utilities/provider-summary.js';
 
 // Every event's payload, so a host page wiring components by hand reads `event.detail` against the
 // type the component is compiled against instead of describing the shape itself. `TypedEventTarget`
@@ -36,6 +36,11 @@ export {
   type DaySelectDetail,
   type ZdAvailabilityGridEventMap,
 } from './components/availability-grid/index.js';
+export {
+  ZdAvailabilityWindow,
+  type WindowShiftDetail,
+  type ZdAvailabilityWindowEventMap,
+} from './components/availability-window/index.js';
 export {
   ZdAvailabilityPicker,
   type PatientTypeChangeDetail,

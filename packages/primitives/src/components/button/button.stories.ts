@@ -58,11 +58,7 @@ export const Sizes: Story = {
 };
 
 export const Fluid: Story = {
-  render: () => html`
-    <div style="max-width: 320px;">
-      <zd-button variant="primary" fluid>Full Width Button</zd-button>
-    </div>
-  `,
+  render: () => html`<zd-button variant="primary" fluid>Full Width Button</zd-button>`,
 };
 
 export const WithStartIcon: Story = {

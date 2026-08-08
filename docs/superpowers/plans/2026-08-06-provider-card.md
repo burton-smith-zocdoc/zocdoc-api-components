@@ -668,7 +668,7 @@ import './index.js';
 const PROVIDER = SCENARIOS.drJohnSmith.providerLocations[0];
 
 const meta: Meta<ZdProviderCard> = {
-  title: 'Components/Provider Card',
+  title: 'API Components/Provider Card',
   component: 'zd-provider-card',
   argTypes: {
     showPhoto: { control: 'boolean' },

@@ -8,14 +8,14 @@ import {
   resolveWindowStart,
   windowEndDate,
   windowSpan,
-} from '../internal/availability-window.js';
-import { userFacingError } from '../internal/error-message.js';
-import { addDays, dayKey, isValidDate, providerLocalTime } from '../internal/provider-time.js';
+} from '../../utilities/availability-window.js';
+import { userFacingError } from '../../utilities/error-message.js';
+import { addDays, dayKey, isValidDate, providerLocalTime } from '../../utilities/provider-time.js';
 import {
   renderRequestState,
   requestStateDependencies,
   type RequestState,
-} from '../internal/request-state.js';
+} from '../../utilities/request-state.js';
 import styles from './availability-picker.styles.js';
 
 /** No year: a picker only ever shows the next few weeks. */
@@ -336,7 +336,7 @@ export class ZdAvailabilityPicker extends CharmElement {
    */
   protected renderDays(): unknown {
     return this.html`
-      <ul part="days">
+      <ul class="days" part="days">
         ${this.dayKeys.map(
           (day) => this.html`
             <li>
@@ -367,7 +367,7 @@ export class ZdAvailabilityPicker extends CharmElement {
    * render the same control rather than two that drift apart. */
   protected renderSlotList(slots: readonly AvailabilitySlot[]): unknown {
     return this.html`
-      <ul part="slots">
+      <ul class="slots" part="slots">
         ${slots.map(
           (slot) => this.html`
             <li>
@@ -397,14 +397,14 @@ export class ZdAvailabilityPicker extends CharmElement {
    */
   protected renderDayGroups(): unknown {
     return this.html`
-      <ol part="day-groups">
+      <ol class="day-groups" part="day-groups">
         ${this.dayGroups.map(
           (group) => this.html`
             <li part="day-group">
-              <p part="day-heading">${groupHeading(group)}</p>
+              <p class="day-heading" part="day-heading">${groupHeading(group)}</p>
               ${
                 group.slots.length === 0
-                  ? this.html`<p part="day-empty">No available appointments</p>`
+                  ? this.html`<p class="day-empty" part="day-empty">No available appointments</p>`
                   : this.renderSlotList(group.slots)
               }
             </li>
@@ -427,6 +427,7 @@ export class ZdAvailabilityPicker extends CharmElement {
 
     return this.html`
       <scoped-radio-group
+        class="patient-type"
         part="patient-type"
         layout="horizontal"
         .value=${this.patientType}

@@ -2,7 +2,7 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { buildAvailability, PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
-import { addDays, todayDayKey } from '../internal/provider-time.js';
+import { addDays, todayDayKey } from '../../utilities/provider-time.js';
 import type { ZdProviderResults } from './provider-results.js';
 import './index.js';
 
@@ -41,7 +41,7 @@ const AVAILABILITY = PROVIDER_LOCATIONS.map((location) =>
  * panel — picking a provider logs the event rather than needing a story to prove it fires.
  */
 const meta: Meta<ZdProviderResults> = {
-  title: 'Booking/Provider Results',
+  title: 'API Components/Provider Results',
   component: 'zd-provider-results',
   args: { ...args, providers: PROVIDER_LOCATIONS },
   argTypes,
