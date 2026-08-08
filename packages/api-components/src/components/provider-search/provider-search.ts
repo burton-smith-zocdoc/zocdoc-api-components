@@ -344,12 +344,13 @@ export class ZdProviderSearch extends CharmElement {
 
     return this.html`
       <form class="search-bar" part="form" novalidate @submit=${(event: Event) => this.handleSubmit(event)}>
-        <div class="field" part="specialty-field">
+        <div class="field field--select" part="specialty-field">
           <label for="specialty-select">Search</label>
           <select
             id="specialty-select"
             part="specialty"
             .value=${this.specialtyId ?? ''}
+            ?aria-describedby=${this.fieldErrors.specialty ? 'field-error' : nothing}
             @change=${(event: Event) => {
               this.specialtyId = (event.target as HTMLSelectElement).value || undefined;
             }}
@@ -369,13 +370,14 @@ export class ZdProviderSearch extends CharmElement {
             autocomplete="postal-code"
             maxlength="5"
             .value=${this.zipCode}
+            ?aria-describedby=${this.fieldErrors.zip ? 'field-error' : nothing}
             @input=${(event: Event) => {
               this.zipCode = (event.target as HTMLInputElement).value;
             }}
           />
         </div>
 
-        <div class="field" part="insurance-field">
+        <div class="field field--select" part="insurance-field">
           <label for="insurance-select">Insurance</label>
           <select
             id="insurance-select"
@@ -395,7 +397,7 @@ export class ZdProviderSearch extends CharmElement {
         </scoped-button>
 
         ${errorMessage ? this.html`
-          <div class="error-container" role="alert" part="field-error">
+          <div id="field-error" class="error-container" role="alert" part="field-error">
             ${errorMessage}
           </div>
         ` : nothing}
