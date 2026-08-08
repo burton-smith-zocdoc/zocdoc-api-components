@@ -254,7 +254,9 @@ search.addEventListener('provider-results', ({ detail }) => {
   results.pageSize = detail.pageSize;
 
   insurancePlanId = detail.insurancePlanId;
-  resolvedVisitReasonId = detail.searchParameters?.visit_reason_id ?? detail.visitReasonId;
+  // zd-provider-search no longer collects a visit reason; the API's echo of the specialty's
+  // "any reason" default is the only source left.
+  resolvedVisitReasonId = detail.searchParameters?.visit_reason_id;
 
   const startDate = today();
 
