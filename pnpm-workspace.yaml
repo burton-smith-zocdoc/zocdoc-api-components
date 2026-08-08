@@ -1,5 +1,7 @@
 packages:
   - './packages/*'
+overrides:
+  '@lit/reactive-element': 2.1.2
 allowBuilds:
   esbuild: true
   rs-module-lexer: false

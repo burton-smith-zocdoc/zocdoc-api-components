@@ -47,10 +47,5 @@
     "vite": "^7.1.5",
     "vitest": "^4.1.10"
   },
-  "pnpm": {
-    "overrides": {
-      "@lit/reactive-element": "2.1.2"
-    }
-  },
   "customElements": "custom-elements.json"
 }
