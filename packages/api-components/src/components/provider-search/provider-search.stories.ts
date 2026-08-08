@@ -1,4 +1,3 @@
-import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { SCENARIOS, SPECIALTIES } from '../../client/mock/fixtures.js';
@@ -8,72 +7,69 @@ import type { ZdProviderSearch } from './provider-search.js';
 import '../provider-results/index.js';
 import './index.js';
 
-/**
- * Stories run against the mock transport, so they need no token and make no outbound
- * request (PHI-003). Each state is driven by the documented sentinel ZIP it would send to
- * the real sandbox rather than by a mock-only flag, which keeps the stories honest — the
- * same markup works against the live API once `configureZocdoc` points at it.
- *
- * The default 300ms latency is deliberate: with an instant resolve the loading leg of the
- * COMP-001 state machine never paints and a broken spinner would look fine.
- */
 configureZocdocMock();
 
-const { args, argTypes, template } = getStorybookHelpers<ZdProviderSearch>('zd-provider-search', {
-  excludeCategories: ['cssParts'],
-});
-
 const meta: Meta<ZdProviderSearch> = {
-  title: 'Booking/Provider Search',
+  title: 'API Components/Provider Search',
   component: 'zd-provider-search',
-  args: { ...args, zipCode: SCENARIOS.zipWithResults, specialtyId: SPECIALTIES[0]!.id },
-  argTypes,
-  render: (args) => template(args),
+  args: {
+    zipCode: SCENARIOS.zipWithResults,
+    specialtyId: SPECIALTIES[0]!.id,
+  },
 };
 
 export default meta;
 type Story = StoryObj<ZdProviderSearch>;
 
 /**
- * Press Search, or focus the ZIP field and press Enter — Charm's input calls
- * `form.requestSubmit()`, so the keyboard path needs no extra handler. Results leave
- * through `provider-results`, which the Actions panel logs.
+ * The compact search bar with specialty, ZIP, and insurance fields.
+ * Press "Find care" or Enter to search.
  */
-export const Default: Story = {};
+export const Default: Story = {
+  render: (args) => html`
+    <zd-provider-search
+      zip-code=${args.zipCode ?? ''}
+      specialty-id=${args.specialtyId ?? ''}
+      insurance-plan-id=${args.insurancePlanId ?? ''}
+    ></zd-provider-search>
+  `,
+};
 
 /**
- * Nothing chosen. `GET /v1/provider_locations` requires a 5-digit ZIP and one of
- * `specialty_id` or `visit_reason_id`, so this form cannot search yet — press Search to see
- * both fields report it rather than the request coming back a 400.
- *
- * The visit reason select is disabled until a specialty is chosen. Unscoped it would be every
- * reason across all 310 specialties, which is neither a list a patient can read nor one worth
- * fetching.
+ * Nothing chosen. The form validates that a specialty and valid ZIP are required.
  */
 export const NothingChosen: Story = {
   args: { zipCode: '', specialtyId: undefined },
+  render: (args) => html`
+    <zd-provider-search
+      zip-code=${args.zipCode ?? ''}
+    ></zd-provider-search>
+  `,
 };
 
-/** The documented ZIP that matches nothing. Empty is a success, not an error (COMP-001). */
+/** The documented ZIP that matches nothing. Empty is a success, not an error. */
 export const NoResults: Story = {
   args: { zipCode: SCENARIOS.zipEmpty },
+  render: (args) => html`
+    <zd-provider-search
+      zip-code=${args.zipCode ?? ''}
+      specialty-id=${args.specialtyId ?? ''}
+    ></zd-provider-search>
+  `,
 };
 
-/**
- * The documented ZIP that returns a 500. The alert shows user-facing copy, never the
- * developer-facing message from the client (CLIENT-003), and offers a retry.
- */
+/** The documented ZIP that returns a 500. Shows user-facing error with retry. */
 export const RequestFails: Story = {
   args: { zipCode: SCENARIOS.zipError },
+  render: (args) => html`
+    <zd-provider-search
+      zip-code=${args.zipCode ?? ''}
+      specialty-id=${args.specialtyId ?? ''}
+    ></zd-provider-search>
+  `,
 };
 
-/**
- * The composition this component exists for: search emits, results render. Neither knows
- * about the other beyond the event, so a host page can put anything in between (COMP-002).
- *
- * The listener sits on the wrapper because `emit()` events bubble and are composed, so a
- * common ancestor sees them without either component reaching for the other.
- */
+/** Search wired to results - the composition this component exists for. */
 export const WiredToResults: Story = {
   render: (args) => html`
     <div
@@ -86,8 +82,23 @@ export const WiredToResults: Story = {
         }
       }}
     >
-      ${template(args)}
-      <zd-provider-results></zd-provider-results>
+      <zd-provider-search
+        zip-code=${args.zipCode ?? ''}
+        specialty-id=${args.specialtyId ?? ''}
+      ></zd-provider-search>
+      <zd-provider-results style="margin-top: 1rem;"></zd-provider-results>
+    </div>
+  `,
+};
+
+/** Narrow viewport - fields wrap gracefully. */
+export const NarrowViewport: Story = {
+  render: (args) => html`
+    <div style="max-width: 400px;">
+      <zd-provider-search
+        zip-code=${args.zipCode ?? ''}
+        specialty-id=${args.specialtyId ?? ''}
+      ></zd-provider-search>
     </div>
   `,
 };
