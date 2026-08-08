@@ -360,7 +360,7 @@ export class ZdProviderSearch extends CharmElement {
         </div>
 
         <div class="field field--location" part="location-field">
-          <label for="location-input">Location</label>
+          <label for="location-input">ZIP code</label>
           <input
             id="location-input"
             part="zip"
@@ -368,7 +368,6 @@ export class ZdProviderSearch extends CharmElement {
             inputmode="numeric"
             autocomplete="postal-code"
             maxlength="5"
-            placeholder="ZIP code"
             .value=${this.zipCode}
             @input=${(event: Event) => {
               this.zipCode = (event.target as HTMLInputElement).value;
