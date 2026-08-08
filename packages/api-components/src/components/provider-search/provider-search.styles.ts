@@ -24,6 +24,7 @@ export default css`
     min-width: 8rem;
     padding-inline-end: var(--zd-spacing-16, 16px);
     border-inline-end: 1px solid var(--zd-border-light, #e5e5e5);
+    position: relative;
 
     &:last-of-type {
       border-inline-end: none;
@@ -68,10 +69,22 @@ export default css`
   }
 
   .field select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right center;
     padding-inline-end: 1.5rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline-end: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1rem;
+      height: 1rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      pointer-events: none;
+    }
   }
 
   .field input {
