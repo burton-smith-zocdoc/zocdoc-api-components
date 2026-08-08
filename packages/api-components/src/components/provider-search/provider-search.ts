@@ -350,7 +350,7 @@ export class ZdProviderSearch extends CharmElement {
             id="specialty-select"
             part="specialty"
             .value=${this.specialtyId ?? ''}
-            ?aria-describedby=${this.fieldErrors.specialty ? 'field-error' : nothing}
+            aria-describedby=${this.fieldErrors.specialty ? 'field-error' : nothing}
             @change=${(event: Event) => {
               this.specialtyId = (event.target as HTMLSelectElement).value || undefined;
             }}
@@ -370,7 +370,7 @@ export class ZdProviderSearch extends CharmElement {
             autocomplete="postal-code"
             maxlength="5"
             .value=${this.zipCode}
-            ?aria-describedby=${this.fieldErrors.zip ? 'field-error' : nothing}
+            aria-describedby=${this.fieldErrors.zip ? 'field-error' : nothing}
             @input=${(event: Event) => {
               this.zipCode = (event.target as HTMLInputElement).value;
             }}
