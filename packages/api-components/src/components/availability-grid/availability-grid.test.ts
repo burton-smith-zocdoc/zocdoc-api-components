@@ -56,8 +56,16 @@ function dayCells(element: Grid): HTMLButtonElement[] {
   return parts<HTMLButtonElement>(element, 'day');
 }
 
+function windowControl(element: Grid): HTMLElement | null {
+  return shadow(element).querySelector('zd-availability-window');
+}
+
 function windowButton(element: Grid, direction: 'previous' | 'next'): HTMLButtonElement {
-  return part<HTMLButtonElement>(element, `window-${direction}`);
+  const windowEl = windowControl(element);
+  if (!windowEl) throw new Error('availability-grid rendered no window control');
+  const btn = windowEl.shadowRoot?.querySelector<HTMLButtonElement>(`[part~="window-${direction}"]`);
+  if (!btn) throw new Error(`window control rendered no [part~="window-${direction}"]`);
+  return btn;
 }
 
 /** The prop-driven way in: slots supplied, so nothing is fetched. */
@@ -136,7 +144,8 @@ describe('zd-availability-grid', () => {
      */
     it('names both ends of the range on show', async () => {
       const element = await mountSupplied('days="14"');
-      const range = texts(element, 'window-range')[0] ?? '';
+      const windowEl = windowControl(element)!;
+      const range = windowEl.shadowRoot!.querySelector('[part~="window-range"]')?.textContent ?? '';
 
       // Both ends inclusive, so a fortnight from today ends thirteen days along.
       expect(range).toContain(String(Number(TODAY.slice(8))));
@@ -222,22 +231,22 @@ describe('zd-availability-grid', () => {
       expect(events[0]!.detail.providerLocationId).toBe(PROVIDER_LOCATION_ID);
     });
 
-    it('marks the chosen day with aria-current', async () => {
+    it('marks the chosen day with aria-selected', async () => {
       const element = await mountSupplied();
 
       dayCells(element)[1]!.click();
       await settled(element);
 
       expect(element.selectedDay).toBe(TOMORROW);
-      expect(dayCells(element)[1]!.getAttribute('aria-current')).toBe('date');
-      expect(dayCells(element)[0]!.hasAttribute('aria-current')).toBe(false);
+      expect(dayCells(element)[1]!.getAttribute('aria-selected')).toBe('true');
+      expect(dayCells(element)[0]!.getAttribute('aria-selected')).toBe('false');
     });
 
     /** Settable so a host page resuming a booking can restore what was picked (COMP-004). */
     it('marks a day a host page set without a click', async () => {
       const element = await mountSupplied(`selected-day="${TOMORROW}"`);
 
-      expect(dayCells(element)[1]!.getAttribute('aria-current')).toBe('date');
+      expect(dayCells(element)[1]!.getAttribute('aria-selected')).toBe('true');
     });
   });
 
@@ -249,7 +258,7 @@ describe('zd-availability-grid', () => {
     it('cannot go earlier than today', async () => {
       const element = await mountSupplied();
 
-      expect(windowButton(element, 'previous').disabled).toBe(true);
+      expect(windowButton(element, 'previous').hasAttribute('disabled')).toBe(true);
     });
 
     it('moves forward by the width of the window and says so', async () => {
@@ -274,7 +283,7 @@ describe('zd-availability-grid', () => {
 
       windowButton(element, 'next').click();
       await settled(element);
-      expect(windowButton(element, 'previous').disabled).toBe(false);
+      expect(windowButton(element, 'previous').hasAttribute('disabled')).toBe(false);
 
       windowButton(element, 'previous').click();
       await settled(element);
@@ -326,7 +335,7 @@ describe('zd-availability-grid', () => {
     it('drops its own control on hide-window, keeping the days', async () => {
       const element = await mountSupplied('hide-window');
 
-      expect(shadow(element).querySelector('[part="window"]')).toBeNull();
+      expect(windowControl(element)).toBeNull();
       expect(dayCells(element)).toHaveLength(14);
     });
 
@@ -508,7 +517,7 @@ describe('zd-availability-grid', () => {
 
       // The pager is the only way out of an empty range, so it has to survive the message.
       expect(dayCells(element)).toHaveLength(14);
-      expect(shadow(element).querySelector('[part="window-next"]')).not.toBeNull();
+      expect(windowControl(element)).not.toBeNull();
       expect(shadow(element).querySelector('[part="error"]')).toBeNull();
     });
 

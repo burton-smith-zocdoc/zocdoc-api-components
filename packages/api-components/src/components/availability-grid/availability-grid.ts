@@ -8,29 +8,28 @@ import type {
   TypedEmit,
   TypedEventTarget,
 } from '../events.js';
+import { ZdAvailabilityWindow, type WindowShiftDetail } from '../availability-window/availability-window.js';
 import {
   getLocationSlots,
   nextWindowStart,
-  renderAvailabilityWindow,
   resolveWindowStart,
   windowEndDate,
   windowSpan,
-} from '../internal/availability-window.js';
-import windowStyles from '../internal/availability-window.styles.js';
-import { userFacingError } from '../internal/error-message.js';
-import { formatCount } from '../internal/format.js';
+} from '../../utilities/availability-window.js';
+import { userFacingError } from '../../utilities/error-message.js';
+import { formatCount } from '../../utilities/format.js';
 import {
   addDays,
   dayKey,
   isValidDate,
   providerLocalTime,
   todayDayKey,
-} from '../internal/provider-time.js';
+} from '../../utilities/provider-time.js';
 import {
   renderRequestState,
   requestStateDependencies,
   type RequestState,
-} from '../internal/request-state.js';
+} from '../../utilities/request-state.js';
 import styles from './availability-grid.styles.js';
 
 /** Split in two because a cell stacks the weekday over the date as separate lines. */
@@ -121,20 +120,15 @@ export class ZdAvailabilityGrid extends CharmElement {
   declare public removeEventListener: TypedEventTarget<ZdAvailabilityGridEventMap>['removeEventListener'];
   declare protected emit: TypedEmit<ZdAvailabilityGridEventMap>;
 
-  public static override styles = [
-    ...super.styles,
-    windowStyles,
-    styles,
-  ] as typeof CharmElement.styles;
+  public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   /**
-   * Only what the request states need. Every control here is a native `<button>` rather than a
-   * Charm one: a fourteen-cell grid on each of ten cards is a hundred and forty custom elements
-   * per page, and the cells are blocks of text, not buttons with variants. `provider-results`
-   * does the same for its provider control, and its style reset is the precedent for this one.
+   * The day cells use native buttons because a fourteen-cell grid on each of ten cards is a
+   * hundred and forty custom elements per page, and the cells are blocks of text, not buttons
+   * with variants.
    */
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [...requestStateDependencies];
+    return [...requestStateDependencies, ZdAvailabilityWindow];
   }
 
   /**
@@ -222,6 +216,10 @@ export class ZdAvailabilityGrid extends CharmElement {
 
   @state()
   private errorMessage?: string;
+
+  /** The day key that currently has roving tabindex="0". */
+  @state()
+  private rovingDay?: string;
 
   /** What the cells count: whatever a parent supplied, or whatever this component fetched. */
   private get slots(): readonly AvailabilitySlot[] {
@@ -323,6 +321,57 @@ export class ZdAvailabilityGrid extends CharmElement {
     return counts;
   }
 
+  /** Days with at least one appointment, in order. */
+  protected get enabledDays(): string[] {
+    return [...this.dayCounts].filter(([, count]) => count > 0).map(([day]) => day);
+  }
+
+  /** The day that should have tabindex="0": explicit roving state, selected day, or first enabled. */
+  protected get activeRovingDay(): string | undefined {
+    const enabled = this.enabledDays;
+    if (this.rovingDay && enabled.includes(this.rovingDay)) return this.rovingDay;
+    if (this.selectedDay && enabled.includes(this.selectedDay)) return this.selectedDay;
+    return enabled[0];
+  }
+
+  /** Handles arrow-key navigation within the day grid. */
+  protected handleDaysKeydown(event: KeyboardEvent): void {
+    const enabled = this.enabledDays;
+    if (enabled.length === 0) return;
+
+    const current = this.activeRovingDay;
+    const currentIndex = current ? enabled.indexOf(current) : -1;
+    let nextIndex: number | undefined;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        nextIndex = currentIndex < enabled.length - 1 ? currentIndex + 1 : 0;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : enabled.length - 1;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = enabled.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    const nextDay = enabled[nextIndex];
+    this.rovingDay = nextDay;
+
+    const button = this.shadowRoot?.querySelector<HTMLButtonElement>(
+      `button.day[data-day="${nextDay}"]`
+    );
+    button?.focus();
+  }
+
   /** Moves the window by its own width, so the ranges tile rather than overlap. */
   public shiftWindow(direction: -1 | 1): void {
     const startDate = nextWindowStart(this.windowStart, direction, this.days);
@@ -348,58 +397,68 @@ export class ZdAvailabilityGrid extends CharmElement {
    * Suppressed by `hide-window`, which is what a results list sets on every card: one control
    * above the list governs all of them.
    */
+  protected handleWindowShift(event: CustomEvent<WindowShiftDetail>): void {
+    this.shiftWindow(event.detail.direction);
+  }
+
   protected renderWindow(): unknown {
     if (this.hideWindow) return nothing;
 
-    return renderAvailabilityWindow({
-      startDate: this.windowStart,
-      endDate: this.windowEnd,
-      canGoEarlier: this.windowStart > todayDayKey(),
-      onShift: (direction) => this.shiftWindow(direction),
-    });
+    return this.html`
+      <scoped-availability-window
+        start-date=${this.windowStart}
+        end-date=${this.windowEnd}
+        .canGoEarlier=${this.windowStart > todayDayKey()}
+        @window-shift=${this.handleWindowShift}
+      ></scoped-availability-window>
+    `;
   }
 
   /**
-   * The cells, as a list so a screen reader says how many days there are before the user starts
-   * moving through them. Not `role="grid"`: the two rows are a wrapped single sequence, and
-   * claiming a grid would promise arrow-key navigation between rows that do not mean anything.
+   * The days as a listbox of selectable options. Each day is an option; disabled days have
+   * `aria-disabled`. Uses roving tabindex: only one enabled day is tabbable at a time, and arrow
+   * keys move between enabled days.
    *
-   * A day with nothing open is `disabled` rather than merely styled, so it is skipped by the
-   * keyboard instead of being a control that swallows every press.
+   * The "More" button lives outside the listbox since it is not a selectable date.
    */
   protected renderDays(): unknown {
+    const activeDay = this.activeRovingDay;
+
     return this.html`
-      <ul part="days">
+      <span id="days-label" class="visually-hidden">Available dates</span>
+      <div class="days" part="days" role="listbox" aria-labelledby="days-label" @keydown=${this.handleDaysKeydown}>
         ${[...this.dayCounts].map(([day, count]) => {
           const date = providerLocalTime(day);
+          const isEnabled = count > 0;
           return this.html`
-            <li>
-              <button
-                part="day"
-                type="button"
-                ?disabled=${count === 0}
-                aria-current=${day === this.selectedDay ? 'date' : nothing}
-                @click=${() => this.selectDay(day)}
-              >
-                <span part="day-weekday">${isValidDate(date) ? weekdayLabel.format(date) : ''}</span>
-                <span part="day-date">${isValidDate(date) ? dateLabel.format(date) : day}</span>
-                <span part="day-count">${countPhrase(count)}</span>
-              </button>
-            </li>
+            <button
+              class="day"
+              part="day"
+              type="button"
+              role="option"
+              data-day=${day}
+              tabindex=${isEnabled && day === activeDay ? 0 : -1}
+              ?disabled=${!isEnabled}
+              aria-disabled=${!isEnabled}
+              aria-selected=${day === this.selectedDay}
+              @click=${() => this.selectDay(day)}
+            >
+              <span class="day-weekday" part="day-weekday">${isValidDate(date) ? weekdayLabel.format(date) : ''}</span>
+              <span class="day-date" part="day-date">${isValidDate(date) ? dateLabel.format(date) : day}</span>
+              <span class="day-count" part="day-count">${countPhrase(count)}</span>
+            </button>
           `;
         })}
-        ${
-          this.showMore
-            ? this.html`
-                <li>
-                  <button part="more" type="button" @click=${() => this.emit('more-select', { detail: {} })}>
-                    More
-                  </button>
-                </li>
-              `
-            : nothing
-        }
-      </ul>
+      </div>
+      ${
+        this.showMore
+          ? this.html`
+              <button class="more" part="more" type="button" @click=${() => this.emit('more-select', { detail: {} })}>
+                More
+              </button>
+            `
+          : nothing
+      }
     `;
   }
 

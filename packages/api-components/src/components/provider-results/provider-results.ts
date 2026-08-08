@@ -8,20 +8,19 @@ import type {
   ProviderLocationAvailability,
 } from '../../client/types.js';
 import { ZdAvailabilityGrid } from '../availability-grid/availability-grid.js';
+import { ZdAvailabilityWindow, type WindowShiftDetail } from '../availability-window/availability-window.js';
 import { ZdProviderCard } from '../provider-card/provider-card.js';
 import { ZdProviderProfile } from '../provider-profile/provider-profile.js';
 import type { AvailabilityWindowDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import {
   nextWindowStart,
-  renderAvailabilityWindow,
   resolveWindowStart,
   windowEndDate,
-} from '../internal/availability-window.js';
-import { formatCount } from '../internal/format.js';
-import { NO_PROVIDERS_MATCH } from '../internal/messages.js';
-import windowStyles from '../internal/availability-window.styles.js';
-import { todayDayKey } from '../internal/provider-time.js';
-import summaryStyles from '../internal/provider-summary.styles.js';
+} from '../../utilities/availability-window.js';
+import { formatCount } from '../../utilities/format.js';
+import { NO_PROVIDERS_MATCH } from '../../utilities/messages.js';
+import { todayDayKey } from '../../utilities/provider-time.js';
+import summaryStyles from '../../utilities/provider-summary.styles.js';
 import styles from './provider-results.styles.js';
 
 /**
@@ -123,12 +122,11 @@ export class ZdProviderResults extends CharmElement {
   public static override styles = [
     ...super.styles,
     summaryStyles,
-    windowStyles,
     styles,
   ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdCard, ZdButton, ZdAvailabilityGrid, ZdProviderCard, ZdDialog, ZdProviderProfile];
+    return [ZdCard, ZdButton, ZdAvailabilityGrid, ZdAvailabilityWindow, ZdProviderCard, ZdDialog, ZdProviderProfile];
   }
 
   /** The provider locations to display. */
@@ -245,7 +243,7 @@ export class ZdProviderResults extends CharmElement {
     const count = formatCount(this.totalCount);
     const label = this.totalCount === 1 ? `${count} provider` : `${count} providers`;
 
-    return this.html`<p part="summary" role="status" aria-live="polite">${label}</p>`;
+    return this.html`<p class="summary" part="summary" role="status" aria-live="polite">${label}</p>`;
   }
 
   /**
@@ -256,6 +254,10 @@ export class ZdProviderResults extends CharmElement {
    * put every card on different dates, and a patient comparing them would be comparing nothing.
    * The cards get `hide-window` for the same reason.
    */
+  protected handleWindowShift(event: CustomEvent<WindowShiftDetail>): void {
+    this.shiftWindow(event.detail.direction);
+  }
+
   protected renderHeader(): unknown {
     const summary = this.renderSummary();
     if (this.availability === undefined) return summary;
@@ -263,14 +265,14 @@ export class ZdProviderResults extends CharmElement {
     const startDate = resolveWindowStart(this.availabilityStart);
 
     return this.html`
-      <div part="header">
+      <div class="header" part="header">
         ${summary}
-        ${renderAvailabilityWindow({
-          startDate,
-          endDate: windowEndDate(startDate, this.availabilityDays),
-          canGoEarlier: startDate > todayDayKey(),
-          onShift: (direction) => this.shiftWindow(direction),
-        })}
+        <scoped-availability-window
+          start-date=${startDate}
+          end-date=${windowEndDate(startDate, this.availabilityDays)}
+          .canGoEarlier=${startDate > todayDayKey()}
+          @window-shift=${this.handleWindowShift}
+        ></scoped-availability-window>
       </div>
     `;
   }
@@ -323,6 +325,7 @@ export class ZdProviderResults extends CharmElement {
     return this.html`
       <scoped-availability-grid
         slot="availability"
+        class="provider-availability"
         part="provider-availability"
         exportparts="days: availability-days, day: availability-day, empty: availability-empty"
         hide-window
@@ -371,12 +374,13 @@ export class ZdProviderResults extends CharmElement {
     return this.html`
       ${this.renderHeader()}
 
-      <ul part="list">
+      <ul class="list" part="list">
         ${this.providers.map((location) => {
           const badges = this.renderBadges(location);
           return this.html`
             <li>
               <scoped-provider-card
+                class="provider"
                 part="provider"
                 .provider=${location}
                 ?show-photo=${this.showPhotos}
@@ -419,7 +423,7 @@ export class ZdProviderResults extends CharmElement {
     const position = `Page ${formatCount(this.page + 1)} of ${formatCount(lastPage + 1)}`;
 
     return this.html`
-      <div part="pager">
+      <div class="pager" part="pager">
         <scoped-button
           part="pager-previous"
           variant="secondary"
@@ -430,7 +434,7 @@ export class ZdProviderResults extends CharmElement {
           Previous
         </scoped-button>
 
-        <p part="pager-position">${position}</p>
+        <p class="pager-position" part="pager-position">${position}</p>
 
         <scoped-button
           part="pager-next"

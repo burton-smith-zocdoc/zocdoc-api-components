@@ -467,9 +467,9 @@ describe('zd-provider-results', () => {
     it('renders one window control for the whole list', async () => {
       const element = await mountWithAvailability();
 
-      expect(shadow(element).querySelectorAll('[part="window"]')).toHaveLength(1);
+      expect(shadow(element).querySelectorAll('zd-availability-window')).toHaveLength(1);
       for (const grid of grids(element)) {
-        expect(grid.shadowRoot!.querySelector('[part="window"]')).toBeNull();
+        expect(grid.shadowRoot!.querySelector('zd-availability-window')).toBeNull();
       }
     });
 
@@ -494,7 +494,8 @@ describe('zd-provider-results', () => {
       const events: CustomEvent[] = [];
       element.addEventListener('window-change', (event) => events.push(event as CustomEvent));
 
-      shadow(element).querySelector<HTMLButtonElement>('[part="window-next"]')!.click();
+      const windowEl = shadow(element).querySelector('zd-availability-window')!;
+      windowEl.shadowRoot!.querySelector<HTMLButtonElement>('[part="window-next"]')!.click();
       await settled(element);
 
       expect(events).toHaveLength(1);
@@ -507,9 +508,10 @@ describe('zd-provider-results', () => {
     /* Nowhere earlier to go on the first window, since the API returns nothing in the past. */
     it('disables the earlier control at today', async () => {
       const element = await mountWithAvailability();
-      const previous = shadow(element).querySelector<HTMLButtonElement>('[part="window-previous"]');
+      const windowEl = shadow(element).querySelector('zd-availability-window')!;
+      const previous = windowEl.shadowRoot!.querySelector('[part="window-previous"]');
 
-      expect(previous!.disabled).toBe(true);
+      expect(previous!.hasAttribute('disabled')).toBe(true);
     });
 
     it('says nothing when the window cannot move any earlier', async () => {
@@ -558,7 +560,7 @@ describe('zd-provider-results', () => {
       const header = shadow(element).querySelector('[part="header"]');
 
       expect(header!.querySelector('[part="summary"]')).not.toBeNull();
-      expect(header!.querySelector('[part="window"]')).not.toBeNull();
+      expect(header!.querySelector('zd-availability-window')).not.toBeNull();
     });
   });
 
