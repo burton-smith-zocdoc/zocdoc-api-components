@@ -123,9 +123,10 @@ Redesign `zd-provider-search` to use a compact horizontal search bar with native
 2. **ZIP format** — "Enter a 5-digit ZIP code." (pattern: `/^\d{5}$/`)
 
 On validation failure:
-- Error message appears below the search bar (single error container)
+- Single error message appears below the search bar (not per-field errors, to preserve compact layout)
 - Focus moves to the first invalid field
 - Error container has `role="alert"`
+- Only one error shown at a time (first failing field in render order: specialty, then ZIP)
 
 ### Accessibility
 
