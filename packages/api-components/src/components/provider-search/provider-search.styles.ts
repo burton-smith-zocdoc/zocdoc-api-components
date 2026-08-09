@@ -30,68 +30,49 @@ export default css`
       border-inline-end: none;
       padding-inline-end: 0;
     }
-  }
 
-  .field label {
-    font-size: var(--zd-typography-label-lg-fontSize, 14px);
-    font-weight: var(--zd-typography-label-lg-fontWeight, 600);
-    color: var(--zd-formControl-helpText-color, #525252);
-    line-height: var(--zd-typography-label-lg-lineHeight, 1.25);
-  }
-
-  .field select,
-  .field input {
-    appearance: none;
-    border: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: var(--zd-typography-body-md-fontSize, 16px);
-    font-weight: var(--zd-typography-body-md-fontWeight, 400);
-    line-height: var(--zd-typography-body-md-lineHeight, 1.625);
-    color: var(--zd-body-fgColor, #171717);
-    width: 100%;
-    padding: 0;
-    cursor: pointer;
-
-    &::placeholder {
-      color: var(--zd-formControl-placeholderColor, #a3a3a3);
+    & label {
+      font-size: var(--zd-typography-label-lg-fontSize, 14px);
+      font-weight: var(--zd-typography-label-lg-fontWeight, 600);
+      color: var(--zd-formControl-helpText-color, #525252);
+      line-height: var(--zd-typography-label-lg-lineHeight, 1.25);
     }
 
-    &:focus {
-      outline: none;
+    & select,
+    & input {
+      appearance: none;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: var(--zd-typography-body-md-fontSize, 16px);
+      font-weight: var(--zd-typography-body-md-fontWeight, 400);
+      line-height: var(--zd-typography-body-md-lineHeight, 1.625);
+      color: var(--zd-body-fgColor, #171717);
+      width: 100%;
+      padding: 0;
+      cursor: pointer;
+
+      &::placeholder {
+        color: var(--zd-formControl-placeholderColor, #a3a3a3);
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: var(--zd-focus-outlineWidth, 2px) solid var(--zd-focus-outlineColor, #4e93f3);
+        outline-offset: var(--zd-focus-outlineOffset, 2px);
+        border-radius: var(--zd-borderRadius-sm, 4px);
+      }
     }
 
-    &:focus-visible {
-      outline: var(--zd-focus-outlineWidth, 2px) solid var(--zd-focus-outlineColor, #4e93f3);
-      outline-offset: var(--zd-focus-outlineOffset, 2px);
-      border-radius: var(--zd-borderRadius-sm, 4px);
+    & input {
+      cursor: text;
     }
   }
 
-  .field select {
-    padding-inline-end: 1.5rem;
-  }
-
-  .field--select::after {
-    content: '';
-    position: absolute;
-    inset-inline-end: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1rem;
-    height: 1rem;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    pointer-events: none;
-  }
-
-  .field input {
-    cursor: text;
-  }
-
-  .field--location {
+  .location {
     flex: 0 1 7rem;
     min-width: 5rem;
   }

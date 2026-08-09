@@ -344,7 +344,7 @@ export class ZdProviderSearch extends CharmElement {
 
     return this.html`
       <form class="search-bar" part="form" novalidate @submit=${(event: Event) => this.handleSubmit(event)}>
-        <div class="field field--select" part="specialty-field">
+        <div class="field" part="specialty-field">
           <label for="specialty-select">Search</label>
           <select
             id="specialty-select"
@@ -360,7 +360,7 @@ export class ZdProviderSearch extends CharmElement {
           </select>
         </div>
 
-        <div class="field field--location" part="location-field">
+        <div class="field location" part="location-field">
           <label for="location-input">ZIP code</label>
           <input
             id="location-input"
@@ -377,7 +377,7 @@ export class ZdProviderSearch extends CharmElement {
           />
         </div>
 
-        <div class="field field--select" part="insurance-field">
+        <div class="field" part="insurance-field">
           <label for="insurance-select">Insurance</label>
           <select
             id="insurance-select"
