@@ -1,0 +1,81 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderComponentApi > matches the snapshot for a component with a full surface 1`] = `
+"# zd-widget
+
+A widget. Renders a labelled control.
+
+**Class** \`ZdWidget\` — **Module** \`src/components/widget/widget.ts\` — **Package** \`@powered-by-zocdoc/primitives\`
+
+\`\`\`html
+<zd-widget></zd-widget>
+\`\`\`
+
+## Attributes & Properties
+
+| Attribute | Property | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| \`size\` | \`size\` | \`'default' \\| 'small' \\| undefined\` | \`'default'\` | Control size. |
+| \`patient-type\` | \`patientType\` | \`'new' \\| 'existing'\` | — | Which booking path to show. |
+| \`aria-label\` | — | \`string\` | — | Accessibility label. |
+| — | \`form\` | \`HTMLFormElement \\| null\` | — | The associated form. (readonly) |
+
+## Events
+
+| Event | Type | Description |
+| --- | --- | --- |
+| \`zd-widget-change\` | \`ZdWidgetChangeEvent\` | Fired when the value changes. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | Widget content. |
+
+## Methods
+
+| Method | Description |
+| --- | --- |
+| \`focus(options?: FocusOptions): void\` | Moves focus to the control. |
+
+## Inherited
+
+### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| \`disabled\` | \`disabled\` | \`boolean\` | \`false\` | Disables the control. | \`CoreWidget\` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| \`icon\` | Leading icon. | \`CoreWidget\` |
+"
+`;
+
+exports[`renderComponentApi > matches the snapshot for a component with no inherited API and no slots 1`] = `
+"# zd-thing
+
+Fetches and renders a thing.
+
+**Class** \`ZdThing\` — **Module** \`src/components/thing/thing.ts\` — **Package** \`@powered-by-zocdoc/primitives\`
+
+\`\`\`html
+<zd-thing></zd-thing>
+\`\`\`
+
+## Attributes & Properties
+
+| Attribute | Property | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| — | \`values\` | \`Record<string, string>\` | — | Current field values. |
+| — | \`state\` | \`'idle' \\| 'loading' \\| 'success' \\| 'empty' \\| 'error'\` | \`'idle'\` | — |
+
+## Events
+
+| Event | Type | Description |
+| --- | --- | --- |
+| \`zd-thing-error\` | \`ZocdocErrorEvent\` | — |
+"
+`;
