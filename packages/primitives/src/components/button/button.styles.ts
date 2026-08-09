@@ -209,9 +209,9 @@ export default css`
         text-decoration: var(--zd-button-link-hover-decoration);
       }
     }
-  }
 
-  :host([variant="link"]:not([disabled])) .control:active {
-    text-decoration: var(--zd-button-link-active-decoration);
+    &:not([disabled]) .control:active {
+      text-decoration: var(--zd-button-link-active-decoration);
+    }
   }
 `;

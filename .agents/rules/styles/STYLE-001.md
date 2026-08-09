@@ -1,6 +1,6 @@
-# STYLE-001: Prefer CSS nesting
+# STYLE-001: Use CSS nesting everywhere
 
-Nest related rules inside their parent instead of repeating the selector chain. Native CSS nesting is supported in every browser we target and works as-is inside Lit `css` templates — no preprocessor involved.
+Always nest related rules inside their parent — never repeat the selector chain. Native CSS nesting is supported in every browser we target and works as-is inside Lit `css` templates — no preprocessor involved.
 
 Nest when the child rule is a variation of the parent:
 
@@ -60,7 +60,17 @@ Reference the parent with `&` explicitly. Keep nesting to two or three levels �
 
 **Declarations first.** Put a rule's own declarations above its nested rules. Declarations placed after a nested rule are legal in current browsers but read as a mistake and behave surprisingly in older ones.
 
-**Conditions on the host stay in `:host()`.** A nested `&` expands to the full parent selector, so anything that narrows the host itself belongs in the `:host()` argument, not in a nested rule. Selectors that compound extra conditions onto the host — for example `:host([variant='link']:not([disabled])) .control:active` — are clearer left flat than contorted into a nest.
+**Compound host conditions nest too.** A nested `&` expands to the full parent selector, so `&:not([disabled])` inside `:host([variant='link'])` becomes `:host([variant='link']):not([disabled])` — functionally equivalent to `:host([variant='link']:not([disabled]))`. Use this to keep related rules together:
+
+```css
+:host([variant='link']) {
+  /* base link styles */
+
+  &:not([disabled]) .control:active {
+    text-decoration: var(--zd-button-link-active-decoration);
+  }
+}
+```
 
 **Don't nest to group.** Nesting expresses "this is a variation of that." Rules that merely appear near each other stay flat; use a comment to group them.
 
