@@ -54,4 +54,24 @@ describe('writeDocs', () => {
 
     expect(fs.files.get('deep/nested/out/a.md')).toBe('# A\n');
   });
+
+  it('rejects a name that escapes outDir, before writing any entry in the map', () => {
+    const fs = memoryFileSystem({ 'out/a.md': '# A\n' });
+    const before = new Map(fs.files);
+    const files = new Map([
+      ['ok.md', '# OK\n'],
+      ['../evil.md', '# Evil\n'],
+    ]);
+
+    expect(() => writeDocs('out', files, fs)).toThrow(/outDir/);
+    expect(fs.files).toEqual(before);
+  });
+
+  it('allows a legitimate name that merely contains dots', () => {
+    const fs = memoryFileSystem();
+    const report = writeDocs('out', new Map([['zd-x.y.md', '# XY\n']]), fs);
+
+    expect(fs.files.get('out/zd-x.y.md')).toBe('# XY\n');
+    expect(report.written).toEqual(['out/zd-x.y.md']);
+  });
 });

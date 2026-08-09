@@ -1,5 +1,13 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
+import { join, resolve, sep } from 'node:path';
 
 /**
  * The only filesystem surface the generator uses. A port rather than direct `node:fs` calls
@@ -22,6 +30,10 @@ export const nodeFileSystem: FileSystem = {
     writeFileSync(path, content, 'utf-8');
   },
   remove(path) {
+    // Pruning only ever targets `*.md` files, but a directory named `notes.md` is possible on
+    // disk. Recursively deleting a directory tree is a far worse failure than leaving a stray
+    // one behind, so this skips directories rather than adding `recursive: true`.
+    if (existsSync(path) && statSync(path).isDirectory()) return;
     rmSync(path, { force: true });
   },
   list(path) {
@@ -66,6 +78,21 @@ export interface WriteReport {
 }
 
 /**
+ * Resolve `name` against `outDir` and confirm the result is still contained within it.
+ * `outDir` is the only directory this module has write authority over, so a `files` map key
+ * such as `../evil.md` must be rejected rather than silently escaping it.
+ */
+function resolveContained(outDir: string, name: string): string {
+  const path = join(outDir, name);
+  const resolvedOutDir = resolve(outDir);
+  const resolvedPath = resolve(path);
+  if (resolvedPath !== resolvedOutDir && !resolvedPath.startsWith(resolvedOutDir + sep)) {
+    throw new Error(`Refusing to write "${name}": resolves outside outDir "${outDir}"`);
+  }
+  return path;
+}
+
+/**
  * Write the generated pages and remove orphans.
  *
  * Byte-identical content is not rewritten: `analyze` runs on every build, and touching
@@ -79,12 +106,19 @@ export function writeDocs(
   files: Map<string, string>,
   fs: FileSystem
 ): WriteReport {
+  // Resolve and validate every path before touching the filesystem, so one bad name in the
+  // map can't cause a partial write of the entries that come before it in iteration order.
+  const paths = new Map<string, string>();
+  for (const name of files.keys()) {
+    paths.set(name, resolveContained(outDir, name));
+  }
+
   fs.mkdirp(outDir);
 
   const report: WriteReport = { written: [], unchanged: [], pruned: [] };
 
   for (const [name, content] of files) {
-    const path = join(outDir, name);
+    const path = paths.get(name)!;
     if (fs.read(path) === content) {
       report.unchanged.push(path);
       continue;
