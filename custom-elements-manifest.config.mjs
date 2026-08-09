@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { cemInheritancePlugin } from '@wc-toolkit/cem-inheritance';
-import { typeParserPlugin } from '@wc-toolkit/type-parser';
+import { getTsProgram, typeParserPlugin } from '@wc-toolkit/type-parser';
 import { jsDocTagsPlugin } from '@wc-toolkit/jsdoc-tags';
 import { modulePathResolverPlugin } from '@wc-toolkit/module-path-resolver';
 import { cemSorterPlugin } from '@wc-toolkit/cem-sorter';
@@ -25,4 +25,11 @@ export default {
     cssPrefixPlugin({ prefix: 'zd' }),
     cemSorterPlugin(),
   ],
+
+  overrideModuleCreation({ ts, globs }) {
+    const program = getTsProgram(ts, globs, 'tsconfig.json');
+    return program
+      .getSourceFiles()
+      .filter((sf) => globs.find((glob) => sf.fileName.includes(glob)));
+  },
 };

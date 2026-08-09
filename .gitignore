@@ -15,3 +15,5 @@ __screenshots__
 __fixtures__
 .playwright-cli
 *.log
+# pnpm project-local store
+.pnpm-store/
