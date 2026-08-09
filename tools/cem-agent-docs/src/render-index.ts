@@ -30,7 +30,7 @@ export function renderIndex(components: Component[], config: AgentDocsConfig): s
   );
 
   const out: string[] = [
-    `# ${config.packageName} — Component Index`,
+    `# \`${config.packageName}\` — Component Index`,
     'Generated from the Custom Elements Manifest. Do not edit by hand.',
     `${sorted.length} components. Read this file first, then open the one page you need.`,
   ];

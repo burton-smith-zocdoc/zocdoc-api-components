@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`renderIndex > matches the snapshot 1`] = `
-"# @powered-by-zocdoc/primitives — Component Index
+"# \`@powered-by-zocdoc/primitives\` — Component Index
 
 Generated from the Custom Elements Manifest. Do not edit by hand.
 
