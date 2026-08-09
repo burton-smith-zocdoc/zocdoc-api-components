@@ -1,0 +1,14 @@
+{
+  // Node runs these files directly via type stripping — there is no emit and no build step
+  // before `analyze`. `allowImportingTsExtensions` is what lets the source write the explicit
+  // `./foo.ts` specifiers that Node's ESM resolver requires, and `erasableSyntaxOnly` makes
+  // `tsc` reject the syntax the stripper cannot handle (enum, namespace, parameter properties)
+  // instead of letting it fail at analyze time.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"]
+}

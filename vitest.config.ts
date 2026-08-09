@@ -92,6 +92,19 @@ export default defineConfig({
           },
         },
       },
+      {
+        test: {
+          clearMocks,
+          /**
+           * Build tooling under `tools/`. Needs its own project because `client` — the
+           * catch-all — is scoped to `packages/*`, so without this these tests are collected
+           * by nothing and pass vacuously.
+           */
+          name: 'tools',
+          environment: 'node',
+          include: ['tools/*/src/**/*.test.ts'],
+        },
+      },
     ],
   },
 });
