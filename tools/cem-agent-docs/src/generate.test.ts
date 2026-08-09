@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { generateAgentDocs, selectComponents } from './generate.ts';
 import { fixtureManifest } from './test/fixtures.ts';
 import { memoryFileSystem } from './write.ts';
-import type { AgentDocsConfig } from './types.ts';
+import type { AgentDocsConfig, Package } from './types.ts';
 
 const config: AgentDocsConfig = {
   packageName: '@powered-by-zocdoc/primitives',
@@ -34,6 +34,9 @@ describe('generateAgentDocs', () => {
       'refs/zd-widget.md',
       'refs/zd-widget.styling.md',
     ]);
+    // A component whose render result carries a `styling` string gets a link — the positive
+    // side of the "index reports what was written" rule.
+    expect(fs.files.get('refs/index.md')).toContain('zd-widget.styling.md');
   });
 
   it('is idempotent — a second run writes nothing', () => {
@@ -79,6 +82,10 @@ describe('generateAgentDocs', () => {
 
     expect(fs.files.get('refs/zd-widget.md')).toBe('custom zd-widget\n');
     expect(fs.files.has('refs/zd-widget.styling.md')).toBe(false);
+    // Regression: zd-widget has a raw styling surface (cssParts/cssStates/cssProperties), but
+    // this custom render hook never produced a styling page. The index must link to what was
+    // actually written, not to what the raw component fields imply, or the link is dead.
+    expect(fs.files.get('refs/index.md')).not.toContain('zd-widget.styling.md');
   });
 
   it('treats a render hook returning null as a skip', () => {
@@ -131,5 +138,32 @@ describe('generateAgentDocs', () => {
         fs
       )
     ).toThrow(/zd-widget.*boom/s);
+  });
+
+  it('throws naming the component when tagName is not a safe basename', () => {
+    const fs = memoryFileSystem();
+    const manifest: Package = {
+      schemaVersion: '2.1.0',
+      modules: [
+        {
+          kind: 'javascript-module',
+          path: 'src/components/evil/evil.ts',
+          declarations: [
+            { kind: 'class', name: 'ZdEvil', tagName: 'a/b', customElement: true },
+          ],
+        },
+      ],
+    };
+
+    expect(() => generateAgentDocs(manifest, config, fs)).toThrow(/a\/b.*ZdEvil/s);
+  });
+
+  it('produces an index reflecting zero components when the filter excludes everything', () => {
+    const fs = memoryFileSystem();
+    const report = generateAgentDocs(fixtureManifest(), { ...config, filter: () => false }, fs);
+
+    expect([...fs.files.keys()]).toEqual(['refs/index.md']);
+    expect(fs.files.get('refs/index.md')).toContain('0 components');
+    expect(report.written).toEqual(['refs/index.md']);
   });
 });

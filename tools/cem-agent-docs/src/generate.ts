@@ -12,6 +12,16 @@ import type {
 import { nodeFileSystem, writeDocs, type FileSystem, type WriteReport } from './write.ts';
 
 /**
+ * A `tagName` is only ever used as a filename basename (`<tag>.md`, `<tag>.styling.md`), never
+ * joined into a deeper path. A manifest that carries a slash, backslash, or a dot-segment in
+ * `tagName` is malformed — `write.ts`'s outside-outDir guard would accept the resulting nested
+ * path, so this must reject it before it ever reaches the file map.
+ */
+function isSafeBasename(name: string): boolean {
+  return name !== '.' && name !== '..' && !/[/\\]/.test(name);
+}
+
+/**
  * Every custom element in the manifest, tag-sorted, after the filter hook.
  *
  * A declaration with no `tagName` is skipped silently — base classes and mixins are expected
@@ -49,8 +59,17 @@ export function generateAgentDocs(
 
   const files = new Map<string, string>();
   const rendered: Component[] = [];
+  const stylingPages = new Set<string>();
 
   for (const component of candidates) {
+    const tag = component.tagName as string;
+    if (!isSafeBasename(tag)) {
+      throw new Error(
+        `agent-docs: invalid tagName "${tag}" for component ${component.name}: ` +
+          `tag names must be a plain basename, not a path`
+      );
+    }
+
     const ctx: RenderContext = {
       config,
       api: normalizeApi(component),
@@ -72,13 +91,15 @@ export function generateAgentDocs(
     }
     if (!result) continue;
 
-    const tag = component.tagName as string;
     files.set(`${tag}.md`, result.api);
-    if (result.styling) files.set(`${tag}.styling.md`, result.styling);
+    if (result.styling) {
+      files.set(`${tag}.styling.md`, result.styling);
+      stylingPages.add(tag);
+    }
     rendered.push(component);
   }
 
-  files.set('index.md', renderIndex(rendered, config));
+  files.set('index.md', renderIndex(rendered, config, stylingPages));
 
   return writeDocs(config.outDir, files, fs);
 }

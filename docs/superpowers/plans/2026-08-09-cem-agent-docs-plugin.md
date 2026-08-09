@@ -1483,9 +1483,18 @@ git commit -m "feat(cem-agent-docs): render the styling page and compose the def
 
 **Interfaces:**
 - Consumes: `Component`, `AgentDocsConfig` from `./types.ts`.
-- Produces: `renderIndex(components: Component[], config: AgentDocsConfig): string`; `firstSentence(text: string | undefined, maxLength?: number): string`.
+- Produces: `renderIndex(components: Component[], config: AgentDocsConfig, stylingPages: ReadonlySet<string>): string`; `firstSentence(text: string | undefined, maxLength?: number): string`.
 
 Per the amendment above, the index is a flat tag-sorted list. It is the only file an agent needs to decide where to look next, so it must stay one line per component.
+
+> **Fix round 1 note:** the styling link in each row comes from `stylingPages`, the set of tags
+> that actually got a `<tag>.styling.md` file written by `generate.ts` — not from re-deriving
+> "does this component have a styling surface" off the raw `Component.cssParts` /
+> `cssStates` / `cssProperties` fields. Two sources of truth for the same fact drift: a custom
+> `render` hook can return `{ api }` only for a component whose raw fields say it has a styling
+> surface, and a `hasStyling(component)` check would then link to a page that was never written
+> (and gets pruned on the next run). The index must report what was written, not what the
+> manifest merely implies.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1528,33 +1537,46 @@ describe('firstSentence', () => {
 
 describe('renderIndex', () => {
   it('matches the snapshot', () => {
-    expect(renderIndex([thingComponent(), widgetComponent()], config)).toMatchSnapshot();
+    expect(
+      renderIndex([thingComponent(), widgetComponent()], config, new Set(['zd-widget']))
+    ).toMatchSnapshot();
   });
 
   it('sorts by tag name regardless of input order', () => {
-    const md = renderIndex([widgetComponent(), thingComponent()], config);
+    const md = renderIndex([widgetComponent(), thingComponent()], config, new Set());
     expect(md.indexOf('zd-thing')).toBeLessThan(md.indexOf('zd-widget'));
   });
 
   it('links each component to its page', () => {
-    const md = renderIndex([widgetComponent()], config);
+    const md = renderIndex([widgetComponent()], config, new Set());
     expect(md).toContain('- [`zd-widget`](zd-widget.md) — A widget.');
   });
 
-  it('notes the styling page only when one exists', () => {
-    const md = renderIndex([widgetComponent(), thingComponent()], config);
+  it('notes the styling page only when its tag is in stylingPages', () => {
+    const md = renderIndex(
+      [widgetComponent(), thingComponent()],
+      config,
+      new Set(['zd-widget'])
+    );
     expect(md).toContain('[styling](zd-widget.styling.md)');
     expect(md).not.toContain('zd-thing.styling.md');
   });
 
+  it('omits the styling link when the tag is absent from stylingPages, even though the raw component has a styling surface', () => {
+    // widgetComponent() carries cssParts/cssStates/cssProperties, but the link must come from
+    // what was actually written (stylingPages), not from those raw fields.
+    const md = renderIndex([widgetComponent()], config, new Set());
+    expect(md).not.toContain('styling');
+  });
+
   it('states the count and the package', () => {
-    const md = renderIndex([widgetComponent(), thingComponent()], config);
+    const md = renderIndex([widgetComponent(), thingComponent()], config, new Set());
     expect(md).toContain('`@powered-by-zocdoc/primitives`');
     expect(md).toContain('2 components');
   });
 
   it('handles an empty component list without emitting a broken list', () => {
-    const md = renderIndex([], config);
+    const md = renderIndex([], config, new Set());
     expect(md).toContain('0 components');
     expect(md).not.toContain('- [');
   });
@@ -1570,13 +1592,6 @@ Expected: FAIL — `Failed to resolve import "./render-index.ts"`
 
 ```ts
 import type { AgentDocsConfig, Component } from './types.ts';
-
-/** True when the component exposes anything a styling page would document. */
-function hasStyling(component: Component): boolean {
-  return Boolean(
-    component.cssParts?.length || component.cssStates?.length || component.cssProperties?.length
-  );
-}
 
 /**
  * The first sentence of a class JSDoc, flattened and capped. The index is the file an agent
@@ -1594,8 +1609,18 @@ export function firstSentence(text: string | undefined, maxLength = 120): string
  * A flat, tag-sorted catalog. Deliberately not grouped by category: nothing in the manifest
  * carries one, and a taxonomy the generator invents would be wrong the first time a component
  * is added.
+ *
+ * `stylingPages` is the set of tags that actually got a `<tag>.styling.md` file written — not
+ * a re-derivation from the component's raw `cssParts`/`cssStates`/`cssProperties` fields. A
+ * custom `render` hook can produce an API page without a styling page even when the raw
+ * component has a styling surface, and the index must link to what exists on disk, not to
+ * what the manifest merely implies.
  */
-export function renderIndex(components: Component[], config: AgentDocsConfig): string {
+export function renderIndex(
+  components: Component[],
+  config: AgentDocsConfig,
+  stylingPages: ReadonlySet<string>
+): string {
   const sorted = [...components].sort((a, b) =>
     (a.tagName ?? a.name).localeCompare(b.tagName ?? b.name)
   );
@@ -1612,7 +1637,7 @@ export function renderIndex(components: Component[], config: AgentDocsConfig): s
         .map((component) => {
           const tag = component.tagName ?? component.name;
           const summary = firstSentence(component.summary ?? component.description);
-          const styling = hasStyling(component) ? ` · [styling](${tag}.styling.md)` : '';
+          const styling = stylingPages.has(tag) ? ` · [styling](${tag}.styling.md)` : '';
           return `- [\`${tag}\`](${tag}.md) — ${summary || 'No description.'}${styling}`;
         })
         .join('\n')
@@ -1863,7 +1888,7 @@ import { describe, expect, it } from 'vitest';
 import { generateAgentDocs, selectComponents } from './generate.ts';
 import { fixtureManifest } from './test/fixtures.ts';
 import { memoryFileSystem } from './write.ts';
-import type { AgentDocsConfig } from './types.ts';
+import type { AgentDocsConfig, Package } from './types.ts';
 
 const config: AgentDocsConfig = {
   packageName: '@powered-by-zocdoc/primitives',
@@ -1895,6 +1920,9 @@ describe('generateAgentDocs', () => {
       'refs/zd-widget.md',
       'refs/zd-widget.styling.md',
     ]);
+    // A component whose render result carries a `styling` string gets a link — the positive
+    // side of the "index reports what was written" rule.
+    expect(fs.files.get('refs/index.md')).toContain('zd-widget.styling.md');
   });
 
   it('is idempotent — a second run writes nothing', () => {
@@ -1940,6 +1968,10 @@ describe('generateAgentDocs', () => {
 
     expect(fs.files.get('refs/zd-widget.md')).toBe('custom zd-widget\n');
     expect(fs.files.has('refs/zd-widget.styling.md')).toBe(false);
+    // Regression: zd-widget has a raw styling surface (cssParts/cssStates/cssProperties), but
+    // this custom render hook never produced a styling page. The index must link to what was
+    // actually written, not to what the raw component fields imply, or the link is dead.
+    expect(fs.files.get('refs/index.md')).not.toContain('zd-widget.styling.md');
   });
 
   it('treats a render hook returning null as a skip', () => {
@@ -1993,6 +2025,33 @@ describe('generateAgentDocs', () => {
       )
     ).toThrow(/zd-widget.*boom/s);
   });
+
+  it('throws naming the component when tagName is not a safe basename', () => {
+    const fs = memoryFileSystem();
+    const manifest: Package = {
+      schemaVersion: '2.1.0',
+      modules: [
+        {
+          kind: 'javascript-module',
+          path: 'src/components/evil/evil.ts',
+          declarations: [
+            { kind: 'class', name: 'ZdEvil', tagName: 'a/b', customElement: true },
+          ],
+        },
+      ],
+    };
+
+    expect(() => generateAgentDocs(manifest, config, fs)).toThrow(/a\/b.*ZdEvil/s);
+  });
+
+  it('produces an index reflecting zero components when the filter excludes everything', () => {
+    const fs = memoryFileSystem();
+    const report = generateAgentDocs(fixtureManifest(), { ...config, filter: () => false }, fs);
+
+    expect([...fs.files.keys()]).toEqual(['refs/index.md']);
+    expect(fs.files.get('refs/index.md')).toContain('0 components');
+    expect(report.written).toEqual(['refs/index.md']);
+  });
 });
 ```
 
@@ -2016,6 +2075,16 @@ import type {
   RenderResult,
 } from './types.ts';
 import { nodeFileSystem, writeDocs, type FileSystem, type WriteReport } from './write.ts';
+
+/**
+ * A `tagName` is only ever used as a filename basename (`<tag>.md`, `<tag>.styling.md`), never
+ * joined into a deeper path. A manifest that carries a slash, backslash, or a dot-segment in
+ * `tagName` is malformed — `write.ts`'s outside-outDir guard would accept the resulting nested
+ * path, so this must reject it before it ever reaches the file map.
+ */
+function isSafeBasename(name: string): boolean {
+  return name !== '.' && name !== '..' && !/[/\\]/.test(name);
+}
 
 /**
  * Every custom element in the manifest, tag-sorted, after the filter hook.
@@ -2055,8 +2124,17 @@ export function generateAgentDocs(
 
   const files = new Map<string, string>();
   const rendered: Component[] = [];
+  const stylingPages = new Set<string>();
 
   for (const component of candidates) {
+    const tag = component.tagName as string;
+    if (!isSafeBasename(tag)) {
+      throw new Error(
+        `agent-docs: invalid tagName "${tag}" for component ${component.name}: ` +
+          `tag names must be a plain basename, not a path`
+      );
+    }
+
     const ctx: RenderContext = {
       config,
       api: normalizeApi(component),
@@ -2078,13 +2156,17 @@ export function generateAgentDocs(
     }
     if (!result) continue;
 
-    const tag = component.tagName as string;
     files.set(`${tag}.md`, result.api);
-    if (result.styling) files.set(`${tag}.styling.md`, result.styling);
+    if (result.styling) {
+      files.set(`${tag}.styling.md`, result.styling);
+      stylingPages.add(tag);
+    }
     rendered.push(component);
   }
 
-  files.set('index.md', renderIndex(rendered, config));
+  // `stylingPages` and the `${tag}.styling.md` file entry are both derived from the single
+  // `if (result.styling)` check above, so the index and the file map cannot drift.
+  files.set('index.md', renderIndex(rendered, config, stylingPages));
 
   return writeDocs(config.outDir, files, fs);
 }

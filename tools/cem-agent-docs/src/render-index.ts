@@ -1,12 +1,5 @@
 import type { AgentDocsConfig, Component } from './types.ts';
 
-/** True when the component exposes anything a styling page would document. */
-function hasStyling(component: Component): boolean {
-  return Boolean(
-    component.cssParts?.length || component.cssStates?.length || component.cssProperties?.length
-  );
-}
-
 /**
  * The first sentence of a class JSDoc, flattened and capped. The index is the file an agent
  * reads to decide where to look next, so a line that runs long defeats the point.
@@ -23,8 +16,18 @@ export function firstSentence(text: string | undefined, maxLength = 120): string
  * A flat, tag-sorted catalog. Deliberately not grouped by category: nothing in the manifest
  * carries one, and a taxonomy the generator invents would be wrong the first time a component
  * is added.
+ *
+ * `stylingPages` is the set of tags that actually got a `<tag>.styling.md` file written — not
+ * a re-derivation from the component's raw `cssParts`/`cssStates`/`cssProperties` fields. A
+ * custom `render` hook can produce an API page without a styling page even when the raw
+ * component has a styling surface, and the index must link to what exists on disk, not to
+ * what the manifest merely implies.
  */
-export function renderIndex(components: Component[], config: AgentDocsConfig): string {
+export function renderIndex(
+  components: Component[],
+  config: AgentDocsConfig,
+  stylingPages: ReadonlySet<string>
+): string {
   const sorted = [...components].sort((a, b) =>
     (a.tagName ?? a.name).localeCompare(b.tagName ?? b.name)
   );
@@ -41,7 +44,7 @@ export function renderIndex(components: Component[], config: AgentDocsConfig): s
         .map((component) => {
           const tag = component.tagName ?? component.name;
           const summary = firstSentence(component.summary ?? component.description);
-          const styling = hasStyling(component) ? ` · [styling](${tag}.styling.md)` : '';
+          const styling = stylingPages.has(tag) ? ` · [styling](${tag}.styling.md)` : '';
           return `- [\`${tag}\`](${tag}.md) — ${summary || 'No description.'}${styling}`;
         })
         .join('\n')
