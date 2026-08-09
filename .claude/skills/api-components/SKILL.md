@@ -5,7 +5,7 @@ description: Map of @powered-by-zocdoc/api-components - which file to read for w
 
 # API Components Reference
 
-Booking components for the Zocdoc public API. Seven public components over a
+Booking components for the Zocdoc public API. Ten public components over a
 client layer, sharing one state machine and a folder of internal helpers.
 
 For the layers around this one: `client` (endpoints, errors, caching), `testing`
