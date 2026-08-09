@@ -10,5 +10,5 @@ Claude Code-specific path-gated rules are configured in `.claude/rules/`.
 
 These files are too large or generated - use source files instead:
 
-- `custom-elements.json` (1.2MB generated manifest)
+- `**/custom-elements.json` (generated manifests up to 1.3MB — root and each package)
 - `packages/*/dist/` (build output)

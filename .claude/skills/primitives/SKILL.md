@@ -54,7 +54,7 @@ infer. Read the exceptions, not the pattern.
 |------|------|---------|
 | `TOKENS.md` | ~2900 lines, ~45k tokens | `grep -A25 '^  button:' TOKENS.md` (generated — see below) |
 | `src/theme/zocdoc.ts` | ~2600 lines, ~25k tokens | grep for the camelCase group, e.g. `grep -n 'primary: {' -A12` |
-| `custom-elements.json` | 1.2MB generated | read the source component |
+| `**/custom-elements.json` | up to 1.3MB generated (package and root manifests) | read the source component, or [`references/index.md`](references/index.md) for the summary |
 
 ### Which token file to grep
 
@@ -125,71 +125,16 @@ new import, and so the `stylesheet-tokens` test discovers every component. Don't
 
 ## Component Catalog
 
-### Layout & Structure
-| Component | Tag | Notes |
-|-----------|-----|-------|
-| `ZdCard` | `zd-card` | Container with padding/border |
-| `ZdDivider` | `zd-divider` | Horizontal rule |
-| `ZdAccordion` | `zd-accordion` | Expandable sections container |
-| `ZdAccordionItem` | `zd-accordion-item` | Single accordion section |
-| `ZdDisclosure` | `zd-disclosure` | Show/hide content |
-| `ZdTabs` | `zd-tabs` | Tab container |
-| `ZdTab` | `zd-tab` | Tab trigger |
-| `ZdTabPanel` | `zd-tab-panel` | Tab content |
+Generated from the manifest, so it cannot drift. Read the index first, then open the one
+component you need — do not read the whole directory.
 
-### Buttons & Actions
-| Component | Tag | Variants |
-|-----------|-----|----------|
-| `ZdButton` | `zd-button` | `primary`, `secondary`, `inverse`, `ghost`, `destructive`, `link` |
-| `ZdButtonGroup` | `zd-button-group` | Groups buttons horizontally |
-| `ZdButtonGroupOverflow` | `zd-button-group-overflow` | Overflow menu for button groups |
+- [`references/index.md`](references/index.md) — every tag with a one-line summary
+- `references/<tag>.md` — attributes, properties, events, slots, methods, inherited API
+- `references/<tag>.styling.md` — CSS parts, custom properties, states
 
-**ZdButton props**: `variant`, `size` (`default` \| `small`), `fluid` (boolean)
-
-### Form Inputs
-| Component | Tag | Notes |
-|-----------|-----|-------|
-| `ZdInput` | `zd-input` | Text input, supports `size` prop |
-| `ZdTextArea` | `zd-text-area` | Multi-line text, supports `size` prop |
-| `ZdSelect` | `zd-select` | Dropdown select — **no `size` prop**, see below |
-| `ZdCheckbox` | `zd-checkbox` | Checkbox, supports `size` prop |
-| `ZdRadio` | `zd-radio` | Radio button, supports `size` prop |
-| `ZdRadioGroup` | `zd-radio-group` | Radio button group |
-| `ZdSwitch` | `zd-switch` | Toggle switch |
-
-### Feedback & Status
-| Component | Tag | Variants |
-|-----------|-----|----------|
-| `ZdAlert` | `zd-alert` | `info`, `success`, `warning`, `danger` |
-| `ZdBadge` | `zd-badge` | `neutral`, `inverse`, `info`, `success`, `warning`, `danger`, `caution`, `brand` |
-| `ZdSpinner` | `zd-spinner` | Loading indicator |
-| `ZdProgressBar` | `zd-progress-bar` | Progress indicator |
-| `ZdSkeleton` | `zd-skeleton` | Loading placeholder |
-| `ZdTooltip` | `zd-tooltip` | Hover tooltip |
-
-### Overlays & Popups
-| Component | Tag | Notes |
-|-----------|-----|-------|
-| `ZdDialog` | `zd-dialog` | Modal dialog |
-| `ZdPopup` | `zd-popup` | Positioned popup |
-| `ZdPushPane` | `zd-push-pane` | Slide-in panel |
-| `ZdMenu` | `zd-menu` | Dropdown menu container |
-| `ZdMenuGroup` | `zd-menu-group` | Menu section |
-| `ZdMenuItem` | `zd-menu-item` | Menu item |
-
-### Navigation
-| Component | Tag | Notes |
-|-----------|-----|-------|
-| `ZdBreadcrumb` | `zd-breadcrumb` | Breadcrumb container |
-| `ZdBreadcrumbItem` | `zd-breadcrumb-item` | Breadcrumb link |
-
-### Utility
-| Component | Tag | Notes |
-|-----------|-----|-------|
-| `ZdIcon` | `zd-icon` | SVG icon |
-| `ZdAvatar` | `zd-avatar` | User avatar |
-| `ZdOverflow` | `zd-overflow` | Overflow container |
-| `ZdScopedStyles` | `zd-scoped-styles` | Style scoping |
+One caveat the generated pages cannot express: `zd-select`'s `size` attribute is a `number`
+(visible rows, the native `<select>` meaning), not the `'default' | 'small'` control size the
+other five form primitives take. See "Size Prop" below.
 
 ## Creating a New Primitive
 

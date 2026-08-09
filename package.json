@@ -16,6 +16,7 @@
     "test:client": "pnpm run build:types && vitest run --project client",
     "test:components": "pnpm run build:types && vitest run --project components",
     "analyze": "cem analyze --litelement --globs \"packages/*/src/**/*.ts\" --exclude \"**/*.stories.ts\" --exclude \"**/*.test.ts\"",
+    "docs:check": "pnpm run analyze && pnpm -r run analyze && git diff --exit-code -- .claude/skills packages/*/custom-elements.json",
     "storybook": "pnpm run build:types && pnpm run analyze && storybook dev -p 6006",
     "storybook:build": "pnpm run build:types && pnpm run analyze && storybook build",
     "demo": "pnpm --filter demo dev"

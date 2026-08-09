@@ -30,27 +30,21 @@ Grep for the method instead:
 grep -n 'private render\|protected override render\|public async' <file>
 ```
 
-**Never read `custom-elements.json`** (1.2MB, generated) or any `dist/`. The
-source is the answer.
+**Never read `**/custom-elements.json`** (package and root manifests, up to 1.3MB,
+generated) or any `dist/`. The source is the answer — or [`references/index.md`](references/index.md)
+for the generated summary.
 
 ### What each component actually is
 
-Only two components fetch on their own. Assuming the rest do is the most common
-wrong turn in this package.
+Generated from the manifest. Read the index first, then the one component you need.
 
-| Component | Fetches? | Entry point | Notes |
-|---|---|---|---|
-| `availability-grid` | yes | `load()` | The canonical one. Day counts across a window. |
-| `availability-picker` | yes | `load()` | ~80% the same as the grid; times, not counts. |
-| `provider-search` | yes | `search()` | Also loads reference data (specialties, visit reasons, plans). |
-| `provider-results` | **no** | — | Pure props-in. Imports only `DEFAULT_PAGE_SIZE` from the client. |
-| `provider-profile` | **no** | — | Presentational. No request state, no `<scoped-*>`, no dependencies. |
-| `booking-confirmation` | **no** | — | Presentational. Renders one alert from attributes. |
-| `booking-flow` | coordinates | `book()` | Owns the funnel. See below. |
+- [`references/index.md`](references/index.md) — every tag with a one-line summary
+- `references/<tag>.md` — attributes, properties, events, slots, methods
+- `references/<tag>.styling.md` — CSS parts, custom properties, states
 
-**`booking-flow.step` is a derived getter (`:315`), not stored state.** Looking for
-a `@state() step` and not finding it is the single most misread thing in the file.
-The step falls out of which of `provider`, `slot`, and `appointment` are set.
+These pages show each component's own API only. Every component extends `CharmElement`, but
+the manifest does not currently merge that base class in — see "Names `CharmElement` already
+owns" below for what it brings.
 
 ### Internal helpers — check here before writing a utility
 
