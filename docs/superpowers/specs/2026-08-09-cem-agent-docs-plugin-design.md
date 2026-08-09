@@ -52,36 +52,83 @@ This requires adding `'./tools/*'` to `pnpm-workspace.yaml`. If you'd rather it 
 
 ## Architecture
 
-The generator is a CEM analyzer plugin that runs **last** in the chain, in
-`packageLinkPhase`. By that point `jsdoc-tags`, `cem-inheritance`, `type-parser`,
-`module-path-resolver`, `css-prefix`, and `cem-sorter` have all finished mutating the
-manifest, so the plugin reads a finished artifact and writes files. It never mutates the
-manifest.
+### Per-package analyzer runs
 
-Registration in `custom-elements-manifest.config.mjs`, after `cemSorterPlugin()`:
+Today one analyzer run at the repo root produces a unified 1.3 MB manifest for Storybook.
+This design adds a **second analyzer config per package**, each producing a manifest scoped
+to that package. The root run stays exactly as it is.
 
-```js
-agentDocsPlugin({
-  packages: [
-    { name: '@powered-by-zocdoc/primitives',     srcDir: 'packages/primitives/src',
-      outDir: '.claude/skills/primitives/references' },
-    { name: '@powered-by-zocdoc/api-components', srcDir: 'packages/api-components/src',
-      outDir: '.claude/skills/api-components/references' },
-  ],
-})
+```
+custom-elements.config.base.mjs                          shared plugin factory
+custom-elements-manifest.config.mjs                      root — unified, Storybook only
+packages/primitives/custom-elements-manifest.config.mjs
+packages/api-components/custom-elements-manifest.config.mjs
 ```
 
-Components are routed to a package by `module.path` prefix matching `srcDir`. A component
-whose module path matches no configured package is skipped with a warning — silence here
-would let a new package's docs quietly never generate.
+The docs plugin is registered **only in the package configs**, never at root — otherwise
+every component would generate twice. Each package config supplies one `outDir`, so there
+is no path routing and no way for a component to be silently unclaimed.
+
+This was prototyped before speccing. Per-package output is identical to the corresponding
+slice of the unified manifest, on every metric:
+
+| | modules | tags | parsedType | inherited |
+|---|---|---|---|---|
+| primitives, standalone | 46 | 36 | 46 | 1672 |
+| primitives, unified slice | 46 | 36 | 46 | 1672 |
+| api-components, standalone | 45 | 10 | 28 | 8 |
+| api-components, unified slice | 45 | 10 | 28 | 8 |
+
+Each package uses its own `tsconfig.build.json`. For `api-components` that resolves
+`primitives` through `dist/*.d.ts` rather than source — the exact situation that broke
+type-parser 1.3.0 — but 1.3.1 resolves through the checker from the consuming file, and the
+measured output is unchanged. `analyze` takes 2.3s, so a second run is not a real cost.
+
+Two consequences to plan around:
+
+- **Module paths become package-relative.** `src/components/button/button.ts` rather than
+  `packages/primitives/src/components/button/button.ts`. Correct for a distributable
+  package, and it is what generated import examples should be built from.
+- **The analyzer writes `"customElements": "custom-elements.json"` into each
+  `package.json`.** Neither package sets this today. It is the field editor tooling reads,
+  so this is wanted — but it is an automatic side effect worth expecting in review.
+
+### Why keep the root run
+
+Storybook is the only consumer of the unified view, and `preview.ts` imports the manifest
+directly. Merging two manifests there is possible, but keeping the root run means Storybook
+and anything else keyed on `packages/*/src/...` paths are untouched by this work.
+
+The accepted cost is that each component is described by two artifacts that could in
+principle disagree. In practice both come from the same sources and the same plugin chain
+in the same CI run, and the root manifest is a gitignored build artifact — so a divergence
+would be a bug in the analyzer, not drift. If that stops being true, collapsing to
+per-package manifests plus an inline merge in `preview.ts` is the exit.
+
+### The plugin
+
+The generator runs **last** in the chain, in `packageLinkPhase`. By that point
+`jsdoc-tags`, `cem-inheritance`, `type-parser`, `module-path-resolver`, `css-prefix`, and
+`cem-sorter` have finished mutating the manifest, so it reads a finished artifact and
+writes files. It never mutates the manifest.
+
+Generation logic lives in a pure core, with the plugin as a thin adapter:
+
+```ts
+generateAgentDocs(manifest, config)   // pure, testable without the analyzer
+agentDocsPlugin(config)               // packageLinkPhase adapter over the above
+```
+
+That split is what makes "reusable in other packages" real: an external consumer can point
+the core at their own manifest without adopting our analyzer config.
 
 ### Data flow
 
 ```
-cem analyze
+cem analyze  (per package)
   → plugins mutate manifest
   → agentDocsPlugin.packageLinkPhase(manifest)
-      → for each configured package
+      → generateAgentDocs(manifest, config)
           → select components (has tagName, passes filter)
           → normalize (dedupe, filter private, resolve types)
           → render (default renderer, or user override)
@@ -93,12 +140,11 @@ cem analyze
 Two hooks. Everything else is configuration.
 
 ```ts
-interface PackageTarget {
+interface AgentDocsConfig {
   /** Package name, used in generated import examples. */
-  name: string;
-  /** Source dir prefix used to route components to this package. */
-  srcDir: string;
-  /** Where generated markdown goes. */
+  packageName: string;
+  /** Where generated markdown goes. Resolved from the repo root, not the package dir,
+   *  so it can point at the existing `.claude/skills/` tree. */
   outDir: string;
   /** Decide which components get a page. Default: every component with a tagName. */
   filter?: (component: Component) => boolean;
@@ -107,14 +153,17 @@ interface PackageTarget {
 }
 ```
 
+Because each package runs its own analyzer, the config describes one package. There is no
+`srcDir`, no routing, and no unclaimed-component case to handle.
+
 `Component` is the CEM declaration object, unmodified — so anything a custom `@jsdoc` tag
 or another plugin attached to it is reachable. That is the extension point: customization
 happens by reading richer data off the component, not by adding more hooks.
 
 ```ts
 interface RenderContext {
-  /** Package this component belongs to. */
-  pkg: PackageTarget;
+  /** The resolved config for this package. */
+  config: AgentDocsConfig;
   /** Normalized, deduped, private-filtered API groups. */
   api: NormalizedApi;
   /** Apply the literal-union rule to any member. */
@@ -282,20 +331,31 @@ docs get wrong by looking right — worth keeping the hand-written warning next 
 
 ## Build Integration
 
-The plugin runs inside the existing `pnpm run analyze`, so `build`, `storybook`, and
-`storybook:build` all regenerate as a side effect. No new script.
+Two levels of `analyze`:
 
-Generated markdown is **committed**. It's the artifact agents read, and committing it is
-what makes the skills work for anyone who clones the repo — and, later, for external
+| Script | Produces | Committed? |
+|---|---|---|
+| `pnpm run analyze` (root) | unified `custom-elements.json` for Storybook | no, gitignored |
+| `pnpm -r run analyze` (per package) | `packages/*/custom-elements.json` + agent docs | yes |
+
+`pnpm -r` runs in topological order, so `primitives` analyzes before `api-components`.
+The root `build` script runs both. `storybook` and `storybook:build` need only the root run,
+so they are unchanged.
+
+Per-package manifests are **committed**, unlike the root one. They are what a consumer gets
+through the `customElements` field, and committing them keeps the docs and the manifest they
+were generated from in the same reviewable diff.
+
+Generated markdown is **committed** for the same reason: it is the artifact agents read, and
+committing it is what makes the skills work on a fresh clone — and later for external
 consumers.
 
-CI freshness check: run `pnpm run analyze` and fail if `git diff --exit-code` reports
-changes under `.claude/skills/*/references/`. No new flag needed.
+CI freshness check: run both levels, then fail if `git diff --exit-code` reports changes
+under `.claude/skills/*/references/` or `packages/*/custom-elements.json`. No new flag needed.
 
 ## Error Handling
 
 - Component without a `tagName` → skipped silently. Base classes and mixins are expected.
-- Component matching no configured package → skipped with a warning naming the module path.
 - `render` throwing → fail the build, naming the component. A silently missing page is
   worse than a broken build.
 - Stale files → the writer prunes any `*.md` in `outDir` not produced this run, so deleted
@@ -322,8 +382,25 @@ Real-manifest generation is verified by the CI freshness check, not by unit test
 
 ## Deferred
 
+- **The api-components inheritance gap.** Every api-component extends `CharmElement`, but
+  `cem-inheritance` merges nothing into them — their only `inheritedFrom` is `ZocdocError`.
+  Compare `ZdButton`, which inherits 288 members from `CharmElement` alone via
+  `@charm-ux/core`. Cause: `primitives` re-exports `CharmElement` from Charm
+  (`index.ts:8`) rather than declaring it, so `superclass.package` points at
+  `@powered-by-zocdoc/primitives` — a package whose manifest has no such declaration.
+  Verified orthogonal to this work: adding the primitives manifest as an `externalManifest`
+  did not fix it. Fixing it also needs `@charm-ux/core` as an explicit `api-components`
+  devDependency, since it is currently linked only into `primitives`. Generated pages will
+  show own API only until this is addressed, which is defensible on its own terms. **Filed
+  separately; does not block.**
 - **Index customization.** Generated with no hook. If a package needs a different index
   shape, that's the signal for what the third hook should be.
+- **Moving skills inside their packages.** Skills stay at the repo root
+  `.claude/skills/<pkg>/`, where the hand-written `SKILL.md` files already live. Claude Code
+  also supports directory-scoped skills at `packages/<pkg>/.claude/skills/`, which would let
+  a skill travel with its package — the natural end state once packages ship separately.
+  Deferred because it relocates hand-written files for no local benefit, and only `outDir`
+  changes when we do it.
 - **Cross-package links.** `zd-provider-search` uses `zd-input`, but linking across skills
   assumes a shared layout that won't hold once packages ship separately.
 - **npm distribution** of the plugin, and **marketplace distribution** of the skills.
@@ -332,4 +409,12 @@ Real-manifest generation is verified by the CI freshness check, not by unit test
 
 ## Open Questions
 
-None blocking. The placement assumption above is the one call worth confirming.
+None blocking. Two calls worth confirming at review:
+
+- **Generator placement** — `tools/cem-agent-docs/` as a private workspace package, rather
+  than inside `packages/primitives/` as originally described. See "Assumption on Placement".
+- **Committing per-package manifests** — they are build output, and committing build output
+  is a real tradeoff. The case for it is that they ship via `customElements` and keep the
+  docs reviewable next to the data they came from. The case against is diff noise on every
+  component change. Gitignoring them instead costs nothing structurally; only the CI
+  freshness check changes.
