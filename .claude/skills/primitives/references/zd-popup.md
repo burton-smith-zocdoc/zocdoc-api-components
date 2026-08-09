@@ -1,0 +1,68 @@
+# zd-popup
+
+Low-level positioning primitive: places floating content relative to an anchor element.
+
+**Class** `ZdPopup` — **Module** `src/components/popup/popup.ts` — **Package** `@powered-by-zocdoc/primitives`
+
+```html
+<zd-popup></zd-popup>
+```
+
+## Inherited
+
+### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `anchor` | `anchor` | `Element \| string \| undefined` | — | The element the popup will be anchored to. If the anchor lives outside of the popup, you can provide its `id` or a reference to it here. If the anchor lives inside the popup, use the `anchor` slot instead. | `CorePopup` |
+| `arrow` | `arrow` | `boolean` | `false` | Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet. | `CorePopup` |
+| `arrow-padding` | `arrowPadding` | `number` | `10` | The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example, this will prevent it from overflowing the corners. | `CorePopup` |
+| `arrow-placement` | `arrowPlacement` | `'start' \| 'end' \| 'center' \| 'anchor' \| undefined` | — | The placement of the arrow. | `CorePopup` |
+| `auto-size` | `autoSize` | `'horizontal' \| 'vertical' \| 'both' \| undefined` | — | When set, this will cause the popup to automatically resize itself to prevent it from overflowing. | `CorePopup` |
+| `auto-size-padding` | `autoSizePadding` | `number \| undefined` | — | The amount of padding, in pixels, to exceed before the auto-size behavior will occur. | `CorePopup` |
+| `content-role` | `contentRole` | `string` | `'dialog'` | Sets the role of the overlay content. | `CorePopup` |
+| `dir` | `dir` | `'ltr' \| 'rtl' \| 'auto'` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `distance` | `distance` | `number` | `0` | The distance in pixels from which to offset the panel away from its anchor. | `CorePopup` |
+| `flip` | `flip` | `boolean` | `false` | When set, placement of the popup will flip to the opposite site to keep it in view. You can use `flipFallbackPlacements` to further configure how the fallback placement is determined. | `CorePopup` |
+| `flip-fallback-placements` | `flipFallbackPlacements` | `string` | `''` | If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a string of any number of placements separated by a space, e.g. "top bottom left". If no placement fits, the flip fallback strategy will be used instead. | `CorePopup` |
+| `flip-fallback-strategy` | `flipFallbackStrategy` | `'best-fit' \| 'initial' \| undefined` | — | When neither the preferred placement nor the fallback placements fit, this value will be used to determine whether the popup should be positioned as it was initially preferred or using the best available fit based on available space. | `CorePopup` |
+| `flip-padding` | `flipPadding` | `number \| undefined` | — | The amount of padding, in pixels, to exceed before the flip behavior will occur. | `CorePopup` |
+| `flipBoundary` | `flipBoundary` | `Element \| Element[] \| undefined` | — | The flip boundary describes clipping element(s) that overflow will be checked relative to when flipping. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property. | `CorePopup` |
+| `focus-trap` | `focusTrap` | `boolean` | `false` | Provides keyboard focus trapping within the overlay content. | `CorePopup` |
+| `label` | `label` | `string \| undefined` | `'popup'` | The `aria-label` of the popup for assistive technologies. | `CorePopup` |
+| `open` | `open` | `boolean` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+| `placement` | `placement` | `'top' \| 'top-start' \| 'top-end' \| 'bottom' \| 'bottom-start' \| 'bottom-end' \| 'start' \| 'start-top' \| 'start-bottom' \| 'end' \| 'end-top' \| 'end-bottom' \| undefined` | `'top'` | The preferred placement of the popup. Note that the actual placement will vary as configured to keep the panel inside of the viewport. | `CorePopup` |
+| `shift` | `shift` | `boolean` | `false` | Moves the popup along the axis to keep it in view when clipped. | `CorePopup` |
+| `shift-padding` | `shiftPadding` | `number \| undefined` | — | The amount of padding, in pixels, to exceed before the shift behavior will occur. | `CorePopup` |
+| `shiftBoundary` | `shiftBoundary` | `Element \| Element[] \| undefined` | — | The shift boundary describes clipping element(s) that overflow will be checked relative to when shifting. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property. | `CorePopup` |
+| `skidding` | `skidding` | `number` | `0` | The distance in pixels from which to offset the panel along its anchor. | `CorePopup` |
+| `strategy` | `strategy` | `'absolute' \| 'fixed' \| undefined` | — | Determines how the popup is positioned. The `absolute` strategy works well in most cases, but if overflow is clipped, using a `fixed` position strategy can often workaround it. | `CorePopup` |
+| `sync` | `sync` | `'width' \| 'height' \| 'both' \| undefined` | — | Syncs the popup's width or height to that of the anchor element. | `CorePopup` |
+| — | `autoSizeBoundary` | `Element \| Element[] \| undefined` | — | The auto-size boundary describes clipping element(s) that overflow will be checked relative to when resizing. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property. | `CorePopup` |
+
+### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `popup-after-hide` | `unknown` | Emitted after the popup closes and all transitions are complete. | `CorePopup` |
+| `popup-after-show` | `unknown` | Emitted after the popup opens and all transitions are complete. | `CorePopup` |
+| `popup-hide` | `unknown` | Emitted when the popup closes. | `CorePopup` |
+| `popup-reposition` | `unknown` | PopupRepositionEvent. Emitted when the popup is repositioned. This event can fire a lot, so avoid putting expensive operations in your listener or consider debouncing it. | `CorePopup` |
+| `popup-show` | `unknown` | Emitted when the popup opens. | `CorePopup` |
+| `ready` | `unknown` | Emitted when the component is ready. | `CharmElement` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| _(default)_ | The popup's content. | `CorePopup` |
+| `anchor` | The element the popup will be anchored to. | `CorePopup` |
+
+### Methods
+
+| Method | Description | From |
+| --- | --- | --- |
+| `hide(): void` | Hides/closes the component. | `CharmDismissibleElement` |
+| `reposition(): void` | Recalculate and repositions the popup. | `CorePopup` |
+| `show(): void` | Shows/opens the component. | `CharmDismissibleElement` |
+| `toggle(): void` | Shows or hides the component depending on whether it is currently visible. | `CharmDismissibleElement` |

@@ -13,8 +13,12 @@
       "default": "./dist/client/mock/index.js"
     }
   },
+  "scripts": {
+    "analyze": "cem analyze"
+  },
   "dependencies": {
     "@powered-by-zocdoc/primitives": "workspace:*",
     "lit": "^3.2.1"
-  }
+  },
+  "customElements": "custom-elements.json"
 }

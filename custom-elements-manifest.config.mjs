@@ -1,35 +1,19 @@
-import fs from 'fs';
-import { cemInheritancePlugin } from '@wc-toolkit/cem-inheritance';
-import { getTsProgram, typeParserPlugin } from '@wc-toolkit/type-parser';
-import { jsDocTagsPlugin } from '@wc-toolkit/jsdoc-tags';
-import { modulePathResolverPlugin } from '@wc-toolkit/module-path-resolver';
-import { cemSorterPlugin } from '@wc-toolkit/cem-sorter';
-import { cssPrefixPlugin } from '@charm-ux/theming';
+import { EXCLUDE, overrideModuleCreation, sharedPlugins } from './custom-elements.config.base.mjs';
 
-const charmManifest = JSON.parse(
-  fs.readFileSync('packages/primitives/node_modules/@charm-ux/core/custom-elements.json', 'utf-8')
-);
-
+/**
+ * The unified manifest, consumed by Storybook (`.storybook/preview.ts` imports it directly)
+ * and by editor tooling following the root `customElements` field. Gitignored build output.
+ *
+ * The agent-docs plugin is NOT registered here. This run covers both packages, so registering
+ * it would generate every component twice — once from here and once from the package run.
+ */
 export default {
   globs: ['packages/*/src/**/*.ts'],
-  exclude: ['**/*.stories.ts', '**/*.test.ts', '**/*.styles.ts'],
+  exclude: EXCLUDE,
   outdir: '.',
   litelement: true,
-  plugins: [
-    jsDocTagsPlugin(),
-    cemInheritancePlugin({
-      externalManifests: [charmManifest],
-    }),
-    typeParserPlugin(),
-    modulePathResolverPlugin({}),
-    cssPrefixPlugin({ prefix: 'zd' }),
-    cemSorterPlugin(),
-  ],
-
-  overrideModuleCreation({ ts, globs }) {
-    const program = getTsProgram(ts, globs, 'tsconfig.json');
-    return program
-      .getSourceFiles()
-      .filter((sf) => globs.find((glob) => sf.fileName.includes(glob)));
-  },
+  plugins: sharedPlugins({
+    charmManifestPath: 'packages/primitives/node_modules/@charm-ux/core/custom-elements.json',
+  }),
+  overrideModuleCreation: overrideModuleCreation('tsconfig.json'),
 };

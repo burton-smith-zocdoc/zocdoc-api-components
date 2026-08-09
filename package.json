@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm run build:types && pnpm run build:theme && pnpm run analyze",
+    "build": "pnpm run build:types && pnpm run build:theme && pnpm run analyze && pnpm -r run analyze",
     "build:types": "tsc --build tsconfig.build.json",
     "build:theme": "oxnode scripts/build-theme.ts",
     "typecheck": "pnpm run build:types && tsc --noEmit",

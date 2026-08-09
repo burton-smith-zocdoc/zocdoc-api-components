@@ -13,9 +13,13 @@
     "./theme/utilities.css": "./dist/theme/utilities.css",
     "./theme/all.css": "./dist/theme/all.css"
   },
+  "scripts": {
+    "analyze": "cem analyze"
+  },
   "dependencies": {
     "@charm-ux/core": "link:../../../charm-ux/core/packages/core",
     "@charm-ux/theming": "link:../../../charm-ux/core/packages/theming",
     "lit": "^3.2.1"
-  }
+  },
+  "customElements": "custom-elements.json"
 }

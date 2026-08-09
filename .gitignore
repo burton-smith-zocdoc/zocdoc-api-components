@@ -6,7 +6,10 @@ storybook-static/
 .DS_Store
 coverage/
 test-results/
-custom-elements.json
+# Root manifest is build output for Storybook. Per-package manifests are committed: they ship
+# via each package's `customElements` field and keep the generated docs reviewable next to the
+# data they came from.
+/custom-elements.json
 packages/primitives/TOKENS.md
 packages/api-components/assets/
 dist
