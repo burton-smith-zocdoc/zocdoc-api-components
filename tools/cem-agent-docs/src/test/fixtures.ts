@@ -37,6 +37,11 @@ export function widgetComponent(): Component {
         description: 'Disables the control.',
         inheritedFrom: { name: 'CoreWidget', package: '@charm-ux/core' },
       },
+      {
+        name: 'aria-label',
+        type: { text: 'string' },
+        description: 'Accessibility label.',
+      },
     ],
     members: [
       { kind: 'field', name: 'size', type: { text: 'ZdControlSize | undefined' }, privacy: 'public' },
@@ -58,6 +63,13 @@ export function widgetComponent(): Component {
         privacy: 'public',
         readonly: true,
         description: 'The associated form.',
+      },
+      {
+        kind: 'field',
+        name: 'internalState',
+        type: { text: 'string' },
+        privacy: 'protected',
+        description: 'Internal state (should be dropped).',
       },
       {
         kind: 'method',

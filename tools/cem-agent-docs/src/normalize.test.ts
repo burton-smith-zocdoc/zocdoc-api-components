@@ -39,6 +39,20 @@ describe('normalizeApi', () => {
     expect(own.methods.map((method) => method.name)).not.toContain('_sync');
   });
 
+  it('drops protected members and produces attribute-only props', () => {
+    const { own } = normalizeApi(widgetComponent());
+    // Protected member should be absent.
+    expect(own.props.map((prop) => prop.property)).not.toContain('internalState');
+    // Attribute with no backing field produces a row with property undefined.
+    const ariaLabel = own.props.find((prop) => prop.attribute === 'aria-label');
+    expect(ariaLabel).toEqual({
+      attribute: 'aria-label',
+      type: 'string',
+      description: 'Accessibility label.',
+      readonly: false,
+    });
+  });
+
   it('partitions inherited members out of own', () => {
     const { own, inherited } = normalizeApi(widgetComponent());
     expect(own.props.map((prop) => prop.property)).not.toContain('disabled');
