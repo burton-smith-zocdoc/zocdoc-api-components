@@ -2323,15 +2323,22 @@ export default {
 
 - [ ] **Step 3: Verify the root run is unchanged**
 
+A baseline was captured **before Task 1** at
+`.superpowers/sdd/2026-08-09-cem-agent-docs-plugin/root-manifest-baseline.json`. Compare
+against that, not against a fresh copy — Task 1 added `tools/` to the root `tsconfig.json`,
+which the root analyzer feeds to `getTsProgram`, so a baseline taken now would hide any effect
+of that change.
+
 ```bash
-cp custom-elements.json /tmp/cem-before.json
 pnpm --config.verifyDepsBeforeRun=false run analyze
-diff <(node -e "console.log(JSON.stringify(JSON.parse(require('fs').readFileSync('/tmp/cem-before.json','utf8')),null,2))") \
+diff .superpowers/sdd/2026-08-09-cem-agent-docs-plugin/root-manifest-baseline.json \
      <(node -e "console.log(JSON.stringify(JSON.parse(require('fs').readFileSync('custom-elements.json','utf8')),null,2))") \
   && echo "IDENTICAL"
 ```
 
-Expected: `IDENTICAL`. If it differs, the refactor changed behaviour — stop and reconcile before continuing.
+Expected: `IDENTICAL`. If it differs, either the config refactor or the root tsconfig change
+altered behaviour — stop and reconcile before continuing. If the baseline file is missing, say
+so and stop rather than substituting a fresh copy.
 
 - [ ] **Step 4: Write the primitives config**
 
