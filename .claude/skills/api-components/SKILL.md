@@ -189,7 +189,7 @@ selectedId)` over `renderOptions(...)`.
 |---|---|
 | A new endpoint | `client/<resource>.ts` + `client/http.ts` if the shape is new |
 | Error wording a patient sees | `utilities/error-message.ts` |
-| Loading / empty / retry markup | `utilities/request-state.ts` — changes all three fetching components |
+| Loading / empty / retry markup | `utilities/request-state.ts` — changes all five components that render request state |
 | Date or time formatting | `utilities/provider-time.ts` |
 | Window paging arithmetic | `utilities/availability-window.ts` |
 | Provider name, address, photo | `utilities/provider-summary.ts` |
