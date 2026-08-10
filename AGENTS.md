@@ -144,4 +144,9 @@ PHI-001).
 - **`@powered-by-zocdoc/api-components` has one extra subpath, `./mock`** — a fake transport and the documented sentinel inputs, for a host page that wants the funnel without a token. Importing `.` pulls in none of it.
 - **Storybook** on `@storybook/web-components-vite`, globbing `packages/{primitives,api-components}/src/**/*.stories.ts`.
 - **Vitest browser mode** with `@vitest/browser-playwright` for component tests.
+- **`pnpm run docs:check`** regenerates the manifest for both packages and diffs
+  `.claude/skills/*/references` and `packages/*/custom-elements.json` against git. It catches a
+  component added or changed without regenerating the agent reference docs — modified, deleted,
+  or untracked pages all fail it. Run it after any change to a component's public API, and before
+  committing.
 - **`pnpm demo`** serves two pages: `/` is `zd-booking-flow` alone, `/composed.html` is the same five components wired by a host page. Both serve fixtures unless `VITE_ZOCDOC_MODE=live` **and** `VITE_ZOCDOC_TOKEN` are set in `.env.local` at the workspace root — a demo that reached the live sandbox by default would post a patient's details the first time anyone clicked through it.

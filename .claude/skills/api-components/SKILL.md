@@ -46,9 +46,19 @@ These pages show each component's own API only. Every component extends `CharmEl
 the manifest does not currently merge that base class in — see "Names `CharmElement` already
 owns" below for what it brings.
 
+These pages also don't distinguish fetching from presentational — that's on you to track. **Four
+of the ten components fetch on their own:** `availability-grid` and `availability-picker` via
+`load()`, `provider-search` via `search()` (which also loads reference data — specialties,
+insurance plans), and `booking-flow` via `book()` (which also calls `createAppointment` and
+`getAvailability` directly). The other six only import client *types*, never client functions —
+most notably `provider-results`, whose `goToPage()` and `shiftWindow()` methods look
+state-changing on the reference page but only reshuffle data the caller already fetched.
+Assuming a component fetches because it has a method that changes what's on screen is the most
+common wrong turn in this package.
+
 ### Internal helpers — check here before writing a utility
 
-`components/internal/` is eight modules of shared logic. Reimplementing one of these
+`utilities/` is eight modules of shared logic. Reimplementing one of these
 inline is the most common avoidable duplication.
 
 | Module | Exports |
@@ -96,7 +106,7 @@ ways that bites:
   declares only the icon it renders itself, so `availability-picker` lists
   `ZdRadio` alongside it.
 
-The one hardcoded-prefix site is `internal/request-state.ts` — a free function
+The one hardcoded-prefix site is `utilities/request-state.ts` — a free function
 with no `this.html` to resolve against. Its header documents the limitation. Don't
 copy the pattern into a component.
 
@@ -178,9 +188,9 @@ selectedId)` over `renderOptions(...)`.
 | Task | File |
 |---|---|
 | A new endpoint | `client/<resource>.ts` + `client/http.ts` if the shape is new |
-| Error wording a patient sees | `components/internal/error-message.ts` |
-| Loading / empty / retry markup | `components/internal/request-state.ts` — changes all three fetching components |
-| Date or time formatting | `components/internal/provider-time.ts` |
-| Window paging arithmetic | `components/internal/availability-window.ts` |
-| Provider name, address, photo | `components/internal/provider-summary.ts` |
+| Error wording a patient sees | `utilities/error-message.ts` |
+| Loading / empty / retry markup | `utilities/request-state.ts` — changes all three fetching components |
+| Date or time formatting | `utilities/provider-time.ts` |
+| Window paging arithmetic | `utilities/availability-window.ts` |
+| Provider name, address, photo | `utilities/provider-summary.ts` |
 | A new event | the component's own `*EventMap`, plus the table in `AGENTS.md` |
