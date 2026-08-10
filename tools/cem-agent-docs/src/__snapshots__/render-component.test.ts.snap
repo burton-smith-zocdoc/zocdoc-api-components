@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`renderComponentApi > matches the snapshot for a component with a full surface 1`] = `
+exports[`renderComponentPage > matches the snapshot for a component with a full surface 1`] = `
 "# zd-widget
 
 A widget. Renders a labelled control.
@@ -38,6 +38,24 @@ A widget. Renders a labelled control.
 | --- | --- |
 | \`focus(options?: FocusOptions): void\` | Moves focus to the control. |
 
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| \`base\` | The outer wrapper. |
+
+## CSS Custom Properties
+
+| Property | Syntax | Default | Description |
+| --- | --- | --- | --- |
+| \`--zd-widget-gap\` | \`<length>\` | \`8px\` | Gap between icon and label. |
+
+## CSS States
+
+| State | Description |
+| --- | --- |
+| \`invalid\` | Applied when validation fails. |
+
 ## Inherited
 
 ### Attributes & Properties
@@ -51,10 +69,16 @@ A widget. Renders a labelled control.
 | Slot | Description | From |
 | --- | --- | --- |
 | \`icon\` | Leading icon. | \`CoreWidget\` |
+
+### CSS Parts
+
+| Part | Description | From |
+| --- | --- | --- |
+| \`icon\` | The leading icon wrapper. | \`CoreWidget\` |
 "
 `;
 
-exports[`renderComponentApi > matches the snapshot for a component with no inherited API and no slots 1`] = `
+exports[`renderComponentPage > matches the snapshot for a component with no inherited API and no slots 1`] = `
 "# zd-thing
 
 Fetches and renders a thing.

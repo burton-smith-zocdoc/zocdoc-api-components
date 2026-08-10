@@ -149,8 +149,11 @@ export interface AgentDocsConfig {
   outDir: string;
   /** Decide which components get a page. Default: every component with a tagName. */
   filter?: (component: Component) => boolean;
-  /** Produce the files for one component. Default: the built-in renderer. */
-  render?: (component: Component, ctx: RenderContext) => RenderResult | null;
+  /**
+   * Produce the markdown for one component's page, or null to skip it entirely.
+   * Default: the built-in renderer.
+   */
+  render?: (component: Component, ctx: RenderContext) => string | null;
 }
 
 export interface RenderContext {
@@ -164,11 +167,4 @@ export interface RenderContext {
   siblings: Component[];
   /** Full manifest. Escape hatch for anything the above doesn't cover. */
   manifest: Package;
-}
-
-export interface RenderResult {
-  /** Written to <outDir>/<tag>.md */
-  api: string;
-  /** Written to <outDir>/<tag>.styling.md — omit if there is no styling surface. */
-  styling?: string;
 }

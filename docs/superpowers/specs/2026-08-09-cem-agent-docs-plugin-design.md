@@ -279,13 +279,17 @@ section, so own API reads first.
 
 ## Output Layout
 
+> **Superseded 2026-08-10.** The API/styling split described below was reversed after the
+> first full generation run: `<tag>.styling.md` no longer exists, and the CSS surface is
+> rendered onto `<tag>.md` after the callable surface. See the note at the end of this
+> section.
+
 ```
 .claude/skills/primitives/
   SKILL.md                     hand-written, never generated
   references/
     index.md                   generated — the catalog
-    zd-button.md               generated — API
-    zd-button.styling.md       generated — CSS parts, custom properties, states
+    zd-button.md               generated — API and styling
     …
 .claude/skills/api-components/
   SKILL.md                     hand-written
@@ -309,6 +313,19 @@ the component has at least one of those.
 The API/styling split matters because they're consulted in different tasks and by
 different rules — styling work is governed by `STYLE-001` and the token files, which the
 hand-written skill already explains.
+
+**Amendment, 2026-08-10.** The split did not survive contact with real output. Measured
+across both packages, the largest merged page is 135 lines and the median is well under
+80 — small enough that the second file bought nothing. Against that, it cost a wrong guess
+or a second read on every "how do I style this" question, and it forced the index to track
+which styling pages existed so its links wouldn't dangle. The two-consulted-in-different-
+tasks argument also assumed a boundary agents don't actually observe: a component is one
+thing, and "add a variant" reads the props table and the custom properties table together.
+
+Each component now gets exactly one page. Own API sections come first, then own CSS
+sections, then a single `## Inherited` holding both kinds at `###`. `RenderResult` is gone —
+the `render` hook returns `string | null` — and `renderIndex` no longer takes a
+`stylingPages` set.
 
 ## Integration With Hand-Written Skills
 

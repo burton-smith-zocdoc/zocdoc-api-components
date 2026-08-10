@@ -43,3 +43,13 @@ collect a visit reason; the API defaults to "any" for the chosen specialty.
 | Method | Description |
 | --- | --- |
 | `search(): Promise<void>` | Runs the search. Public so a host page or a coordinating parent can trigger it. Validation runs on this path rather than only on submit, so a programmatic call cannot issue a request the API is certain to reject either. |
+
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| `form` | The search form. |
+| `insurance` | The insurance plan select. |
+| `specialty` | The specialty select. |
+| `submit` | The submit button. |
+| `zip` | The ZIP code field. |

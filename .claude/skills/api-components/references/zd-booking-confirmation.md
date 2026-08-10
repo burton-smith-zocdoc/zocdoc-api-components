@@ -21,3 +21,13 @@ standalone confirmation page as plain markup rather than only at the end of a fl
 | `provider-name` | `providerName` | `string \| undefined` | — | Who the appointment is with. Omitted rather than guessed at when absent. |
 | `start-time` | `startTime` | `string \| undefined` | — | The appointment's start, as the API returned it — offset included, unmodified. The offset is the provider's, and is what makes the displayed time theirs. |
 | `status` | `status` | `'pending_booking' \| 'confirmed' \| 'booking_failed' \| 'cancelled' \| 'no_show' \| 'pending_reschedule' \| 'rescheduled' \| 'reschedule_failed'` | `'confirmed'` | The `appointment_status` from the booking response. Defaults to `confirmed` because a host page rendering this component by hand has already decided the booking worked; a flow passing the API's own value through gets the pending wording for free. |
+
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| `confirmation` | The alert wrapping the whole confirmation. |
+| `detail` | The line qualifying a pending request. |
+| `provider` | The line naming the provider. |
+| `reference` | The line carrying the confirmation number. |
+| `when` | The appointment's date and time. |

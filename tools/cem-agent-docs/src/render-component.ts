@@ -1,25 +1,6 @@
+import { cell, code, table } from './markdown.ts';
+import { stylingSections } from './render-styling.ts';
 import type { ApiGroups, Component, RenderContext } from './types.ts';
-
-/** A table cell: pipes escaped, newlines flattened, empty rendered as an em dash. */
-export function cell(value?: string): string {
-  if (!value) return '—';
-  const flat = value.replace(/\s*\n+\s*/g, ' ').replace(/\|/g, '\\|').trim();
-  return flat || '—';
-}
-
-/** A code-formatted table cell. */
-export function code(value?: string): string {
-  if (!value) return '—';
-  return `\`${value.replace(/\|/g, '\\|')}\``;
-}
-
-export function table(headers: string[], rows: string[][]): string {
-  return [
-    `| ${headers.join(' | ')} |`,
-    `| ${headers.map(() => '---').join(' | ')} |`,
-    ...rows.map((row) => `| ${row.join(' | ')} |`),
-  ].join('\n');
-}
 
 function slotName(name: string): string {
   return name ? code(name) : '_(default)_';
@@ -30,7 +11,7 @@ function slotName(name: string): string {
  * inherited. Sections with no rows are omitted entirely — an empty table is pure noise in a
  * file whose whole purpose is to stay small.
  */
-function sections(groups: ApiGroups, level: string, withOrigin: boolean): string[] {
+function apiSections(groups: ApiGroups, level: string, withOrigin: boolean): string[] {
   const out: string[] = [];
   const extend = (headers: string[]) => (withOrigin ? [...headers, 'From'] : headers);
   const origin = (value?: string) => (withOrigin ? [code(value)] : []);
@@ -99,10 +80,14 @@ function sections(groups: ApiGroups, level: string, withOrigin: boolean): string
 }
 
 /**
- * The callable surface: what an agent needs to answer "what props does this take". Styling
- * lives in a sibling file so the common question never pays for the CSS surface.
+ * One page per component: the callable surface first, then the CSS surface, then everything
+ * inherited. A component is one thing to an agent — splitting its API from its styling meant
+ * every "how do I use this" question cost either a wrong guess or a second file read.
+ *
+ * Inherited members of both kinds share a single `## Inherited` section, so the top of the
+ * page stays the part an agent actually came for.
  */
-export function renderComponentApi(component: Component, ctx: RenderContext): string {
+export function renderComponentPage(component: Component, ctx: RenderContext): string {
   const tag = component.tagName ?? component.name;
   const out: string[] = [`# ${tag}`];
 
@@ -115,9 +100,13 @@ export function renderComponentApi(component: Component, ctx: RenderContext): st
 
   out.push(['```html', `<${tag}></${tag}>`, '```'].join('\n'));
 
-  out.push(...sections(ctx.api.own, '##', false));
+  out.push(...apiSections(ctx.api.own, '##', false));
+  out.push(...stylingSections(ctx.api.own, '##', false));
 
-  const inherited = sections(ctx.api.inherited, '###', true);
+  const inherited = [
+    ...apiSections(ctx.api.inherited, '###', true),
+    ...stylingSections(ctx.api.inherited, '###', true),
+  ];
   if (inherited.length) {
     out.push('## Inherited');
     out.push(...inherited);

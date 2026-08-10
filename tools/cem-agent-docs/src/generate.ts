@@ -1,18 +1,12 @@
 import { normalizeApi } from './normalize.ts';
-import { defaultRender } from './render.ts';
+import { renderComponentPage } from './render-component.ts';
 import { renderIndex } from './render-index.ts';
 import { resolveType } from './resolve-type.ts';
-import type {
-  AgentDocsConfig,
-  Component,
-  Package,
-  RenderContext,
-  RenderResult,
-} from './types.ts';
+import type { AgentDocsConfig, Component, Package, RenderContext } from './types.ts';
 import { nodeFileSystem, writeDocs, type FileSystem, type WriteReport } from './write.ts';
 
 /**
- * A `tagName` is only ever used as a filename basename (`<tag>.md`, `<tag>.styling.md`), never
+ * A `tagName` is only ever used as a filename basename (`<tag>.md`), never
  * joined into a deeper path. A manifest that carries a slash, backslash, or a dot-segment in
  * `tagName` is malformed — `write.ts`'s outside-outDir guard would accept the resulting nested
  * path, so this must reject it before it ever reaches the file map.
@@ -55,11 +49,10 @@ export function generateAgentDocs(
   fs: FileSystem = nodeFileSystem
 ): WriteReport {
   const candidates = selectComponents(manifest, config.filter);
-  const render = config.render ?? defaultRender;
+  const render = config.render ?? renderComponentPage;
 
   const files = new Map<string, string>();
   const rendered: Component[] = [];
-  const stylingPages = new Set<string>();
 
   for (const component of candidates) {
     const tag = component.tagName as string;
@@ -78,9 +71,9 @@ export function generateAgentDocs(
       manifest,
     };
 
-    let result: RenderResult | null;
+    let page: string | null;
     try {
-      result = render(component, ctx);
+      page = render(component, ctx);
     } catch (cause) {
       // A silently missing page is worse than a broken build.
       throw new Error(
@@ -89,17 +82,13 @@ export function generateAgentDocs(
         { cause }
       );
     }
-    if (!result) continue;
+    if (!page) continue;
 
-    files.set(`${tag}.md`, result.api);
-    if (result.styling) {
-      files.set(`${tag}.styling.md`, result.styling);
-      stylingPages.add(tag);
-    }
+    files.set(`${tag}.md`, page);
     rendered.push(component);
   }
 
-  files.set('index.md', renderIndex(rendered, config, stylingPages));
+  files.set('index.md', renderIndex(rendered, config));
 
   return writeDocs(config.outDir, files, fs);
 }

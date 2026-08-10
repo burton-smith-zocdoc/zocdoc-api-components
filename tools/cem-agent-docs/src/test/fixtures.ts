@@ -44,8 +44,18 @@ export function widgetComponent(): Component {
       },
     ],
     members: [
-      { kind: 'field', name: 'size', type: { text: 'ZdControlSize | undefined' }, privacy: 'public' },
-      { kind: 'field', name: 'patientType', type: { text: "'new' | 'existing'" }, privacy: 'public' },
+      {
+        kind: 'field',
+        name: 'size',
+        type: { text: 'ZdControlSize | undefined' },
+        privacy: 'public',
+      },
+      {
+        kind: 'field',
+        name: 'patientType',
+        type: { text: "'new' | 'existing'" },
+        privacy: 'public',
+      },
       {
         kind: 'field',
         name: 'disabled',
@@ -55,7 +65,13 @@ export function widgetComponent(): Component {
       },
       { kind: 'field', name: '_internal', type: { text: 'string' }, privacy: 'public' },
       { kind: 'field', name: 'hidden', type: { text: 'boolean' }, privacy: 'private' },
-      { kind: 'field', name: 'baseName', type: { text: 'string' }, privacy: 'public', static: true },
+      {
+        kind: 'field',
+        name: 'baseName',
+        type: { text: 'string' },
+        privacy: 'public',
+        static: true,
+      },
       {
         kind: 'field',
         name: 'form',
@@ -93,7 +109,14 @@ export function widgetComponent(): Component {
       { name: '', description: 'Widget content.' },
       { name: 'icon', description: 'Leading icon.', inheritedFrom: { name: 'CoreWidget' } },
     ],
-    cssParts: [{ name: 'base', description: 'The outer wrapper.' }],
+    cssParts: [
+      { name: 'base', description: 'The outer wrapper.' },
+      {
+        name: 'icon',
+        description: 'The leading icon wrapper.',
+        inheritedFrom: { name: 'CoreWidget' },
+      },
+    ],
     cssStates: [{ name: 'invalid', description: 'Applied when validation fails.' }],
     cssProperties: [
       {

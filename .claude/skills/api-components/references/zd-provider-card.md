@@ -31,3 +31,14 @@ in a horizontal card layout with a slot for availability.
 | --- | --- |
 | `availability` | Content to display on the right side (typically zd-availability-grid). |
 | `badges` | Content to display below the insurance line (badges, awards). |
+
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| `details` | The text column. |
+| `insurance` | The network status line. |
+| `location` | The distance and address line. |
+| `name` | The clickable provider name button. |
+| `photo` | The avatar element. |
+| `specialty` | The specialty line. |

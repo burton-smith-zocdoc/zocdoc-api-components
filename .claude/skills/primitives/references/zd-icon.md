@@ -32,3 +32,9 @@ Renders a named icon from the configured icon set, at a token-driven size.
 | `icon-error` | `IconErrorEvent` | Emitted when the icon fails to load. | `CoreIcon` |
 | `icon-load` | `unknown` | Emitted when the icon has loaded. | `CoreIcon` |
 | `ready` | `unknown` | Emitted when the component is ready. | `CharmElement` |
+
+### CSS Parts
+
+| Part | Description | From |
+| --- | --- | --- |
+| `icon-base` | The base of the icon. | `CoreIcon` |

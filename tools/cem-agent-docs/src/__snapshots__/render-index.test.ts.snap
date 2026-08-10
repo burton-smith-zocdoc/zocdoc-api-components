@@ -8,6 +8,6 @@ Generated from the Custom Elements Manifest. Do not edit by hand.
 2 components. Read this file first, then open the one page you need.
 
 - [\`zd-thing\`](zd-thing.md) — Fetches and renders a thing.
-- [\`zd-widget\`](zd-widget.md) — A widget. · [styling](zd-widget.styling.md)
+- [\`zd-widget\`](zd-widget.md) — A widget.
 "
 `;

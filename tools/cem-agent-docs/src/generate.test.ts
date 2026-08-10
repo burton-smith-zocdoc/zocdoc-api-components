@@ -24,7 +24,7 @@ describe('selectComponents', () => {
 });
 
 describe('generateAgentDocs', () => {
-  it('writes an index, an API page per component, and a styling page where warranted', () => {
+  it('writes an index and exactly one page per component', () => {
     const fs = memoryFileSystem();
     generateAgentDocs(fixtureManifest(), config, fs);
 
@@ -32,11 +32,9 @@ describe('generateAgentDocs', () => {
       'refs/index.md',
       'refs/zd-thing.md',
       'refs/zd-widget.md',
-      'refs/zd-widget.styling.md',
     ]);
-    // A component whose render result carries a `styling` string gets a link — the positive
-    // side of the "index reports what was written" rule.
-    expect(fs.files.get('refs/index.md')).toContain('zd-widget.styling.md');
+    // zd-widget has a styling surface, and it lands on the component's own page.
+    expect(fs.files.get('refs/zd-widget.md')).toContain('## CSS Parts');
   });
 
   it('is idempotent — a second run writes nothing', () => {
@@ -45,7 +43,7 @@ describe('generateAgentDocs', () => {
     const second = generateAgentDocs(fixtureManifest(), config, fs);
 
     expect(second.written).toEqual([]);
-    expect(second.unchanged).toHaveLength(4);
+    expect(second.unchanged).toHaveLength(3);
   });
 
   it('prunes the pages of a component that was removed', () => {
@@ -74,25 +72,21 @@ describe('generateAgentDocs', () => {
 
   it('honours a custom render hook', () => {
     const fs = memoryFileSystem();
-    generateAgentDocs(
-      fixtureManifest(),
-      { ...config, render: (c) => ({ api: `custom ${c.tagName}\n` }) },
-      fs
-    );
+    generateAgentDocs(fixtureManifest(), { ...config, render: (c) => `custom ${c.tagName}\n` }, fs);
 
     expect(fs.files.get('refs/zd-widget.md')).toBe('custom zd-widget\n');
-    expect(fs.files.has('refs/zd-widget.styling.md')).toBe(false);
-    // Regression: zd-widget has a raw styling surface (cssParts/cssStates/cssProperties), but
-    // this custom render hook never produced a styling page. The index must link to what was
-    // actually written, not to what the raw component fields imply, or the link is dead.
-    expect(fs.files.get('refs/index.md')).not.toContain('zd-widget.styling.md');
+    expect([...fs.files.keys()].sort()).toEqual([
+      'refs/index.md',
+      'refs/zd-thing.md',
+      'refs/zd-widget.md',
+    ]);
   });
 
   it('treats a render hook returning null as a skip', () => {
     const fs = memoryFileSystem();
     generateAgentDocs(
       fixtureManifest(),
-      { ...config, render: (c) => (c.tagName === 'zd-thing' ? null : { api: 'x\n' }) },
+      { ...config, render: (c) => (c.tagName === 'zd-thing' ? null : 'x\n') },
       fs
     );
 
@@ -114,7 +108,7 @@ describe('generateAgentDocs', () => {
             expect(ctx.config.packageName).toBe('@powered-by-zocdoc/primitives');
             expect(ctx.resolveType({ type: { text: 'boolean' } })).toBe('boolean');
           }
-          return { api: 'x\n' };
+          return 'x\n';
         },
       },
       fs
@@ -132,7 +126,7 @@ describe('generateAgentDocs', () => {
           ...config,
           render: (c) => {
             if (c.tagName === 'zd-widget') throw new Error('boom');
-            return { api: 'x\n' };
+            return 'x\n';
           },
         },
         fs
@@ -148,9 +142,7 @@ describe('generateAgentDocs', () => {
         {
           kind: 'javascript-module',
           path: 'src/components/evil/evil.ts',
-          declarations: [
-            { kind: 'class', name: 'ZdEvil', tagName: 'a/b', customElement: true },
-          ],
+          declarations: [{ kind: 'class', name: 'ZdEvil', tagName: 'a/b', customElement: true }],
         },
       ],
     };

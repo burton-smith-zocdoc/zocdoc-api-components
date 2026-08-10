@@ -28,3 +28,12 @@ button with a visually hidden label for accessibility (I18N-001).
 | Event | Type | Description |
 | --- | --- | --- |
 | `window-shift` | `unknown` | Emitted with `{ direction: -1 \| 1 }` when a navigation button is pressed. |
+
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| `window` | The container holding the range and controls. |
+| `window-next` | The control moving the range forward. |
+| `window-previous` | The control moving the range back. |
+| `window-range` | The line naming the range on show. |

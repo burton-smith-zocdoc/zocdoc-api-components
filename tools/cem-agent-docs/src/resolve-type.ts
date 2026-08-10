@@ -51,9 +51,7 @@ export function isLiteralUnion(text: string): boolean {
   if (meaningful.length === 0) return false;
   // `boolean` expanding to `false | true` is noise, not information.
   if (meaningful.every((member) => BOOLEANISH.has(member))) return false;
-  return meaningful.every(
-    (member) => STRING_LITERAL.test(member) || NUMBER_LITERAL.test(member)
-  );
+  return meaningful.every((member) => STRING_LITERAL.test(member) || NUMBER_LITERAL.test(member));
 }
 
 /** Dedupe union members, preserving first-seen order, with nullish members last. */

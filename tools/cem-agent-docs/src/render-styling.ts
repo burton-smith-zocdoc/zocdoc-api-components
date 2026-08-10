@@ -1,15 +1,12 @@
-import { cell, code, table } from './render-component.ts';
-import type { ApiGroups, Component, RenderContext } from './types.ts';
+import { cell, code, table } from './markdown.ts';
+import type { ApiGroups } from './types.ts';
 
-function isEmpty(groups: ApiGroups): boolean {
-  return (
-    groups.cssParts.length === 0 &&
-    groups.cssStates.length === 0 &&
-    groups.cssProperties.length === 0
-  );
-}
-
-function stylingSections(groups: ApiGroups, level: string, withOrigin: boolean): string[] {
+/**
+ * The CSS surface — parts, custom properties, and states — as sections appended to the
+ * component's one page. Sections with no rows are omitted, so a component with nothing to
+ * style contributes nothing.
+ */
+export function stylingSections(groups: ApiGroups, level: string, withOrigin: boolean): string[] {
   const out: string[] = [];
   const extend = (headers: string[]) => (withOrigin ? [...headers, 'From'] : headers);
   const origin = (value?: string) => (withOrigin ? [code(value)] : []);
@@ -59,28 +56,4 @@ function stylingSections(groups: ApiGroups, level: string, withOrigin: boolean):
   }
 
   return out;
-}
-
-/**
- * The CSS surface, kept out of the API page because the two are consulted in different tasks
- * and governed by different rules (STYLE-001 and the token files, which the hand-written
- * SKILL.md already explains). Returns null when the component exposes nothing to style, so
- * no empty file is written.
- */
-export function renderComponentStyling(component: Component, ctx: RenderContext): string | null {
-  const { own, inherited } = ctx.api;
-  if (isEmpty(own) && isEmpty(inherited)) return null;
-
-  const tag = component.tagName ?? component.name;
-  const out: string[] = [`# ${tag} — Styling`, `API reference: [${tag}.md](${tag}.md)`];
-
-  out.push(...stylingSections(own, '##', false));
-
-  const inheritedSections = stylingSections(inherited, '###', true);
-  if (inheritedSections.length) {
-    out.push('## Inherited');
-    out.push(...inheritedSections);
-  }
-
-  return `${out.join('\n\n')}\n`;
 }

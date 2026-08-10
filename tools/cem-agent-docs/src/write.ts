@@ -101,11 +101,7 @@ function resolveContained(outDir: string, name: string): string {
  * Pruning is confined to `*.md` directly inside `outDir`, which is `references/` — never the
  * directory holding the hand-written `SKILL.md`.
  */
-export function writeDocs(
-  outDir: string,
-  files: Map<string, string>,
-  fs: FileSystem
-): WriteReport {
+export function writeDocs(outDir: string, files: Map<string, string>, fs: FileSystem): WriteReport {
   // Resolve and validate every path before touching the filesystem, so one bad name in the
   // map can't cause a partial write of the entries that come before it in iteration order.
   const paths = new Map<string, string>();

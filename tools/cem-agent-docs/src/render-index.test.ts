@@ -34,46 +34,33 @@ describe('firstSentence', () => {
 
 describe('renderIndex', () => {
   it('matches the snapshot', () => {
-    expect(
-      renderIndex([thingComponent(), widgetComponent()], config, new Set(['zd-widget']))
-    ).toMatchSnapshot();
+    expect(renderIndex([thingComponent(), widgetComponent()], config)).toMatchSnapshot();
   });
 
   it('sorts by tag name regardless of input order', () => {
-    const md = renderIndex([widgetComponent(), thingComponent()], config, new Set());
+    const md = renderIndex([widgetComponent(), thingComponent()], config);
     expect(md.indexOf('zd-thing')).toBeLessThan(md.indexOf('zd-widget'));
   });
 
   it('links each component to its page', () => {
-    const md = renderIndex([widgetComponent()], config, new Set());
+    const md = renderIndex([widgetComponent()], config);
     expect(md).toContain('- [`zd-widget`](zd-widget.md) — A widget.');
   });
 
-  it('notes the styling page only when its tag is in stylingPages', () => {
-    const md = renderIndex(
-      [widgetComponent(), thingComponent()],
-      config,
-      new Set(['zd-widget'])
-    );
-    expect(md).toContain('[styling](zd-widget.styling.md)');
-    expect(md).not.toContain('zd-thing.styling.md');
-  });
-
-  it('omits the styling link when the tag is absent from stylingPages, even though the raw component has a styling surface', () => {
-    // widgetComponent() carries cssParts/cssStates/cssProperties, but the link must come from
-    // what was actually written (stylingPages), not from those raw fields.
-    const md = renderIndex([widgetComponent()], config, new Set());
-    expect(md).not.toContain('styling');
+  it('gives each component exactly one link — styling lives on the same page', () => {
+    const md = renderIndex([widgetComponent(), thingComponent()], config);
+    expect(md.match(/\]\(/g)).toHaveLength(2);
+    expect(md).not.toContain('.styling.md');
   });
 
   it('states the count and the package', () => {
-    const md = renderIndex([widgetComponent(), thingComponent()], config, new Set());
+    const md = renderIndex([widgetComponent(), thingComponent()], config);
     expect(md).toContain('`@powered-by-zocdoc/primitives`');
     expect(md).toContain('2 components');
   });
 
   it('handles an empty component list without emitting a broken list', () => {
-    const md = renderIndex([], config, new Set());
+    const md = renderIndex([], config);
     expect(md).toContain('0 components');
     expect(md).not.toContain('- [');
   });

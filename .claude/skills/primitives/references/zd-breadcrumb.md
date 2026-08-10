@@ -28,3 +28,10 @@ Shows the hierarchy leading to the current page.
 | Slot | Description | From |
 | --- | --- | --- |
 | _(default)_ | Breadcrumb's contents, which should typically be a breadcrumb-item. | `CoreBreadcrumb` |
+
+### CSS Parts
+
+| Part | Description | From |
+| --- | --- | --- |
+| `breadcrumb-base` | The component's base wrapper. | `CoreBreadcrumb` |
+| `breadcrumb-list` | Default slot's wrapper. | `CoreBreadcrumb` |

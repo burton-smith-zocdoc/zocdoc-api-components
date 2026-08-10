@@ -1,56 +1,47 @@
 import { describe, expect, it } from 'vitest';
 import { normalizeApi } from './normalize.ts';
-import { defaultRender } from './render.ts';
-import { renderComponentStyling } from './render-styling.ts';
-import { resolveType } from './resolve-type.ts';
-import { fixtureManifest, thingComponent, widgetComponent } from './test/fixtures.ts';
-import type { Component, RenderContext } from './types.ts';
+import { stylingSections } from './render-styling.ts';
+import { thingComponent, widgetComponent } from './test/fixtures.ts';
 
-function context(component: Component): RenderContext {
-  return {
-    config: { packageName: '@powered-by-zocdoc/primitives', outDir: 'out' },
-    api: normalizeApi(component),
-    resolveType,
-    siblings: [widgetComponent(), thingComponent()],
-    manifest: fixtureManifest(),
-  };
-}
+const widget = normalizeApi(widgetComponent());
+const thing = normalizeApi(thingComponent());
 
-describe('renderComponentStyling', () => {
-  it('matches the snapshot for a component with a styling surface', () => {
-    expect(
-      renderComponentStyling(widgetComponent(), context(widgetComponent()))
-    ).toMatchSnapshot();
+describe('stylingSections', () => {
+  it('emits parts, custom properties, and states in that order', () => {
+    const out = stylingSections(widget.own, '##', false);
+    expect(out.filter((section) => section.startsWith('##'))).toEqual([
+      '## CSS Parts',
+      '## CSS Custom Properties',
+      '## CSS States',
+    ]);
   });
 
-  it('returns null when there is no styling surface at all', () => {
-    expect(renderComponentStyling(thingComponent(), context(thingComponent()))).toBeNull();
+  it('renders the custom property row with syntax and default', () => {
+    const out = stylingSections(widget.own, '##', false).join('\n');
+    expect(out).toContain(
+      '| `--zd-widget-gap` | `<length>` | `8px` | Gap between icon and label. |'
+    );
   });
 
-  it('covers parts, custom properties, and states', () => {
-    const md = renderComponentStyling(widgetComponent(), context(widgetComponent())) ?? '';
-    expect(md).toContain('## CSS Parts');
-    expect(md).toContain('## CSS Custom Properties');
-    expect(md).toContain('## CSS States');
-    expect(md).toContain('`--zd-widget-gap`');
+  it('returns nothing for a component with no styling surface', () => {
+    expect(stylingSections(thing.own, '##', false)).toEqual([]);
+    expect(stylingSections(thing.inherited, '###', true)).toEqual([]);
   });
 
-  it('points back at the API page', () => {
-    const md = renderComponentStyling(widgetComponent(), context(widgetComponent())) ?? '';
-    expect(md).toContain('[zd-widget.md](zd-widget.md)');
-  });
-});
-
-describe('defaultRender', () => {
-  it('produces both files when the component has a styling surface', () => {
-    const result = defaultRender(widgetComponent(), context(widgetComponent()));
-    expect(result.api).toContain('# zd-widget');
-    expect(result.styling).toContain('# zd-widget — Styling');
+  it('honours the heading level it is given', () => {
+    expect(stylingSections(widget.own, '###', false)).toContain('### CSS Parts');
   });
 
-  it('omits styling when there is none', () => {
-    const result = defaultRender(thingComponent(), context(thingComponent()));
-    expect(result.api).toContain('# zd-thing');
-    expect(result.styling).toBeUndefined();
+  it('adds a From column naming the origin when rendering inherited members', () => {
+    const out = stylingSections(widget.inherited, '###', true).join('\n');
+    expect(out).toContain('### CSS Parts');
+    expect(out).toContain('| Part | Description | From |');
+    expect(out).toContain('| `icon` | The leading icon wrapper. | `CoreWidget` |');
+  });
+
+  it('omits the From column when rendering own members', () => {
+    const out = stylingSections(widget.own, '##', false).join('\n');
+    expect(out).toContain('| Part | Description |');
+    expect(out).not.toContain('| From |');
   });
 });

@@ -28,3 +28,9 @@ Groups accordion items into a single collapsible region.
 | Slot | Description | From |
 | --- | --- | --- |
 | _(default)_ | The default slot where accordion items are placed. | `CoreAccordion` |
+
+### CSS Custom Properties
+
+| Property | Syntax | Default | Description | From |
+| --- | --- | --- | --- | --- |
+| `--zd-accordion-top-border-color` | — | — | The border top color of the accordion. | `CoreAccordion` |

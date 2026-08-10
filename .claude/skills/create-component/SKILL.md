@@ -255,6 +255,6 @@ export const Default: Story = {};
 - [ ] Axe accessibility tests for each state
 - [ ] Row added to the Component Events table in `AGENTS.md`
 - [ ] Ran `pnpm run docs:check` (or `pnpm run analyze && pnpm -r run analyze`) and committed the
-      regenerated `references/<tag>.md` / `references/<tag>.styling.md` pages plus the updated
+      regenerated `references/<tag>.md` page plus the updated
       `references/index.md` — a new component with no reference page is invisible to every
       agent routed through the index

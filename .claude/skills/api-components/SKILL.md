@@ -39,8 +39,8 @@ for the generated summary.
 Generated from the manifest. Read the index first, then the one component you need.
 
 - [`references/index.md`](references/index.md) — every tag with a one-line summary
-- `references/<tag>.md` — attributes, properties, events, slots, methods
-- `references/<tag>.styling.md` — CSS parts, custom properties, states
+- `references/<tag>.md` — one page per component: attributes, properties, events, slots,
+  methods, CSS parts, custom properties, states, then everything inherited
 
 These pages show each component's own API only. Every component extends `CharmElement`, but
 the manifest does not currently merge that base class in — see "Names `CharmElement` already

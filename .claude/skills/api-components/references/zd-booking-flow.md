@@ -52,3 +52,21 @@ correct anyway, since a different provider invalidates the slot picked from the 
 | --- | --- |
 | `back(): void` | Returns to the previous step by dropping what that step decided. Clearing is the point rather than a side effect. Going back past a provider has to discard the slot picked from it — the times belong to that location, and carrying one forward would book an appointment nobody chose. The visible cost is that the picker refetches on the way back in, which is worth paying for a flow whose state cannot lie. |
 | `book(patient: Patient, notes?: string): Promise<void>` | Books the appointment. Public so a host page driving the form itself can still finish. Every `return` here is a refusal to send an incomplete or duplicate booking, which is the one request in this library that cannot be undone by making it again — a second POST books a second appointment. `zd-patient-form` disables its own button while `busy`, so this guard covers what that cannot: a programmatic caller, or a second submit racing the first. |
+
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| `back` | The button returning to the previous step. |
+| `confirmation` | The booking confirmation. |
+| `error` | The alert shown when a booking fails. |
+| `patient-form` | The patient details form. |
+| `picker` | The availability picker. |
+| `provider-summary` | The provider block inside the summary, shared with `zd-provider-results` — see `internal/provider-summary.ts` for its inner parts. |
+| `results` | The provider results list. |
+| `search` | The provider search form. |
+| `status` | The live region announcing that a booking is in flight. |
+| `step` | The current step's container, and the focus target on every transition. |
+| `step-heading` | The current step's heading. |
+| `summary` | The block restating what is about to be booked. |
+| `summary-time` | The appointment time, on the patient step. |

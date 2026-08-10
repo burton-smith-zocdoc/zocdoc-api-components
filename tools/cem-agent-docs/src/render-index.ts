@@ -17,17 +17,10 @@ export function firstSentence(text: string | undefined, maxLength = 120): string
  * carries one, and a taxonomy the generator invents would be wrong the first time a component
  * is added.
  *
- * `stylingPages` is the set of tags that actually got a `<tag>.styling.md` file written — not
- * a re-derivation from the component's raw `cssParts`/`cssStates`/`cssProperties` fields. A
- * custom `render` hook can produce an API page without a styling page even when the raw
- * component has a styling surface, and the index must link to what exists on disk, not to
- * what the manifest merely implies.
+ * `components` is what the render hook actually produced a page for, not every candidate, so
+ * every link here resolves to a file on disk.
  */
-export function renderIndex(
-  components: Component[],
-  config: AgentDocsConfig,
-  stylingPages: ReadonlySet<string>
-): string {
+export function renderIndex(components: Component[], config: AgentDocsConfig): string {
   const sorted = [...components].sort((a, b) =>
     (a.tagName ?? a.name).localeCompare(b.tagName ?? b.name)
   );
@@ -44,8 +37,7 @@ export function renderIndex(
         .map((component) => {
           const tag = component.tagName ?? component.name;
           const summary = firstSentence(component.summary ?? component.description);
-          const styling = stylingPages.has(tag) ? ` · [styling](${tag}.styling.md)` : '';
-          return `- [\`${tag}\`](${tag}.md) — ${summary || 'No description.'}${styling}`;
+          return `- [\`${tag}\`](${tag}.md) — ${summary || 'No description.'}`;
         })
         .join('\n')
     );

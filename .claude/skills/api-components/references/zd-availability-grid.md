@@ -56,3 +56,18 @@ page to a range that does have appointments.
 | --- | --- |
 | `load(): Promise<void>` | Fetches the window. Safe to call repeatedly, and does nothing at all when a parent supplied `timeslots` or when there is no visit reason to fetch against. |
 | `shiftWindow(direction: -1 \| 1): void` | Moves the window by its own width, so the ranges tile rather than overlap. |
+
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| `day` | One day cell. |
+| `day-count` | The appointment count line of a cell. |
+| `day-date` | The month and day line of a cell. |
+| `day-weekday` | The weekday line of a cell. |
+| `days` | The grid of days. |
+| `more` | The "More" control, when `show-more` is set. |
+| `window` | The header holding the range and its controls. |
+| `window-next` | The control moving the range forward. |
+| `window-previous` | The control moving the range back. |
+| `window-range` | The line naming the range on show. |

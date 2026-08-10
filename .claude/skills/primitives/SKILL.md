@@ -129,8 +129,8 @@ Generated from the manifest, so it cannot drift. Read the index first, then open
 component you need — do not read the whole directory.
 
 - [`references/index.md`](references/index.md) — every tag with a one-line summary
-- `references/<tag>.md` — attributes, properties, events, slots, methods, inherited API
-- `references/<tag>.styling.md` — CSS parts, custom properties, states
+- `references/<tag>.md` — one page per component: attributes, properties, events, slots,
+  methods, CSS parts, custom properties, states, then everything inherited
 
 One caveat the generated pages cannot express: `zd-select`'s `size` attribute is a `number`
 (visible rows, the native `<select>` meaning), not the `'default' | 'small'` control size the
