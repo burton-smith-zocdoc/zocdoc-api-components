@@ -1,94 +1,66 @@
-# powered-by-zocdoc
+# Powered by Zocdoc
 
-Standards-based web components for the [Zocdoc public API](https://api-docs.zocdoc.com/guides).
-They are custom elements, so they work in any framework or in plain HTML.
+Embed Zocdoc booking flows directly into your website with a single HTML tag.
 
-The first slice is a booking flow: search for providers, pick a time, enter patient
-details, confirm.
+**[Live Demo](https://burton-smith-zocdoc.github.io/powered-by-zocdoc/)**
+
+## Why Use This?
+
+Partner websites typically link users away to Zocdoc to book appointments. That handoff loses context, breaks the user's flow, and makes the booking feel disconnected from your brand.
+
+These web components let you embed the full booking experience—search, availability, patient form, confirmation—without leaving your site. Users stay in your environment while getting Zocdoc's provider network and scheduling infrastructure.
+
+## Features
+
+- **Framework-agnostic** — Standard web components work in React, Vue, Angular, Svelte, or plain HTML
+- **Accessible** — WCAG 2.2 AA conformant with full keyboard navigation and screen reader support
+- **Themeable** — CSS custom properties adapt to your brand colors and typography
+- **Privacy-first** — Patient data goes directly to Zocdoc's API; nothing is logged or sent elsewhere
+- **Internationalization-ready** — RTL support, locale-aware date formatting, browser-translatable text
+
+## Quick Start
+
+```html
+<script type="module">
+  import { configure } from '@powered-by-zocdoc/api-components';
+  
+  configure({
+    getToken: () => fetchTokenFromYourServer(),
+  });
+</script>
+
+<zd-booking
+  specialty="dentist-general"
+  location="10001"
+></zd-booking>
+```
+
+The `<zd-booking>` component handles the entire flow: searching providers, selecting a time slot, collecting patient information, and confirming the appointment.
+
+## Components
+
+| Component | Purpose |
+|-----------|---------|
+| `<zd-booking>` | Complete booking flow in one component |
+| `<zd-provider-search>` | Search form for specialty, location, insurance |
+| `<zd-provider-results>` | Provider cards with availability preview |
+| `<zd-availability-picker>` | Full calendar for a single provider |
+| `<zd-patient-form>` | Patient information collection |
+
+Use `<zd-booking>` for a drop-in solution, or compose the individual components for custom layouts.
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| `@powered-by-zocdoc/primitives` | UI primitives (buttons, inputs, cards) with Zocdoc theming |
+| `@powered-by-zocdoc/api-components` | Booking components that call the Zocdoc API |
 
 ## Status
 
-Proof of concept. Not published, not versioned, no browser support matrix.
+Proof of concept. Not yet published to npm.
 
-| Package | State |
-| --- | --- |
-| `@powered-by-zocdoc/primitives` | built — theme tokens, 35 components with axe-core accessibility tests (light + dark mode) |
-| `@powered-by-zocdoc/api-components` | scaffolded |
+## Documentation
 
-## Layout
-
-```
-packages/
-  primitives/         tokens, Charm prefix configuration, the primitives to build on
-  api-components/
-    src/client/       the Zocdoc API client
-    src/components/   the zd-* booking components
-```
-
-Two packages, split along the line that matters: `primitives` is presentation with no
-knowledge of Zocdoc's API, `api-components` is everything that knows about it. The
-client lives inside `api-components` because nothing else consumes it.
-
-Each package is consumed straight from TypeScript source — every `exports` field
-points at `./src/index.ts`. There is no build step and no `dist/`. Typechecking is
-`tsc --noEmit` only.
-
-## Prerequisites
-
-**Node 24.11.0** (`.nvmrc`). **pnpm** for workspaces.
-
-The Node version is not arbitrary. Vitest 4 peer-requires Vite ≥6, and Vite 7 calls
-`crypto.hash`, which landed in Node 20.12 — on anything older the browser test
-project dies at startup with `crypto.hash is not a function`. 24.11.0 also matches
-Charm's own `.nvmrc`, so one `nvm use` serves both repos.
-
-**A local Charm checkout.** Both Charm packages are consumed via pnpm `link:` paths
-into `../charm-ux/core`, not from npm:
-
-- `@charm-ux/theming@0.5.0` is unpublished — npm tops out at `0.2.0`.
-- Local `@charm-ux/core` carries fixes past the published `0.5.2` tag.
-
-The checkout must be on branch `next` and built (`pnpm build` in `charm-ux/core`).
-
-## Getting started
-
-```bash
-nvm use                 # 24.11.0
-pnpm install
-pnpm typecheck
-pnpm test
-```
-
-Browser tests need Chromium, Firefox, and WebKit:
-`pnpm exec playwright install chromium firefox webkit`.
-
-Copy `.env.local.example` to `.env.local` and add your sandbox token. `.env.local`
-is gitignored. **Never commit a token.**
-
-## Commands
-
-| Command | Does |
-| --- | --- |
-| `pnpm typecheck` | `tsc --noEmit` across the workspace |
-| `pnpm test` | Vitest across Chromium, Firefox, and WebKit — axe-core accessibility tests run in both light and dark mode |
-| `pnpm storybook` | Storybook on :6006 |
-| `pnpm demo` | the demo site |
-
-## Conventions
-
-**Tag prefix is `zd`.** Never hardcode a tag name in a template — write
-`<scoped-button>` inside `this.html` and `CharmElement` rewrites it to the
-registered prefix, so a consumer that rescopes the project still gets working
-markup. Every `<scoped-*>` also needs its class in `dependencies()`; without it
-the tag is rewritten but never defined, and the element renders empty.
-
-**Register Charm primitives through `dependencies()`, not barrel imports.** A
-component folder's `index.js` barrel calls `registerComponent()` at import time,
-which defines the element using whatever prefix is current at that moment — so an
-import that lands before configuration permanently registers under `ch-`. Importing
-the class module (`.../button/button.js`) and listing it in
-`static override get dependencies()` defers registration to construction, when the
-prefix is guaranteed set.
-
-**PHI never leaves the machine.** No patient values in logs, thrown errors,
-fixtures, stories, or tests. Use only sandbox test data.
+- [Zocdoc Public API](https://api-docs.zocdoc.com/guides) — API reference and sandbox access
+- [Contributing](CONTRIBUTING.md) — Development setup and guidelines
