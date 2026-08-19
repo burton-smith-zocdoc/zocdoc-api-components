@@ -10,12 +10,56 @@
 
 body {
   margin-inline: auto;
-  max-inline-size: 46rem;
+  max-inline-size: 56rem;
   padding: 2rem 1rem 4rem;
+}
+
+/*
+ * The heading and the appearance switch share a row, with the switch pushed to the inline end so
+ * it sits opposite the heading in both directions (I18N-003).
+ */
+.page-header {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
 }
 
 h1 {
   margin-block: 0 0.25rem;
+}
+
+/*
+ * The controls at the inline end of the header: theme dropdown and appearance switch.
+ */
+.page-controls {
+  align-items: center;
+  display: flex;
+  flex: none;
+  gap: 1.5rem;
+}
+
+/*
+ * The theme menu trigger.
+ */
+.theme-switcher {
+  font-size: var(--zd-font-size-sm, 14px);
+}
+
+/*
+ * Nothing here is colour: the switch takes its own from the theme, which is the point — it changes
+ * along with everything else when the scheme it controls flips. Only the size and the refusal to
+ * be squeezed by the heading beside it are the page's business.
+ */
+#appearance {
+  --zd-form-control-label-font-size: var(--zd-font-size-sm);
+
+  /*
+   * Form controls are built to fill the field they sit in, so the switch's own width is 100% and
+   * it would take the whole row and wrap the heading beside it. Here it is page chrome rather than
+   * a field, so it sizes to the label and the control.
+   */
+  inline-size: max-content;
 }
 
 .lede {
@@ -77,5 +121,29 @@ h1 {
 
   & dd {
     margin: 0;
+  }
+}
+
+/* must define property to work properly for all browsers */
+@property --wc-loaded {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+body {
+  /* start timeout regardless if there are undefined components */
+  animation: showBody 0s linear 200ms forwards;
+
+  /* if there are undefined components, hide until defined or 200ms - whichever comes first */
+  &:has(:not(:defined)) {
+    opacity: var(--wc-loaded, 0);
+  }
+}
+
+/* update variable to prevent opactity flash for subsequent component loads */
+@keyframes showBody {
+  to {
+    --wc-loaded: 1;
   }
 }

@@ -11,7 +11,23 @@
     <link rel="icon" href="data:," />
   </head>
   <body>
-    <h1>One tag</h1>
+    <!--
+      Dark mode is one setting that is either on or off, which is what a switch is for: the label
+      stays put and the control carries the state, so nothing has to be relabelled as it flips.
+      `appearance.ts` sets its starting position from the scheme the page opens in.
+
+      The label is slotted rather than passed as the `label` attribute so the words sit in a DOM
+      text node, where a browser's translator can reach them (I18N-001).
+    -->
+    <header class="page-header">
+      <h1>One tag</h1>
+      <div class="page-controls">
+        <div id="theme-switcher" class="theme-switcher"></div>
+        <zd-switch id="appearance" label-position="start">
+          <span slot="label">Dark mode</span>
+        </zd-switch>
+      </div>
+    </header>
     <p class="lede">The whole booking funnel from a single custom element.</p>
 
     <p id="mode"></p>
@@ -20,8 +36,12 @@
       The `<h1>` above is the page's, which is why `zd-booking-flow` heads each of its steps at
       `<h2>`. A host page that gave this component the page's only heading would have a document
       whose outline starts at level two.
+
+      `modal` keeps the search and its results on the page and runs the booking in a dialog over
+      them, which is the arrangement a results page wants. Drop the attribute and the same steps
+      render in place instead — see `/composed.html` for that one.
     -->
-    <zd-booking-flow zip-code="11201"></zd-booking-flow>
+    <zd-booking-flow modal show-photos zip-code="11201"></zd-booking-flow>
 
     <section class="scenarios">
       <h2>Try a different outcome</h2>

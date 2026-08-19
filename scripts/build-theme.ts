@@ -11,16 +11,25 @@ const outDir = join(packageDir, 'dist/theme');
 const docsPath = join(packageDir, 'TOKENS.md');
 
 async function buildTheme() {
-  const { zocdocThemeCss, zocdocResetCss, zocdocUtilitiesCss, zocdocAllCss, zocdocTheme } =
-    await import('../packages/primitives/src/theme/zocdoc.js');
+  const [zocdoc, schweiger, womensCare, privia] = await Promise.all([
+    import('../packages/primitives/src/theme/zocdoc.js'),
+    import('../packages/primitives/src/theme/schweiger.js'),
+    import('../packages/primitives/src/theme/womensCare.js'),
+    import('../packages/primitives/src/theme/privia.js'),
+  ]);
 
   await mkdir(outDir, { recursive: true });
 
   await Promise.all([
-    writeFile(join(outDir, 'tokens.css'), zocdocThemeCss),
-    writeFile(join(outDir, 'reset.css'), zocdocResetCss),
-    writeFile(join(outDir, 'utilities.css'), zocdocUtilitiesCss),
-    writeFile(join(outDir, 'all.css'), zocdocAllCss),
+    // Zocdoc (default)
+    writeFile(join(outDir, 'tokens.css'), zocdoc.zocdocThemeCss),
+    writeFile(join(outDir, 'reset.css'), zocdoc.zocdocResetCss),
+    writeFile(join(outDir, 'utilities.css'), zocdoc.zocdocUtilitiesCss),
+    writeFile(join(outDir, 'all.css'), zocdoc.zocdocAllCss),
+    // Partner themes (tokens only - they share reset/utilities with zocdoc)
+    writeFile(join(outDir, 'schweiger-tokens.css'), schweiger.schweigerThemeCss),
+    writeFile(join(outDir, 'womens-care-tokens.css'), womensCare.womensCareThemeCss),
+    writeFile(join(outDir, 'privia-tokens.css'), privia.priviaThemeCss),
   ]);
 
   console.log('Theme CSS files written to', outDir);
@@ -28,7 +37,7 @@ async function buildTheme() {
   // `generateThemeSync` runs with `dryRun: true`, so it builds every artifact in
   // memory and writes none of them. The CSS strings are re-exported by
   // zocdoc.ts; the markdown is only reachable through the result object.
-  const { tokensMarkdown } = zocdocTheme;
+  const { tokensMarkdown } = zocdoc.zocdocTheme;
 
   if (!tokensMarkdown) {
     throw new Error(

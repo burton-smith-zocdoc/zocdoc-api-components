@@ -11,8 +11,10 @@
  * Everything the API says is read off the events. Nothing is read back off an element and nothing
  * reaches into a shadow root.
  */
-import '@powered-by-zocdoc/primitives/theme/all.css';
+import '@powered-by-zocdoc/primitives/theme/reset.css';
+import '@powered-by-zocdoc/primitives/theme/utilities.css';
 import './demo.css';
+import { renderThemeSwitcher } from './theme.js';
 import '@powered-by-zocdoc/api-components';
 import {
   createAppointment,
@@ -28,6 +30,7 @@ import {
   type ZdProviderResults,
   type ZdProviderSearch,
 } from '@powered-by-zocdoc/api-components';
+import { renderAppearanceToggle } from './appearance.js';
 import { configureDemo, renderModeBanner } from './config.js';
 import { renderScenarios } from './scenarios.js';
 
@@ -305,5 +308,7 @@ form.addEventListener('patient-submit', ({ detail }) => {
   void book(detail.patient, detail.notes);
 });
 
+renderThemeSwitcher();
+renderAppearanceToggle();
 renderModeBanner(configureDemo());
 renderScenarios();

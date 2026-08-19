@@ -2171,6 +2171,19 @@ const zocdocTokensBase = charmTokens
           borderRadius: primitive('borderRadius', 'full'),
           shadow: '0 1px 3px rgb(0 0 0 / 20%)',
           transition: `transform ${primitive('duration', 200)} ${primitive('timingFunction', 'overshoot')}`,
+          /**
+           * How far the thumb slides each way from the center of the track,
+           * which is where Charm's stylesheet parks it. Zinc had no equivalent
+           * leaf, so without this we inherit Charm's `0` and the thumb never
+           * moves - the track changes color and nothing else does.
+           *
+           * Half the difference between the track's width and its height is
+           * the distance that leaves the same gap at the end of the travel as
+           * the thumb already has above and below it, whatever those two are
+           * set to: the thumb is a circle as tall as the track allows, so the
+           * track's height is what decides its inset on every side.
+           */
+          transform: `calc((${varRef('switch', 'width')} - ${varRef('switch', 'height')}) / 2)`,
         },
         disabled: {
           opacity: '0.35',
@@ -2594,6 +2607,8 @@ const zocdocTokensBase = charmTokens
       },
     };
   });
+
+export { zocdocTokensBase };
 
 export const zocdocTokenDefinition = zocdocTokensBase.definition;
 
