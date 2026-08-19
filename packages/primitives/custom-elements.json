@@ -263,7 +263,7 @@
                   }
                 }
               ],
-              "description": "Handles the `details` element toggle event.",
+              "description": "Handles the `details` element toggle event. Keeps `open` and the native element's open state in\nsync; the base class emits the standardized `show` / `hide` / `after-show` / `after-hide` events.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem"
               }
@@ -577,6 +577,20 @@
               }
             },
             {
+              "description": "The transition applied to the content when the item opens.",
+              "name": "--zd-accordion-item-show-transition",
+              "inheritedFrom": {
+                "name": "CoreAccordionItem"
+              }
+            },
+            {
+              "description": "The transition applied to the content when the item closes.",
+              "name": "--zd-accordion-item-hide-transition",
+              "inheritedFrom": {
+                "name": "CoreAccordionItem"
+              }
+            },
+            {
               "description": "Sets background color.",
               "name": "--zd-accordion-item-bg-color",
               "inheritedFrom": {
@@ -795,8 +809,29 @@
           ],
           "events": [
             {
-              "description": "Dispatched when the accordion item is expanded or collapsed.",
-              "name": "accordion-item-open-change",
+              "description": "Emitted after the accordion item has hidden and all animations are complete.",
+              "name": "accordion-item-after-hide",
+              "inheritedFrom": {
+                "name": "CoreAccordionItem"
+              }
+            },
+            {
+              "description": "Emitted after the accordion item has shown and all animations are complete.",
+              "name": "accordion-item-after-show",
+              "inheritedFrom": {
+                "name": "CoreAccordionItem"
+              }
+            },
+            {
+              "description": "Emitted when the accordion item begins to hide.",
+              "name": "accordion-item-hide",
+              "inheritedFrom": {
+                "name": "CoreAccordionItem"
+              }
+            },
+            {
+              "description": "Emitted when the accordion item begins to show.",
+              "name": "accordion-item-show",
               "inheritedFrom": {
                 "name": "CoreAccordionItem"
               }
@@ -1019,30 +1054,6 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "updateTimer",
-              "type": {
-                "text": "number | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CoreAccordion"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "updating",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false",
-              "description": "Used to prevent multiple calls to the logic when updating the `open` attribute when `openSingle` is true",
-              "inheritedFrom": {
-                "name": "CoreAccordion"
               }
             }
           ],
@@ -2111,7 +2122,7 @@
               "kind": "method",
               "name": "backgroundTemplate",
               "privacy": "protected",
-              "description": "Generates the template for the avatar's background. The slot image is used to provide custom image content that will override the image property.",
+              "description": "Generates the template for the avatar's background.",
               "inheritedFrom": {
                 "name": "CoreAvatar"
               }
@@ -2128,6 +2139,28 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "defaultSlotTemplate",
+              "privacy": "protected",
+              "description": "Generates the fallback template used when no image or initials are present.",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CoreAvatar"
               }
             },
             {
@@ -2165,6 +2198,27 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleImageError",
+              "privacy": "protected",
+              "description": "Handles image load failures by falling back to the initials or default icon.",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasError",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
               }
             },
             {
@@ -2221,6 +2275,15 @@
               }
             },
             {
+              "kind": "method",
+              "name": "imageTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for the avatar's image.",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
+            },
+            {
               "kind": "field",
               "name": "initials",
               "type": {
@@ -2235,6 +2298,15 @@
               }
             },
             {
+              "kind": "method",
+              "name": "initialsTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for the avatar's initials.",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
+            },
+            {
               "kind": "field",
               "name": "label",
               "type": {
@@ -2244,6 +2316,20 @@
               "description": "The alt text for the avatar.",
               "attribute": "label",
               "reflects": true,
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "loading",
+              "type": {
+                "text": "'eager' | 'lazy'"
+              },
+              "privacy": "public",
+              "default": "'eager'",
+              "description": "Indicates how the browser should load the avatar's image.",
+              "attribute": "loading",
               "inheritedFrom": {
                 "name": "CoreAvatar"
               }
@@ -2385,6 +2471,13 @@
               }
             },
             {
+              "description": "A wrapper for the default slot fallback when no image or initials are present.",
+              "name": "avatar-icon",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
+            },
+            {
               "description": "The image tag for the avatar.",
               "name": "avatar-image",
               "inheritedFrom": {
@@ -2452,9 +2545,28 @@
               "inheritedFrom": {
                 "name": "CoreAvatar"
               }
+            },
+            {
+              "name": "loading",
+              "type": {
+                "text": "'eager' | 'lazy'"
+              },
+              "default": "'eager'",
+              "description": "Indicates how the browser should load the avatar's image.",
+              "fieldName": "loading",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
             }
           ],
           "events": [
+            {
+              "description": "Emitted when the avatar's image fails to load. When this fires, the avatar falls back to the initials or default icon.",
+              "name": "avatar-error",
+              "inheritedFrom": {
+                "name": "CoreAvatar"
+              }
+            },
             {
               "description": "Emitted when the component is ready.",
               "name": "ready",
@@ -2466,7 +2578,7 @@
           ],
           "slots": [
             {
-              "description": "Utilized for specifying the default element, typically an icon.",
+              "description": "Utilized for specifying the default element, typically an icon. When no image, initials, or slot content is provided, a default person icon is rendered.",
               "name": "",
               "inheritedFrom": {
                 "name": "CoreAvatar"
@@ -2713,6 +2825,13 @@
               }
             },
             {
+              "description": "determines the space between the start slot, content, and end slot.",
+              "name": "--zd-badge-gap",
+              "inheritedFrom": {
+                "name": "CoreBadge"
+              }
+            },
+            {
               "description": "determines the padding.",
               "name": "--zd-badge-padding",
               "inheritedFrom": {
@@ -2734,6 +2853,20 @@
               "inheritedFrom": {
                 "name": "CoreBadge"
               }
+            },
+            {
+              "description": "The end slot container.",
+              "name": "badge-end",
+              "inheritedFrom": {
+                "name": "CoreBadge"
+              }
+            },
+            {
+              "description": "The start slot container.",
+              "name": "badge-start",
+              "inheritedFrom": {
+                "name": "CoreBadge"
+              }
             }
           ],
           "cssStates": [],
@@ -2751,6 +2884,20 @@
             {
               "description": "The content of the badge.",
               "name": "",
+              "inheritedFrom": {
+                "name": "CoreBadge"
+              }
+            },
+            {
+              "description": "Content rendered after the badge content.",
+              "name": "end",
+              "inheritedFrom": {
+                "name": "CoreBadge"
+              }
+            },
+            {
+              "description": "Content rendered before the badge content.",
+              "name": "start",
               "inheritedFrom": {
                 "name": "CoreBadge"
               }
@@ -3473,6 +3620,20 @@
               "kind": "method",
               "name": "breadcrumbTemplate",
               "privacy": "protected",
+              "description": "Template for the breadcrumb component.",
+              "inheritedFrom": {
+                "name": "CoreBreadcrumb"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true,
               "inheritedFrom": {
                 "name": "CoreBreadcrumb"
               }
@@ -3512,6 +3673,15 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getSeparator",
+              "privacy": "protected",
+              "description": "Generates a clone of the breadcrumb's separator element.",
+              "inheritedFrom": {
+                "name": "CoreBreadcrumb"
               }
             },
             {
@@ -3579,6 +3749,17 @@
               }
             },
             {
+              "kind": "field",
+              "name": "separatorSlot",
+              "type": {
+                "text": "HTMLSlotElement"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CoreBreadcrumb"
+              }
+            },
+            {
               "kind": "method",
               "name": "setAriaCurrent",
               "privacy": "protected",
@@ -3630,6 +3811,28 @@
                 }
               ],
               "description": "Controls the display of item separators for a given CoreBreadcrumbItem.",
+              "inheritedFrom": {
+                "name": "CoreBreadcrumb"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setItemSeparatorContent",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "item",
+                  "type": {
+                    "text": "CoreBreadcrumbItem"
+                  }
+                }
+              ],
+              "description": "Clones the breadcrumb's separator into an item that does not provide its own.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumb"
               }
@@ -3711,6 +3914,13 @@
             {
               "description": "Breadcrumb's contents, which should typically be a breadcrumb-item.",
               "name": "",
+              "inheritedFrom": {
+                "name": "CoreBreadcrumb"
+              }
+            },
+            {
+              "description": "The default separator used between breadcrumb items. When set, it is cloned into every item that does not provide its own.",
+              "name": "separator",
               "inheritedFrom": {
                 "name": "CoreBreadcrumb"
               }
@@ -4730,6 +4940,15 @@
             },
             {
               "kind": "field",
+              "name": "handleFocusIn",
+              "privacy": "protected",
+              "description": "Keeps the roving focusedIndex in sync when focus moves to a slotted item by\nany means other than the arrow keys (click, tab, programmatic focus). Without\nthis, arrow navigation after a mouse click would jump from a stale index.",
+              "inheritedFrom": {
+                "name": "CoreButtonGroup"
+              }
+            },
+            {
+              "kind": "field",
               "name": "handleKeyDown",
               "privacy": "protected",
               "description": "Handles the 'keydown' event on button-group",
@@ -4822,6 +5041,15 @@
               },
               "privacy": "protected",
               "default": "0",
+              "inheritedFrom": {
+                "name": "CoreButtonGroup"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "resetAttributes",
+              "privacy": "protected",
+              "description": "Clears the attributes this element propagated to its children, restoring default tab behavior.",
               "inheritedFrom": {
                 "name": "CoreButtonGroup"
               }
@@ -5478,6 +5706,15 @@
             },
             {
               "kind": "field",
+              "name": "handleSlotChange",
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CoreButton"
+              }
+            },
+            {
+              "kind": "field",
               "name": "hasFocus",
               "type": {
                 "text": "boolean"
@@ -5487,6 +5724,28 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "hasIconOnlyContent",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "nodes",
+                  "type": {
+                    "text": "Node[]"
+                  }
+                }
+              ],
+              "description": "True when every visible node in the default slot is an icon and there is at least one\nicon. Visually-hidden labels (per A11Y-002) don't disqualify icon-only detection.",
+              "inheritedFrom": {
+                "name": "CoreButton"
               }
             },
             {
@@ -5562,9 +5821,31 @@
                 "text": "boolean | undefined"
               },
               "privacy": "public",
-              "description": "Allows component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'",
+              "description": "Allows the component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'. When not set, this is\ndetected automatically when the default slot contains only an icon and no other visible\ncontent.",
               "attribute": "icon-only",
               "reflects": true,
+              "inheritedFrom": {
+                "name": "CoreButton"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "isIconElement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "node",
+                  "type": {
+                    "text": "Node"
+                  }
+                }
+              ],
+              "description": "True when the node represents an icon: an inline SVG, an element carrying the `icon`\nattribute, or the scope's icon component.",
               "inheritedFrom": {
                 "name": "CoreButton"
               }
@@ -5919,7 +6200,7 @@
               "type": {
                 "text": "boolean | undefined"
               },
-              "description": "Allows component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'",
+              "description": "Allows the component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'. When not set, this is\ndetected automatically when the default slot contains only an icon and no other visible\ncontent.",
               "fieldName": "iconOnly",
               "inheritedFrom": {
                 "name": "CoreButton"
@@ -7087,6 +7368,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -7271,6 +7565,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -7652,6 +7961,21 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -7705,6 +8029,16 @@
               "reflects": true,
               "parsedType": {
                 "text": "'default' | 'small' | undefined"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -8779,18 +9113,36 @@
             },
             {
               "kind": "field",
-              "name": "handleKeydown",
+              "name": "handleDialogCancel",
               "privacy": "protected",
-              "description": "Handles the 'keydown' event, specifically for the 'Escape' key.",
+              "description": "Handles the native 'cancel' event, which the browser fires when the user presses Escape.\nThe browser natively targets the event at the correct dialog in the top layer: the topmost\nmodal dialog on Firefox and WebKit, and each nested dialog in sequence on Chromium. preventDefault()\nalways so the native dialog never closes itself outside Charm's transition flow.",
               "parameters": [
                 {
-                  "description": "The 'keydown' event object.",
-                  "name": "e",
+                  "description": "The 'cancel' event object.",
+                  "name": "event",
                   "type": {
-                    "text": "KeyboardEvent"
+                    "text": "Event"
                   }
                 }
               ],
+              "inheritedFrom": {
+                "name": "CoreDialog"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleRenderedChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "isRendered",
+                  "type": {
+                    "text": "boolean"
+                  },
+                  "description": "Whether the host still generates layout boxes."
+                }
+              ],
+              "description": "Suspends the modal when third-party CSS (e.g. cookie banner blockers) hides an open dialog, so\nthe page isn't left scroll locked and inert. \"open\" stays true so the modal resumes if the\ndialog is rendered again.",
               "inheritedFrom": {
                 "name": "CoreDialog"
               }
@@ -9021,6 +9373,18 @@
               }
             },
             {
+              "kind": "field",
+              "name": "renderedWatcher",
+              "type": {
+                "text": "RenderedWatcher | undefined"
+              },
+              "privacy": "private",
+              "description": "Watches whether the dialog is actually rendered while open, so third-party CSS can't leave the page inert.",
+              "inheritedFrom": {
+                "name": "CoreDialog"
+              }
+            },
+            {
               "kind": "method",
               "name": "requestClose",
               "privacy": "protected",
@@ -9091,6 +9455,24 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "startRenderedWatcher",
+              "privacy": "protected",
+              "description": "Starts watching the dialog's render state, tearing down any previous watcher first.",
+              "inheritedFrom": {
+                "name": "CoreDialog"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "stopRenderedWatcher",
+              "privacy": "protected",
+              "description": "Stops watching the dialog's render state.",
+              "inheritedFrom": {
+                "name": "CoreDialog"
               }
             },
             {
@@ -10785,7 +11167,7 @@
             },
             {
               "kind": "field",
-              "name": "cachedUrl",
+              "name": "cachedSource",
               "type": {
                 "text": "string | undefined"
               },
@@ -10798,7 +11180,6 @@
               "kind": "field",
               "name": "defaultIcon",
               "privacy": "protected",
-              "default": "this.icons['question']",
               "inheritedFrom": {
                 "name": "CoreIcon"
               }
@@ -10815,6 +11196,20 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "flip",
+              "type": {
+                "text": "'x' | 'y' | 'both' | undefined"
+              },
+              "privacy": "public",
+              "description": "Sets the flip direction of the icon.",
+              "attribute": "flip",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CoreIcon"
               }
             },
             {
@@ -10879,9 +11274,13 @@
             },
             {
               "kind": "method",
-              "name": "iconTemplate",
+              "name": "iconSource",
               "privacy": "protected",
-              "description": "Generates the icon template.",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
               "inheritedFrom": {
                 "name": "CoreIcon"
               }
@@ -10917,6 +11316,11 @@
               "kind": "method",
               "name": "requestIcon",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Promise<SVGResult>"
+                }
+              },
               "parameters": [
                 {
                   "name": "url",
@@ -10925,6 +11329,21 @@
                   }
                 }
               ],
+              "inheritedFrom": {
+                "name": "CoreIcon"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "rotate",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "public",
+              "default": "0",
+              "description": "Sets the rotation degree of the icon.",
+              "attribute": "rotate",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CoreIcon"
               }
@@ -10967,10 +11386,18 @@
               "kind": "field",
               "name": "svg",
               "type": {
-                "text": "string"
+                "text": "SVGSVGElement | null"
               },
               "privacy": "protected",
-              "default": "''",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CoreIcon"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncIconNode",
+              "privacy": "protected",
               "inheritedFrom": {
                 "name": "CoreIcon"
               }
@@ -11003,6 +11430,17 @@
               }
             },
             {
+              "name": "flip",
+              "type": {
+                "text": "'x' | 'y' | 'both' | undefined"
+              },
+              "description": "Sets the flip direction of the icon.",
+              "fieldName": "flip",
+              "inheritedFrom": {
+                "name": "CoreIcon"
+              }
+            },
+            {
               "name": "label",
               "type": {
                 "text": "string | undefined"
@@ -11020,6 +11458,18 @@
               },
               "description": "The name of the icon to draw.",
               "fieldName": "name",
+              "inheritedFrom": {
+                "name": "CoreIcon"
+              }
+            },
+            {
+              "name": "rotate",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Sets the rotation degree of the icon.",
+              "fieldName": "rotate",
               "inheritedFrom": {
                 "name": "CoreIcon"
               }
@@ -11626,6 +12076,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -11837,6 +12300,21 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getOptions",
               "privacy": "protected",
               "description": "Gets all the options in the datalist from the input",
@@ -11894,6 +12372,23 @@
               "name": "handleChange",
               "privacy": "protected",
               "description": "Handles the change of the input.",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleClearClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ],
+              "description": "Handles the clear button click event.",
               "inheritedFrom": {
                 "name": "CoreInput"
               }
@@ -11963,6 +12458,15 @@
                 }
               ],
               "description": "Handles the `mousedown` event for slider.",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handlePasswordToggle",
+              "privacy": "protected",
+              "description": "Handles the password toggle click event.",
               "inheritedFrom": {
                 "name": "CoreInput"
               }
@@ -12361,6 +12865,34 @@
             },
             {
               "kind": "field",
+              "name": "passwordToggle",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Adds a button to toggle the password's visibility. Only applies to password types.",
+              "attribute": "password-toggle",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "passwordVisible",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Determines whether the password is currently visible. Only applies to password types.",
+              "attribute": "password-visible",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "field",
               "name": "pattern",
               "type": {
                 "text": "string | undefined"
@@ -12443,6 +12975,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -12452,6 +12994,15 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "select",
+              "privacy": "public",
+              "description": "Selects all input text.",
+              "inheritedFrom": {
+                "name": "CoreInput"
               }
             },
             {
@@ -12471,6 +13022,74 @@
               }
             },
             {
+              "kind": "method",
+              "name": "setRangeText",
+              "privacy": "public",
+              "parameters": [
+                {
+                  "name": "replacement",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "start",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "end",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "selectMode",
+                  "default": "'preserve'",
+                  "type": {
+                    "text": "'select' | 'start' | 'end' | 'preserve'"
+                  }
+                }
+              ],
+              "description": "Replaces a range of text in the input.",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setSelectionRange",
+              "privacy": "public",
+              "parameters": [
+                {
+                  "name": "selectionStart",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "selectionEnd",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "selectionDirection",
+                  "default": "'none'",
+                  "type": {
+                    "text": "'forward' | 'backward' | 'none'"
+                  }
+                }
+              ],
+              "description": "Sets the start and end positions of the selection.",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
               "kind": "field",
               "name": "shadowRootOptions",
               "type": {
@@ -12482,6 +13101,15 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "showPicker",
+              "privacy": "public",
+              "description": "Shows the browser picker for supported input types.",
+              "inheritedFrom": {
+                "name": "CoreInput"
               }
             },
             {
@@ -12522,6 +13150,49 @@
               "privacy": "public",
               "description": "The input's step attribute.",
               "attribute": "step",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "stepDown",
+              "privacy": "public",
+              "description": "Decrements the value of a numeric input type by the value of the step attribute.",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "stepUp",
+              "privacy": "public",
+              "description": "Increments the value of a numeric input type by the value of the step attribute.",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "''",
+              "description": "Tooltip text for the input.",
+              "attribute": "title",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CoreInput"
@@ -12632,6 +13303,20 @@
               "name": "valueAsNumber",
               "privacy": "public",
               "description": "Gets or sets the current value as a number.",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "withClear",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Adds a clear button when the input is not empty.",
+              "attribute": "with-clear",
               "inheritedFrom": {
                 "name": "CoreInput"
               }
@@ -12851,6 +13536,30 @@
               }
             },
             {
+              "name": "password-toggle",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Adds a button to toggle the password's visibility. Only applies to password types.",
+              "fieldName": "passwordToggle",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
+              "name": "password-visible",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Determines whether the password is currently visible. Only applies to password types.",
+              "fieldName": "passwordVisible",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
               "name": "pattern",
               "type": {
                 "text": "string | undefined"
@@ -12932,6 +13641,18 @@
               }
             },
             {
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "description": "Tooltip text for the input.",
+              "fieldName": "title",
+              "inheritedFrom": {
+                "name": "CoreInput"
+              }
+            },
+            {
               "name": "type",
               "type": {
                 "text": "InputTypes | undefined"
@@ -12954,6 +13675,18 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "with-clear",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Adds a clear button when the input is not empty.",
+              "fieldName": "withClear",
+              "inheritedFrom": {
+                "name": "CoreInput"
               }
             }
           ],
@@ -15099,19 +15832,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "lastFocusedItem",
-              "type": {
-                "text": "HTMLElement | null | undefined"
-              },
-              "privacy": "protected",
-              "default": "null",
-              "description": "The last focused item before a submenu was opened",
-              "inheritedFrom": {
-                "name": "CoreMenu"
-              }
-            },
-            {
               "kind": "method",
               "name": "menuTemplate",
               "privacy": "protected",
@@ -15440,6 +16160,31 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "userTypedQuery",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''",
+              "description": "The characters accumulated for type-ahead search.",
+              "inheritedFrom": {
+                "name": "CoreMenu"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "userTypedTimeout",
+              "type": {
+                "text": "ReturnType<typeof setTimeout> | undefined"
+              },
+              "privacy": "protected",
+              "description": "Handle for the timer that resets the type-ahead query after a pause in typing.",
+              "inheritedFrom": {
+                "name": "CoreMenu"
               }
             }
           ],
@@ -16568,7 +17313,7 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
+              "description": "Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
               "attribute": "arrow",
               "reflects": true,
               "inheritedFrom": {
@@ -16674,6 +17419,21 @@
                 "module": "src/base/charm-element/charm-element.ts"
               },
               "default": "'popup'"
+            },
+            {
+              "kind": "field",
+              "name": "boundary",
+              "type": {
+                "text": "'viewport' | 'scroll'"
+              },
+              "privacy": "public",
+              "default": "'viewport'",
+              "description": "Determines which overflow ancestors are used when flipping, shifting, and auto-sizing.",
+              "attribute": "boundary",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CorePopup"
+              }
             },
             {
               "kind": "field",
@@ -17264,6 +18024,28 @@
               }
             },
             {
+              "kind": "method",
+              "name": "resolveBoundary",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | Element[] | undefined"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "boundary",
+                  "optional": true,
+                  "type": {
+                    "text": "Element | Element[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -17540,8 +18322,8 @@
           "modulePath": "src/components/popup/popup.ts",
           "cssProperties": [
             {
-              "description": "The color of the arrow.",
-              "name": "--zd-popup-arrow-color",
+              "description": "The background color of the popup. The arrow uses the same color, so the two always match.",
+              "name": "--zd-popup-bg-color",
               "inheritedFrom": {
                 "name": "CorePopup"
               }
@@ -17631,7 +18413,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
+              "description": "Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
               "fieldName": "arrow",
               "inheritedFrom": {
                 "name": "CorePopup"
@@ -17678,6 +18460,18 @@
               },
               "description": "The amount of padding, in pixels, to exceed before the auto-size behavior will occur.",
               "fieldName": "autoSizePadding",
+              "inheritedFrom": {
+                "name": "CorePopup"
+              }
+            },
+            {
+              "name": "boundary",
+              "type": {
+                "text": "'viewport' | 'scroll'"
+              },
+              "default": "'viewport'",
+              "description": "Determines which overflow ancestors are used when flipping, shifting, and auto-sizing.",
+              "fieldName": "boundary",
               "inheritedFrom": {
                 "name": "CorePopup"
               }
@@ -17992,6 +18786,18 @@
             },
             {
               "kind": "field",
+              "name": "_syncRangeFrame",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "private",
+              "description": "The id of the pending animation frame that defers the width sync, if one is scheduled.",
+              "inheritedFrom": {
+                "name": "CoreProgressBar"
+              }
+            },
+            {
+              "kind": "field",
               "name": "baseName",
               "type": {
                 "text": "string"
@@ -18163,7 +18969,7 @@
                 "text": "string | undefined"
               },
               "privacy": "public",
-              "description": "A custom label for the progress bar's aria label.",
+              "description": "A custom label for the progress bar's aria label. When omitted and the default slot is empty, a default `Progress` text is used.",
               "attribute": "label",
               "inheritedFrom": {
                 "name": "CoreProgressBar"
@@ -18232,6 +19038,15 @@
               "name": "syncRange",
               "privacy": "protected",
               "description": "Updates the percentage of the progress bar loaded.",
+              "inheritedFrom": {
+                "name": "CoreProgressBar"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncRangeOnNextFrame",
+              "privacy": "protected",
+              "description": "Defers the width sync by a frame so Safari animates the width transition instead of snapping it.",
               "inheritedFrom": {
                 "name": "CoreProgressBar"
               }
@@ -18456,7 +19271,7 @@
               "type": {
                 "text": "string | undefined"
               },
-              "description": "A custom label for the progress bar's aria label.",
+              "description": "A custom label for the progress bar's aria label. When omitted and the default slot is empty, a default `Progress` text is used.",
               "fieldName": "label",
               "inheritedFrom": {
                 "name": "CoreProgressBar"
@@ -18508,7 +19323,7 @@
           ],
           "slots": [
             {
-              "description": "A label to show inside the indicator when the `label` attribute is not provided.",
+              "description": "A label shown above the track. When the `label` attribute is not provided and the slot is empty, a default `Progress` text is used to name the bar for assistive tech.",
               "name": "",
               "inheritedFrom": {
                 "name": "CoreProgressBar"
@@ -19753,6 +20568,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -19952,6 +20780,21 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CoreRadioGroup"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -20352,18 +21195,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "previouslyDisabledRadios",
-              "type": {
-                "text": "Set<CoreRadio>"
-              },
-              "privacy": "private",
-              "default": "new Set()",
-              "inheritedFrom": {
-                "name": "CoreRadioGroup"
-              }
-            },
-            {
               "kind": "method",
               "name": "radioGroupHelpTextTemplate",
               "privacy": "protected",
@@ -20468,6 +21299,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -20512,8 +21353,19 @@
             },
             {
               "kind": "method",
-              "name": "updateCheckedRadio",
+              "name": "syncInitialFormValue",
               "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncRadioElements",
+              "privacy": "protected",
+              "description": "Synchronizes the slotted radios with the group's state: force-disables them when the group is disabled (without\nclobbering their own `disabled` state), syncs their `checked` state to the group's value, and applies the roving\ntabindex. Waits for the radios to settle so the radios' own reactive tabindex handling can't clobber the group's.",
               "inheritedFrom": {
                 "name": "CoreRadioGroup"
               }
@@ -20563,6 +21415,19 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationTarget",
+              "type": {
+                "text": "CoreRadio | undefined"
+              },
+              "privacy": "protected",
+              "description": "The first enabled radio, used to anchor the browser's constraint-validation message to the radio controls.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CoreRadioGroup"
               }
             },
             {
@@ -21108,7 +21973,7 @@
               }
             },
             {
-              "description": "fires when the value of the element has been changed as a direct result of a user action",
+              "description": "Emitted when the radio group receives user input.",
               "name": "input",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -21262,6 +22127,16 @@
               }
             },
             {
+              "kind": "field",
+              "name": "effectivelyDisabled",
+              "privacy": "protected",
+              "description": "Whether the radio is disabled by its own `disabled` property or by the containing radio group's `forceDisabled`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CoreRadio"
+              }
+            },
+            {
               "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
@@ -21315,7 +22190,7 @@
               "kind": "method",
               "name": "handleDisabledChange",
               "privacy": "protected",
-              "description": "Handles the change in the `disabled` property.",
+              "description": "Handles the change in the `disabled` and `forceDisabled` state.",
               "inheritedFrom": {
                 "name": "CoreRadio"
               }
@@ -22436,6 +23311,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -22624,6 +23512,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -23125,6 +24028,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -23204,6 +24117,16 @@
               "description": "Generates the start slot template",
               "inheritedFrom": {
                 "name": "CoreSelect"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -24754,6 +25677,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -24938,6 +25874,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -25365,6 +26316,21 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -25413,6 +26379,16 @@
               "description": "Generates the template for the switch.",
               "inheritedFrom": {
                 "name": "CoreSwitch"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -27829,6 +28805,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -28022,6 +29011,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -28474,6 +29478,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "rows",
               "type": {
@@ -28539,6 +29553,16 @@
               "reflects": true,
               "parsedType": {
                 "text": "'default' | 'small' | undefined"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -30473,7 +31497,7 @@
           "type": {
             "text": "Record<string, string>"
           },
-          "default": "{ 'chevron-left': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M10.35 3.15a.5.5 0 0 1 0 .7L6.21 8l4.14 4.15a.5.5 0 0 1-.7.7l-4.5-4.5a.5.5 0 0 1 0-.7l4.5-4.5a.5.5 0 0 1 .7 0Z\" fill=\"currentColor\"></path></svg>`, 'info-circle': `<svg height=\"16\" viewBox=\"0 0 12 12\" fill=\"none\"><path fill-rule=\"evenodd\" d=\"M6 1a5 5 0 1 0 0 10A5 5 0 0 0 6 1Zm0 2a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM5.5 6a.5.5 0 0 1 1 0v2.1a.5.5 0 0 1-1 0V6Z\" fill=\"currentColor\"/></svg>`, 'location-pin': `<svg height=\"16\" viewBox=\"0 0 12 20\" fill=\"none\"><title>location pin icon</title><path d=\"M5.833 1.667A5.83 5.83 0 0 0 0 7.5c0 4.375 5.833 10.833 5.833 10.833s5.834-6.458 5.834-10.833a5.83 5.83 0 0 0-5.834-5.833Zm0 7.916a2.084 2.084 0 1 1 .002-4.168 2.084 2.084 0 0 1-.002 4.168Z\" fill=\"currentColor\"></path></svg>`, 'search': `<svg height=\"16\" viewBox=\"0 0 38 40\" fill=\"none\"><path d=\"M37.6,36L26.8,24.7c2.2-2.6,3.6-6,3.6-9.7c0-8.3-6.7-15-15-15s-15,6.7-15,15c0,8.3,6.7,15,15,15c2.5,0,4.8-0.6,6.8-1.7L33.4,40L37.6,36z M4.1,15c0-6.2,5.1-11.3,11.3-11.3S26.7,8.7,26.7,15s-5.1,11.3-11.3,11.3S4.1,21.2,4.1,15z\" fill=\"currentColor\"></path></svg>`, 'insurance-accepted': `<svg height=\"16\" viewBox=\"0 0 15 20\" fill=\"none\"><path d=\"M7.5.833 0 4.167v5c0 4.625 3.2 8.95 7.5 10 4.3-1.05 7.5-5.375 7.5-10v-5L7.5.833ZM5.833 14.167 2.5 10.833l1.175-1.175 2.158 2.15 5.492-5.491L12.5 7.5l-6.667 6.667Z\" fill=\"currentColor\"></path></svg>`, 'insurance-add': `<svg height=\"16\" viewBox=\"0 0 15 20\" fill=\"none\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0 4.167 7.5.833 15 4.167v5c0 4.625-3.2 8.95-7.5 10-4.3-1.05-7.5-5.375-7.5-10v-5Zm8.333 1.666v3.334h3.334v1.666H8.333v3.334H6.667v-3.334H3.333V9.167h3.334V5.833h1.666Z\" fill=\"currentColor\"></path></svg>`, 'star': `<svg height=\"16\" viewBox=\"0 0 17 20\" fill=\"none\"><path d=\"m8.333 15.343 4.042 2.43c.74.445 1.646-.213 1.45-1.045l-1.07-4.57 3.574-3.078c.652-.562.302-1.626-.555-1.694l-4.704-.397L9.23 2.67c-.332-.784-1.462-.784-1.793 0L5.597 6.98l-4.704.397C.036 7.444-.315 8.51.338 9.07l3.574 3.079-1.071 4.569c-.195.832.71 1.49 1.45 1.045l4.042-2.42Z\" fill=\"currentColor\"></path></svg>`, 'stethoscope': `<svg height=\"16\" viewBox=\"0 0 17 18\" fill=\"none\"><path d=\"M14.167 5.667A.82.82 0 0 1 15 6.5a.833.833 0 0 1-.833.834.825.825 0 0 1-.834-.834c0-.475.359-.833.834-.833ZM0 .667v7.5a4.98 4.98 0 0 0 4.283 4.925c.517 2.508 2.734 4.242 5.3 4.242A5.415 5.415 0 0 0 15 11.917V8.842c.967-.35 1.667-1.267 1.667-2.342a2.5 2.5 0 1 0-5 0c0 1.075.7 2 1.666 2.342v3a3.734 3.734 0 0 1-3.75 3.75c-1.666 0-3.066-1.008-3.566-2.508C8.333 12.584 10 10.5 10 8.167v-7.5H6.667v2.5h1.666v5a3.333 3.333 0 1 1-6.666 0v-5h1.666v-2.5H0Z\" fill=\"currentColor\"></path></svg>`, }",
+          "default": "{ 'chevron-left': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M10.35 3.15a.5.5 0 0 1 0 .7L6.21 8l4.14 4.15a.5.5 0 0 1-.7.7l-4.5-4.5a.5.5 0 0 1 0-.7l4.5-4.5a.5.5 0 0 1 .7 0Z\" fill=\"currentColor\"></path></svg>`, 'info-circle': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 12 12\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M6 1a5 5 0 1 0 0 10A5 5 0 0 0 6 1Zm0 2a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM5.5 6a.5.5 0 0 1 1 0v2.1a.5.5 0 0 1-1 0V6Z\"></path></svg>`, 'location-pin': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 12 20\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M5.833 1.667A5.83 5.83 0 0 0 0 7.5c0 4.375 5.833 10.833 5.833 10.833s5.834-6.458 5.834-10.833a5.83 5.83 0 0 0-5.834-5.833Zm0 7.916a2.084 2.084 0 1 1 .002-4.168 2.084 2.084 0 0 1-.002 4.168Z\"></path></svg>`, 'search': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 38 40\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M37.6,36L26.8,24.7c2.2-2.6,3.6-6,3.6-9.7c0-8.3-6.7-15-15-15s-15,6.7-15,15c0,8.3,6.7,15,15,15c2.5,0,4.8-0.6,6.8-1.7L33.4,40L37.6,36z M4.1,15c0-6.2,5.1-11.3,11.3-11.3S26.7,8.7,26.7,15s-5.1,11.3-11.3,11.3S4.1,21.2,4.1,15z\"></path></svg>`, 'insurance-accepted': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 15 20\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7.5.833 0 4.167v5c0 4.625 3.2 8.95 7.5 10 4.3-1.05 7.5-5.375 7.5-10v-5L7.5.833ZM5.833 14.167 2.5 10.833l1.175-1.175 2.158 2.15 5.492-5.491L12.5 7.5l-6.667 6.667Z\"></path></svg>`, 'insurance-add': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 15 20\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0 4.167 7.5.833 15 4.167v5c0 4.625-3.2 8.95-7.5 10-4.3-1.05-7.5-5.375-7.5-10v-5Zm8.333 1.666v3.334h3.334v1.666H8.333v3.334H6.667v-3.334H3.333V9.167h3.334V5.833h1.666Z\"></path></svg>`, 'star': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 17 20\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m8.333 15.343 4.042 2.43c.74.445 1.646-.213 1.45-1.045l-1.07-4.57 3.574-3.078c.652-.562.302-1.626-.555-1.694l-4.704-.397L9.23 2.67c-.332-.784-1.462-.784-1.793 0L5.597 6.98l-4.704.397C.036 7.444-.315 8.51.338 9.07l3.574 3.079-1.071 4.569c-.195.832.71 1.49 1.45 1.045l4.042-2.42Z\"></path></svg>`, 'stethoscope': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 0 17 18\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M14.167 5.667A.82.82 0 0 1 15 6.5a.833.833 0 0 1-.833.834.825.825 0 0 1-.834-.834c0-.475.359-.833.834-.833ZM0 .667v7.5a4.98 4.98 0 0 0 4.283 4.925c.517 2.508 2.734 4.242 5.3 4.242A5.415 5.415 0 0 0 15 11.917V8.842c.967-.35 1.667-1.267 1.667-2.342a2.5 2.5 0 1 0-5 0c0 1.075.7 2 1.666 2.342v3a3.734 3.734 0 0 1-3.75 3.75c-1.666 0-3.066-1.008-3.566-2.508C8.333 12.584 10 10.5 10 8.167v-7.5H6.667v2.5h1.666v5a3.333 3.333 0 1 1-6.666 0v-5h1.666v-2.5H0Z\"></path></svg>`, 'video-filled': `<svg fill=\"currentColor\" width=\"16\" height=\"16\" viewBox=\"0 -960 960 960\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h480q33 0 56.5 23.5T720-720v180l126-126q10-10 22-5t12 19v344q0 14-12 19t-22-5L720-420v180q0 33-23.5 56.5T640-160H160Z\"></path></svg>`, }",
           "description": "Icons Zocdoc adds to Charm's set, merged in by `configure.ts`.\n\nCharm ships `error-circle`, `warning`, and `checkmark-circle` but no\ninformational glyph, which leaves `<zd-alert variant=\"info\">` as the one\nseverity with nothing to draw. `question` is the nearest thing in Charm's set\nand means \"help\", not \"here is something you should know\".\n\nMerging happens in `configure.ts` rather than here or in `icon.ts`, because\n`project.updateProject()` *replaces* its configuration rather than merging it:\na second call would drop the `zd` prefix and reset the component scope. There\nis one call, so there is one place to add icons."
         }
       ],
@@ -30534,6 +31558,174 @@
       "exports": [
         {
           "kind": "js",
+          "name": "priviaAllCss",
+          "declaration": {
+            "name": "priviaAllCss",
+            "module": "./privia.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaResetCss",
+          "declaration": {
+            "name": "priviaResetCss",
+            "module": "./privia.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaTheme",
+          "declaration": {
+            "name": "priviaTheme",
+            "module": "./privia.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaThemeCss",
+          "declaration": {
+            "name": "priviaThemeCss",
+            "module": "./privia.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaTokenDefinition",
+          "declaration": {
+            "name": "priviaTokenDefinition",
+            "module": "./privia.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaTokensBase",
+          "declaration": {
+            "name": "priviaTokensBase",
+            "module": "./privia.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaUtilitiesCss",
+          "declaration": {
+            "name": "priviaUtilitiesCss",
+            "module": "./privia.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerAllCss",
+          "declaration": {
+            "name": "schweigerAllCss",
+            "module": "./schweiger.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerResetCss",
+          "declaration": {
+            "name": "schweigerResetCss",
+            "module": "./schweiger.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerTheme",
+          "declaration": {
+            "name": "schweigerTheme",
+            "module": "./schweiger.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerThemeCss",
+          "declaration": {
+            "name": "schweigerThemeCss",
+            "module": "./schweiger.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerTokenDefinition",
+          "declaration": {
+            "name": "schweigerTokenDefinition",
+            "module": "./schweiger.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerTokensBase",
+          "declaration": {
+            "name": "schweigerTokensBase",
+            "module": "./schweiger.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerUtilitiesCss",
+          "declaration": {
+            "name": "schweigerUtilitiesCss",
+            "module": "./schweiger.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareAllCss",
+          "declaration": {
+            "name": "womensCareAllCss",
+            "module": "./womensCare.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareResetCss",
+          "declaration": {
+            "name": "womensCareResetCss",
+            "module": "./womensCare.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareTheme",
+          "declaration": {
+            "name": "womensCareTheme",
+            "module": "./womensCare.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareThemeCss",
+          "declaration": {
+            "name": "womensCareThemeCss",
+            "module": "./womensCare.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareTokenDefinition",
+          "declaration": {
+            "name": "womensCareTokenDefinition",
+            "module": "./womensCare.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareTokensBase",
+          "declaration": {
+            "name": "womensCareTokensBase",
+            "module": "./womensCare.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareUtilitiesCss",
+          "declaration": {
+            "name": "womensCareUtilitiesCss",
+            "module": "./womensCare.js"
+          }
+        },
+        {
+          "kind": "js",
           "name": "zocdocAllCss",
           "declaration": {
             "name": "zocdocAllCss",
@@ -30569,6 +31761,14 @@
           "name": "zocdocTokenDefinition",
           "declaration": {
             "name": "zocdocTokenDefinition",
+            "module": "./zocdoc.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "zocdocTokensBase",
+          "declaration": {
+            "name": "zocdocTokensBase",
             "module": "./zocdoc.js"
           }
         },
@@ -30609,6 +31809,319 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/theme/privia.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "priviaAllCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "priviaResetCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "priviaTheme"
+        },
+        {
+          "kind": "variable",
+          "name": "priviaThemeCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "priviaTokenDefinition"
+        },
+        {
+          "kind": "variable",
+          "name": "priviaTokensBase",
+          "description": "Privia Health Theme\n\nExtends the Zocdoc theme with Privia's brand colors.\nMinimal customization - just brand and accent colors."
+        },
+        {
+          "kind": "variable",
+          "name": "priviaUtilitiesCss",
+          "type": {
+            "text": "string"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "priviaAllCss",
+          "declaration": {
+            "name": "priviaAllCss",
+            "module": "src/theme/privia.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaResetCss",
+          "declaration": {
+            "name": "priviaResetCss",
+            "module": "src/theme/privia.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaTheme",
+          "declaration": {
+            "name": "priviaTheme",
+            "module": "src/theme/privia.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaThemeCss",
+          "declaration": {
+            "name": "priviaThemeCss",
+            "module": "src/theme/privia.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaTokenDefinition",
+          "declaration": {
+            "name": "priviaTokenDefinition",
+            "module": "src/theme/privia.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaTokensBase",
+          "declaration": {
+            "name": "priviaTokensBase",
+            "module": "src/theme/privia.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "priviaUtilitiesCss",
+          "declaration": {
+            "name": "priviaUtilitiesCss",
+            "module": "src/theme/privia.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/theme/schweiger.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "schweigerAllCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "schweigerResetCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "schweigerTheme"
+        },
+        {
+          "kind": "variable",
+          "name": "schweigerThemeCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "schweigerTokenDefinition"
+        },
+        {
+          "kind": "variable",
+          "name": "schweigerTokensBase"
+        },
+        {
+          "kind": "variable",
+          "name": "schweigerUtilitiesCss",
+          "type": {
+            "text": "string"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "schweigerAllCss",
+          "declaration": {
+            "name": "schweigerAllCss",
+            "module": "src/theme/schweiger.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerResetCss",
+          "declaration": {
+            "name": "schweigerResetCss",
+            "module": "src/theme/schweiger.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerTheme",
+          "declaration": {
+            "name": "schweigerTheme",
+            "module": "src/theme/schweiger.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerThemeCss",
+          "declaration": {
+            "name": "schweigerThemeCss",
+            "module": "src/theme/schweiger.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerTokenDefinition",
+          "declaration": {
+            "name": "schweigerTokenDefinition",
+            "module": "src/theme/schweiger.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerTokensBase",
+          "declaration": {
+            "name": "schweigerTokensBase",
+            "module": "src/theme/schweiger.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "schweigerUtilitiesCss",
+          "declaration": {
+            "name": "schweigerUtilitiesCss",
+            "module": "src/theme/schweiger.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/theme/womensCare.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "womensCareAllCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "womensCareResetCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "womensCareTheme"
+        },
+        {
+          "kind": "variable",
+          "name": "womensCareThemeCss",
+          "type": {
+            "text": "string"
+          }
+        },
+        {
+          "kind": "variable",
+          "name": "womensCareTokenDefinition"
+        },
+        {
+          "kind": "variable",
+          "name": "womensCareTokensBase"
+        },
+        {
+          "kind": "variable",
+          "name": "womensCareUtilitiesCss",
+          "type": {
+            "text": "string"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "womensCareAllCss",
+          "declaration": {
+            "name": "womensCareAllCss",
+            "module": "src/theme/womensCare.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareResetCss",
+          "declaration": {
+            "name": "womensCareResetCss",
+            "module": "src/theme/womensCare.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareTheme",
+          "declaration": {
+            "name": "womensCareTheme",
+            "module": "src/theme/womensCare.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareThemeCss",
+          "declaration": {
+            "name": "womensCareThemeCss",
+            "module": "src/theme/womensCare.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareTokenDefinition",
+          "declaration": {
+            "name": "womensCareTokenDefinition",
+            "module": "src/theme/womensCare.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareTokensBase",
+          "declaration": {
+            "name": "womensCareTokensBase",
+            "module": "src/theme/womensCare.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "womensCareUtilitiesCss",
+          "declaration": {
+            "name": "womensCareUtilitiesCss",
+            "module": "src/theme/womensCare.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/theme/zocdoc.ts",
       "declarations": [
         {
@@ -30639,6 +32152,10 @@
         {
           "kind": "variable",
           "name": "zocdocTokenDefinition"
+        },
+        {
+          "kind": "variable",
+          "name": "zocdocTokensBase"
         },
         {
           "kind": "variable",
@@ -30686,6 +32203,14 @@
           "name": "zocdocTokenDefinition",
           "declaration": {
             "name": "zocdocTokenDefinition",
+            "module": "src/theme/zocdoc.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "zocdocTokensBase",
+          "declaration": {
+            "name": "zocdocTokensBase",
             "module": "src/theme/zocdoc.ts"
           }
         },

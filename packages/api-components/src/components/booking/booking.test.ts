@@ -12,7 +12,7 @@ import type {
 } from '../../client/types.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
 import { dayFromToday } from '../../utils/test/dates.js';
-import { mount, part, settled, shadow } from '../../utils/test/mount.js';
+import { mount, part, queryPart, settled, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -84,8 +84,13 @@ function child(element: Flow, name: string): HTMLElement {
   return part(element, name);
 }
 
-/** Drives the flow to the patient step the way the children do, by event. */
-async function toPatientStep(element: Flow): Promise<void> {
+/** The dialog `modal` mode renders, which is present whether or not it is open. */
+function dialog(element: Flow): HTMLElement & { open: boolean } {
+  return part<HTMLElement & { open: boolean }>(element, 'dialog');
+}
+
+/** Drives the flow to the time step the way the results list does, by event. */
+async function toTimeStep(element: Flow): Promise<void> {
   element.providers = [PROVIDER];
   await settled(element);
 
@@ -93,6 +98,11 @@ async function toPatientStep(element: Flow): Promise<void> {
     new CustomEvent('provider-select', { detail: { provider: PROVIDER } })
   );
   await settled(element);
+}
+
+/** Drives the flow to the patient step the way the children do, by event. */
+async function toPatientStep(element: Flow): Promise<void> {
+  await toTimeStep(element);
 
   child(element, 'picker').dispatchEvent(
     new CustomEvent('slot-select', {
@@ -108,7 +118,7 @@ function submitPatient(element: Flow): void {
   );
 }
 
-describe('zd-booking-flow', () => {
+describe('zd-booking', () => {
   beforeEach(() => {
     vi.spyOn(appointments, 'createAppointment').mockResolvedValue(bookingResponse('confirmed'));
     vi.spyOn(availability, 'getAvailability').mockResolvedValue([]);
@@ -123,7 +133,7 @@ describe('zd-booking-flow', () => {
 
   function mountFlow(attributes = ''): Promise<Flow> {
     return mount<Flow>(
-      `<zd-booking-flow zip-code="${SCENARIOS.zipWithResults}" ${attributes}></zd-booking-flow>`
+      `<zd-booking zip-code="${SCENARIOS.zipWithResults}" ${attributes}></zd-booking>`
     );
   }
 
@@ -218,10 +228,12 @@ describe('zd-booking-flow', () => {
     await settled(element);
 
     const summary = child(element, 'summary');
-    expect(summary.querySelector('[part="provider-name"]')?.textContent).toContain(
+    const providerSummary = summary.querySelector('[part="provider-summary"]');
+    const providerShadow = providerSummary?.shadowRoot;
+    expect(providerShadow?.querySelector('[part="name"]')?.textContent).toContain(
       'Dr. Ada Testerson'
     );
-    expect(summary.querySelector('[part="provider-location"]')?.textContent).toContain(
+    expect(providerShadow?.querySelector('[part="location"]')?.textContent).toContain(
       '1 Sandbox Plaza'
     );
     // The time step is where the time is being chosen; restating it above the control is noise.
@@ -233,7 +245,8 @@ describe('zd-booking-flow', () => {
     await toPatientStep(element);
 
     const summary = child(element, 'summary');
-    expect(summary.querySelector('[part="provider-name"]')).not.toBeNull();
+    const providerSummary = summary.querySelector('[part="provider-summary"]');
+    expect(providerSummary?.shadowRoot?.querySelector('[part="name"]')).not.toBeNull();
     expect(summary.querySelector('[part="summary-time"]')?.textContent).toBeTruthy();
   });
 
@@ -285,6 +298,50 @@ describe('zd-booking-flow', () => {
 
     const picker = child(element, 'picker') as HTMLElement & { visitReasonId?: string };
     expect(picker.visitReasonId).toBe('vr_resolved');
+  });
+
+  /**
+   * A host page that ran its own search hands the results in and names one of them, which is
+   * what `providers` is public for — the demo's assistant panel is exactly this.
+   *
+   * The selection has to be resolved from `providers` rather than only from the results list's
+   * event, or the flow reaches the time step knowing an id and nothing else: the summary loses
+   * the provider it is supposed to restate, and a flow with no chosen visit reason has no
+   * default to fall back to and so never fetches.
+   */
+  it('resolves a provider named from outside against the results handed in', async () => {
+    const element = await mountFlow();
+    element.providers = [PROVIDER];
+    element.providerLocationId = PROVIDER.provider_location_id;
+    await settled(element);
+
+    expect(element.step).toBe('time');
+
+    const providerSummary = child(element, 'summary').querySelector('[part="provider-summary"]');
+    expect(providerSummary?.shadowRoot?.querySelector('[part="name"]')?.textContent).toContain(
+      'Dr. Ada Testerson'
+    );
+
+    const picker = child(element, 'picker') as HTMLElement & { visitReasonId?: string };
+    expect(picker.visitReasonId).toBe('vr_default');
+  });
+
+  /**
+   * An id that matches nothing in `providers` — a deep link, or a page that named a provider it
+   * never handed in — drops the provider block rather than leaving the last one under it. The
+   * step still runs: the picker fetches from the id, and it is the restatement that goes, because
+   * a summary naming a provider the flow is no longer booking is worse than no summary.
+   */
+  it('drops the restated provider when an id matches nothing handed in', async () => {
+    const element = await mountFlow('visit-reason-id="vr_1"');
+    await toTimeStep(element);
+
+    element.providerLocationId = 'pr_absent|lo_absent';
+    await settled(element);
+
+    expect(element.step).toBe('time');
+    expect(queryPart(element, 'provider-summary')).toBeNull();
+    expect(queryPart(element, 'picker')).not.toBeNull();
   });
 
   /*
@@ -834,6 +891,121 @@ describe('zd-booking-flow', () => {
     });
   });
 
+  /**
+   * The modal mode a host page opts into with `modal`, where the search stays on the page and
+   * everything from the time step on happens in a dialog over it.
+   */
+  describe('modal', () => {
+    it('leaves the dialog closed while the patient is still searching', async () => {
+      const element = await mountFlow('modal');
+
+      expect(element.step).toBe('search');
+      expect(dialog(element).open).toBeFalsy();
+      expect(queryPart(element, 'search')).not.toBeNull();
+    });
+
+    /*
+     * The list is what the patient came from and what they return to, so it stays rendered
+     * underneath rather than being swapped out for the dialog's content.
+     */
+    it('opens the dialog on the time step, over a list that is still there', async () => {
+      const element = await mountFlow('modal visit-reason-id="vr_1"');
+      await toTimeStep(element);
+
+      expect(dialog(element).open).toBe(true);
+      expect(queryPart(element, 'modal-step')).not.toBeNull();
+      expect(queryPart(element, 'picker')).not.toBeNull();
+      expect(queryPart(element, 'results')).not.toBeNull();
+    });
+
+    it('carries on to the patient step inside the dialog', async () => {
+      const element = await mountFlow('modal visit-reason-id="vr_1"');
+      await toPatientStep(element);
+
+      expect(element.step).toBe('patient');
+      expect(dialog(element).open).toBe(true);
+      expect(queryPart(element, 'patient-form')).not.toBeNull();
+    });
+
+    /*
+     * Dismissing is not the same as going back one step: the dialog was the whole booking, so
+     * closing it drops the slot and the provider together and leaves the patient on the list.
+     */
+    it('returns to the search step when the dialog is dismissed', async () => {
+      const element = await mountFlow('modal visit-reason-id="vr_1"');
+      await toPatientStep(element);
+
+      dialog(element).dispatchEvent(new CustomEvent('dialog-hide'));
+      await settled(element);
+
+      expect(element.step).toBe('search');
+      expect(element.startTime).toBeUndefined();
+      expect(element.providerLocationId).toBeUndefined();
+      expect(dialog(element).open).toBeFalsy();
+      expect(queryPart(element, 'results')).not.toBeNull();
+    });
+
+    /*
+     * The dialog moves focus into itself as it opens, so the flow's own focus move would be
+     * fighting it (A11Y-003). Between two steps of an already-open dialog there is nothing else
+     * moving focus, so the flow still does it.
+     */
+    it('leaves the opening focus to the dialog and moves it between steps itself', async () => {
+      const element = await mountFlow('modal visit-reason-id="vr_1"');
+      await toTimeStep(element);
+
+      expect(shadow(element).activeElement).not.toBe(queryPart(element, 'modal-step'));
+
+      child(element, 'picker').dispatchEvent(
+        new CustomEvent('slot-select', {
+          detail: { startTime: START_TIME, providerLocationId: PROVIDER.provider_location_id },
+        })
+      );
+      await settled(element);
+
+      expect(shadow(element).activeElement).toBe(part(element, 'modal-step'));
+    });
+
+    it('still renders the flow inline when modal is not set', async () => {
+      const element = await mountFlow('visit-reason-id="vr_1"');
+      await toTimeStep(element);
+
+      expect(queryPart(element, 'dialog')).toBeNull();
+      expect(queryPart(element, 'picker')).not.toBeNull();
+    });
+
+    /*
+     * The dialog scrolls, so the times do not have to hide behind a day that has to be pressed
+     * first; the inline step has no such room and keeps the strip.
+     */
+    it('lists every day at once in the dialog, and one at a time inline', async () => {
+      const inModal = await mountFlow('modal visit-reason-id="vr_1"');
+      await toTimeStep(inModal);
+      expect(child(inModal, 'picker')).toHaveProperty('layout', 'stacked');
+
+      const inline = await mountFlow('visit-reason-id="vr_1"');
+      await toTimeStep(inline);
+      expect(child(inline, 'picker')).toHaveProperty('layout', 'strip');
+    });
+
+    /*
+     * The dialog's own padding sits outside its scrollport, so without this the last row of times
+     * ends exactly on the clip line. Measured on the step rather than read off the stylesheet,
+     * because what matters is that the content has somewhere to land when scrolled to the end.
+     */
+    it('leaves room under the content the dialog scrolls', async () => {
+      const element = await mountFlow('modal visit-reason-id="vr_1"');
+      await toTimeStep(element);
+
+      const step = part(element, 'modal-step');
+      const last = step.lastElementChild!;
+
+      expect(step.getBoundingClientRect().bottom).toBeGreaterThan(
+        last.getBoundingClientRect().bottom
+      );
+    });
+  });
+
   /** One check per step, because each is a different composition (A11Y-005). */
   describe('accessibility', () => {
     it('passes axe checks on the search step', async () => {
@@ -868,6 +1040,19 @@ describe('zd-booking-flow', () => {
       submitPatient(element);
       await vi.waitFor(() =>
         expect(shadow(element).querySelector('[part="error"]')).not.toBeNull()
+      );
+      await settled(element);
+
+      await expectNoViolations(element);
+    });
+
+    /* The dialog adds a heading, a close button and a focus trap the inline flow does not have. */
+    it('passes axe checks with the time step in a modal', async () => {
+      const element = await mountFlow('modal visit-reason-id="vr_1"');
+      element.providers = [PROVIDER];
+      await settled(element);
+      child(element, 'results').dispatchEvent(
+        new CustomEvent('provider-select', { detail: { provider: PROVIDER } })
       );
       await settled(element);
 

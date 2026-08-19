@@ -23,6 +23,13 @@ body {
   display: flex;
   gap: 1rem;
   justify-content: space-between;
+
+  /*
+   * The row wraps rather than overflowing. Three controls plus a heading do not fit across a phone,
+   * and a header that does not wrap widens the whole document instead of itself — every section
+   * below it then scrolls sideways.
+   */
+  flex-wrap: wrap;
 }
 
 h1 {
@@ -36,6 +43,7 @@ h1 {
   align-items: center;
   display: flex;
   flex: none;
+  flex-wrap: wrap;
   gap: 1.5rem;
 }
 
@@ -69,15 +77,23 @@ h1 {
 
 /* The mode banner. Its wording is set by config.ts; the colour follows what it landed on. */
 #mode {
-  border-inline-start: 0.25rem solid var(--zd-border-secondary);
   font-size: var(--zd-font-size-sm);
   margin-block: 0 1.5rem;
-  padding: 0.5rem 0.75rem;
 
   /* Live mode is the state worth noticing, so it is the one that gets a colour. */
   &[data-mode='live'] {
-    border-inline-start-color: var(--zd-surface-warning-border-color);
+    border-inline-start: 0.25rem solid var(--zd-surface-warning-border-color);
+    padding: 0.5rem 0.75rem;
   }
+}
+
+.code-sample {
+  background: var(--zd-badge-neutral-bg-color);
+  border-radius: var(--zd-form-control-border-radius, 0.5rem);
+  color: var(--zd-badge-neutral-fg-color);
+  font-family: var(--zd-font-family-mono);
+  margin: 0;
+  padding: 0.75rem 1rem;
 }
 
 .warning {
@@ -90,7 +106,7 @@ h1 {
 
 /*
  * The steps of the hand-wired page. Each is revealed as the one before it completes, which is the
- * progressive disclosure zd-booking-flow does internally — done out here so the composed page
+ * progressive disclosure zd-booking does internally — done out here so the composed page
  * shows what a host page has to do for itself.
  */
 .step {
@@ -99,6 +115,158 @@ h1 {
   & h2 {
     font-size: var(--zd-font-size-lg);
     margin-block: 0 0.75rem;
+  }
+}
+
+/*
+ * The assistant panel.
+ *
+ * Only its width is set here: `position="end"` already gives the dialog full height, its own slide
+ * transition, and the focus handling — see `index.html`. Everything else is the theme's.
+ */
+#assistant {
+  /*
+   * A drawer's width, not a page's. The address in a provider row wraps to a second line below about
+   * 32rem, and a 32rem drawer is a third of a laptop window — the wrap is the better trade.
+   */
+  --zd-dialog-size: 26rem;
+
+  /*
+   * And never wider than the window. A drawer is `width: <size>` against a max-width the theme sets
+   * at 512px, so on a phone-width viewport a 26rem panel hangs off the inline start and the first
+   * 26px of every bubble and provider row is clipped — which is exactly the width a chat panel is
+   * most likely to be opened at.
+   */
+  --zd-dialog-max-width: 100%;
+
+  /*
+   * The footer slot is sized for a pair of buttons at the inline end, which is what a dialog's
+   * footer usually holds. A composer is the width of the drawer, so the part is stretched. Reaching
+   * in through `::part` rather than putting the composer in the body: the footer is the thing the
+   * dialog keeps pinned while the body scrolls, and a chat panel whose input scrolls away with the
+   * conversation is not one.
+   */
+  &::part(dialog-footer) {
+    align-self: stretch;
+  }
+}
+
+/* The composer: a field that takes the room left over, and Send at the inline end. */
+.chat-composer {
+  align-items: center;
+  display: flex;
+  gap: var(--zd-spacing-sm, 8px);
+
+  /*
+   * The footer is itself a flex row, so a stretched footer alone leaves this sized to its contents —
+   * a 12rem field in a 26rem drawer. Growing as a flex item is what actually fills the width.
+   */
+  flex: 1 1 auto;
+
+  & zd-input {
+    /*
+     * `min-inline-size: 0` because a form control's own width is 100% of its container — without it
+     * the field refuses to shrink below that and pushes Send past the edge of the drawer.
+     */
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+}
+
+/*
+ * The transcript. A column of bubbles, each one aligned to the side its speaker is on — the
+ * patient's at the inline end, the assistant's at the inline start, so the two read as a
+ * conversation in either direction (I18N-003).
+ */
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zd-spacing-md, 1rem);
+}
+
+/*
+ * Every colour below is a paired `bg`/`fg` token rather than one of the `--zd-color-*` primitives.
+ * The primitives are fixed values: a light grey bubble picked from them keeps its light grey in dark
+ * mode while the text on it flips to near-white, which is how the first cut of this panel shipped an
+ * unreadable bubble. The paired tokens both resolve through `light-dark()`, so a bubble cannot end
+ * up carrying one scheme's background under the other's text.
+ */
+.chat-message {
+  border-radius: var(--zd-form-control-border-radius, 0.5rem);
+  margin-block: 0;
+  max-inline-size: 85%;
+  padding: 0.5rem 0.75rem;
+
+  /*
+   * The light info tint rather than a brand or accent fill. A bubble is not an action and should not
+   * compete with one, and the `badge-info` pair is the lightest tinted surface the theme carries a
+   * matching foreground for — the saturated `surface-info` blue is the one meant for filled controls.
+   */
+  &.from-patient {
+    align-self: flex-end;
+    background: var(--zd-badge-info-bg-color);
+    color: var(--zd-badge-info-fg-color);
+  }
+
+  &.from-assistant {
+    align-self: flex-start;
+    background: var(--zd-badge-neutral-bg-color);
+    color: var(--zd-badge-neutral-fg-color);
+  }
+}
+
+/* The answer: one row per provider, plus the lines the panel says instead when there are none. */
+.chat-providers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zd-spacing-xs, 0.25rem);
+  list-style: none;
+  margin-block: 0;
+  padding-inline-start: 0;
+}
+
+.chat-note {
+  color: var(--zd-body-secondary-fg-color);
+  font-size: var(--zd-font-size-sm);
+}
+
+/*
+ * A whole row is the target rather than a control inside it, which is the one thing worth being
+ * deliberate about: the row is a choice of provider, and a patient reading it on a phone should not
+ * have to hit the two words that happen to be the button. It carries no label of its own — the
+ * summary is the label, and the border, hover and focus ring are what say it can be pressed.
+ */
+.provider-choice {
+  align-items: center;
+  background: none;
+  border: var(--zd-border-width-thin) solid var(--zd-border-secondary);
+  border-radius: var(--zd-form-control-border-radius, 0.5rem);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  inline-size: 100%;
+  padding: 0.75rem;
+  text-align: start;
+
+  /*
+   * The border darkens rather than the surface. A tinted hover background is what this had first,
+   * and it dropped the summary's own secondary text — a grey the component picks, not the page — to
+   * 4.09:1 against it. Anything the row does to its background is applied under text it does not
+   * own, so the row indicates itself with the one thing that has nothing behind it.
+   */
+  &:hover {
+    border-color: var(--zd-body-fg-color);
+  }
+
+  /*
+   * The theme's own focus ring rather than a hand-rolled one, so the panel's rows are indicated
+   * the same way every control inside a component is.
+   */
+  &:focus-visible {
+    outline: var(--zd-focus-outline-width, 2px) var(--zd-focus-outline-style, solid)
+      var(--zd-focus-outline-color, currentColor);
+    outline-offset: var(--zd-focus-outline-offset, 2px);
   }
 }
 

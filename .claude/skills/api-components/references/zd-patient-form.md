@@ -1,7 +1,7 @@
 # zd-patient-form
 
 Collects the patient demographics `POST /v1/appointments` requires, validates them, and
-emits them. It never performs a network request — `zd-booking-flow` is what submits, and
+emits them. It never performs a network request — `zd-booking` is what submits, and
 keeping the two apart means the form can be reused by a host page that books its own way
 (COMP-002).
 

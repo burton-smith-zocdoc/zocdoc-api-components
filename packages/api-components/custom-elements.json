@@ -571,8 +571,8 @@
           "type": {
             "text": "ProviderLocation[]"
           },
-          "default": "[ { provider_location_id: IN_PERSON_ID, provider_location_type: 'in_person_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-05', provider: { provider_id: 'pr_abc123-def456_wxyz7890', first_name: 'Avery', last_name: 'Sandoval', title: 'MD', specialties: ['Primary Care Doctor'], specialty_ids: ['sp_153'], default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR', /* * The profile fields, populated on this location only — a second location with none of * them is what lets `zd-provider-profile` be shown doing the thing it does most often, * which is dropping a section it has no data for. * * Provider-authored copy, not patient copy: a `statement` is marketing text a practice * writes about itself, so there is no patient in it to redact (PHI-002). The newlines * are deliberate — production returns them, and the profile is what has to keep them. */ statement: 'I have practised primary care in Brooklyn for twelve years, and most of the people I see I have seen before.\\n\\nMy approach is unhurried: I would rather spend the visit understanding what changed than work through a checklist.', languages: ['English', 'Spanish'], credentials: { certifications: ['American Board of Family Medicine', 'Advanced Cardiac Life Support'], education: { institutions: [ 'Sandbox University School of Medicine', 'Sandbox General Hospital — Family Medicine Residency', ], }, }, }, practice: { practice_id: 'pt_abc123-def456_wxyz7890', practice_name: 'Sandbox Health Partners', }, location: { location_name: 'Sandbox Plaza Family Medicine', address1: '1 Sandbox Plaza', city: 'Brooklyn', state: 'NY', zip_code: '11201', latitude: 40.6955, longitude: -73.9909, /* * The 555-0100 block is reserved for fiction, so this number cannot reach anyone * (PHI-002). It is punctuated the way a practice would type it rather than normalised, * because normalising it here would hide the fact that `telHref` has to. */ phone_number: '(555) 555-0100', phone_extension: null, time_zone: 'America/New_York', distance_to_patient_mi: 0.8, }, booking_requirements: { required_fields: [], accepts_booking_requests_from: ['in_network', 'out_of_network', 'self_pay'], }, }, { provider_location_id: VIRTUAL_ID, provider_location_type: 'virtual_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-04', provider: { provider_id: 'pr_ghi123-jkl456_mnop7890', first_name: 'Rowan', last_name: 'Okonkwo', title: 'DO', specialties: ['Primary Care Doctor'], specialty_ids: ['sp_153'], default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR', }, // `state` is singular on a virtual location — one code, not a served-states list. virtual_location: { state: 'NY', time_zone: 'America/New_York' }, booking_requirements: { required_fields: [], accepts_booking_requests_from: ['in_network', 'self_pay'], }, }, { provider_location_id: SCENARIOS.providerLocationInsuranceRequired, provider_location_type: 'in_person_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-06', provider: { provider_id: 'pr_insuranceIdIsRequired', first_name: 'Kai', last_name: 'Lindqvist', title: 'MD', specialty_ids: ['sp_153'], default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR', }, location: { address1: '2 Sandbox Plaza', city: 'Brooklyn', state: 'NY', zip_code: '11201', latitude: 40.6931, longitude: -73.9903, time_zone: 'America/New_York', distance_to_patient_mi: 1.4, }, booking_requirements: { required_fields: [ 'data.patient.insurance.insurance_plan_id', 'data.patient.insurance.insurance_member_id', ], accepts_booking_requests_from: ['in_network'], }, }, ]",
-          "description": "Three locations covering the branches the results list has to render: an in-person\nprovider, a virtual one, and one whose booking requirements force extra form fields."
+          "default": "[ { provider_location_id: IN_PERSON_ID, provider_location_type: 'in_person_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-05', provider: { provider_id: 'pr_abc123-def456_wxyz7890', first_name: 'Avery', last_name: 'Sandoval', title: 'MD', specialties: ['Primary Care Doctor'], specialty_ids: ['sp_153'], default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR', provider_photo_url: '/images/michael-scott.png', /* * The profile fields, populated on this location only — a second location with none of * them is what lets `zd-provider-profile` be shown doing the thing it does most often, * which is dropping a section it has no data for. * * Provider-authored copy, not patient copy: a `statement` is marketing text a practice * writes about itself, so there is no patient in it to redact (PHI-002). The newlines * are deliberate — production returns them, and the profile is what has to keep them. */ statement: 'I have practised primary care in Brooklyn for twelve years, and most of the people I see I have seen before.\\n\\nMy approach is unhurried: I would rather spend the visit understanding what changed than work through a checklist.', languages: ['English', 'Spanish'], credentials: { certifications: ['American Board of Family Medicine', 'Advanced Cardiac Life Support'], education: { institutions: [ 'Sandbox University School of Medicine', 'Sandbox General Hospital — Family Medicine Residency', ], }, }, }, practice: { practice_id: 'pt_abc123-def456_wxyz7890', practice_name: 'Sandbox Health Partners', }, location: { location_name: 'Sandbox Plaza Family Medicine', address1: '1 Sandbox Plaza', city: 'Brooklyn', state: 'NY', zip_code: '11201', latitude: 40.6955, longitude: -73.9909, /* * The 555-0100 block is reserved for fiction, so this number cannot reach anyone * (PHI-002). It is punctuated the way a practice would type it rather than normalised, * because normalising it here would hide the fact that `telHref` has to. */ phone_number: '(555) 555-0100', phone_extension: null, time_zone: 'America/New_York', distance_to_patient_mi: 0.8, }, booking_requirements: { required_fields: [], accepts_booking_requests_from: ['in_network', 'out_of_network', 'self_pay'], }, }, { provider_location_id: VIRTUAL_ID, provider_location_type: 'virtual_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-04', provider: { provider_id: 'pr_ghi123-jkl456_mnop7890', first_name: 'Rowan', last_name: 'Okonkwo', title: 'DO', specialties: ['Primary Care Doctor'], specialty_ids: ['sp_153'], default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR', provider_photo_url: '/images/pam-beesly.png', }, // `state` is singular on a virtual location — one code, not a served-states list. virtual_location: { state: 'NY', time_zone: 'America/New_York' }, booking_requirements: { required_fields: [], accepts_booking_requests_from: ['in_network', 'self_pay'], }, }, { provider_location_id: SCENARIOS.providerLocationInsuranceRequired, provider_location_type: 'in_person_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-06', provider: { provider_id: 'pr_insuranceIdIsRequired', first_name: 'Kai', last_name: 'Lindqvist', title: 'MD', specialty_ids: ['sp_153'], default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR', provider_photo_url: '/images/andy-bernard.png', }, location: { address1: '2 Sandbox Plaza', city: 'Brooklyn', state: 'NY', zip_code: '11201', latitude: 40.6931, longitude: -73.9903, time_zone: 'America/New_York', distance_to_patient_mi: 1.4, }, booking_requirements: { required_fields: [ 'data.patient.insurance.insurance_plan_id', 'data.patient.insurance.insurance_member_id', ], accepts_booking_requests_from: ['in_network'], }, }, /* * The two dentists. Their ids are the documented `pending_booking` and `confirmed` * sentinels rather than invented ones (PHI-002), which is worth more than tidiness: the * two of them are the two statuses that mean a booking happened, so booking one dentist * and then the other walks a demo through both — and `pending_booking` is the one a * confirmation screen is most likely to get wrong. */ { provider_location_id: SCENARIOS.providerLocationPending, provider_location_type: 'in_person_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-05', provider: { provider_id: 'pr_pending', first_name: 'Imani', last_name: 'Whitfield', title: 'DDS', specialties: ['Dentist'], specialty_ids: ['sp_154'], default_visit_reason_id: 'pc_TlZW-r06U0W3pCsIGtSI5B', languages: ['English'], provider_photo_url: '/images/dwight-schrute.png', }, practice: { practice_id: 'pt_ghi123-jkl456_wxyz7890', practice_name: 'Sandbox Dental Group', }, location: { location_name: 'Sandbox Plaza Dental', address1: '3 Sandbox Plaza', city: 'Brooklyn', state: 'NY', zip_code: '11201', latitude: 40.6942, longitude: -73.9895, // The 555-0100 block is reserved for fiction, so this number cannot reach anyone (PHI-002). phone_number: '(555) 555-0101', phone_extension: null, time_zone: 'America/New_York', distance_to_patient_mi: 0.5, }, booking_requirements: { required_fields: [], accepts_booking_requests_from: ['in_network', 'out_of_network', 'self_pay'], }, }, { provider_location_id: SCENARIOS.providerLocationConfirmed, provider_location_type: 'in_person_provider', accepts_patient_insurance: 'accepted', first_availability_date_in_provider_local_time: '2026-08-04', provider: { provider_id: 'pr_confirmed', first_name: 'Tobias', last_name: 'Meier', title: 'DMD', specialties: ['Dentist'], specialty_ids: ['sp_154'], default_visit_reason_id: 'pc_TlZW-r06U0W3pCsIGtSI5B', languages: ['English', 'German'], provider_photo_url: '/images/jim-halpert.png', }, practice: { practice_id: 'pt_jkl123-mno456_wxyz7890', practice_name: 'Sandbox Dental Group', }, location: { location_name: 'Sandbox Heights Dental', address1: '4 Sandbox Plaza', city: 'Brooklyn', state: 'NY', zip_code: '11201', latitude: 40.6968, longitude: -73.9921, phone_number: '(555) 555-0102', phone_extension: null, time_zone: 'America/New_York', distance_to_patient_mi: 1.1, }, booking_requirements: { required_fields: [], accepts_booking_requests_from: ['in_network', 'out_of_network', 'self_pay'], }, }, ]",
+          "description": "Five locations covering the branches the results list has to render: an in-person\nprovider, a virtual one, one whose booking requirements force extra form fields, and\ntwo dentists — the only specialty here other than primary care, so a search filtered by\n`specialty_id` has something to actually filter to."
         },
         {
           "kind": "variable",
@@ -1588,7 +1588,7 @@
               },
               "privacy": "public",
               "static": true,
-              "description": "`ZdButton` is listed even though `requestStateDependencies` already carries it, for the\nretry control. The day and time buttons are this component's own requirement, and\nleaning on the error state's dependency list to supply them would break silently if\nthat list ever changed. Registration is idempotent, so the repeat costs nothing.\n\n`ZdRadio` is listed alongside its group because `ZdRadioGroup.dependencies` declares only\nthe icon it renders itself — the radios are slotted children, which are the caller's to\nregister (PBZD-001).",
+              "description": "`ZdButton` is listed even though `requestStateDependencies` already carries it, for the\nretry control. The day and time buttons are this component's own requirement, and\nleaning on the error state's dependency list to supply them would break silently if\nthat list ever changed. Registration is idempotent, so the repeat costs nothing.\n\n`ZdButtonGroup` wraps the buttons with its own border when `split`, so the child buttons do\nnot need to be listed separately — they register via `ZdButtonGroup.dependencies`.",
               "readonly": true
             },
             {
@@ -1706,7 +1706,7 @@
                   "text": "unknown"
                 }
               },
-              "description": "The New/Existing control, as a radio group: two mutually exclusive answers that filter what\nis shown is what radios are for, and the primitive brings the roving tabindex and the arrow\nkeys with it. Grouped and labelled rather than left as two bare controls (A11Y-004).\n\nThe label goes in the slot rather than the `label` attribute so the text is a DOM text node a\nbrowser can translate (I18N-001)."
+              "description": "The New/Existing control, as a radio group: two mutually exclusive answers that filter what\nis shown is what radios are for, and the primitive brings the roving tabindex and the arrow\nkeys with it. Grouped and labelled rather than left as two bare controls (A11Y-004)."
             },
             {
               "kind": "method",
@@ -1725,7 +1725,7 @@
                   }
                 }
               ],
-              "description": "One list of times. Shared, so a day in the stacked layout and the strip's selected day\nrender the same control rather than two that drift apart."
+              "description": "One list of times. Shared, so a day in the stacked layout and the strip's selected day\nrender the same control rather than two that drift apart.\n\n`fluid` fills the grid cell the list puts each time in, which is what makes every time the\nsame width — left to itself a button sizes to its own label."
             },
             {
               "kind": "method",
@@ -2361,12 +2361,12 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/booking-flow/booking-flow.ts",
+      "path": "src/components/booking/booking.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "Coordinates the booking funnel: search → time → details → confirmation.\n\nIt owns the flow's state and the only write call in the library, and it talks to its\nchildren through properties down and events up — no context protocol, no reaching into a\nchild, no shared store (COMP-002). Each child still works on its own, which is what lets a\nhost page assemble its own funnel instead of using this one (COMP-004).\n\n**The step is derived, never assigned.** `startTime` implies the patient step the way\n`appointment` implies the confirmation, so there is no `step` field to fall out of sync with\nthe data, and a host page resuming a half-finished booking only has to set the properties it\nalready has. The cost is that going back has to clear what it goes back past — which is\ncorrect anyway, since a different provider invalidates the slot picked from the old one.",
-          "name": "ZdBookingFlow",
+          "name": "ZdBooking",
           "cssParts": [
             {
               "description": "The button returning to the previous step.",
@@ -2377,8 +2377,20 @@
               "name": "confirmation"
             },
             {
+              "description": "The dialog the steps after the search run in, present only in `modal` mode.",
+              "name": "dialog"
+            },
+            {
               "description": "The alert shown when a booking fails.",
               "name": "error"
+            },
+            {
+              "description": "The current step's container inside the dialog, and the focus target on transitions between two steps that are both in the dialog.",
+              "name": "modal-step"
+            },
+            {
+              "description": "The step's heading inside the dialog. Visually hidden, since the dialog carries a heading of its own, but it is what a screen reader announces on arrival.",
+              "name": "modal-step-heading"
             },
             {
               "description": "The patient details form.",
@@ -2405,7 +2417,7 @@
               "name": "status"
             },
             {
-              "description": "The current step's container, and the focus target on every transition.",
+              "description": "The current step's container, and the focus target on every transition. In `modal` mode this is always the search, which stays on the page under the dialog.",
               "name": "step"
             },
             {
@@ -2426,7 +2438,7 @@
               "kind": "field",
               "name": "addEventListener",
               "type": {
-                "text": "TypedEventTarget<ZdBookingFlowEventMap>['addEventListener']"
+                "text": "TypedEventTarget<ZdBookingEventMap>['addEventListener']"
               },
               "privacy": "public"
             },
@@ -2492,7 +2504,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "'booking-flow'"
+              "default": "'booking'"
             },
             {
               "kind": "method",
@@ -2538,6 +2550,17 @@
               "privacy": "private"
             },
             {
+              "kind": "method",
+              "name": "cancel",
+              "privacy": "public",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "description": "Abandons the booking and returns to the search, whatever step it had reached.\n\nThis is what dismissing the modal does, and it is not `back()` twice: the dialog held the whole\nbooking, so closing it discards the provider and the slot together rather than stepping through\nthem. The search itself is deliberately untouched — the patient's results are the page the\ndialog opened over, and they are still looking at it.\n\nPublic so a host page can close the dialog itself, and idempotent so the `dialog-hide` that\narrives when the flow closes the dialog by clearing state changes nothing a second time."
+            },
+            {
               "kind": "field",
               "name": "defaultVisitReasonId",
               "type": {
@@ -2554,7 +2577,7 @@
               },
               "privacy": "public",
               "static": true,
-              "description": "The five children plus the primitives this component renders itself. Every one has to be\nlisted: a `scoped-*` tag is rewritten to the scope's prefix whether or not the class\nbehind it was ever registered, so a missing entry here is an inert element rather than an\nerror (PBZD-001).",
+              "description": "The five children plus the primitives this component renders itself. Every one has to be\nlisted: a `scoped-*` tag is rewritten to the scope's prefix whether or not the class\nbehind it was ever registered, so a missing entry here is an inert element rather than an\nerror (PBZD-001).\n\nThe dialog is listed unconditionally even though only `modal` mode renders one: dependencies\nare read once, off the class, long before any instance knows which mode it is in.",
               "readonly": true
             },
             {
@@ -2571,7 +2594,7 @@
               "kind": "field",
               "name": "emit",
               "type": {
-                "text": "TypedEmit<ZdBookingFlowEventMap>"
+                "text": "TypedEmit<ZdBookingEventMap>"
               },
               "privacy": "protected"
             },
@@ -2603,6 +2626,16 @@
             },
             {
               "kind": "field",
+              "name": "insuranceName",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The display name of the insurance plan, for the network status line.",
+              "attribute": "insurance-name"
+            },
+            {
+              "kind": "field",
               "name": "insurancePlanId",
               "type": {
                 "text": "string | undefined"
@@ -2628,6 +2661,17 @@
                 }
               ],
               "description": "Fetches day counts for the whole page in one call.\n\nThe endpoint takes an array of `provider_location_ids` and answers for all of them, so this\nis one request where ten self-fetching cards would be ten. That is the only reason the counts\nlive here rather than in the cards that show them (COMP-002).\n\n**Failure is silent, and takes the grids with it.** No message, no retry: the counts are an\nenhancement over a list that already works, and the patient still gets real times on the next\nstep. Dropping `availability` rather than keeping the stale set is what stops the list showing\none window's dates over another window's counts — the one outcome worse than showing none.\nThe raw error rides `availability-error` for a host page that wants to say more."
+            },
+            {
+              "kind": "field",
+              "name": "modal",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Runs every step after the search in a dialog over the results, instead of in their place.\n\nOff by default, because inline is the arrangement a host page can place and style freely; a\nmodal is a decision about the page rather than about the flow. What it changes is only where\nthe steps are drawn — the state machine, the events and the children are the same either way,\nand the search stays mounted underneath, so dismissing the dialog returns the patient to their\nresults rather than to a refetch.",
+              "attribute": "modal"
             },
             {
               "kind": "field",
@@ -2696,7 +2740,7 @@
               "kind": "field",
               "name": "removeEventListener",
               "type": {
-                "text": "TypedEventTarget<ZdBookingFlowEventMap>['removeEventListener']"
+                "text": "TypedEventTarget<ZdBookingEventMap>['removeEventListener']"
               },
               "privacy": "public"
             },
@@ -2783,6 +2827,29 @@
             },
             {
               "kind": "method",
+              "name": "renderStepSection",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "step",
+                  "type": {
+                    "text": "BookingStep"
+                  }
+                },
+                {
+                  "name": "inDialog",
+                  "default": "false"
+                }
+              ],
+              "description": "One step at a time, in a container that is both the focus target and the step's\naccessible name (`aria-labelledby` on a `tabindex=\"-1\"` element).\n\n`tabindex=\"-1\"` and not `0`: it takes focus when the flow moves it there, and stays out\nof the tab sequence otherwise, so a patient tabbing through the form never lands on a\nwrapper that does nothing.\n\nThere is no Back button on the confirmation. A booked appointment is not a step to\nreconsider — cancelling one is a different request this library does not make.\n\nThe heading is hidden inside the dialog rather than dropped, because the dialog already shows\n\"Book an appointment\" and two stacked headings read as a mistake — but the container still\nneeds a name to announce when focus lands on it."
+            },
+            {
+              "kind": "method",
               "name": "renderSummary",
               "privacy": "protected",
               "return": {
@@ -2800,7 +2867,8 @@
                 "type": {
                   "text": "unknown"
                 }
-              }
+              },
+              "description": "The picker, laid out for the space the step is in.\n\nA dialog scrolls, so every day can be on the page at once with its times under its date, and\nnothing is hidden behind a day that has to be pressed first. Inline the step has to fit\nwhatever column the host page put it in, which is what the strip is for."
             },
             {
               "kind": "field",
@@ -2831,6 +2899,17 @@
               "parsedType": {
                 "text": "{ provider_location_id: string, provider_location_type?: 'in_person_provider' | 'virtual_provider', accepts_patient_insurance?: 'accepted' | 'not_accepted' | 'insurance_not_specified', first_availability_date_in_provider_local_time?: null | string, provider: { provider_id: string, npi?: string, first_name?: string, last_name?: string, title?: string, full_name?: string, gender_identity?: string, specialties?: string[], specialty_ids?: string[], default_visit_reason_id?: string, visit_reason_ids?: string[], statement?: string, provider_photo_url?: string, languages?: string[], profile_url?: string, credentials?: { certifications?: string[], education?: { institutions?: string[] } } }, location?: { address1?: string, address2?: string, city?: string, state?: string, zip_code?: string, latitude?: number, longitude?: number, location_name?: string, phone_number?: string, phone_extension?: null | string, time_zone?: string, distance_to_patient_mi?: number }, virtual_location?: null | { state?: string, location_name?: string, time_zone?: string }, practice?: { practice_id: string, practice_name: string }, booking_requirements?: { required_fields?: string[], accepts_booking_requests_from?: 'in_network' | 'out_of_network' | 'self_pay'[] } } | undefined"
               }
+            },
+            {
+              "kind": "field",
+              "name": "showPhotos",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Shows provider photos in the results list and booking summary.",
+              "attribute": "show-photos"
             },
             {
               "kind": "field",
@@ -2913,11 +2992,28 @@
           ],
           "attributes": [
             {
+              "name": "insurance-name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The display name of the insurance plan, for the network status line.",
+              "fieldName": "insuranceName"
+            },
+            {
               "name": "insurance-plan-id",
               "type": {
                 "text": "string | undefined"
               },
               "fieldName": "insurancePlanId"
+            },
+            {
+              "name": "modal",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Runs every step after the search in a dialog over the results, instead of in their place.\n\nOff by default, because inline is the arrangement a host page can place and style freely; a\nmodal is a decision about the page rather than about the flow. What it changes is only where\nthe steps are drawn — the state machine, the events and the children are the same either way,\nand the search stays mounted underneath, so dismissing the dialog returns the patient to their\nresults rather than to a refetch.",
+              "fieldName": "modal"
             },
             {
               "name": "page",
@@ -2953,6 +3049,15 @@
               },
               "description": "The chosen `pr_…|lo_…`. Setting it advances the flow to the time step.",
               "fieldName": "providerLocationId"
+            },
+            {
+              "name": "show-photos",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Shows provider photos in the results list and booking summary.",
+              "fieldName": "showPhotos"
             },
             {
               "name": "specialty-id",
@@ -3000,25 +3105,25 @@
             "name": "CharmElement",
             "package": "@powered-by-zocdoc/primitives"
           },
-          "tagName": "zd-booking-flow",
+          "tagName": "zd-booking",
           "customElement": true,
-          "modulePath": "src/components/booking-flow/booking-flow.ts"
+          "modulePath": "src/components/booking/booking.ts"
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ZdBookingFlow",
+          "name": "ZdBooking",
           "declaration": {
-            "name": "ZdBookingFlow",
-            "module": "src/components/booking-flow/booking-flow.ts"
+            "name": "ZdBooking",
+            "module": "src/components/booking/booking.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/booking-flow/index.ts",
+      "path": "src/components/booking/index.ts",
       "declarations": [],
       "exports": [
         {
@@ -3026,7 +3131,7 @@
           "name": "BookingCompleteDetail",
           "declaration": {
             "name": "BookingCompleteDetail",
-            "module": "./booking-flow.js"
+            "module": "./booking.js"
           }
         },
         {
@@ -3034,7 +3139,7 @@
           "name": "BookingErrorDetail",
           "declaration": {
             "name": "BookingErrorDetail",
-            "module": "./booking-flow.js"
+            "module": "./booking.js"
           }
         },
         {
@@ -3042,23 +3147,23 @@
           "name": "BookingStep",
           "declaration": {
             "name": "BookingStep",
-            "module": "./booking-flow.js"
+            "module": "./booking.js"
           }
         },
         {
           "kind": "js",
-          "name": "ZdBookingFlow",
+          "name": "ZdBooking",
           "declaration": {
-            "name": "ZdBookingFlow",
-            "module": "src/components/booking-flow/index.ts"
+            "name": "ZdBooking",
+            "module": "src/components/booking/index.ts"
           }
         },
         {
           "kind": "js",
-          "name": "ZdBookingFlowEventMap",
+          "name": "ZdBookingEventMap",
           "declaration": {
-            "name": "ZdBookingFlowEventMap",
-            "module": "./booking-flow.js"
+            "name": "ZdBookingEventMap",
+            "module": "./booking.js"
           }
         }
       ]
@@ -3122,7 +3227,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Collects the patient demographics `POST /v1/appointments` requires, validates them, and\nemits them. It never performs a network request — `zd-booking-flow` is what submits, and\nkeeping the two apart means the form can be reused by a host page that books its own way\n(COMP-002).\n\nEverything this component holds is PHI. Two rules follow from that and are load-bearing\nin the code below rather than aspirational:\n\n- **No field value ever leaves as text.** Not in a `console` call, not in a thrown error,\n  not in a validation message. Messages name the field and state the format; that is\n  PHI-001 in practice, and it is why `validate()` builds its strings from\n  `FIELDS[field].label` and never from `this.values[field]`.\n- **No field value ever reaches an attribute.** `values` and `notes` are both\n  `attribute: false`, so nothing here is reflected into markup where `outerHTML`, a DOM\n  snapshot, or a session replay tool would pick it up.",
+          "description": "Collects the patient demographics `POST /v1/appointments` requires, validates them, and\nemits them. It never performs a network request — `zd-booking` is what submits, and\nkeeping the two apart means the form can be reused by a host page that books its own way\n(COMP-002).\n\nEverything this component holds is PHI. Two rules follow from that and are load-bearing\nin the code below rather than aspirational:\n\n- **No field value ever leaves as text.** Not in a `console` call, not in a thrown error,\n  not in a validation message. Messages name the field and state the format; that is\n  PHI-001 in practice, and it is why `validate()` builds its strings from\n  `FIELDS[field].label` and never from `this.values[field]`.\n- **No field value ever reaches an attribute.** `values` and `notes` are both\n  `attribute: false`, so nothing here is reflected into markup where `outerHTML`, a DOM\n  snapshot, or a session replay tool would pick it up.",
           "name": "ZdPatientForm",
           "cssParts": [
             {
@@ -3726,7 +3831,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "The whole of one provider location, as a page rather than a card. Presentational only — it\nfetches nothing, so it has no request state and needs no token.\n\nEverything it renders comes off the `provider` property, which is exactly the\n`ProviderLocation` that `zd-provider-results` emits on `provider-select`, so wiring the two\ntogether is one assignment and no translation (COMP-002). It emits nothing: there is\nnothing here to decide.\n\n**Sections are dropped, not blanked.** Every field under `Provider` but `provider_id` is\noptional, and production populates them unevenly — a location with no `statement` and no\n`credentials` is ordinary, not broken. A section whose data is absent renders nothing at\nall, so a sparse provider reads as brief rather than as a page of empty headings.\n\n**What it deliberately does not render.** The production profile also carries reviews, a\nratings summary, an insurance list, a map, and the \"Patients often return\" highlights. None\nof them are in this API: there is no reviews or ratings endpoint, `accepts_patient_insurance`\nanswers about one plan rather than listing the accepted ones, and the highlights are derived\nfrom Zocdoc's own booking history. Rather than invent them, this component leaves holes where\nthey belong — see the `highlights`, `reviews`, and `faqs` slots — so a host page that has\nthat data can drop it in and one that does not gets a shorter page instead of a wrong one.\n\nThe network line is not among them, and its absence is a policy choice rather than an\noversight: `accepts_patient_insurance` is answered relative to the plan the *search* sent, and\nthis component never sees a search. \"In-network\" with nothing to be in the network of is a\ncoverage claim a patient could take to an appointment and be billed for, so it is not\nrenderable from here at all.\n\n**Heading levels.** The provider's name is an `<h2>` and each section heading an `<h3>`, which\nassumes the embedding page owns the `<h1>` — the same assumption `zd-booking-flow` makes of its\nstep heading. Slotted content should continue at `<h3>` so the outline stays walkable.\n\n**Why the `<article>` matters.** Everything is wrapped in one, named by the provider's own\nheading. It is the honest element for a self-contained composition a page lists several of, and\nit is also what makes the `<header>` and the `<address>` inside it legal: both are defined\nrelative to their nearest sectioning ancestor, so without the article they would describe the\nembedding *page* — a `banner` landmark and a set of contact details that are not the host's.",
+          "description": "The whole of one provider location, as a page rather than a card. Presentational only — it\nfetches nothing, so it has no request state and needs no token.\n\nEverything it renders comes off the `provider` property, which is exactly the\n`ProviderLocation` that `zd-provider-results` emits on `provider-select`, so wiring the two\ntogether is one assignment and no translation (COMP-002). It emits nothing: there is\nnothing here to decide.\n\n**Sections are dropped, not blanked.** Every field under `Provider` but `provider_id` is\noptional, and production populates them unevenly — a location with no `statement` and no\n`credentials` is ordinary, not broken. A section whose data is absent renders nothing at\nall, so a sparse provider reads as brief rather than as a page of empty headings.\n\n**What it deliberately does not render.** The production profile also carries reviews, a\nratings summary, an insurance list, a map, and the \"Patients often return\" highlights. None\nof them are in this API: there is no reviews or ratings endpoint, `accepts_patient_insurance`\nanswers about one plan rather than listing the accepted ones, and the highlights are derived\nfrom Zocdoc's own booking history. Rather than invent them, this component leaves holes where\nthey belong — see the `highlights`, `reviews`, and `faqs` slots — so a host page that has\nthat data can drop it in and one that does not gets a shorter page instead of a wrong one.\n\nThe network line is not among them, and its absence is a policy choice rather than an\noversight: `accepts_patient_insurance` is answered relative to the plan the *search* sent, and\nthis component never sees a search. \"In-network\" with nothing to be in the network of is a\ncoverage claim a patient could take to an appointment and be billed for, so it is not\nrenderable from here at all.\n\n**Heading levels.** The provider's name is an `<h2>` and each section heading an `<h3>`, which\nassumes the embedding page owns the `<h1>` — the same assumption `zd-booking` makes of its\nstep heading. Slotted content should continue at `<h3>` so the outline stays walkable.\n\n**Why the `<article>` matters.** Everything is wrapped in one, named by the provider's own\nheading. It is the honest element for a self-contained composition a page lists several of, and\nit is also what makes the `<header>` and the `<address>` inside it legal: both are defined\nrelative to their nearest sectioning ancestor, so without the article they would describe the\nembedding *page* — a `banner` landmark and a set of contact details that are not the host's.",
           "name": "ZdProviderProfile",
           "cssParts": [
             {
@@ -3760,6 +3865,10 @@
             {
               "description": "The text column beside the photo.",
               "name": "identity"
+            },
+            {
+              "description": "The network status line, when `insurance-name` is set.",
+              "name": "insurance"
             },
             {
               "description": "The languages section.",
@@ -3844,6 +3953,16 @@
               "default": "'provider-profile'"
             },
             {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "headerLocation",
               "privacy": "protected",
@@ -3864,6 +3983,16 @@
             },
             {
               "kind": "field",
+              "name": "insuranceName",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The insurance plan name the search was run with. Enables the network status line when\nprovided.",
+              "attribute": "insurance-name"
+            },
+            {
+              "kind": "field",
               "name": "provider",
               "type": {
                 "text": "ProviderLocation | undefined"
@@ -3872,6 +4001,16 @@
               "description": "The location to describe.\n\n`ProviderLocation` and not `Provider`, because half of what a profile says is about\n*where* — the address, the practice, the phone number, whether it is a video visit — and a\nprovider practising at three locations has three of those. It is also the shape every other\ncomponent in this package passes around, so nothing has to be unpacked to get here.",
               "parsedType": {
                 "text": "{ provider_location_id: string, provider_location_type?: 'in_person_provider' | 'virtual_provider', accepts_patient_insurance?: 'accepted' | 'not_accepted' | 'insurance_not_specified', first_availability_date_in_provider_local_time?: null | string, provider: { provider_id: string, npi?: string, first_name?: string, last_name?: string, title?: string, full_name?: string, gender_identity?: string, specialties?: string[], specialty_ids?: string[], default_visit_reason_id?: string, visit_reason_ids?: string[], statement?: string, provider_photo_url?: string, languages?: string[], profile_url?: string, credentials?: { certifications?: string[], education?: { institutions?: string[] } } }, location?: { address1?: string, address2?: string, city?: string, state?: string, zip_code?: string, latitude?: number, longitude?: number, location_name?: string, phone_number?: string, phone_extension?: null | string, time_zone?: string, distance_to_patient_mi?: number }, virtual_location?: null | { state?: string, location_name?: string, time_zone?: string }, practice?: { practice_id: string, practice_name: string }, booking_requirements?: { required_fields?: string[], accepts_booking_requests_from?: 'in_network' | 'out_of_network' | 'self_pay'[] } } | undefined"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "providerInitials",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
               }
             },
             {
@@ -3910,6 +4049,16 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "renderInsurance",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
             },
             {
               "kind": "method",
@@ -3993,6 +4142,14 @@
             }
           ],
           "attributes": [
+            {
+              "name": "insurance-name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The insurance plan name the search was run with. Enables the network status line when\nprovided.",
+              "fieldName": "insuranceName"
+            },
             {
               "name": "show-photo",
               "type": {
@@ -4240,7 +4397,8 @@
                 "type": {
                   "text": "void"
                 }
-              }
+              },
+              "description": "Follows the dialog rather than driving it, on `dialog-hide` — the event the dialog actually\nemits when it closes, and not `close`, which nothing dispatches.\n\nThe dialog dismisses itself on its own close button, Escape and the backdrop, so a flag left\ntrue after any of those no longer describes the dialog it drives: pressing the same provider's\nname again would set a flag that was already set, and the profile would never come back."
             },
             {
               "kind": "field",
@@ -5118,6 +5276,175 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/provider-summary/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ZdProviderSummary",
+          "declaration": {
+            "name": "ZdProviderSummary",
+            "module": "src/components/provider-summary/index.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/provider-summary/provider-summary.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Displays a provider's photo, name, specialty, location, and insurance status\nin a compact summary layout. Used by provider-card and booking.",
+          "name": "ZdProviderSummary",
+          "cssParts": [
+            {
+              "description": "The network status line.",
+              "name": "insurance"
+            },
+            {
+              "description": "The distance and address line.",
+              "name": "location"
+            },
+            {
+              "description": "The provider name and credential.",
+              "name": "name"
+            },
+            {
+              "description": "The avatar element.",
+              "name": "photo"
+            },
+            {
+              "description": "The specialty line.",
+              "name": "specialty"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "'provider-summary'"
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "insuranceName",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The insurance plan name the search was run with. Enables the network\nstatus line when provided.",
+              "attribute": "insurance-name"
+            },
+            {
+              "kind": "field",
+              "name": "provider",
+              "type": {
+                "text": "ProviderLocation | undefined"
+              },
+              "privacy": "public",
+              "description": "The provider location data to render.",
+              "parsedType": {
+                "text": "{ provider_location_id: string, provider_location_type?: 'in_person_provider' | 'virtual_provider', accepts_patient_insurance?: 'accepted' | 'not_accepted' | 'insurance_not_specified', first_availability_date_in_provider_local_time?: null | string, provider: { provider_id: string, npi?: string, first_name?: string, last_name?: string, title?: string, full_name?: string, gender_identity?: string, specialties?: string[], specialty_ids?: string[], default_visit_reason_id?: string, visit_reason_ids?: string[], statement?: string, provider_photo_url?: string, languages?: string[], profile_url?: string, credentials?: { certifications?: string[], education?: { institutions?: string[] } } }, location?: { address1?: string, address2?: string, city?: string, state?: string, zip_code?: string, latitude?: number, longitude?: number, location_name?: string, phone_number?: string, phone_extension?: null | string, time_zone?: string, distance_to_patient_mi?: number }, virtual_location?: null | { state?: string, location_name?: string, time_zone?: string }, practice?: { practice_id: string, practice_name: string }, booking_requirements?: { required_fields?: string[], accepts_booking_requests_from?: 'in_network' | 'out_of_network' | 'self_pay'[] } } | undefined"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "providerInitials",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderAvatar",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderInsurance",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "showPhoto",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Renders the provider's photo from CDN. Off by default because the photo\ncomes from an external CDN, not the configured baseUrl (PHI-003 note).",
+              "attribute": "show-photo"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "insurance-name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The insurance plan name the search was run with. Enables the network\nstatus line when provided.",
+              "fieldName": "insuranceName"
+            },
+            {
+              "name": "show-photo",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Renders the provider's photo from CDN. Off by default because the photo\ncomes from an external CDN, not the configured baseUrl (PHI-003 note).",
+              "fieldName": "showPhoto"
+            }
+          ],
+          "superclass": {
+            "name": "CharmElement",
+            "package": "@powered-by-zocdoc/primitives"
+          },
+          "tagName": "zd-provider-summary",
+          "customElement": true,
+          "modulePath": "src/components/provider-summary/provider-summary.ts"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ZdProviderSummary",
+          "declaration": {
+            "name": "ZdProviderSummary",
+            "module": "src/components/provider-summary/provider-summary.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/index.ts",
       "declarations": [],
       "exports": [
@@ -5190,7 +5517,7 @@
           "name": "BookingCompleteDetail",
           "declaration": {
             "name": "BookingCompleteDetail",
-            "module": "./components/booking-flow/index.js"
+            "module": "./components/booking/index.js"
           }
         },
         {
@@ -5198,7 +5525,7 @@
           "name": "BookingErrorDetail",
           "declaration": {
             "name": "BookingErrorDetail",
-            "module": "./components/booking-flow/index.js"
+            "module": "./components/booking/index.js"
           }
         },
         {
@@ -5206,7 +5533,7 @@
           "name": "BookingStep",
           "declaration": {
             "name": "BookingStep",
-            "module": "./components/booking-flow/index.js"
+            "module": "./components/booking/index.js"
           }
         },
         {
@@ -5379,6 +5706,14 @@
         },
         {
           "kind": "js",
+          "name": "ZdBooking",
+          "declaration": {
+            "name": "ZdBooking",
+            "module": "./components/booking/index.js"
+          }
+        },
+        {
+          "kind": "js",
           "name": "ZdBookingConfirmation",
           "declaration": {
             "name": "ZdBookingConfirmation",
@@ -5387,18 +5722,10 @@
         },
         {
           "kind": "js",
-          "name": "ZdBookingFlow",
+          "name": "ZdBookingEventMap",
           "declaration": {
-            "name": "ZdBookingFlow",
-            "module": "./components/booking-flow/index.js"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "ZdBookingFlowEventMap",
-          "declaration": {
-            "name": "ZdBookingFlowEventMap",
-            "module": "./components/booking-flow/index.js"
+            "name": "ZdBookingEventMap",
+            "module": "./components/booking/index.js"
           }
         },
         {
@@ -5471,6 +5798,14 @@
           "declaration": {
             "name": "ZdProviderSearchEventMap",
             "module": "./components/provider-search/index.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "ZdProviderSummary",
+          "declaration": {
+            "name": "ZdProviderSummary",
+            "module": "./components/provider-summary/index.js"
           }
         }
       ]

@@ -3,6 +3,7 @@ import {
   ZdAvatar,
   ZdButton,
   ZdCard,
+  ZdIcon,
 } from "@powered-by-zocdoc/primitives";
 import { nothing } from "lit";
 import { property } from "lit/decorators.js";
@@ -51,7 +52,7 @@ export class ZdProviderCard extends CharmElement {
   ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdCard, ZdAvatar, ZdButton];
+    return [ZdCard, ZdAvatar, ZdButton, ZdIcon];
   }
 
   /** The provider location data to render. */
@@ -111,7 +112,7 @@ export class ZdProviderCard extends CharmElement {
 
     const status = acceptance === "accepted" ? "In-network" : "Out-of-network";
     return this
-      .html`<span class="insurance" part="insurance">${status} · ${this.insuranceName}</span>`;
+      .html`<span class="insurance" part="insurance"><scoped-icon name="insurance-accepted"></scoped-icon>${status} · ${this.insuranceName}</span>`;
   }
 
   protected handleNameClick(): void {
@@ -146,7 +147,7 @@ export class ZdProviderCard extends CharmElement {
               </div>
             </div>
             <div class="details">
-              ${location ? this.html`<span class="location" part="location">${location}</span>` : nothing}
+              ${location ? this.html`<span class="location" part="location"><scoped-icon name=${this.provider.provider_location_type === 'virtual_provider' ? 'video-filled' : 'location-pin'}></scoped-icon>${location}</span>` : nothing}
               ${this.renderInsurance()}
               <slot name="badges"></slot>
             </div>

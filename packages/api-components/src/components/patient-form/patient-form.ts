@@ -88,8 +88,6 @@ interface FieldConfig {
    * `aria-describedby` so it is announced with the label.
    */
   readonly helpText?: string;
-  /** Spans both grid columns. */
-  readonly wide?: boolean;
 }
 
 const FIELDS: Record<PatientFormField, FieldConfig> = {
@@ -111,7 +109,7 @@ const FIELDS: Record<PatientFormField, FieldConfig> = {
     type: 'email',
     inputmode: 'email',
   },
-  address1: { label: 'Street address', autocomplete: 'address-line1', wide: true },
+  address1: { label: 'Street address', autocomplete: 'address-line1' },
   city: { label: 'City', autocomplete: 'address-level2' },
   state: {
     label: 'State',
@@ -143,7 +141,7 @@ function partName(field: PatientFormField): string {
 
 /**
  * Collects the patient demographics `POST /v1/appointments` requires, validates them, and
- * emits them. It never performs a network request — `zd-booking-flow` is what submits, and
+ * emits them. It never performs a network request — `zd-booking` is what submits, and
  * keeping the two apart means the form can be reused by a host page that books its own way
  * (COMP-002).
  *
@@ -376,7 +374,6 @@ export class ZdPatientForm extends CharmElement {
 
     return this.html`
       <scoped-input
-        class=${config.wide ? 'wide' : ''}
         part=${partName(field)}
         label=${config.label}
         type=${config.type ?? 'text'}
@@ -431,7 +428,6 @@ export class ZdPatientForm extends CharmElement {
         )}
 
         <scoped-text-area
-          class="wide"
           part="notes"
           label="Notes for the practice (optional)"
           help-text="Up to ${NOTES_MAX_LENGTH} characters."

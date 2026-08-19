@@ -9,4 +9,8 @@ export default css`
   .initials {
     color: var(--zd-avatar-fg-color);
   }
+
+  .image {
+    object-fit: cover;
+  }
 `;

@@ -128,9 +128,9 @@ drifting from what it emits. See `components/events.ts`.
 | `zd-availability-picker` | `patient-type-change` | `PatientTypeChangeDetail` — `{ patientType: 'new' \| 'existing' }` |
 | `zd-availability-picker` | `availability-error` | `ErrorDetail` |
 | `zd-patient-form` | `patient-submit` | `PatientSubmitDetail` — `{ patient: Patient, notes?: string }`. **The one detail carrying PHI:** pass it to `createAppointment` and nowhere else (PHI-001, PHI-003). |
-| `zd-booking-flow` | `booking-complete` | `BookingCompleteDetail` — `{ appointmentId: string, status: AppointmentStatus }` |
-| `zd-booking-flow` | `booking-error` | `BookingErrorDetail` — `{ error: unknown, status?: AppointmentStatus }` |
-| `zd-booking-flow` | `availability-error` | `ErrorDetail` — nothing is rendered for it |
+| `zd-booking` | `booking-complete` | `BookingCompleteDetail` — `{ appointmentId: string, status: AppointmentStatus }` |
+| `zd-booking` | `booking-error` | `BookingErrorDetail` — `{ error: unknown, status?: AppointmentStatus }` |
+| `zd-booking` | `availability-error` | `ErrorDetail` — nothing is rendered for it |
 
 `day-select` and `window-change` are each emitted by two components with different payloads, which
 is why these live in per-component event maps rather than a global `HTMLElementEventMap`
@@ -149,4 +149,4 @@ PHI-001).
   component added or changed without regenerating the agent reference docs — modified, deleted,
   or untracked pages all fail it. Run it after any change to a component's public API, and before
   committing.
-- **`pnpm demo`** serves two pages: `/` is `zd-booking-flow` alone, `/composed.html` is the same five components wired by a host page. Both serve fixtures unless `VITE_ZOCDOC_MODE=live` **and** `VITE_ZOCDOC_TOKEN` are set in `.env.local` at the workspace root — a demo that reached the live sandbox by default would post a patient's details the first time anyone clicked through it.
+- **`pnpm demo`** serves two pages: `/` is `zd-booking` alone, `/composed.html` is the same five components wired by a host page. Both serve fixtures unless `VITE_ZOCDOC_MODE=live` **and** `VITE_ZOCDOC_TOKEN` are set in `.env.local` at the workspace root — a demo that reached the live sandbox by default would post a patient's details the first time anyone clicked through it.

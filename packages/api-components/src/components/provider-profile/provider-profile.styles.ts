@@ -17,21 +17,11 @@ export default css`
   }
 
   .header {
+    --zd-avatar-size: 5rem;
+
     align-items: flex-start;
     display: flex;
     gap: 1rem;
-
-    /*
-     * A fixed box, so the header does not reflow once the image lands and so a portrait and a
-     * landscape photo occupy the same space. Logical properties throughout (I18N-003).
-     */
-    .photo {
-      block-size: 5rem;
-      border-radius: 50%;
-      flex: 0 0 auto;
-      inline-size: 5rem;
-      object-fit: cover;
-    }
 
     .identity {
       display: grid;
@@ -54,6 +44,23 @@ export default css`
 
     .specialty {
       font-weight: var(--zd-font-weight-semibold);
+    }
+
+    .insurance {
+      align-items: center;
+      display: inline-flex;
+      gap: var(--zd-spacing-xs, 0.25rem);
+
+      [name] {
+        flex-shrink: 0;
+        block-size: 1em;
+        inline-size: 1em;
+
+        &::part(icon-base) {
+          block-size: 100%;
+          inline-size: 100%;
+        }
+      }
     }
   }
 

@@ -8,6 +8,7 @@ export default defineConfig({
    * because a new directory is not covered by the root `.gitignore` entry.
    */
   envDir: resolve(import.meta.dirname, '../..'),
+  publicDir: resolve(import.meta.dirname, '../../static'),
   build: {
     rollupOptions: {
       input: {

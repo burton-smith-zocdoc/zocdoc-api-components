@@ -1,5 +1,5 @@
 /**
- * The hand-wired page: the same five components `zd-booking-flow` renders, with the host page
+ * The hand-wired page: the same five components `zd-booking` renders, with the host page
  * doing the coordination.
  *
  * This file is the argument for COMP-002 and COMP-004 both ways round. Every component here works
@@ -61,6 +61,8 @@ const BOOKED_STATUSES: ReadonlySet<AppointmentStatus> = new Set(['confirmed', 'p
 
 const search = document.querySelector<ZdProviderSearch>('zd-provider-search')!;
 const results = document.querySelector<ZdProviderResults>('zd-provider-results')!;
+results.insuranceName = 'Sandbox National PPO';
+results.showPhotos = true;
 const picker = document.querySelector<ZdAvailabilityPicker>('zd-availability-picker')!;
 const form = document.querySelector<ZdPatientForm>('zd-patient-form')!;
 const confirmation = document.querySelector<ZdBookingConfirmation>('zd-booking-confirmation')!;
@@ -116,7 +118,7 @@ function windowEnd(startDate: string, days: number): string {
 /**
  * Reveals or hides a step, and moves focus when the patient has been taken to a new one.
  *
- * Focus goes to the step's container rather than its heading, which is what `zd-booking-flow` does
+ * Focus goes to the step's container rather than its heading, which is what `zd-booking` does
  * with its own `part="step"`: a screen reader then reads the heading and continues into the step
  * instead of announcing the heading alone (A11Y-003). `tabIndex` is set here rather than in the
  * markup so the sections are not in the tab order while they are hidden.
@@ -178,7 +180,7 @@ async function loadAvailability(startDate: string): Promise<void> {
  * `day` is the cell the patient pressed on a card, when that is how they got here. Passing it down
  * as the picker's `start-date` is what makes a day cell mean something, and is the one piece of
  * coordination that is easy to leave out: without it the picker opens on the provider's first
- * available day, and pressing Thursday lands the patient on Monday. `zd-booking-flow` does the same.
+ * available day, and pressing Thursday lands the patient on Monday. `zd-booking` does the same.
  */
 function selectProvider(provider: ProviderLocation, day?: string): void {
   selectedProvider = provider;
@@ -255,6 +257,7 @@ search.addEventListener('provider-results', ({ detail }) => {
   results.totalCount = detail.totalCount;
   results.page = detail.page;
   results.pageSize = detail.pageSize;
+  results.insuranceName = detail.insurancePlanName;
 
   insurancePlanId = detail.insurancePlanId;
   // zd-provider-search no longer collects a visit reason; the API's echo of the specialty's

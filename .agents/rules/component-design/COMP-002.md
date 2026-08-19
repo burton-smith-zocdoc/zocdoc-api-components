@@ -2,7 +2,7 @@
 
 Composition model: attributes and properties in, events out. No context protocol, no shared state container.
 
-`zd-booking-flow` holds flow state and renders children with direct Lit property bindings. No child discovery, no protocol. Every child also works standalone.
+`zd-booking` holds flow state and renders children with direct Lit property bindings. No child discovery, no protocol. Every child also works standalone.
 
 **Do:**
 
@@ -31,7 +31,7 @@ render() {
 // ❌ Child reaching upward for context
 connectedCallback() {
   super.connectedCallback();
-  this.bookingContext = this.closest('zd-booking-flow')?.context;
+  this.bookingContext = this.closest('zd-booking')?.context;
 }
 
 // ❌ Shared mutable state

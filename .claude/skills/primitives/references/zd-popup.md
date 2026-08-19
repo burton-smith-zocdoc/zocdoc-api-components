@@ -15,11 +15,12 @@ Low-level positioning primitive: places floating content relative to an anchor e
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `anchor` | `anchor` | `Element \| string \| undefined` | — | The element the popup will be anchored to. If the anchor lives outside of the popup, you can provide its `id` or a reference to it here. If the anchor lives inside the popup, use the `anchor` slot instead. | `CorePopup` |
-| `arrow` | `arrow` | `boolean` | `false` | Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet. | `CorePopup` |
+| `arrow` | `arrow` | `boolean` | `false` | Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet. | `CorePopup` |
 | `arrow-padding` | `arrowPadding` | `number` | `10` | The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example, this will prevent it from overflowing the corners. | `CorePopup` |
 | `arrow-placement` | `arrowPlacement` | `'start' \| 'end' \| 'center' \| 'anchor' \| undefined` | — | The placement of the arrow. | `CorePopup` |
 | `auto-size` | `autoSize` | `'horizontal' \| 'vertical' \| 'both' \| undefined` | — | When set, this will cause the popup to automatically resize itself to prevent it from overflowing. | `CorePopup` |
 | `auto-size-padding` | `autoSizePadding` | `number \| undefined` | — | The amount of padding, in pixels, to exceed before the auto-size behavior will occur. | `CorePopup` |
+| `boundary` | `boundary` | `'viewport' \| 'scroll'` | `'viewport'` | Determines which overflow ancestors are used when flipping, shifting, and auto-sizing. | `CorePopup` |
 | `content-role` | `contentRole` | `string` | `'dialog'` | Sets the role of the overlay content. | `CorePopup` |
 | `dir` | `dir` | `'ltr' \| 'rtl' \| 'auto'` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
 | `distance` | `distance` | `number` | `0` | The distance in pixels from which to offset the panel away from its anchor. | `CorePopup` |
@@ -78,7 +79,7 @@ Low-level positioning primitive: places floating content relative to an anchor e
 
 | Property | Syntax | Default | Description | From |
 | --- | --- | --- | --- | --- |
-| `--zd-popup-arrow-color` | — | — | The color of the arrow. | `CorePopup` |
+| `--zd-popup-bg-color` | — | — | The background color of the popup. The arrow uses the same color, so the two always match. | `CorePopup` |
 | `--zd-popup-arrow-size` | — | — | The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used. | `CorePopup` |
 | `--zd-popup-auto-size-available-height` | — | — | A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`. | `CorePopup` |
 | `--zd-popup-auto-size-available-width` | — | — | A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`. | `CorePopup` |

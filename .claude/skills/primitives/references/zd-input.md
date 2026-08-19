@@ -38,14 +38,18 @@ A text input field with label and validation support.
 | `min` | `min` | `number \| undefined` | — | The input's min attribute. | `CoreInput` |
 | `minlength` | `minlength` | `number \| undefined` | — | The input's minlength attribute. | `CoreInput` |
 | `name` | `name` | `string \| undefined` | — | The input's name attribute. | `CharmFormControlElement` |
+| `password-toggle` | `passwordToggle` | `boolean` | `false` | Adds a button to toggle the password's visibility. Only applies to password types. | `CoreInput` |
+| `password-visible` | `passwordVisible` | `boolean` | `false` | Determines whether the password is currently visible. Only applies to password types. | `CoreInput` |
 | `pattern` | `pattern` | `string \| undefined` | — | A pattern to validate input against. | `CoreInput` |
 | `placeholder` | `placeholder` | `string \| undefined` | — | The input's placeholder text. | `CoreInput` |
 | `readonly` | `readonly` | `boolean` | — | Makes the input readonly. | `CharmFormControlElement` |
 | `required` | `required` | `boolean` | `false` | Makes the input a required field. | `CharmFormControlElement` |
 | `spellcheck` | `spellcheck` | `boolean` | `false` | Enables spell checking on the input. | `CoreInput` |
 | `step` | `step` | `number \| undefined` | — | The input's step attribute. | `CoreInput` |
+| `title` | `title` | `string` | `''` | Tooltip text for the input. | `CoreInput` |
 | `type` | `type` | `'number' \| 'date' \| 'datetime-local' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'text' \| 'time' \| 'url' \| 'range' \| undefined` | — | — | `CoreInput` |
 | `value` | `value` | `string` | — | The input's value attribute. | `CharmFormControlElement` |
+| `with-clear` | `withClear` | `boolean` | `false` | Adds a clear button when the input is not empty. | `CoreInput` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `ValidityState` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 | — | `valueAsDate` | `unknown` | — | Gets or sets the current value as a `Date` object. Only valid when `type` is `date`. | `CoreInput` |
@@ -74,7 +78,13 @@ A text input field with label and validation support.
 | --- | --- | --- |
 | `checkValidity(): boolean \| undefined` | Checks for validity but doesn't report a validation message when invalid. | `CharmFormControlElement` |
 | `reportValidity(): boolean \| undefined` | Checks for validity and shows the browser's validation message if the control is invalid. | `CharmFormControlElement` |
+| `select(): void` | Selects all input text. | `CoreInput` |
 | `setCustomValidity(message: unknown): void` | Sets a custom validation message. | `CharmFormControlElement` |
+| `setRangeText(replacement: string, start?: number, end?: number, selectMode: 'select' \| 'start' \| 'end' \| 'preserve'): void` | Replaces a range of text in the input. | `CoreInput` |
+| `setSelectionRange(selectionStart: number, selectionEnd: number, selectionDirection: 'forward' \| 'backward' \| 'none'): void` | Sets the start and end positions of the selection. | `CoreInput` |
+| `showPicker(): void` | Shows the browser picker for supported input types. | `CoreInput` |
+| `stepDown(): void` | Decrements the value of a numeric input type by the value of the step attribute. | `CoreInput` |
+| `stepUp(): void` | Increments the value of a numeric input type by the value of the step attribute. | `CoreInput` |
 
 ### CSS Parts
 

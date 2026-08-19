@@ -28,6 +28,7 @@ Shows the hierarchy leading to the current page.
 | Slot | Description | From |
 | --- | --- | --- |
 | _(default)_ | Breadcrumb's contents, which should typically be a breadcrumb-item. | `CoreBreadcrumb` |
+| `separator` | The default separator used between breadcrumb items. When set, it is cloned into every item that does not provide its own. | `CoreBreadcrumb` |
 
 ### CSS Parts
 

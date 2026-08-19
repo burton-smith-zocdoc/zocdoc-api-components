@@ -1,5 +1,5 @@
 ---
-globs: packages/api-components/src/components/patient-form/**,packages/api-components/src/components/booking-flow/**
+globs: packages/api-components/src/components/patient-form/**,packages/api-components/src/components/booking/**
 ---
 
 # PHI Handling Rules (PHI)

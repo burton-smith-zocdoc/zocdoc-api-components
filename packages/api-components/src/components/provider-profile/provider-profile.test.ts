@@ -88,14 +88,15 @@ describe('zd-provider-profile', () => {
 
     /**
      * `provider_photo_url` points at an image CDN rather than the configured `baseUrl`, so
-     * painting it is an outbound request to a host PHI-003 does not otherwise allow. Off unless
-     * asked for — and this location has no photo url at all, so the assertion is that the
-     * element is absent either way rather than that the src is empty.
+     * painting it is an outbound request to a host PHI-003 does not otherwise allow. The avatar
+     * always renders (showing initials), but has no image unless `show-photo` is set.
      */
-    it('renders no photo unless show-photo is set', async () => {
+    it('renders an avatar with initials but no image unless show-photo is set', async () => {
       const element = await mountProfile(FULL);
+      const avatar = part(element, 'photo') as HTMLElement & { image?: string };
 
-      expect(part(element, 'photo')).toBeNull();
+      expect(avatar).not.toBeNull();
+      expect(avatar.image).toBeFalsy();
     });
   });
 
@@ -289,7 +290,7 @@ describe('zd-provider-profile', () => {
     /**
      * `<h2>` then `<h3>` and nothing skipped, which is what axe's `heading-order` rule checks
      * and what a screen reader walks. The page's `<h1>` is the host's, which is the same
-     * assumption `zd-booking-flow` makes of its step heading.
+     * assumption `zd-booking` makes of its step heading.
      */
     it('descends one heading level from the name to the sections', async () => {
       const element = await mountProfile(FULL);

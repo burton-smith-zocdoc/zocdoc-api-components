@@ -1,4 +1,4 @@
-import { CharmElement } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdAvatar, ZdIcon } from '@powered-by-zocdoc/primitives';
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { ProviderLocation } from '../../client/types.js';
@@ -68,7 +68,7 @@ function telHref(number: string | undefined, extension?: string | null): string 
  * renderable from here at all.
  *
  * **Heading levels.** The provider's name is an `<h2>` and each section heading an `<h3>`, which
- * assumes the embedding page owns the `<h1>` — the same assumption `zd-booking-flow` makes of its
+ * assumes the embedding page owns the `<h1>` — the same assumption `zd-booking` makes of its
  * step heading. Slotted content should continue at `<h3>` so the outline stays walkable.
  *
  * **Why the `<article>` matters.** Everything is wrapped in one, named by the provider's own
@@ -94,6 +94,7 @@ function telHref(number: string | undefined, extension?: string | null): string 
  * @csspart name - The provider's name and credential, as an `<h2>`.
  * @csspart specialty - The provider's primary specialty.
  * @csspart header-location - The address under the name, or the video-visit line.
+ * @csspart insurance - The network status line, when `insurance-name` is set.
  * @csspart section - Every section, so one rule can space them all.
  * @csspart section-heading - A section's `<h3>`.
  * @csspart about - The section carrying the provider's own statement.
@@ -114,6 +115,10 @@ export class ZdProviderProfile extends CharmElement {
 
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
+  public static override get dependencies(): (typeof CharmElement)[] {
+    return [ZdAvatar, ZdIcon];
+  }
+
   /**
    * The location to describe.
    *
@@ -133,6 +138,34 @@ export class ZdProviderProfile extends CharmElement {
    */
   @property({ type: Boolean, attribute: 'show-photo' })
   public showPhoto = false;
+
+  /**
+   * The insurance plan name the search was run with. Enables the network status line when
+   * provided.
+   */
+  @property({ attribute: 'insurance-name' })
+  public insuranceName?: string;
+
+  protected providerInitials(): string {
+    const provider = this.provider?.provider;
+    const first = provider?.first_name?.[0] ?? '';
+    const last = provider?.last_name?.[0] ?? '';
+    return (first + last).toUpperCase() || '?';
+  }
+
+  protected renderInsurance(): unknown {
+    if (!this.insuranceName || !this.provider) return nothing;
+
+    const acceptance = this.provider.accepts_patient_insurance;
+    if (acceptance !== 'accepted' && acceptance !== 'not_accepted') return nothing;
+
+    const status = acceptance === 'accepted' ? 'In-network' : 'Out-of-network';
+    return this.html`
+      <p class="insurance" part="insurance">
+        <scoped-icon name="insurance-accepted"></scoped-icon>${status} · ${this.insuranceName}
+      </p>
+    `;
+  }
 
   /**
    * The address under the name, without the distance.
@@ -165,13 +198,22 @@ export class ZdProviderProfile extends CharmElement {
      * is the very next node, and describing it would make a screen reader say the provider
      * twice.
      */
+    const label = providerHeading(provider);
+    const initials = this.providerInitials();
+
     return this.html`
       <header class="header" part="header">
-        ${photo ? this.html`<img class="photo" part="photo" src=${photo} alt="" />` : nothing}
+        <scoped-avatar
+          part="photo"
+          .image=${photo ?? nothing}
+          initials=${initials}
+          label=${label}
+        ></scoped-avatar>
         <div class="identity" part="identity">
           <h2 id=${NAME_ID} class="name" part="name">${providerHeading(provider)}</h2>
           ${specialty ? this.html`<p class="specialty" part="specialty">${specialty}</p>` : nothing}
           ${where ? this.html`<p part="header-location">${where}</p>` : nothing}
+          ${this.renderInsurance()}
         </div>
         <slot name="actions"></slot>
       </header>

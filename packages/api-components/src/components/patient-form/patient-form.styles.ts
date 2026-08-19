@@ -47,18 +47,7 @@ export default css`
     .fields {
       display: grid;
       gap: 0.75rem;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-
-      /* Below two fields' worth of room, one column. Labels and help text need the width more
-         than the layout needs its second column. */
-      @container (inline-size < 26rem) {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    /* Street address and notes are long enough that half a row truncates them visually. */
-    .wide {
-      grid-column: 1 / -1;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     /*

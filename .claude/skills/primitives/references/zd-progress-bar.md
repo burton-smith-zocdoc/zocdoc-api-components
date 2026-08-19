@@ -18,7 +18,7 @@ Shows determinate or indeterminate progress, for multi-step flows and uploads.
 | `help-text` | `helpText` | `string \| undefined` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreProgressBar` |
 | `hide-label` | `hideLabel` | `boolean \| undefined` | — | Hides the input label and help text. | `CoreProgressBar` |
 | `indeterminate` | `indeterminate` | `boolean \| undefined` | — | When true, percentage is ignored, the label is hidden, and the progress bar is drawn in an indeterminate state. | `CoreProgressBar` |
-| `label` | `label` | `string \| undefined` | — | A custom label for the progress bar's aria label. | `CoreProgressBar` |
+| `label` | `label` | `string \| undefined` | — | A custom label for the progress bar's aria label. When omitted and the default slot is empty, a default `Progress` text is used. | `CoreProgressBar` |
 | `max` | `max` | `number \| undefined` | — | The maximum value, which indicates the task is complete.. | `CoreProgressBar` |
 | `meter` | `meter` | `boolean \| undefined` | — | Update the role of the progress bar from 'progressbar' to 'meter' to indicate that it measures a specific value instead of progress towards a specific task. | `CoreProgressBar` |
 | `value` | `value` | `number \| undefined` | — | The current progress, 0 to `max` or 100 if max is not defined. | `CoreProgressBar` |
@@ -33,7 +33,7 @@ Shows determinate or indeterminate progress, for multi-step flows and uploads.
 
 | Slot | Description | From |
 | --- | --- | --- |
-| _(default)_ | A label to show inside the indicator when the `label` attribute is not provided. | `CoreProgressBar` |
+| _(default)_ | A label shown above the track. When the `label` attribute is not provided and the slot is empty, a default `Progress` text is used to name the bar for assistive tech. | `CoreProgressBar` |
 | `help-text` | The progress bar's help text. | `CoreProgressBar` |
 
 ### CSS Parts

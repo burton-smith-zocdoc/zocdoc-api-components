@@ -28,7 +28,7 @@ coverage claim a patient could take to an appointment and be billed for, so it i
 renderable from here at all.
 
 **Heading levels.** The provider's name is an `<h2>` and each section heading an `<h3>`, which
-assumes the embedding page owns the `<h1>` — the same assumption `zd-booking-flow` makes of its
+assumes the embedding page owns the `<h1>` — the same assumption `zd-booking` makes of its
 step heading. Slotted content should continue at `<h3>` so the outline stays walkable.
 
 **Why the `<article>` matters.** Everything is wrapped in one, named by the provider's own
@@ -47,6 +47,7 @@ embedding *page* — a `banner` landmark and a set of contact details that are n
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `insurance-name` | `insuranceName` | `string \| undefined` | — | The insurance plan name the search was run with. Enables the network status line when provided. |
 | `show-photo` | `showPhoto` | `boolean` | `false` | Renders the provider's photo. Off by default for the same reason `zd-provider-results` defaults it off: `provider_photo_url` points at Zocdoc's image CDN rather than the configured `baseUrl`, so painting it makes an outbound request to a host PHI-003 does not otherwise allow. A host page that wants production parity opts in knowingly. |
 | — | `provider` | `ProviderLocation \| undefined` | — | The location to describe. `ProviderLocation` and not `Provider`, because half of what a profile says is about *where* — the address, the practice, the phone number, whether it is a video visit — and a provider practising at three locations has three of those. It is also the shape every other component in this package passes around, so nothing has to be unpacked to get here. |
 
@@ -71,6 +72,7 @@ embedding *page* — a `banner` landmark and a set of contact details that are n
 | `header` | The photo, name, specialty, and address together. |
 | `header-location` | The address under the name, or the video-visit line. |
 | `identity` | The text column beside the photo. |
+| `insurance` | The network status line, when `insurance-name` is set. |
 | `languages` | The languages section. |
 | `list` | The list inside languages, certifications, or education. |
 | `list-item` | One entry in that list. |

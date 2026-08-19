@@ -186,17 +186,39 @@ describe('zd-provider-results', () => {
     expect(profile).not.toBeNull();
   });
 
-  it('closes the dialog on close event', async () => {
+  it('closes the dialog when it reports that it closed', async () => {
     const element = await mountResults(PROVIDERS);
     const card = cards(element)[0]!;
     cardPart(card, 'name')?.click();
     await settled(element);
 
     const dialog = shadow(element).querySelector('zd-dialog') as HTMLElement;
-    dialog.dispatchEvent(new Event('close', { bubbles: true, composed: true }));
+    dialog.dispatchEvent(new Event('dialog-hide', { bubbles: true, composed: true }));
     await settled(element);
 
     expect(dialog.hasAttribute('open')).toBe(false);
+  });
+
+  /*
+   * The dialog closes itself when the patient dismisses it, so this component has to hear about
+   * it: a flag left true no longer describes the dialog it drives, and pressing the same name
+   * again sets a flag that is already set — a no-op, so the profile never comes back.
+   */
+  it('reopens a profile the patient dismissed', async () => {
+    const element = await mountResults(PROVIDERS);
+    const name = (): HTMLElement | null => cardPart(cards(element)[0]!, 'name');
+
+    name()?.click();
+    await settled(element);
+
+    const dialog = shadow(element).querySelector('zd-dialog') as HTMLElement & { hide(): void };
+    dialog.hide();
+    await settled(element);
+
+    name()?.click();
+    await settled(element);
+
+    expect(dialog.hasAttribute('open')).toBe(true);
   });
 
   it('derives a display name from first and last name when full_name is absent', async () => {

@@ -38,7 +38,7 @@ Groups radio buttons for single-selection choices.
 | `blur` | `unknown` | Emitted when the radio group loses focus. | `CoreRadioGroup` |
 | `change` | `unknown` | Emitted when the radio group's selected value changes. | `CharmFormControlElement` |
 | `focus` | `unknown` | Emitted when the radio group gains focus. | `CoreRadioGroup` |
-| `input` | `unknown` | fires when the value of the element has been changed as a direct result of a user action | `CharmFormControlElement` |
+| `input` | `unknown` | Emitted when the radio group receives user input. | `CharmFormControlElement` |
 | `ready` | `unknown` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots

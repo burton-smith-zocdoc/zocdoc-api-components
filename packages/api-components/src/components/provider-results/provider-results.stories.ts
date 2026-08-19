@@ -51,7 +51,9 @@ const meta: Meta<ZdProviderResults> = {
 export default meta;
 type Story = StoryObj<ZdProviderResults>;
 
-export const WithResults: Story = {};
+export const WithResults: Story = {
+  args: { insuranceName: 'Sandbox National PPO', showPhotos: true },
+};
 
 export const Empty: Story = {
   args: { providers: [] },
@@ -129,7 +131,7 @@ export const SinglePage: Story = {
  * array of `provider_location_ids`, so one request covers the page, and the cards count what they
  * are handed (COMP-002). Pressing the arrows moves the dates and logs `window-change` in the
  * Actions panel without the counts changing, which is exactly what the component promises: the
- * range is reported, and refetching it belongs to whoever owns the search. `zd-booking-flow` is
+ * range is reported, and refetching it belongs to whoever owns the search. `zd-booking` is
  * where that circle closes.
  *
  * The last fixture provider is the no-availability sentinel, so its card shows a full window of
@@ -144,7 +146,7 @@ export const WithAvailability: Story = {
  *
  * The counts are the same fixtures, so most cells read "No appts" here — the batch was fetched
  * for the first window and the cards only count the days on show. That mismatch is the reason
- * `zd-booking-flow` refetches on every move rather than paging the data it already has.
+ * `zd-booking` refetches on every move rather than paging the data it already has.
  */
 export const AvailabilityLaterWindow: Story = {
   args: {

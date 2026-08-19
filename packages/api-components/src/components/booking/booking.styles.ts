@@ -10,6 +10,17 @@ export default css`
     gap: 1.5rem;
 
     /*
+     * The dialog's body is the scroll container, so its own padding sits outside the scrollport
+     * and the last row of times ends exactly on the clip line. The padding goes on the content
+     * instead, where it scrolls with it and gives the final row somewhere to land. The inline end
+     * is padded for the same reason — that edge is where the scrollbar sits (I18N-003).
+     */
+    &.in-dialog {
+      padding-block-end: 1rem;
+      padding-inline-end: 1rem;
+    }
+
+    /*
      * The step is the focus target on every transition (A11Y-003), and a container that
      * takes focus needs a visible ring like anything else. Charm's focus tokens are used
      * rather than the user agent's so it matches the controls inside it.
@@ -24,6 +35,23 @@ export default css`
       font-size: var(--zd-font-size-lg);
       font-weight: var(--zd-font-weight-semibold);
       margin: 0;
+
+      /*
+       * The heading inside the dialog is hidden rather than removed: the dialog shows its own
+       * title, but the step container is a focus target and this is its accessible name, so a
+       * screen reader still announces which step it landed on (A11Y-003).
+       *
+       * Neither display:none nor visibility:hidden would do — either takes it out of the
+       * accessibility tree along with the name.
+       */
+      &.visually-hidden {
+        block-size: 1px;
+        clip-path: inset(50%);
+        inline-size: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+      }
     }
   }
 

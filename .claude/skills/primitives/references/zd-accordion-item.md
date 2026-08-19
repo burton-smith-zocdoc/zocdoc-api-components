@@ -25,7 +25,10 @@ A single collapsible section of an accordion: a heading that expands to reveal i
 
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
-| `accordion-item-open-change` | `unknown` | Dispatched when the accordion item is expanded or collapsed. | `CoreAccordionItem` |
+| `accordion-item-after-hide` | `unknown` | Emitted after the accordion item has hidden and all animations are complete. | `CoreAccordionItem` |
+| `accordion-item-after-show` | `unknown` | Emitted after the accordion item has shown and all animations are complete. | `CoreAccordionItem` |
+| `accordion-item-hide` | `unknown` | Emitted when the accordion item begins to hide. | `CoreAccordionItem` |
+| `accordion-item-show` | `unknown` | Emitted when the accordion item begins to show. | `CoreAccordionItem` |
 | `ready` | `unknown` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots
@@ -65,6 +68,8 @@ A single collapsible section of an accordion: a heading that expands to reveal i
 | --- | --- | --- | --- | --- |
 | `--zd-accordion-item-animation-duration` | — | — | The duration of the accordion item animation. | `CoreAccordionItem` |
 | `--zd-accordion-item-animation-timing-function` | — | — | The timing function of the accordion item animation. | `CoreAccordionItem` |
+| `--zd-accordion-item-show-transition` | — | — | The transition applied to the content when the item opens. | `CoreAccordionItem` |
+| `--zd-accordion-item-hide-transition` | — | — | The transition applied to the content when the item closes. | `CoreAccordionItem` |
 | `--zd-accordion-item-bg-color` | — | — | Sets background color. | `CoreAccordionItem` |
 | `--zd-accordion-item-border-color` | — | — | Sets border color. | `CoreAccordionItem` |
 | `--zd-accordion-item-border-width` | — | — | Sets border width. | `CoreAccordionItem` |

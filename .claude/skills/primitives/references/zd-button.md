@@ -31,7 +31,7 @@ An interactive button, with a variant per visual treatment and two densities.
 | `expanded` | `expanded` | `boolean \| undefined` | — | Sets "aria-expanded" on the internal button or link. | `CoreButton` |
 | `hides` | `hides` | `string \| undefined` | — | referencing a dismissible element's ID, this button will hide it when clicked | `CoreButton` |
 | `href` | `href` | `string \| undefined` | — | When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`. | `CoreButton` |
-| `icon-only` | `iconOnly` | `boolean \| undefined` | — | Allows component to render using only the icon as visual element. Optional, default is false, associated attribute is 'icon-only' | `CoreButton` |
+| `icon-only` | `iconOnly` | `boolean \| undefined` | — | Allows the component to render using only the icon as visual element. Optional, default is false, associated attribute is 'icon-only'. When not set, this is detected automatically when the default slot contains only an icon and no other visible content. | `CoreButton` |
 | `name` | `name` | `string \| undefined` | — | An optional name for the button. Ignored when `href` is set. | `CoreButton` |
 | `pressed` | `pressed` | `boolean \| undefined` | — | Sets "aria-pressed" on the internal button or link. | `CoreButton` |
 | `referrerpolicy` | `referrerPolicy` | `'no-referrer' \| 'no-referrer-when-downgrade' \| 'origin' \| 'origin-when-cross-origin' \| 'same-origin' \| 'strict-origin' \| 'strict-origin-when-cross-origin' \| 'unsafe-url' \| (string & {})` | `'strict-origin-when-cross-origin'` | Defining which referrer is sent when fetching the resource. Only applies to links. | `CoreButton` |

@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdIcon } from '@powered-by-zocdoc/primitives';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import {
@@ -47,6 +47,8 @@ export interface ProviderResultsDetail {
   zipCode: string;
   specialtyId?: string;
   insurancePlanId?: string;
+  /** The display name of the selected insurance plan, for the network status line. */
+  insurancePlanName?: string;
   visitType?: VisitType;
 }
 
@@ -96,7 +98,7 @@ export class ZdProviderSearch extends CharmElement {
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdButton, ...requestStateDependencies];
+    return [ZdButton, ZdIcon, ...requestStateDependencies];
   }
 
   /** The ZIP code to search. Required by the API — there is no search-everywhere mode. */
@@ -284,6 +286,7 @@ export class ZdProviderSearch extends CharmElement {
           zipCode: this.zipCode,
           specialtyId: this.specialtyId,
           insurancePlanId: this.insurancePlanId,
+          insurancePlanName: this.insurancePlans.find((p) => p.id === this.insurancePlanId)?.name,
           visitType: this.visitType,
           page: this.page,
           // The size the response was built with, not `this.pageSize`, which is usually unset —
@@ -393,7 +396,7 @@ export class ZdProviderSearch extends CharmElement {
         </div>
 
         <scoped-button part="submit" type="submit" variant="primary" ?disabled=${loading}>
-          Find care
+          <scoped-icon name="search" label="Find care"></scoped-icon>
         </scoped-button>
 
         ${errorMessage ? this.html`

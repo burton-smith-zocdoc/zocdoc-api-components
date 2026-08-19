@@ -16,7 +16,7 @@ elements these render).
 
 **Doc comments are 35–40% of every component file** — deliberately, because they
 carry the *why*. That makes whole-file reads expensive and mostly wasted when you
-came for one method. Six files are over 440 lines; `booking-flow.ts` is 751.
+came for one method. Six files are over 440 lines; `booking.ts` is 751.
 
 **Read `availability-grid.ts` first if you need the shape.** It is the smallest
 complete fetching component: properties in, `load()`, state machine, window
@@ -49,7 +49,7 @@ owns" below for what it brings.
 These pages also don't distinguish fetching from presentational — that's on you to track. **Four
 of the ten components fetch on their own:** `availability-grid` and `availability-picker` via
 `load()`, `provider-search` via `search()` (which also loads reference data — specialties,
-insurance plans), and `booking-flow` via `book()` (which also calls `createAppointment` and
+insurance plans), and `booking` via `book()` (which also calls `createAppointment` and
 `getAvailability` directly). The other six only import client *types*, never client functions —
 most notably `provider-results`, whose `goToPage()` and `shiftWindow()` methods look
 state-changing on the reference page but only reshuffle data the caller already fetched.

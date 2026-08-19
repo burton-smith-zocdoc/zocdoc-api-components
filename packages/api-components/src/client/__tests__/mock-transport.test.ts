@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createAppointment } from '../appointments.js';
 import { getAvailability } from '../availability.js';
 import { configureZocdoc, resetZocdocConfig } from '../configure.js';
-import { BOOKINGS, SCENARIOS, SPECIALTIES } from '../mock/fixtures.js';
+import { BOOKINGS, PROVIDER_LOCATIONS, SCENARIOS, SPECIALTIES } from '../mock/fixtures.js';
 import { createMockTransport } from '../mock/transport.js';
 import { searchProviderLocations } from '../provider-locations.js';
 import type { Patient } from '../types.js';
@@ -21,6 +21,14 @@ const START_DATE = '2026-08-10';
  * the ZIP alone is a documented 400, which the mock now enforces.
  */
 const SEARCH_SPECIALTY_ID = SPECIALTIES[0]!.id;
+
+/**
+ * A second specialty only some of the fixture locations carry, which is what gives the specialty
+ * filter something to actually drop.
+ */
+const DENTAL_SPECIALTY_ID = SPECIALTIES.find(
+  (specialty) => specialty.care_category === 'dental'
+)!.id;
 
 /** Not a person — see the note in `appointments.test.ts`. */
 const TEST_PATIENT: Patient = {
@@ -136,10 +144,16 @@ describe('createMockTransport', () => {
     it('drops locations that do not carry the requested specialty', async () => {
       const result = await searchProviderLocations({
         zipCode: SCENARIOS.zipWithResults,
-        specialtyId: 'sp_154',
+        specialtyId: DENTAL_SPECIALTY_ID,
       });
 
-      expect(result.providerLocations).toEqual([]);
+      // Both directions, because either alone passes for the wrong reason: an empty answer would
+      // satisfy the loop, and an unfiltered one would satisfy the count.
+      expect(result.providerLocations.length).toBeGreaterThan(0);
+      expect(result.providerLocations.length).toBeLessThan(PROVIDER_LOCATIONS.length);
+      for (const location of result.providerLocations) {
+        expect(location.provider.specialty_ids).toContain(DENTAL_SPECIALTY_ID);
+      }
     });
 
     it('pages, reporting the unpaged total alongside the page', async () => {

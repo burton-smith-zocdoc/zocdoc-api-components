@@ -2,7 +2,7 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
-import type { ZdBookingFlow } from './booking-flow.js';
+import type { ZdBooking } from './booking.js';
 import './index.js';
 
 /**
@@ -20,7 +20,7 @@ import './index.js';
  */
 configureZocdocMock();
 
-const { args, argTypes, template } = getStorybookHelpers<ZdBookingFlow>('zd-booking-flow', {
+const { args, argTypes, template } = getStorybookHelpers<ZdBooking>('zd-booking', {
   excludeCategories: ['cssParts'],
 });
 
@@ -38,19 +38,20 @@ const START_TIME = '2026-08-05T09:00:00-04:00';
  * both into the Actions panel — completing a booking logs the appointment id and status the
  * host page would receive.
  */
-const meta: Meta<ZdBookingFlow> = {
-  title: 'API Components/Booking Flow',
-  component: 'zd-booking-flow',
+const meta: Meta<ZdBooking> = {
+  title: 'API Components/Booking',
+  component: 'zd-booking',
   args: {
     ...args,
     zipCode: SCENARIOS.zipWithResults,
+    showPhotos: true,
   },
   argTypes,
   render: (args) => template(args),
 };
 
 export default meta;
-type Story = StoryObj<ZdBookingFlow>;
+type Story = StoryObj<ZdBooking>;
 
 /**
  * The default path. Press Search, pick a provider, pick a time, then fill the form — each step
@@ -139,6 +140,25 @@ export const Paged: Story = {
  */
 export const AvailabilityOnResults: Story = {
   args: { visitReasonId: VISIT_REASON_ID },
+};
+
+/**
+ * The same funnel, with everything after the search in a dialog over the results.
+ *
+ * Press Search, then press a day on any card: the results stay where they are and the booking opens
+ * on top of them, on the day that was pressed. Pick a time and the form takes the dialog's place
+ * without it closing. The dialog's close button, Escape and the backdrop all abandon the booking
+ * and put the patient back on their list — the search was never unmounted, so there is nothing to
+ * fetch again.
+ *
+ * A visit reason is set because the cards need one to show day counts at all, and a day cell is
+ * what opens the dialog.
+ */
+export const InAModal: Story = {
+  args: {
+    modal: true,
+    visitReasonId: VISIT_REASON_ID,
+  },
 };
 
 /**

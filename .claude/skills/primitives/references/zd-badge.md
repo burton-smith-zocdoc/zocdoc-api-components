@@ -33,12 +33,16 @@ A small label or status indicator.
 | Slot | Description | From |
 | --- | --- | --- |
 | _(default)_ | The content of the badge. | `CoreBadge` |
+| `end` | Content rendered after the badge content. | `CoreBadge` |
+| `start` | Content rendered before the badge content. | `CoreBadge` |
 
 ### CSS Parts
 
 | Part | Description | From |
 | --- | --- | --- |
 | `badge-base` | The component's base wrapper. | `CoreBadge` |
+| `badge-end` | The end slot container. | `CoreBadge` |
+| `badge-start` | The start slot container. | `CoreBadge` |
 
 ### CSS Custom Properties
 
@@ -50,5 +54,6 @@ A small label or status indicator.
 | `--zd-badge-border-style` | — | — | determines border style. | `CoreBadge` |
 | `--zd-badge-border-width` | — | — | determines the border. | `CoreBadge` |
 | `--zd-badge-fg-color` | — | — | determines the color of the text. | `CoreBadge` |
+| `--zd-badge-gap` | — | — | determines the space between the start slot, content, and end slot. | `CoreBadge` |
 | `--zd-badge-padding` | — | — | determines the padding. | `CoreBadge` |
 | `--zd-badge-size` | — | — | used to size the badge in relation to the font. | `CoreBadge` |

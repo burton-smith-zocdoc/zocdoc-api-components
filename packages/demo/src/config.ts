@@ -72,10 +72,17 @@ export function renderModeBanner(config: DemoConfig): void {
   const banner = document.querySelector('#mode');
   if (!banner) return;
 
-  banner.textContent =
-    config.mode === 'mock'
-      ? 'Serving documented fixtures. No network requests leave this page.'
-      : `Live: ${config.baseUrl}`;
+  if (config.mode === 'mock') {
+    const code = document.createElement('code');
+    code.textContent = `<script src="..." zd-token="..."></script>
+<zd-booking></zd-booking>`;
+    const pre = document.createElement('pre');
+    pre.className = 'code-sample';
+    pre.append(code);
+    banner.replaceChildren(pre);
+  } else {
+    banner.textContent = `Live: ${config.baseUrl}`;
+  }
   banner.setAttribute('data-mode', config.mode);
 
   if (!config.warning) return;

@@ -1,5 +1,5 @@
-import { CharmElement, ZdButton } from '@powered-by-zocdoc/primitives';
-import { nothing } from 'lit';
+import { CharmElement, ZdButton, ZdDialog } from '@powered-by-zocdoc/primitives';
+import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { createAppointment } from '../../client/appointments.js';
 import { getAvailability } from '../../client/availability.js';
@@ -17,14 +17,14 @@ import { ZdBookingConfirmation } from '../booking-confirmation/booking-confirmat
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import { resolveWindowStart, windowEndDate } from '../../utilities/availability-window.js';
 import { userFacingError } from '../../utilities/error-message.js';
-import { providerHeading, renderProviderSummary } from '../../utilities/provider-summary.js';
-import summaryStyles from '../../utilities/provider-summary.styles.js';
+import { providerHeading } from '../../utilities/provider-summary.js';
 import { formatAppointmentTime } from '../../utilities/provider-time.js';
+import { ZdProviderSummary } from '../provider-summary/provider-summary.js';
 import { requestStateDependencies } from '../../utilities/request-state.js';
 import { ZdPatientForm } from '../patient-form/patient-form.js';
 import { ZdProviderResults } from '../provider-results/provider-results.js';
 import { ZdProviderSearch } from '../provider-search/provider-search.js';
-import styles from './booking-flow.styles.js';
+import styles from './booking.styles.js';
 
 /** The steps, in the order a patient walks them. */
 export type BookingStep = 'search' | 'time' | 'patient' | 'booked';
@@ -41,6 +41,15 @@ const STEP_HEADINGS: Record<BookingStep, string> = {
   patient: 'Your details',
   booked: 'Your appointment',
 };
+
+/**
+ * The dialog's heading in `modal` mode.
+ *
+ * One heading for every step rather than the step's own, because the dialog's title is what tells
+ * the patient what the dialog is *for*, and that does not change as they move through it. The step
+ * heading is still there underneath, hidden, for what focus announces (A11Y-003).
+ */
+const MODAL_HEADING = 'Book an appointment';
 
 /**
  * The two `appointment_status` values that mean a booking happened.
@@ -86,7 +95,7 @@ export interface BookingErrorDetail {
   status?: AppointmentStatus;
 }
 
-export interface ZdBookingFlowEventMap {
+export interface ZdBookingEventMap {
   'booking-complete': CustomEvent<BookingCompleteDetail>;
   'booking-error': CustomEvent<BookingErrorDetail>;
   'availability-error': CustomEvent<ErrorDetail>;
@@ -106,7 +115,7 @@ export interface ZdBookingFlowEventMap {
  * already has. The cost is that going back has to clear what it goes back past — which is
  * correct anyway, since a different provider invalidates the slot picked from the old one.
  *
- * @tag zd-booking-flow
+ * @tag zd-booking
  * @event booking-complete - Emitted with `{ appointmentId, status }` once the API has taken
  *   the appointment. `status` is `confirmed` or `pending_booking`; both are bookings, and the
  *   difference is whether the practice has accepted yet, so a host page that treats them alike
@@ -121,8 +130,14 @@ export interface ZdBookingFlowEventMap {
  * @event availability-error - Emitted with `{ error }` when the batched availability request for
  *   the results list fails. Nothing is rendered for it — the list keeps working without day
  *   counts — so this event is the only notice a host page gets. Same caution about the `error`.
- * @csspart step - The current step's container, and the focus target on every transition.
+ * @csspart step - The current step's container, and the focus target on every transition. In
+ *   `modal` mode this is always the search, which stays on the page under the dialog.
  * @csspart step-heading - The current step's heading.
+ * @csspart dialog - The dialog the steps after the search run in, present only in `modal` mode.
+ * @csspart modal-step - The current step's container inside the dialog, and the focus target on
+ *   transitions between two steps that are both in the dialog.
+ * @csspart modal-step-heading - The step's heading inside the dialog. Visually hidden, since the
+ *   dialog carries a heading of its own, but it is what a screen reader announces on arrival.
  * @csspart back - The button returning to the previous step.
  * @csspart summary - The block restating what is about to be booked.
  * @csspart summary-time - The appointment time, on the patient step.
@@ -136,24 +151,23 @@ export interface ZdBookingFlowEventMap {
  * @csspart patient-form - The patient details form.
  * @csspart confirmation - The booking confirmation.
  */
-export class ZdBookingFlow extends CharmElement {
-  public static override baseName = 'booking-flow';
+export class ZdBooking extends CharmElement {
+  public static override baseName = 'booking';
 
-  declare public addEventListener: TypedEventTarget<ZdBookingFlowEventMap>['addEventListener'];
-  declare public removeEventListener: TypedEventTarget<ZdBookingFlowEventMap>['removeEventListener'];
-  declare protected emit: TypedEmit<ZdBookingFlowEventMap>;
+  declare public addEventListener: TypedEventTarget<ZdBookingEventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<ZdBookingEventMap>['removeEventListener'];
+  declare protected emit: TypedEmit<ZdBookingEventMap>;
 
-  public static override styles = [
-    ...super.styles,
-    summaryStyles,
-    styles,
-  ] as typeof CharmElement.styles;
+  public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   /**
    * The five children plus the primitives this component renders itself. Every one has to be
    * listed: a `scoped-*` tag is rewritten to the scope's prefix whether or not the class
    * behind it was ever registered, so a missing entry here is an inert element rather than an
    * error (PBZD-001).
+   *
+   * The dialog is listed unconditionally even though only `modal` mode renders one: dependencies
+   * are read once, off the class, long before any instance knows which mode it is in.
    */
   public static override get dependencies(): (typeof CharmElement)[] {
     return [
@@ -162,10 +176,28 @@ export class ZdBookingFlow extends CharmElement {
       ZdAvailabilityPicker,
       ZdPatientForm,
       ZdBookingConfirmation,
+      ZdProviderSummary,
       ZdButton,
+      ZdDialog,
       ...requestStateDependencies,
     ];
   }
+
+  /**
+   * Runs every step after the search in a dialog over the results, instead of in their place.
+   *
+   * Off by default, because inline is the arrangement a host page can place and style freely; a
+   * modal is a decision about the page rather than about the flow. What it changes is only where
+   * the steps are drawn — the state machine, the events and the children are the same either way,
+   * and the search stays mounted underneath, so dismissing the dialog returns the patient to their
+   * results rather than to a refetch.
+   */
+  @property({ type: Boolean })
+  public modal = false;
+
+  /** Shows provider photos in the results list and booking summary. */
+  @property({ type: Boolean, attribute: 'show-photos' })
+  public showPhotos = false;
 
   /** The ZIP code the flow opens on. Kept in step with what the patient searched. */
   @property({ attribute: 'zip-code' })
@@ -192,6 +224,10 @@ export class ZdBookingFlow extends CharmElement {
 
   @property({ attribute: 'insurance-plan-id' })
   public insurancePlanId?: string;
+
+  /** The display name of the insurance plan, for the network status line. */
+  @property({ attribute: 'insurance-name' })
+  public insuranceName?: string;
 
   /** Whether the patient is new to the practice. Affects which slots are bookable. */
   @property({ attribute: 'patient-type' })
@@ -346,6 +382,34 @@ export class ZdBookingFlow extends CharmElement {
   }
 
   /**
+   * Resolves a provider named from outside against the results the page handed in.
+   *
+   * `handleProviderSelect` has the whole location in hand, so nothing here fires for a patient
+   * pressing a card — this is for the other way in, where a host page ran its own search, set
+   * `providers`, and then named one of them. `providerLocationId` alone is enough to advance the
+   * step and enough for the picker to fetch, but not enough for the two things that need the
+   * location itself: the summary that restates who is being booked, and the visit reason fallback
+   * that a flow with no chosen reason depends on.
+   *
+   * An id matching nothing in `providers` clears both rather than leaving the last provider under
+   * a different id. That is a deep link's normal state — nothing was handed in to resolve against
+   * — and a summary naming a provider the flow is no longer booking is worse than no summary.
+   */
+  protected override willUpdate(changed: PropertyValues<this>): void {
+    if (!changed.has('providerLocationId') && !changed.has('providers')) return;
+
+    const id = this.providerLocationId;
+
+    if (!id) return;
+    if (this.selectedProvider?.provider_location_id === id) return;
+
+    const provider = this.providers.find((location) => location.provider_location_id === id);
+
+    this.selectedProvider = provider;
+    this.defaultVisitReasonId = provider?.provider.default_visit_reason_id;
+  }
+
+  /**
    * Moves focus to the new step's container (A11Y-003).
    *
    * Deliberately not on first paint: focus belongs to the host page until the patient does
@@ -353,15 +417,22 @@ export class ZdBookingFlow extends CharmElement {
    * flow. The container rather than the heading because the heading is its accessible name,
    * so focusing the container announces the heading *and* leaves the patient at the top of
    * the step rather than past it.
+   *
+   * In `modal` mode the two transitions that cross the dialog's edge are left alone: the dialog
+   * moves focus into itself as it opens and restores it to the element that had it as it closes,
+   * and a second move racing that one would land the patient somewhere neither of us chose.
    */
   protected override updated(): void {
     const step = this.step;
-
-    if (this.renderedStep && this.renderedStep !== step) {
-      this.shadowRoot?.querySelector<HTMLElement>('[part="step"]')?.focus();
-    }
+    const previous = this.renderedStep;
 
     this.renderedStep = step;
+
+    if (!previous || previous === step) return;
+    if (this.modal && (previous === 'search' || step === 'search')) return;
+
+    const container = this.modal ? 'modal-step' : 'step';
+    this.shadowRoot?.querySelector<HTMLElement>(`[part="${container}"]`)?.focus();
   }
 
   /**
@@ -386,6 +457,27 @@ export class ZdBookingFlow extends CharmElement {
       // The day was a cell on that provider's card, so it goes back with the provider.
       this.selectedDay = undefined;
     }
+  }
+
+  /**
+   * Abandons the booking and returns to the search, whatever step it had reached.
+   *
+   * This is what dismissing the modal does, and it is not `back()` twice: the dialog held the whole
+   * booking, so closing it discards the provider and the slot together rather than stepping through
+   * them. The search itself is deliberately untouched — the patient's results are the page the
+   * dialog opened over, and they are still looking at it.
+   *
+   * Public so a host page can close the dialog itself, and idempotent so the `dialog-hide` that
+   * arrives when the flow closes the dialog by clearing state changes nothing a second time.
+   */
+  public cancel(): void {
+    this.startTime = undefined;
+    this.providerLocationId = undefined;
+    this.selectedProvider = undefined;
+    this.defaultVisitReasonId = undefined;
+    this.selectedDay = undefined;
+    this.appointment = undefined;
+    this.bookingError = undefined;
   }
 
   /**
@@ -571,6 +663,8 @@ export class ZdBookingFlow extends CharmElement {
                 part="results"
                 .providers=${this.providers}
                 .totalCount=${this.totalCount}
+                ?show-photos=${this.showPhotos}
+                .insuranceName=${this.insuranceName}
                 .page=${this.page}
                 .pageSize=${this.pageSize}
                 .availability=${this.availability}
@@ -594,12 +688,20 @@ export class ZdBookingFlow extends CharmElement {
     `;
   }
 
+  /**
+   * The picker, laid out for the space the step is in.
+   *
+   * A dialog scrolls, so every day can be on the page at once with its times under its date, and
+   * nothing is hidden behind a day that has to be pressed first. Inline the step has to fit
+   * whatever column the host page put it in, which is what the strip is for.
+   */
   protected renderTimeStep(): unknown {
     return this.html`
       ${this.renderSummary()}
 
       <scoped-availability-picker
         part="picker"
+        layout=${this.modal ? 'stacked' : 'strip'}
         .providerLocationId=${this.providerLocationId}
         .visitReasonId=${this.effectiveVisitReasonId}
         .patientType=${this.patientType}
@@ -706,7 +808,17 @@ export class ZdBookingFlow extends CharmElement {
 
     return this.html`
       <div class="summary" part="summary">
-        ${provider ? renderProviderSummary(provider) : nothing}
+        ${
+          provider
+            ? this.html`
+          <scoped-provider-summary
+            part="provider-summary"
+            .provider=${provider}
+            ?show-photo=${this.showPhotos}
+          ></scoped-provider-summary>
+        `
+            : nothing
+        }
         ${when ? this.html`<p class="summary-time" part="summary-time">${when}</p>` : nothing}
       </div>
     `;
@@ -735,18 +847,57 @@ export class ZdBookingFlow extends CharmElement {
    *
    * There is no Back button on the confirmation. A booked appointment is not a step to
    * reconsider — cancelling one is a different request this library does not make.
+   *
+   * The heading is hidden inside the dialog rather than dropped, because the dialog already shows
+   * "Book an appointment" and two stacked headings read as a mistake — but the container still
+   * needs a name to announce when focus lands on it.
    */
-  protected override render(): unknown {
-    const step = this.step;
+  protected renderStepSection(step: BookingStep, inDialog = false): unknown {
+    const container = inDialog ? 'modal-step' : 'step';
+    const headingId = inDialog ? 'modal-step-heading' : 'step-heading';
 
     return this.html`
-      <section class="step" part="step" tabindex="-1" aria-labelledby="step-heading">
-        <h2 class="step-heading" part="step-heading" id="step-heading">${STEP_HEADINGS[step]}</h2>
+      <section
+        class=${inDialog ? 'step in-dialog' : 'step'}
+        part=${container}
+        tabindex="-1"
+        aria-labelledby=${headingId}
+      >
+        <h2
+          class=${inDialog ? 'step-heading visually-hidden' : 'step-heading'}
+          part=${inDialog ? 'modal-step-heading' : 'step-heading'}
+          id=${headingId}
+        >${STEP_HEADINGS[step]}</h2>
 
         ${step === 'search' || step === 'booked' ? nothing : this.renderBack(step)}
 
         ${this.renderStep(step)}
       </section>
+    `;
+  }
+
+  protected override render(): unknown {
+    const step = this.step;
+
+    if (!this.modal) return this.renderStepSection(step);
+
+    /*
+     * The search renders whatever step the flow is on, because in modal mode it is the page the
+     * dialog opened over: unmounting it would throw away the results the patient came from and
+     * refetch them the moment they closed the dialog. The dialog renders even while closed, so a
+     * host page can find it and drive it, and so opening it is a state change rather than a mount.
+     */
+    return this.html`
+      ${this.renderStepSection('search')}
+
+      <scoped-dialog
+        part="dialog"
+        heading=${MODAL_HEADING}
+        ?open=${step !== 'search'}
+        @dialog-hide=${() => this.cancel()}
+      >
+        ${step === 'search' ? nothing : this.renderStepSection(step, true)}
+      </scoped-dialog>
     `;
   }
 }

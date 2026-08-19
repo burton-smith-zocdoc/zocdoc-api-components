@@ -1,4 +1,4 @@
-# zd-booking-flow
+# zd-booking
 
 Coordinates the booking funnel: search → time → details → confirmation.
 
@@ -13,29 +13,32 @@ the data, and a host page resuming a half-finished booking only has to set the p
 already has. The cost is that going back has to clear what it goes back past — which is
 correct anyway, since a different provider invalidates the slot picked from the old one.
 
-**Class** `ZdBookingFlow` — **Module** `src/components/booking-flow/booking-flow.ts` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdBooking` — **Module** `src/components/booking/booking.ts` — **Package** `@powered-by-zocdoc/api-components`
 
 ```html
-<zd-booking-flow></zd-booking-flow>
+<zd-booking></zd-booking>
 ```
 
 ## Attributes & Properties
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `insurance-name` | `insuranceName` | `string \| undefined` | — | The display name of the insurance plan, for the network status line. |
 | `insurance-plan-id` | `insurancePlanId` | `string \| undefined` | — | — |
+| `modal` | `modal` | `boolean` | `false` | Runs every step after the search in a dialog over the results, instead of in their place. Off by default, because inline is the arrangement a host page can place and style freely; a modal is a decision about the page rather than about the flow. What it changes is only where the steps are drawn — the state machine, the events and the children are the same either way, and the search stays mounted underneath, so dismissing the dialog returns the patient to their results rather than to a refetch. |
 | `page` | `page` | `number` | `0` | The zero-indexed page in hand. Bound down to both children so they cannot disagree. |
 | `page-size` | `pageSize` | `unknown` | `DEFAULT_PAGE_SIZE` | Results per page, forwarded to the search that requests them and to the list that pages through them. Updated from what the API says it used, since it is free to clamp. |
 | `patient-type` | `patientType` | `'new' \| 'existing'` | `'new'` | Whether the patient is new to the practice. Affects which slots are bookable. |
 | `provider-location-id` | `providerLocationId` | `string \| undefined` | — | The chosen `pr_…\|lo_…`. Setting it advances the flow to the time step. |
+| `show-photos` | `showPhotos` | `boolean` | `false` | Shows provider photos in the results list and booking summary. |
 | `specialty-id` | `specialtyId` | `string \| undefined` | — | The specialty the flow opens on. Kept in step with what the patient searched. The search endpoint requires this or a visit reason, so a flow that opens on neither cannot search until the patient chooses one. |
 | `start-time` | `startTime` | `string \| undefined` | — | The chosen slot's `start_time`, verbatim from the API. Setting it advances to the form. |
 | `total-count` | `totalCount` | `number \| undefined` | — | How many providers the search matched in total, which is what the results list needs to count them and to know where its pager ends. Undefined until a search returns, and left undefined by a host page handing in `providers` with no total — in which case the list renders neither the count nor the pager rather than presenting one page as the whole answer. |
 | `visit-reason-id` | `visitReasonId` | `string \| undefined` | — | Narrows the search and, more importantly, is required for availability and booking. When the patient searched for "Any reason" this stays undefined, and the flow falls back to the reason the API resolved for the search, then to the chosen provider's `default_visit_reason_id` — see effectiveVisitReasonId. |
 | `zip-code` | `zipCode` | `string` | `''` | The ZIP code the flow opens on. Kept in step with what the patient searched. |
-| — | `addEventListener` | `TypedEventTarget<ZdBookingFlowEventMap>['addEventListener']` | — | — |
+| — | `addEventListener` | `TypedEventTarget<ZdBookingEventMap>['addEventListener']` | — | — |
 | — | `providers` | `ProviderLocation[]` | `[]` | The last search's results. Public so a host page that ran its own search can hand them in and start the flow at the list. One page of them. `totalCount` is how many the search matched. |
-| — | `removeEventListener` | `TypedEventTarget<ZdBookingFlowEventMap>['removeEventListener']` | — | — |
+| — | `removeEventListener` | `TypedEventTarget<ZdBookingEventMap>['removeEventListener']` | — | — |
 | — | `step` | `'search' \| 'time' \| 'patient' \| 'booked'` | — | Which step the current data puts the patient on. Reading the furthest-satisfied precondition rather than tracking a cursor is what makes the two impossible to desync. (readonly) |
 
 ## Events
@@ -52,6 +55,7 @@ correct anyway, since a different provider invalidates the slot picked from the 
 | --- | --- |
 | `back(): void` | Returns to the previous step by dropping what that step decided. Clearing is the point rather than a side effect. Going back past a provider has to discard the slot picked from it — the times belong to that location, and carrying one forward would book an appointment nobody chose. The visible cost is that the picker refetches on the way back in, which is worth paying for a flow whose state cannot lie. |
 | `book(patient: Patient, notes?: string): Promise<void>` | Books the appointment. Public so a host page driving the form itself can still finish. Every `return` here is a refusal to send an incomplete or duplicate booking, which is the one request in this library that cannot be undone by making it again — a second POST books a second appointment. `zd-patient-form` disables its own button while `busy`, so this guard covers what that cannot: a programmatic caller, or a second submit racing the first. |
+| `cancel(): void` | Abandons the booking and returns to the search, whatever step it had reached. This is what dismissing the modal does, and it is not `back()` twice: the dialog held the whole booking, so closing it discards the provider and the slot together rather than stepping through them. The search itself is deliberately untouched — the patient's results are the page the dialog opened over, and they are still looking at it. Public so a host page can close the dialog itself, and idempotent so the `dialog-hide` that arrives when the flow closes the dialog by clearing state changes nothing a second time. |
 
 ## CSS Parts
 
@@ -59,14 +63,17 @@ correct anyway, since a different provider invalidates the slot picked from the 
 | --- | --- |
 | `back` | The button returning to the previous step. |
 | `confirmation` | The booking confirmation. |
+| `dialog` | The dialog the steps after the search run in, present only in `modal` mode. |
 | `error` | The alert shown when a booking fails. |
+| `modal-step` | The current step's container inside the dialog, and the focus target on transitions between two steps that are both in the dialog. |
+| `modal-step-heading` | The step's heading inside the dialog. Visually hidden, since the dialog carries a heading of its own, but it is what a screen reader announces on arrival. |
 | `patient-form` | The patient details form. |
 | `picker` | The availability picker. |
 | `provider-summary` | The provider block inside the summary, shared with `zd-provider-results` — see `internal/provider-summary.ts` for its inner parts. |
 | `results` | The provider results list. |
 | `search` | The provider search form. |
 | `status` | The live region announcing that a booking is in flight. |
-| `step` | The current step's container, and the focus target on every transition. |
+| `step` | The current step's container, and the focus target on every transition. In `modal` mode this is always the search, which stays on the page under the dialog. |
 | `step-heading` | The current step's heading. |
 | `summary` | The block restating what is about to be booked. |
 | `summary-time` | The appointment time, on the patient step. |

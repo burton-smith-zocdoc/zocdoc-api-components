@@ -21,8 +21,10 @@ Renders a named icon from the configured icon set, at a token-driven size.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `dir` | `dir` | `'ltr' \| 'rtl' \| 'auto'` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `flip` | `flip` | `'x' \| 'y' \| 'both' \| undefined` | — | Sets the flip direction of the icon. | `CoreIcon` |
 | `label` | `label` | `string \| undefined` | — | Label of the icon for assertive technologies. This is required for accessibility. | `CoreIcon` |
 | `name` | `name` | `string \| undefined` | — | The name of the icon to draw. | `CoreIcon` |
+| `rotate` | `rotate` | `number` | `0` | Sets the rotation degree of the icon. | `CoreIcon` |
 | `url` | `url` | `string \| undefined` | — | A string that points to an external SVG. | `CoreIcon` |
 
 ### Events

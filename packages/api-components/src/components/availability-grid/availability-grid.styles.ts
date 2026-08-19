@@ -82,11 +82,12 @@ export default css`
      * count line says which is which in words.
      */
     &:not(:disabled) {
-      background: var(--zd-color-warning-100);
+      background: light-dark(var(--zd-color-brand-300), var(--zd-color-brand-400));
+      color: light-dark(var(--zd-color-on-brand-300), var(--zd-color-on-brand-400));
     }
 
     &:disabled {
-      background: var(--zd-color-neutral-100);
+      background: light-dark(var(--zd-color-neutral-100), var(--zd-color-neutral-800));
       cursor: not-allowed;
       opacity: 0.75;
     }

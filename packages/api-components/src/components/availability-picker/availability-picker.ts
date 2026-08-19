@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton, ZdRadio, ZdRadioGroup } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdButtonGroup, ZdIcon } from '@powered-by-zocdoc/primitives';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { AvailabilitySlot, PatientType } from '../../client/types.js';
@@ -139,12 +139,11 @@ export class ZdAvailabilityPicker extends CharmElement {
    * leaning on the error state's dependency list to supply them would break silently if
    * that list ever changed. Registration is idempotent, so the repeat costs nothing.
    *
-   * `ZdRadio` is listed alongside its group because `ZdRadioGroup.dependencies` declares only
-   * the icon it renders itself — the radios are slotted children, which are the caller's to
-   * register (PBZD-001).
+   * `ZdButtonGroup` wraps the buttons with its own border when `split`, so the child buttons do
+   * not need to be listed separately — they register via `ZdButtonGroup.dependencies`.
    */
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdButton, ZdRadioGroup, ZdRadio, ...requestStateDependencies];
+    return [ZdButton, ZdButtonGroup, ZdIcon, ...requestStateDependencies];
   }
 
   /** The `pr_…|lo_…` pair to fetch availability for. Nothing is fetched without it. */
@@ -363,8 +362,13 @@ export class ZdAvailabilityPicker extends CharmElement {
     );
   }
 
-  /** One list of times. Shared, so a day in the stacked layout and the strip's selected day
-   * render the same control rather than two that drift apart. */
+  /**
+   * One list of times. Shared, so a day in the stacked layout and the strip's selected day
+   * render the same control rather than two that drift apart.
+   *
+   * `fluid` fills the grid cell the list puts each time in, which is what makes every time the
+   * same width — left to itself a button sizes to its own label.
+   */
   protected renderSlotList(slots: readonly AvailabilitySlot[]): unknown {
     return this.html`
       <ul class="slots" part="slots">
@@ -374,6 +378,7 @@ export class ZdAvailabilityPicker extends CharmElement {
               <scoped-button
                 part="slot"
                 variant="secondary"
+                fluid
                 .current=${slot.start_time === this.selectedStartTime ? 'time' : undefined}
                 @click=${() => this.select(slot)}
               >
@@ -418,30 +423,33 @@ export class ZdAvailabilityPicker extends CharmElement {
    * The New/Existing control, as a radio group: two mutually exclusive answers that filter what
    * is shown is what radios are for, and the primitive brings the roving tabindex and the arrow
    * keys with it. Grouped and labelled rather than left as two bare controls (A11Y-004).
-   *
-   * The label goes in the slot rather than the `label` attribute so the text is a DOM text node a
-   * browser can translate (I18N-001).
    */
   protected renderPatientType(): unknown {
     if (this.hidePatientType) return nothing;
 
     return this.html`
-      <scoped-radio-group
+      <scoped-button-group
         class="patient-type"
         part="patient-type"
-        layout="horizontal"
-        .value=${this.patientType}
-        @change=${(event: Event) => {
-          // The group's own `change` is composed, so without this it would surface on the host
-          // page as a `change` from this component — an event with no documented meaning here.
-          event.stopPropagation();
-          this.selectPatientType((event.target as { value?: unknown }).value);
+        select="single"
+        split
+        label="Patient type"
+        @click=${(event: Event) => {
+          const button = event.target as HTMLElement & { value?: unknown };
+          if (button.matches('[part="patient-type-option"]')) {
+            this.selectPatientType(button.value);
+          }
         }}
       >
-        <span slot="label">Patient type</span>
-        <scoped-radio part="patient-type-option" value="new">New patient</scoped-radio>
-        <scoped-radio part="patient-type-option" value="existing">Existing patient</scoped-radio>
-      </scoped-radio-group>
+        <scoped-button part="patient-type-option" variant="ghost" value="new" ?pressed=${this.patientType === 'new'}>
+          ${this.patientType === 'new' ? this.html`<scoped-icon slot="start" name="checkmark"></scoped-icon>` : nothing}
+          New patient
+        </scoped-button>
+        <scoped-button part="patient-type-option" variant="ghost" value="existing" ?pressed=${this.patientType === 'existing'}>
+          ${this.patientType === 'existing' ? this.html`<scoped-icon slot="start" name="checkmark"></scoped-icon>` : nothing}
+          Existing patient
+        </scoped-button>
+      </scoped-button-group>
     `;
   }
 

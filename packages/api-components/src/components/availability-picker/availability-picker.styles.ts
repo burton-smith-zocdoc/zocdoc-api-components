@@ -12,11 +12,14 @@ export default css`
    */
   .days,
   .slots {
-    display: flex;
     gap: 0.5rem;
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+
+  .days {
+    display: flex;
   }
 
   /*
@@ -34,9 +37,23 @@ export default css`
     }
   }
 
+  /*
+   * A grid of equal columns rather than a wrapping row, because a row sizes each time to its own
+   * label: "9:00 AM" comes out narrower than "10:30 AM" and the column edges go ragged. auto-fill
+   * takes as many columns as the container has room for, so the times reflow with the space and
+   * the last row still lines up under the one above instead of stretching to fill it.
+   *
+   * The floor is min() so a container narrower than one column gets a single full-width column
+   * rather than an overflowing one — the modal on a phone, or a card in a two-column list.
+   */
   .slots {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(7rem, 100%), 1fr));
     margin-block-start: 0.75rem;
+
+    & [part='slot'] {
+      white-space: nowrap;
+    }
   }
 
   /*
@@ -49,8 +66,12 @@ export default css`
   }
 
   .patient-type {
-    display: block;
     margin-block-end: 1rem;
+
+    & [part='patient-type-option'] {
+      flex: 1;
+      white-space: nowrap;
+    }
   }
 
   /*

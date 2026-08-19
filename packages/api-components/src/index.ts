@@ -49,12 +49,12 @@ export {
 } from './components/availability-picker/index.js';
 export { ZdBookingConfirmation } from './components/booking-confirmation/index.js';
 export {
-  ZdBookingFlow,
+  ZdBooking,
   type BookingCompleteDetail,
   type BookingErrorDetail,
   type BookingStep,
-  type ZdBookingFlowEventMap,
-} from './components/booking-flow/index.js';
+  type ZdBookingEventMap,
+} from './components/booking/index.js';
 export {
   ZdPatientForm,
   type PatientFormErrors,
@@ -68,6 +68,7 @@ export {
   type ProfileRequestDetail,
   type ZdProviderCardEventMap,
 } from './components/provider-card/index.js';
+export { ZdProviderSummary } from './components/provider-summary/index.js';
 export {
   ZdProviderResults,
   type PageChangeDetail,

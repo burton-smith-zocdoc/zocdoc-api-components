@@ -214,6 +214,34 @@ describe('zd-availability-picker', () => {
     expect(texts(element, 'slot')[1]).toMatch(/\b(?:3|15)[:.]30\b/);
   });
 
+  /*
+   * Widths measured rather than a class asserted: "9:00 AM" is two characters shorter than
+   * "10:30 AM", and what a patient sees is a ragged column edge, not a selector. A grid of equal
+   * columns is one way to fix that and a fixed width is another — this holds either way.
+   */
+  it('gives every time the same width', async () => {
+    // A one-digit hour and a two-digit one, which is where the ragged edge comes from.
+    vi.mocked(availability.getAvailability).mockResolvedValue(
+      entry(buildTimeslots(FIRST_DAY, ['09:00', '10:30', '14:00']))
+    );
+
+    const element = await mountReady();
+    await vi.waitFor(() =>
+      expect(shadow(element).querySelectorAll('[part="slot"]')).toHaveLength(3)
+    );
+
+    const widths = [...shadow(element).querySelectorAll('[part="slot"]')].map(
+      (slot) => slot.getBoundingClientRect().width
+    );
+
+    /*
+     * Within a pixel rather than exactly equal: columns that share the leftover space land on
+     * fractional widths that differ in the last subpixel, which no patient can see. Two labels of
+     * different lengths sizing themselves differ by tens of pixels, which is the thing under test.
+     */
+    expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1);
+  });
+
   it('marks the selected day with aria-current', async () => {
     const element = await mountReady();
     await vi.waitFor(() =>
@@ -437,9 +465,9 @@ describe('zd-availability-picker', () => {
         'New patient',
         'Existing patient',
       ]);
-      // The label is a text node rather than an attribute, so a browser can translate it
-      // (I18N-001).
-      expect(shadow(element).querySelector('[slot="label"]')?.textContent).toBe('Patient type');
+      expect(shadow(element).querySelector('[part="patient-type"]')?.getAttribute('label')).toBe(
+        'Patient type'
+      );
     });
 
     it('refetches for the chosen type and reports the change', async () => {

@@ -116,6 +116,15 @@ export const WithHeaderActions: Story = {
 };
 
 /**
+ * The network status line shows when `insurance-name` is set and the provider's
+ * `accepts_patient_insurance` field is `accepted` or `not_accepted`. The fixture provider
+ * has `accepted`, so it shows "In-network" here.
+ */
+export const WithInsurance: Story = {
+  args: { insuranceName: 'CareFirst BlueCross BlueShield' },
+};
+
+/**
  * The profile in a narrow column, which is how it renders on a phone or in a sidebar. The header
  * keeps the photo box and the text column side by side, and the languages run wraps rather than
  * overflowing.

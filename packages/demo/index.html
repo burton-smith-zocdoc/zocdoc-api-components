@@ -20,8 +20,14 @@
       text node, where a browser's translator can reach them (I18N-001).
     -->
     <header class="page-header">
-      <h1>One tag</h1>
+      <h1>Powered by Zocdoc</h1>
       <div class="page-controls">
+        <!--
+          Opens the assistant panel. A plain button rather than anything cleverer: the panel is a
+          dialog, and `zd-dialog` restores focus to whatever opened it when it closes, so the thing
+          that opens it has to be a real focusable control for that to land anywhere.
+        -->
+        <zd-button id="assistant-open" size="small">Ask Zocdoc</zd-button>
         <div id="theme-switcher" class="theme-switcher"></div>
         <zd-switch id="appearance" label-position="start">
           <span slot="label">Dark mode</span>
@@ -30,10 +36,11 @@
     </header>
     <p class="lede">The whole booking funnel from a single custom element.</p>
 
+    <h2>One tag</h2>
     <p id="mode"></p>
 
     <!--
-      The `<h1>` above is the page's, which is why `zd-booking-flow` heads each of its steps at
+      The `<h1>` above is the page's, which is why `zd-booking` heads each of its steps at
       `<h2>`. A host page that gave this component the page's only heading would have a document
       whose outline starts at level two.
 
@@ -41,7 +48,60 @@
       them, which is the arrangement a results page wants. Drop the attribute and the same steps
       render in place instead — see `/composed.html` for that one.
     -->
-    <zd-booking-flow modal show-photos zip-code="11201"></zd-booking-flow>
+    <p><zd-button id="bob-open">Isn't this just B.O.B.???</zd-button></p>
+    <zd-booking modal show-photos zip-code="11201" insurance-name="Sandbox National PPO"></zd-booking>
+
+    <!--
+      The assistant panel: a chat transcript in a drawer at the inline end of the page.
+
+      `position="end"` is the dialog's own side-panel mode — full height, its own slide transition,
+      focus trapped while it is open. `end` rather than a hardcoded side, so the panel comes in from
+      the right in English and from the left in Arabic (I18N-003).
+
+      The transcript is a fixture, not a model: the words are here in the markup so what this page
+      claims can be read without running it, and so a browser's translator can reach them
+      (I18N-001). Only the provider list is filled in at runtime, and it comes from the same API the
+      rest of the page uses — see `chat.ts`. Nothing on this page talks to an assistant of any kind,
+      and no text a patient types goes anywhere (PHI-003).
+    -->
+    <zd-dialog id="assistant" position="end">
+      <span slot="heading">Ask Zocdoc</span>
+
+      <div class="chat">
+        <p class="chat-message from-patient">Are there any dentists near me?</p>
+        <p class="chat-message from-assistant">
+          Here are the dentists taking new patients near 11201. Pick one and I’ll show you their
+          next available times.
+        </p>
+
+        <!--
+          The list arrives after a request, so it is a live region: a screen reader is told that
+          the answer landed rather than being left to discover it (A11Y-002).
+        -->
+        <ul id="assistant-providers" class="chat-providers" aria-live="polite"></ul>
+      </div>
+
+      <!--
+        The composer. A chat panel without one does not read as a chat panel, so it is here — and it
+        is deliberately inert: there is no assistant behind this page for it to talk to, and nothing
+        a patient types is read, kept, or sent anywhere (PHI-003).
+
+        Inert by construction rather than by script. `zd-button` defaults to `type="button"`, and
+        there is no form around it, so pressing Send has nothing to submit — a `type="submit"` inside
+        a form would call `requestSubmit()` and navigate the page away from the demo unless a
+        listener cancelled it, which is machinery in exchange for the same nothing.
+
+        The label is slotted and hidden rather than written as a `placeholder`: the words stay in a
+        DOM text node where a browser's translator can reach them (I18N-001) and the field keeps an
+        accessible name (A11Y-004), while the composer still looks like the one-line box it should.
+      -->
+      <div class="chat-composer" slot="footer">
+        <zd-input id="assistant-message" hide-label>
+          <span slot="label">Message</span>
+        </zd-input>
+        <zd-button variant="primary">Send</zd-button>
+      </div>
+    </zd-dialog>
 
     <section class="scenarios">
       <h2>Try a different outcome</h2>
@@ -49,6 +109,11 @@
       <dl id="scenarios"></dl>
       <p><a href="/composed.html">See the same five components wired by hand</a></p>
     </section>
+
+    <zd-dialog id="bob-dialog">
+      <span slot="heading">B.O.B.</span>
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDFzdG9rOGp4bXppNzU0ZjNyMmFtbGl4YmN4cTMxN3p6NWU4dTg4ZCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/d10dMmzqCYqQ0/giphy.gif" alt="B.O.B. from Monsters vs. Aliens" />
+    </zd-dialog>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

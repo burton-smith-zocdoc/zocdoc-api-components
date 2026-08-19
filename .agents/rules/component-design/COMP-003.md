@@ -41,7 +41,7 @@ Events emitted by these components:
 | `zd-provider-results`   | `provider-select` | `{ provider: ProviderLocation }` |
 | `zd-availability-picker`| `slot-select`     | `{ slot: TimeSlot }`             |
 | `zd-patient-form`       | `patient-submit`  | `{ patient: Patient }`           |
-| `zd-booking-flow`       | `booking-complete`| `{ appointmentId: string }`      |
+| `zd-booking`       | `booking-complete`| `{ appointmentId: string }`      |
 | (any)                   | `error`           | `{ message: string, code: string }` |
 
 See also: [PBZD-002](../internal/PBZD-002.md), [COMP-002](./COMP-002.md)

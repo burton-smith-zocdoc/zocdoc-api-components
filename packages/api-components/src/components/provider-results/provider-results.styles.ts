@@ -60,6 +60,7 @@ export default css`
     display: flex;
     flex-wrap: wrap;
     margin-block-end: 0.75rem;
+    justify-content: space-between;
 
     /*
      * Pushed to the far side by its own margin rather than by space-between on the wrapper,

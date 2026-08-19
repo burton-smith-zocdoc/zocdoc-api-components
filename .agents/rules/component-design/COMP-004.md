@@ -10,8 +10,8 @@ This enables:
 **Do:**
 
 ```ts
-// Works inside zd-booking-flow
-<zd-booking-flow></zd-booking-flow>
+// Works inside zd-booking
+<zd-booking></zd-booking>
 
 // Also works standalone
 <zd-provider-search
@@ -43,8 +43,8 @@ willUpdate(changedProperties: PropertyValues) {
 ```ts
 // ❌ Child assumes parent context
 connectedCallback() {
-  const flow = this.closest('zd-booking-flow');
-  if (!flow) throw new Error('Must be inside zd-booking-flow');
+  const flow = this.closest('zd-booking');
+  if (!flow) throw new Error('Must be inside zd-booking');
 }
 
 // ❌ Child reads from sibling

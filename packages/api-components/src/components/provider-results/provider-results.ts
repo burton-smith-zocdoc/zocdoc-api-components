@@ -348,6 +348,14 @@ export class ZdProviderResults extends CharmElement {
     this.profileOpen = true;
   }
 
+  /**
+   * Follows the dialog rather than driving it, on `dialog-hide` — the event the dialog actually
+   * emits when it closes, and not `close`, which nothing dispatches.
+   *
+   * The dialog dismisses itself on its own close button, Escape and the backdrop, so a flag left
+   * true after any of those no longer describes the dialog it drives: pressing the same provider's
+   * name again would set a flag that was already set, and the profile would never come back.
+   */
   protected closeProfileDialog(): void {
     this.profileOpen = false;
   }
@@ -400,10 +408,10 @@ export class ZdProviderResults extends CharmElement {
 
       <scoped-dialog
         ?open=${this.profileOpen}
-        @close=${() => this.closeProfileDialog()}
+        @dialog-hide=${() => this.closeProfileDialog()}
       >
         ${this.profileProvider
-          ? this.html`<scoped-provider-profile .provider=${this.profileProvider}></scoped-provider-profile>`
+          ? this.html`<scoped-provider-profile .provider=${this.profileProvider} ?show-photo=${this.showPhotos}></scoped-provider-profile>`
           : nothing}
       </scoped-dialog>
     `;

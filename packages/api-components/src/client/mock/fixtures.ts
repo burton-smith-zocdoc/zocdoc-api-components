@@ -130,8 +130,10 @@ const IN_PERSON_ID = 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890';
 const VIRTUAL_ID = 'pr_ghi123-jkl456_mnop7890|lo_ghi123-jkl456_mnop7890';
 
 /**
- * Three locations covering the branches the results list has to render: an in-person
- * provider, a virtual one, and one whose booking requirements force extra form fields.
+ * Five locations covering the branches the results list has to render: an in-person
+ * provider, a virtual one, one whose booking requirements force extra form fields, and
+ * two dentists — the only specialty here other than primary care, so a search filtered by
+ * `specialty_id` has something to actually filter to.
  */
 export const PROVIDER_LOCATIONS: ProviderLocation[] = [
   {
@@ -147,6 +149,7 @@ export const PROVIDER_LOCATIONS: ProviderLocation[] = [
       specialties: ['Primary Care Doctor'],
       specialty_ids: ['sp_153'],
       default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR',
+      provider_photo_url: '/images/michael-scott.png',
       /*
        * The profile fields, populated on this location only — a second location with none of
        * them is what lets `zd-provider-profile` be shown doing the thing it does most often,
@@ -209,6 +212,7 @@ export const PROVIDER_LOCATIONS: ProviderLocation[] = [
       specialties: ['Primary Care Doctor'],
       specialty_ids: ['sp_153'],
       default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR',
+      provider_photo_url: '/images/pam-beesly.png',
     },
     // `state` is singular on a virtual location — one code, not a served-states list.
     virtual_location: { state: 'NY', time_zone: 'America/New_York' },
@@ -229,6 +233,7 @@ export const PROVIDER_LOCATIONS: ProviderLocation[] = [
       title: 'MD',
       specialty_ids: ['sp_153'],
       default_visit_reason_id: 'pc_FRO-18leckytNKtruw5dLR',
+      provider_photo_url: '/images/andy-bernard.png',
     },
     location: {
       address1: '2 Sandbox Plaza',
@@ -246,6 +251,90 @@ export const PROVIDER_LOCATIONS: ProviderLocation[] = [
         'data.patient.insurance.insurance_member_id',
       ],
       accepts_booking_requests_from: ['in_network'],
+    },
+  },
+  /*
+   * The two dentists. Their ids are the documented `pending_booking` and `confirmed`
+   * sentinels rather than invented ones (PHI-002), which is worth more than tidiness: the
+   * two of them are the two statuses that mean a booking happened, so booking one dentist
+   * and then the other walks a demo through both — and `pending_booking` is the one a
+   * confirmation screen is most likely to get wrong.
+   */
+  {
+    provider_location_id: SCENARIOS.providerLocationPending,
+    provider_location_type: 'in_person_provider',
+    accepts_patient_insurance: 'accepted',
+    first_availability_date_in_provider_local_time: '2026-08-05',
+    provider: {
+      provider_id: 'pr_pending',
+      first_name: 'Imani',
+      last_name: 'Whitfield',
+      title: 'DDS',
+      specialties: ['Dentist'],
+      specialty_ids: ['sp_154'],
+      default_visit_reason_id: 'pc_TlZW-r06U0W3pCsIGtSI5B',
+      languages: ['English'],
+      provider_photo_url: '/images/dwight-schrute.png',
+    },
+    practice: {
+      practice_id: 'pt_ghi123-jkl456_wxyz7890',
+      practice_name: 'Sandbox Dental Group',
+    },
+    location: {
+      location_name: 'Sandbox Plaza Dental',
+      address1: '3 Sandbox Plaza',
+      city: 'Brooklyn',
+      state: 'NY',
+      zip_code: '11201',
+      latitude: 40.6942,
+      longitude: -73.9895,
+      // The 555-0100 block is reserved for fiction, so this number cannot reach anyone (PHI-002).
+      phone_number: '(555) 555-0101',
+      phone_extension: null,
+      time_zone: 'America/New_York',
+      distance_to_patient_mi: 0.5,
+    },
+    booking_requirements: {
+      required_fields: [],
+      accepts_booking_requests_from: ['in_network', 'out_of_network', 'self_pay'],
+    },
+  },
+  {
+    provider_location_id: SCENARIOS.providerLocationConfirmed,
+    provider_location_type: 'in_person_provider',
+    accepts_patient_insurance: 'accepted',
+    first_availability_date_in_provider_local_time: '2026-08-04',
+    provider: {
+      provider_id: 'pr_confirmed',
+      first_name: 'Tobias',
+      last_name: 'Meier',
+      title: 'DMD',
+      specialties: ['Dentist'],
+      specialty_ids: ['sp_154'],
+      default_visit_reason_id: 'pc_TlZW-r06U0W3pCsIGtSI5B',
+      languages: ['English', 'German'],
+      provider_photo_url: '/images/jim-halpert.png',
+    },
+    practice: {
+      practice_id: 'pt_jkl123-mno456_wxyz7890',
+      practice_name: 'Sandbox Dental Group',
+    },
+    location: {
+      location_name: 'Sandbox Heights Dental',
+      address1: '4 Sandbox Plaza',
+      city: 'Brooklyn',
+      state: 'NY',
+      zip_code: '11201',
+      latitude: 40.6968,
+      longitude: -73.9921,
+      phone_number: '(555) 555-0102',
+      phone_extension: null,
+      time_zone: 'America/New_York',
+      distance_to_patient_mi: 1.1,
+    },
+    booking_requirements: {
+      required_fields: [],
+      accepts_booking_requests_from: ['in_network', 'out_of_network', 'self_pay'],
     },
   },
 ];
