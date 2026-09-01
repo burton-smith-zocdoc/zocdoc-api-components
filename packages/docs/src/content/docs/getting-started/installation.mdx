@@ -1,0 +1,61 @@
+---
+title: Installation
+description: Install the Powered by Zocdoc components in your project
+---
+
+import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
+
+## Package Installation
+
+Install the components package and its peer dependencies:
+
+<Tabs>
+  <TabItem label="npm">
+    ```bash
+    npm install @powered-by-zocdoc/api-components @powered-by-zocdoc/primitives
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @powered-by-zocdoc/api-components @powered-by-zocdoc/primitives
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @powered-by-zocdoc/api-components @powered-by-zocdoc/primitives
+    ```
+  </TabItem>
+</Tabs>
+
+## Required CSS
+
+Import the theme reset and utilities before using any components:
+
+```javascript
+import '@powered-by-zocdoc/primitives/theme/reset.css';
+import '@powered-by-zocdoc/primitives/theme/utilities.css';
+```
+
+These provide CSS custom properties that all components resolve against. Without them, components will render with missing styles.
+
+## Script Tag Alternative
+
+For pages without a build step, use the IIFE bundle:
+
+```html
+<script src="https://unpkg.com/@powered-by-zocdoc/api-components/bundle/iife"></script>
+```
+
+This registers all components globally and includes the required CSS.
+
+## TypeScript
+
+The packages include TypeScript definitions. For component types:
+
+```typescript
+import type { ProviderLocation, Timeslot, Appointment } from '@powered-by-zocdoc/api-components';
+```
+
+## Next Steps
+
+Once installed, [configure the client](/powered-by-zocdoc/getting-started/quick-start/) with your API credentials.

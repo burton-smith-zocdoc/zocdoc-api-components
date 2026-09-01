@@ -1,0 +1,78 @@
+---
+title: Quick Start
+description: Get your first booking flow running in minutes
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+This guide walks through rendering a complete booking flow with a single component.
+
+<Steps>
+
+1. **Configure the client**
+
+   Before rendering any component, configure the API client with your credentials:
+
+   ```javascript
+   import { configureZocdoc } from '@powered-by-zocdoc/api-components';
+
+   configureZocdoc({
+     baseUrl: 'https://api.zocdoc.com',
+     getToken: async () => {
+       // Return a valid API token
+       return await fetchTokenFromYourBackend();
+     },
+   });
+   ```
+
+   The `getToken` function is called before each API request, so you can implement token refresh here.
+
+2. **Add the booking component**
+
+   The `<zd-booking>` component provides the complete booking funnel:
+
+   ```html preview
+   <zd-booking
+     modal
+     show-photos
+     zip-code="10001"
+     insurance-name="Blue Cross Blue Shield"
+   ></zd-booking>
+   ```
+
+3. **Handle the completion event**
+
+   Listen for `booking-complete` to know when a patient finishes booking:
+
+   ```javascript
+   const booking = document.querySelector('zd-booking');
+
+   booking.addEventListener('booking-complete', (event) => {
+     const { appointmentId, startTime, status } = event.detail;
+     console.log(`Appointment ${appointmentId} booked for ${startTime}`);
+   });
+   ```
+
+</Steps>
+
+## What Just Happened?
+
+The `<zd-booking>` component:
+
+1. Showed a search form for specialty, location, and insurance
+2. Fetched matching providers from the Zocdoc API
+3. Let the patient pick a provider and time slot
+4. Collected patient details and submitted the booking
+5. Displayed the confirmation
+
+All from a single tag.
+
+## Next Steps
+
+- Learn about [authentication patterns](/powered-by-zocdoc/getting-started/authentication/)
+- Understand the [component architecture](/powered-by-zocdoc/guides/architecture/)
+- Build a [custom flow with individual components](/powered-by-zocdoc/guides/composed-vs-single/)

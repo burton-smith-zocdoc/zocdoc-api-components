@@ -1,0 +1,93 @@
+---
+title: Authentication
+description: Configure API authentication for production use
+---
+
+## Token Setup
+
+The `getToken` option in `configureZocdoc` is a function that returns a valid API token. It's called before each request, which enables several patterns:
+
+### Static Token
+
+For development or server-rendered pages where the token is available at load time:
+
+```javascript
+const token = 'your-api-token';
+
+configureZocdoc({
+  baseUrl: 'https://api.zocdoc.com',
+  getToken: () => token,
+});
+```
+
+### Async Token Fetch
+
+For client-side apps that fetch tokens from your backend:
+
+```javascript
+configureZocdoc({
+  baseUrl: 'https://api.zocdoc.com',
+  getToken: async () => {
+    const response = await fetch('/api/zocdoc-token');
+    const { token } = await response.json();
+    return token;
+  },
+});
+```
+
+### Token Refresh
+
+Because `getToken` is called per-request, you can implement refresh logic:
+
+```javascript
+let cachedToken = null;
+let tokenExpiry = 0;
+
+async function getToken() {
+  if (cachedToken && Date.now() < tokenExpiry) {
+    return cachedToken;
+  }
+
+  const response = await fetch('/api/zocdoc-token');
+  const { token, expiresIn } = await response.json();
+
+  cachedToken = token;
+  tokenExpiry = Date.now() + (expiresIn * 1000) - 60000; // Refresh 1 min early
+
+  return token;
+}
+
+configureZocdoc({
+  baseUrl: 'https://api.zocdoc.com',
+  getToken,
+});
+```
+
+## Error Handling
+
+If `getToken` throws or returns `null`, the request fails with `ZocdocAuthError`. Components handle this gracefully and show an error state:
+
+```javascript
+configureZocdoc({
+  baseUrl: 'https://api.zocdoc.com',
+  getToken: async () => {
+    const response = await fetch('/api/zocdoc-token');
+    if (!response.ok) {
+      throw new Error('Failed to fetch token');
+    }
+    const { token } = await response.json();
+    return token;
+  },
+});
+```
+
+## Security Considerations
+
+- **Never expose your API secret in client-side code.** The `getToken` function should call your backend, which mints tokens using your secret.
+- **Use short-lived tokens.** The Zocdoc API supports tokens with configurable expiry. Shorter is better.
+- **Rotate tokens on auth errors.** If you receive a `ZocdocAuthError`, clear any cached token and fetch a new one.
+
+## Next Steps
+
+- Learn the [component architecture](/powered-by-zocdoc/guides/architecture/)
+- See the [full client configuration options](/powered-by-zocdoc/client/configuration/)
