@@ -1,0 +1,77 @@
+---
+title: Availability Picker
+description: Time slot selection for booking
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-availability-picker>` component lets patients select a specific appointment time.
+
+## Usage
+
+```html
+<zd-availability-picker
+  provider-location-id="pl_001"
+  visit-reason-id="vr_new_patient"
+></zd-availability-picker>
+```
+
+## Examples
+
+### Strip Layout
+
+Horizontal day tabs with times below:
+
+```html
+<zd-availability-picker
+  provider-location-id="pl_001"
+  visit-reason-id="vr_new_patient"
+  layout="strip"
+></zd-availability-picker>
+```
+
+### Stacked Layout
+
+All days shown vertically:
+
+```html
+<zd-availability-picker
+  provider-location-id="pl_001"
+  visit-reason-id="vr_new_patient"
+  layout="stacked"
+></zd-availability-picker>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `provider-location-id` | `string` | — | Provider to show availability for |
+| `visit-reason-id` | `string` | — | Visit reason filter |
+| `layout` | `'strip' \| 'stacked'` | `'strip'` | Layout mode |
+| `timeslots` | `Timeslot[]` | — | Pre-fetched slots (optional) |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `slot-select` | `{ startTime, providerLocationId, visitReasonId }` | Slot clicked |
+| `patient-type-change` | `{ patientType: 'new' \| 'returning' }` | Patient type toggled |
+| `availability-error` | `{ error, message }` | Fetch failed |
+
+## Accessibility
+
+- Slots are buttons with full datetime labels
+- Selected slot announced
+- Day tabs use `role="tablist"` pattern
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-picker-slot-height` | `40px` | Slot button height |
+| `--zd-picker-columns` | `4` | Slots per row |
+</content>

@@ -1,0 +1,57 @@
+---
+title: Provider Card
+description: Individual provider display card
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-provider-card>` component displays a single provider with photo, name, specialty, location, and insurance status.
+
+## Usage
+
+```html
+<zd-provider-card
+  .provider=${provider}
+  show-photo
+  insurance-name="Blue Cross"
+></zd-provider-card>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `provider` | `ProviderLocation` | — | Provider data to display |
+| `show-photo` | `boolean` | `false` | Display provider photo |
+| `insurance-name` | `string` | — | Insurance to check against |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `profile-request` | `{ providerLocationId }` | User wants full profile |
+
+## Slots
+
+| Slot | Description |
+|------|-------------|
+| `availability` | Availability grid or picker |
+| `badges` | Custom badges below name |
+
+## Accessibility
+
+- Entire card is a single focusable element
+- Activates on Enter or Space
+- Insurance status announced as part of card content
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-card-padding` | `1rem` | Internal padding |
+| `--zd-card-radius` | `0.5rem` | Border radius |
+| `--zd-card-photo-size` | `80px` | Photo dimensions |
+</content>

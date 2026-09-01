@@ -1,0 +1,55 @@
+---
+title: Booking Confirmation
+description: Display appointment confirmation
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-booking-confirmation>` component displays the result of a booking request.
+
+## Usage
+
+```html
+<zd-booking-confirmation
+  appointment-id="apt_001"
+  start-time="2026-09-02T09:00:00"
+  status="confirmed"
+  provider-name="Dr. Sarah Chen"
+></zd-booking-confirmation>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `appointment-id` | `string` | — | Booking ID |
+| `start-time` | `string` | — | Appointment time (ISO 8601) |
+| `status` | `'confirmed' \| 'pending_booking'` | — | Booking status |
+| `provider-name` | `string` | — | Provider display name |
+
+## Status States
+
+### Confirmed
+
+Appointment is booked. Shows success message with appointment details.
+
+### Pending Booking
+
+Appointment requires provider confirmation. Shows pending message with expected timeline.
+
+## Accessibility
+
+- Status announced with appropriate tone (success/info)
+- Appointment details in readable order
+- Add-to-calendar links properly labeled
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-confirmation-icon-size` | `48px` | Status icon size |
+| `--zd-confirmation-max-width` | `500px` | Content width |
+</content>

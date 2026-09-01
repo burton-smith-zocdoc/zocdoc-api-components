@@ -1,0 +1,51 @@
+---
+title: Provider Profile
+description: Full provider profile page
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-provider-profile>` component displays complete provider details including about section, education, and contact information.
+
+## Usage
+
+```html
+<zd-provider-profile
+  .provider=${provider}
+  show-photo
+></zd-provider-profile>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `provider` | `ProviderLocation` | — | Provider data to display |
+| `show-photo` | `boolean` | `false` | Display provider photo |
+| `insurance-name` | `string` | — | Insurance to highlight |
+
+## Slots
+
+| Slot | Description |
+|------|-------------|
+| `highlights` | Key facts or badges |
+| `reviews` | Patient reviews section |
+| `faqs` | Frequently asked questions |
+| `actions` | Call-to-action buttons |
+
+## Accessibility
+
+- Sections use semantic headings (h2, h3)
+- Contact info linked appropriately (tel:, mailto:)
+- Missing sections are omitted, not empty
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-profile-max-width` | `800px` | Maximum content width |
+| `--zd-profile-photo-size` | `150px` | Photo dimensions |
+</content>

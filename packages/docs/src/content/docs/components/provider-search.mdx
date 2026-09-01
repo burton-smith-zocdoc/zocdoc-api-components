@@ -1,0 +1,68 @@
+---
+title: Provider Search
+description: Search form for finding providers
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-provider-search>` component collects search criteria and fetches matching providers from the API.
+
+## Usage
+
+```html preview
+<zd-provider-search
+  zip-code="10001"
+></zd-provider-search>
+```
+
+## Examples
+
+### Pre-filled Insurance
+
+```html preview
+<zd-provider-search
+  zip-code="10001"
+  insurance-name="Aetna"
+></zd-provider-search>
+```
+
+### With Specialty
+
+```html
+<zd-provider-search
+  zip-code="10001"
+  specialty-id="sp_dermatology"
+></zd-provider-search>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `zip-code` | `string` | — | Pre-fill ZIP code |
+| `specialty-id` | `string` | — | Pre-select specialty |
+| `insurance-plan-id` | `string` | — | Pre-select insurance plan |
+| `insurance-name` | `string` | — | Display name for insurance |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `provider-results` | `{ providers, totalCount, page }` | Search returned results |
+| `provider-search-error` | `{ error, message }` | Search failed |
+
+## Accessibility
+
+- Form fields have visible labels
+- Error messages linked via `aria-describedby`
+- Submit button disabled during loading with `aria-busy`
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-search-gap` | `1rem` | Spacing between form fields |
+</content>

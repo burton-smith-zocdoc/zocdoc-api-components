@@ -1,0 +1,64 @@
+---
+title: Patient Form
+description: Collect patient details for booking
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-patient-form>` component collects required patient information for booking an appointment.
+
+## Usage
+
+```html preview
+<zd-patient-form></zd-patient-form>
+```
+
+## Fields
+
+The form collects:
+
+- First name
+- Last name
+- Date of birth
+- Sex at birth
+- Phone number
+- Email address
+- Address (street, city, state, ZIP)
+- Notes (optional)
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `patient-submit` | `PatientData` | Form submitted with valid data |
+
+The event detail contains all patient fields. **This is PHI** — only send it to your configured Zocdoc `baseUrl`.
+
+## Accessibility
+
+- All fields have visible labels
+- Required fields marked with asterisk and `aria-required`
+- Validation errors linked via `aria-describedby`
+- Related fields grouped in fieldsets (e.g., address)
+
+## Validation
+
+Client-side validation runs on submit:
+
+- Required fields must be filled
+- Email must be valid format
+- Phone must be 10 digits
+- Date of birth must be valid and in the past
+
+Server-side validation may return additional errors, displayed inline.
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-form-gap` | `1rem` | Spacing between fields |
+| `--zd-form-label-size` | `0.875rem` | Label font size |
+</content>

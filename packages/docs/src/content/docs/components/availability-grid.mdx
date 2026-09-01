@@ -1,0 +1,68 @@
+---
+title: Availability Grid
+description: Calendar view showing appointment counts per day
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-availability-grid>` component displays a day-by-day view of available appointments.
+
+## Usage
+
+### Self-Fetching Mode
+
+Provide IDs and the component fetches availability:
+
+```html
+<zd-availability-grid
+  provider-location-id="pl_001"
+  visit-reason-id="vr_new_patient"
+  availability-days="7"
+></zd-availability-grid>
+```
+
+### Batched Data Mode
+
+Pass pre-fetched timeslots:
+
+```html
+<zd-availability-grid
+  .timeslots=${timeslots}
+></zd-availability-grid>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `provider-location-id` | `string` | — | Provider to fetch availability for |
+| `visit-reason-id` | `string` | — | Visit reason for availability |
+| `timeslots` | `Timeslot[]` | — | Pre-fetched timeslots |
+| `start-date` | `string` | today | Start of date range |
+| `availability-days` | `number` | `7` | Days to show |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `day-select` | `{ date }` | Day clicked |
+| `window-change` | `{ startDate, endDate }` | Date range shifted |
+| `more-select` | `{ providerLocationId }` | "More times" clicked |
+| `availability-error` | `{ error, message }` | Fetch failed |
+
+## Accessibility
+
+- Days are buttons with date labels
+- Available count announced per day
+- Arrow keys navigate between days
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-grid-day-size` | `48px` | Day cell dimensions |
+| `--zd-grid-gap` | `0.25rem` | Spacing between days |
+</content>

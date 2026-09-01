@@ -1,0 +1,58 @@
+---
+title: Provider Results
+description: Display a list of provider search results
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import { sampleProvider } from '@/data/sample-data';
+
+<PreviewRuntime />
+
+The `<zd-provider-results>` component renders a paginated list of providers with optional availability previews.
+
+## Usage
+
+Pass an array of providers to display:
+
+```html
+<zd-provider-results
+  .providers=${providers}
+  .totalCount=${42}
+  show-photos
+></zd-provider-results>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `providers` | `ProviderLocation[]` | `[]` | Array of providers to display |
+| `availability` | `Map<string, number>` | — | Provider ID → appointment count |
+| `total-count` | `number` | `0` | Total results for pagination |
+| `page` | `number` | `1` | Current page number |
+| `show-photos` | `boolean` | `false` | Display provider photos |
+| `insurance-name` | `string` | — | Insurance to show on cards |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `provider-select` | `{ providerLocationId, visitReasonId }` | Provider card clicked |
+| `day-select` | `{ providerLocationId, date }` | Day selected on availability grid |
+| `page-change` | `{ page }` | Pagination changed |
+| `window-change` | `{ startDate, endDate }` | Availability window shifted |
+
+## Accessibility
+
+- Results announced via `aria-live` region
+- Each card is focusable and activates on Enter/Space
+- Pagination controls labeled for screen readers
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-results-gap` | `1rem` | Spacing between cards |
+| `--zd-results-columns` | `1` | Number of columns |
+</content>

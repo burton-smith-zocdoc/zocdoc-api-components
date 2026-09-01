@@ -1,0 +1,47 @@
+---
+title: Availability Window
+description: Date range navigation control
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-availability-window>` component provides previous/next navigation for availability date ranges.
+
+## Usage
+
+```html
+<zd-availability-window
+  start-date="2026-09-01"
+  end-date="2026-09-07"
+></zd-availability-window>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `start-date` | `string` | — | Start of current range |
+| `end-date` | `string` | — | End of current range |
+| `can-go-earlier` | `boolean` | `false` | Enable previous button |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `window-shift` | `{ direction: 'earlier' \| 'later' }` | Navigation clicked |
+
+## Accessibility
+
+- Buttons labeled "Earlier dates" and "Later dates"
+- Disabled state properly announced
+- Current range visible as text
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-window-button-size` | `32px` | Navigation button size |
+</content>

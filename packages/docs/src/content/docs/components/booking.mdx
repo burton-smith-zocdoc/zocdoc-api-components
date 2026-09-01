@@ -1,0 +1,88 @@
+---
+title: Booking
+description: Complete booking funnel in a single component
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+The `<zd-booking>` component orchestrates the entire booking flow: provider search, availability selection, patient form, and confirmation.
+
+## Usage
+
+```html preview
+<zd-booking
+  modal
+  show-photos
+  zip-code="10001"
+  insurance-name="Blue Cross Blue Shield"
+></zd-booking>
+```
+
+## Examples
+
+### Inline Mode
+
+Render the booking flow inline rather than in a modal:
+
+```html preview
+<zd-booking
+  show-photos
+  zip-code="10001"
+></zd-booking>
+```
+
+### Pre-filled Search
+
+Skip the search step by providing a provider directly:
+
+```html
+<zd-booking
+  modal
+  provider-location-id="pl_001"
+  visit-reason-id="vr_new_patient"
+></zd-booking>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `modal` | `boolean` | `false` | Show in a modal dialog |
+| `show-photos` | `boolean` | `false` | Display provider photos |
+| `zip-code` | `string` | — | Pre-fill ZIP code in search |
+| `insurance-name` | `string` | — | Pre-fill insurance in search |
+| `provider-location-id` | `string` | — | Skip search, start with this provider |
+| `visit-reason-id` | `string` | — | Pre-select visit reason |
+
+## Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `booking-complete` | `{ appointmentId, startTime, status }` | Booking succeeded |
+| `booking-error` | `{ error, message }` | Booking failed |
+| `step-change` | `{ step: 'search' \| 'time' \| 'patient' \| 'booked' }` | Flow step changed |
+
+## Slots
+
+| Slot | Description |
+|------|-------------|
+| (default) | Content shown before the booking flow starts |
+
+## Accessibility
+
+- Modal traps focus and returns it on close
+- Each step has a heading for screen readers
+- Error states use `role="alert"`
+- All form fields have visible labels
+
+## Styling
+
+| CSS Property | Default | Description |
+|--------------|---------|-------------|
+| `--zd-booking-max-width` | `600px` | Maximum width in inline mode |
+| `--zd-booking-modal-width` | `90vw` | Modal width |
+</content>
+</invoke>
