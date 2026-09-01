@@ -1,0 +1,20 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.41.0",
+    "astro": "^5.9.0",
+    "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "@powered-by-zocdoc/api-components": "workspace:*",
+    "@powered-by-zocdoc/primitives": "workspace:*"
+  }
+}

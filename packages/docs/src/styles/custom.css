@@ -1,0 +1,5 @@
+:root {
+  --sl-color-accent-low: hsl(212, 70%, 20%);
+  --sl-color-accent: hsl(212, 92%, 45%);
+  --sl-color-accent-high: hsl(212, 70%, 90%);
+}
