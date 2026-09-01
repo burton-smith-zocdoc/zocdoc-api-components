@@ -33,11 +33,23 @@ jobs:
 
       - run: pnpm run build
 
+      # Builds dist/bundle/zocdoc.js, which the demo's standalone.html loads directly.
+      - run: pnpm --filter @powered-by-zocdoc/api-components build:bundle
+
+      - run: pnpm --filter demo build
+
       - run: pnpm --filter docs build
+
+      # Combine both sites into a single artifact: demo stays at the site root
+      # (matching its existing base path), docs is nested under /docs.
+      - name: Combine demo and docs output
+        run: |
+          mkdir -p packages/demo/dist/docs
+          cp -r packages/docs/dist/. packages/demo/dist/docs/
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/docs/dist
+          path: packages/demo/dist
 
   deploy:
     needs: build

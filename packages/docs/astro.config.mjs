@@ -4,7 +4,9 @@ import remarkComponentPreview from './src/plugins/remark-component-preview.js';
 
 export default defineConfig({
   site: 'https://burton-smith-zocdoc.github.io',
-  base: '/powered-by-zocdoc',
+  // Deployed alongside the demo at the same GitHub Pages site, under a /docs subpath —
+  // see .github/workflows/pages.yml, which copies this build's output into demo/dist/docs.
+  base: '/powered-by-zocdoc/docs',
   integrations: [
     starlight({
       title: 'Powered by Zocdoc',
