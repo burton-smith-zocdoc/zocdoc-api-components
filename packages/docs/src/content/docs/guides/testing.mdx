@@ -1,0 +1,144 @@
+---
+title: Testing
+description: Test your integration with mock data and documented scenarios
+---
+
+## Mock Transport
+
+For testing without real API calls, use the mock transport:
+
+```javascript
+import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+
+configureZocdocMock();
+```
+
+This replaces the HTTP client with one that returns fixture data. Components work identically — they just receive recorded responses instead of live data.
+
+## Test Scenarios
+
+The mock transport responds to specific ZIP codes with different scenarios:
+
+| ZIP Code | Scenario |
+|----------|----------|
+| `10001` | Returns providers with availability |
+| `10002` | Returns providers with no availability |
+| `10003` | Returns no providers (empty results) |
+| `10004` | Returns an error response |
+| `99999` | Simulates network timeout |
+
+Use these in your tests to verify your integration handles each case:
+
+```javascript
+import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+
+describe('booking flow', () => {
+  beforeEach(() => {
+    configureZocdocMock();
+  });
+
+  it('shows providers for valid ZIP', async () => {
+    const el = document.createElement('zd-provider-search');
+    el.zipCode = '10001';
+    document.body.appendChild(el);
+
+    // Trigger search and verify results appear
+  });
+
+  it('shows empty state for no results', async () => {
+    const el = document.createElement('zd-provider-search');
+    el.zipCode = '10003';
+    document.body.appendChild(el);
+
+    // Verify empty state renders
+  });
+});
+```
+
+## Test Patient Data
+
+When testing patient form submission, use data from the [Zocdoc Testing Guide](https://api-docs.zocdoc.com/guides/testing-data):
+
+| Field | Test Value |
+|-------|------------|
+| First Name | `Test` |
+| Last Name | `Patient` |
+| Date of Birth | `1990-01-15` |
+| Phone | `(555) 000-0000` |
+| Email | `test@example.com` |
+
+Never use real-looking names, phone numbers, or addresses in tests.
+
+## Component Testing
+
+Each component can be tested in isolation:
+
+```javascript
+import '@powered-by-zocdoc/api-components';
+
+it('renders provider card', () => {
+  const card = document.createElement('zd-provider-card');
+  card.provider = {
+    id: 'test_001',
+    first_name: 'Test',
+    last_name: 'Provider',
+    specialty: 'Internal Medicine',
+    // ... other required fields
+  };
+
+  document.body.appendChild(card);
+
+  expect(card.shadowRoot.textContent).toContain('Test Provider');
+});
+```
+
+## Integration Testing
+
+For end-to-end testing with Playwright or Cypress:
+
+```javascript
+// playwright.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('complete booking flow', async ({ page }) => {
+  await page.goto('/booking');
+
+  // Fill search form
+  await page.fill('zd-provider-search input[name="zipCode"]', '10001');
+  await page.click('zd-provider-search button[type="submit"]');
+
+  // Select a provider
+  await page.click('zd-provider-card:first-child');
+
+  // Select a time slot
+  await page.click('zd-availability-picker button:first-child');
+
+  // Fill patient form
+  await page.fill('zd-patient-form input[name="firstName"]', 'Test');
+  // ... fill remaining fields
+
+  await page.click('zd-patient-form button[type="submit"]');
+
+  // Verify confirmation
+  await expect(page.locator('zd-booking-confirmation')).toBeVisible();
+});
+```
+
+## Accessibility Testing
+
+All components pass axe-core. Include accessibility checks in your tests:
+
+```javascript
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+it('has no accessibility violations', async () => {
+  const el = document.createElement('zd-provider-card');
+  el.provider = sampleProvider;
+  document.body.appendChild(el);
+
+  const results = await axe(el);
+  expect(results).toHaveNoViolations();
+});
+```

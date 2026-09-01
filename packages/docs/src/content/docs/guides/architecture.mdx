@@ -1,0 +1,74 @@
+---
+title: Architecture
+description: Understand how Powered by Zocdoc components communicate
+---
+
+## Props Down, Events Up
+
+All Powered by Zocdoc components follow a strict unidirectional data flow:
+
+- **Properties flow down** — Parent components pass data to children via attributes and properties
+- **Events flow up** — Children emit custom events to notify parents of user actions or state changes
+
+There is no shared state container, no context protocol, and no global store. Each component is self-contained.
+
+## Component Hierarchy
+
+```
+┌─────────────────────────────────────────────┐
+│  <zd-booking>                               │
+│  ┌─────────────────────────────────────────┐│
+│  │ <zd-provider-search>                    ││
+│  │   ↓ emits: provider-results             ││
+│  └─────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────┐│
+│  │ <zd-provider-results>                   ││
+│  │   ↓ emits: provider-select              ││
+│  └─────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────┐│
+│  │ <zd-availability-picker>                ││
+│  │   ↓ emits: slot-select                  ││
+│  └─────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────┐│
+│  │ <zd-patient-form>                       ││
+│  │   ↓ emits: patient-submit               ││
+│  └─────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────┐│
+│  │ <zd-booking-confirmation>               ││
+│  └─────────────────────────────────────────┘│
+└─────────────────────────────────────────────┘
+```
+
+The `<zd-booking>` component listens for events from its children and updates their properties in response. You can replicate this wiring yourself for custom flows.
+
+## Standalone Capability
+
+Every child component works without its parent. You can render `<zd-provider-card>` by itself, pass it a provider object, and it renders correctly. Components never reach upward for context or depend on a specific parent.
+
+This enables:
+
+- **Testing in isolation** — Unit test any component without mounting the full tree
+- **Custom compositions** — Mix and match components in layouts we didn't anticipate
+- **Progressive enhancement** — Start with `<zd-booking>` and decompose later if needed
+
+## Event Types
+
+Each component exports TypeScript types for its events:
+
+```typescript
+import type { ZdProviderSearchEvents, DetailOf } from '@powered-by-zocdoc/api-components';
+
+element.addEventListener('provider-results', (event: DetailOf<ZdProviderSearchEvents['provider-results']>) => {
+  const { providers, totalCount } = event.detail;
+});
+```
+
+## No Global State
+
+The components don't use Redux, MobX, signals, or any state management library. State lives in:
+
+1. **Component properties** — The source of truth for what a component displays
+2. **Component internal state** — Managed by Lit's reactive properties
+3. **Your application** — If you need cross-component state, manage it yourself and pass it down
+
+This makes components predictable and easy to integrate into any framework.

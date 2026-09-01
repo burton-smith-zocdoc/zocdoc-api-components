@@ -1,0 +1,137 @@
+---
+title: Composed vs Single Element
+description: Choose between the all-in-one booking flow or manual composition
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+## Two Approaches
+
+You can integrate Powered by Zocdoc in two ways:
+
+1. **Single element** — Use `<zd-booking>` for the complete flow in one tag
+2. **Composed** — Wire individual components together for custom layouts and behavior
+
+## Single Element
+
+The `<zd-booking>` component handles the entire booking funnel:
+
+```html preview
+<zd-booking
+  modal
+  show-photos
+  zip-code="10001"
+></zd-booking>
+```
+
+**Pros:**
+- Zero wiring required
+- Handles all state transitions
+- One event to handle (`booking-complete`)
+
+**Cons:**
+- Fixed layout and flow
+- Limited customization points
+- All-or-nothing
+
+**Best for:** Quick integrations, standard booking flows, proof of concepts.
+
+## Composed Flow
+
+For custom layouts, wire the components yourself:
+
+```html
+<zd-provider-search
+  id="search"
+  zip-code="10001"
+></zd-provider-search>
+
+<zd-provider-results
+  id="results"
+></zd-provider-results>
+
+<zd-availability-picker
+  id="picker"
+  style="display: none;"
+></zd-availability-picker>
+
+<zd-patient-form
+  id="form"
+  style="display: none;"
+></zd-patient-form>
+
+<zd-booking-confirmation
+  id="confirmation"
+  style="display: none;"
+></zd-booking-confirmation>
+```
+
+Then handle the events:
+
+```javascript
+const search = document.getElementById('search');
+const results = document.getElementById('results');
+const picker = document.getElementById('picker');
+const form = document.getElementById('form');
+const confirmation = document.getElementById('confirmation');
+
+// Search emits results
+search.addEventListener('provider-results', (e) => {
+  results.providers = e.detail.providers;
+  results.totalCount = e.detail.totalCount;
+});
+
+// Results emit provider selection
+results.addEventListener('provider-select', (e) => {
+  picker.providerLocationId = e.detail.providerLocationId;
+  picker.visitReasonId = e.detail.visitReasonId;
+  picker.style.display = 'block';
+});
+
+// Picker emits slot selection
+picker.addEventListener('slot-select', (e) => {
+  form.slot = e.detail;
+  form.style.display = 'block';
+});
+
+// Form emits patient data
+form.addEventListener('patient-submit', async (e) => {
+  const { createAppointment } = await import('@powered-by-zocdoc/api-components');
+  const appointment = await createAppointment({
+    slot: form.slot,
+    patient: e.detail,
+  });
+  confirmation.appointment = appointment;
+  confirmation.style.display = 'block';
+});
+```
+
+**Pros:**
+- Full control over layout
+- Custom step order and logic
+- Insert your own UI between steps
+
+**Cons:**
+- More code to write and maintain
+- You handle error states
+- You manage visibility and transitions
+
+**Best for:** Custom designs, multi-step wizards, embedded in existing flows.
+
+## Hybrid Approach
+
+You can also use `<zd-booking>` and intercept events to inject custom behavior:
+
+```javascript
+const booking = document.querySelector('zd-booking');
+
+booking.addEventListener('provider-select', (e) => {
+  // Log analytics, show a custom modal, etc.
+  trackEvent('provider_selected', { providerId: e.detail.providerLocationId });
+});
+```
+
+The event still bubbles to `<zd-booking>`, which continues the flow. You're just observing.
