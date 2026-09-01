@@ -1,0 +1,156 @@
+---
+title: Endpoints
+description: API endpoint functions for direct data access
+---
+
+The client layer exposes typed functions for each API endpoint. Use these when building custom flows or fetching data outside components.
+
+## Provider Search
+
+### searchProviderLocations
+
+Search for providers by location, specialty, and insurance:
+
+```typescript
+import { searchProviderLocations } from '@powered-by-zocdoc/api-components';
+
+const results = await searchProviderLocations({
+  zipCode: '10001',
+  specialtyId: 'sp_internal_medicine',
+  insurancePlanId: 'ip_blue_cross_ppo',
+  page: 1,
+  pageSize: 10,
+});
+
+// results.providers: ProviderLocation[]
+// results.totalCount: number
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zipCode` | `string` | Yes | 5-digit ZIP code |
+| `specialtyId` | `string` | No | Filter by specialty |
+| `insurancePlanId` | `string` | No | Filter by insurance |
+| `page` | `number` | No | Page number (default: 1) |
+| `pageSize` | `number` | No | Results per page (default: 10) |
+
+## Availability
+
+### getAvailability
+
+Fetch available time slots for a provider:
+
+```typescript
+import { getAvailability } from '@powered-by-zocdoc/api-components';
+
+const timeslots = await getAvailability({
+  providerLocationId: 'pl_001',
+  visitReasonId: 'vr_new_patient',
+  startDate: '2026-09-01',
+  endDate: '2026-09-07',
+});
+
+// timeslots: Timeslot[]
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `providerLocationId` | `string` | Yes | Provider location ID |
+| `visitReasonId` | `string` | Yes | Visit reason ID |
+| `startDate` | `string` | Yes | Start of date range (YYYY-MM-DD) |
+| `endDate` | `string` | Yes | End of date range (YYYY-MM-DD) |
+
+## Appointments
+
+### createAppointment
+
+Book an appointment:
+
+```typescript
+import { createAppointment } from '@powered-by-zocdoc/api-components';
+
+const appointment = await createAppointment({
+  providerLocationId: 'pl_001',
+  visitReasonId: 'vr_new_patient',
+  startTime: '2026-09-02T09:00:00',
+  patient: {
+    firstName: 'Test',
+    lastName: 'Patient',
+    dateOfBirth: '1990-01-15',
+    sexAtBirth: 'female',
+    phoneNumber: '5550000000',
+    emailAddress: 'test@example.com',
+    address: {
+      line1: '123 Main St',
+      city: 'New York',
+      state: 'NY',
+      zipCode: '10001',
+    },
+  },
+});
+
+// appointment.id: string
+// appointment.status: 'confirmed' | 'pending_booking'
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `providerLocationId` | `string` | Yes | Provider location ID |
+| `visitReasonId` | `string` | Yes | Visit reason ID |
+| `startTime` | `string` | Yes | Slot start time (ISO 8601) |
+| `patient` | `PatientData` | Yes | Patient details |
+
+## Reference Data
+
+### getSpecialties
+
+Fetch available specialties:
+
+```typescript
+import { getSpecialties } from '@powered-by-zocdoc/api-components';
+
+const specialties = await getSpecialties();
+// [{ id: 'sp_001', name: 'Internal Medicine' }, ...]
+```
+
+### getInsurancePlans
+
+Fetch insurance plans, optionally filtered:
+
+```typescript
+import { getInsurancePlans } from '@powered-by-zocdoc/api-components';
+
+const plans = await getInsurancePlans({ carrierName: 'Blue Cross' });
+// [{ id: 'ip_001', name: 'Blue Cross PPO', carrier: 'Blue Cross' }, ...]
+```
+
+### getVisitReasons
+
+Fetch visit reasons for a specialty:
+
+```typescript
+import { getVisitReasons } from '@powered-by-zocdoc/api-components';
+
+const reasons = await getVisitReasons({ specialtyId: 'sp_internal_medicine' });
+// [{ id: 'vr_001', name: 'New Patient Visit' }, ...]
+```
+
+## Caching
+
+Reference data (specialties, insurance plans, visit reasons) is cached in memory. The first call fetches from the API; subsequent calls return the cached data.
+
+```typescript
+// First call: network request
+const specialties1 = await getSpecialties();
+
+// Second call: returns cached data
+const specialties2 = await getSpecialties();
+```
+
+The cache persists for the page lifetime. To force a refresh, reload the page.

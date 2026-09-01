@@ -1,0 +1,137 @@
+---
+title: Errors
+description: Handle API errors gracefully
+---
+
+## Error Hierarchy
+
+The client throws typed errors you can catch and handle:
+
+```typescript
+import {
+  ZocdocError,
+  ZocdocAuthError,
+  ZocdocNotFoundError,
+  ZocdocNetworkError,
+} from '@powered-by-zocdoc/api-components';
+```
+
+### ZocdocError
+
+Base class for all client errors. All errors extend this.
+
+```typescript
+try {
+  await searchProviderLocations({ zipCode: '10001' });
+} catch (error) {
+  if (error instanceof ZocdocError) {
+    console.error('API error:', error.message);
+  }
+}
+```
+
+### ZocdocAuthError
+
+Thrown when authentication fails (401 response or `getToken` failure):
+
+```typescript
+try {
+  await searchProviderLocations({ zipCode: '10001' });
+} catch (error) {
+  if (error instanceof ZocdocAuthError) {
+    // Redirect to login, refresh token, etc.
+    await refreshToken();
+    // Retry the request
+  }
+}
+```
+
+### ZocdocNotFoundError
+
+Thrown when a resource doesn't exist (404 response):
+
+```typescript
+try {
+  await getAvailability({ providerLocationId: 'invalid_id', ... });
+} catch (error) {
+  if (error instanceof ZocdocNotFoundError) {
+    // Show "provider not found" message
+  }
+}
+```
+
+### ZocdocNetworkError
+
+Thrown when the request fails due to network issues:
+
+```typescript
+try {
+  await searchProviderLocations({ zipCode: '10001' });
+} catch (error) {
+  if (error instanceof ZocdocNetworkError) {
+    // Show "check your connection" message
+  }
+}
+```
+
+## Component Error Handling
+
+Components handle errors internally and emit error events:
+
+```javascript
+const search = document.querySelector('zd-provider-search');
+
+search.addEventListener('provider-search-error', (event) => {
+  const { error, message } = event.detail;
+
+  if (error instanceof ZocdocAuthError) {
+    showLoginPrompt();
+  } else {
+    showErrorBanner(message);
+  }
+});
+```
+
+The `message` in the event detail is a user-friendly string. The `error` is the original error object for programmatic handling.
+
+## User-Facing Messages
+
+Never show raw API error messages to users. The error classes provide `message` properties, but these are for developers:
+
+```typescript
+// Don't do this
+alert(error.message); // "Request failed with status 401"
+
+// Do this
+if (error instanceof ZocdocAuthError) {
+  alert('Please sign in to continue');
+}
+```
+
+Components display appropriate user-facing messages in their error states. If you're handling errors manually, provide your own copy.
+
+## Retry Logic
+
+For transient errors, implement retry with backoff:
+
+```typescript
+async function fetchWithRetry(fn, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (error instanceof ZocdocNetworkError && i < maxRetries - 1) {
+        await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+
+const results = await fetchWithRetry(() =>
+  searchProviderLocations({ zipCode: '10001' })
+);
+```
+
+Don't retry authentication errors — they require user action.

@@ -1,0 +1,105 @@
+---
+title: Configuration
+description: Configure the Zocdoc API client
+---
+
+## configureZocdoc
+
+Call `configureZocdoc` once before rendering any components:
+
+```javascript
+import { configureZocdoc } from '@powered-by-zocdoc/api-components';
+
+configureZocdoc({
+  baseUrl: 'https://api.zocdoc.com',
+  getToken: () => fetchTokenFromBackend(),
+});
+```
+
+### Options
+
+| Option | Type | Required | Description |
+|--------|------|----------|-------------|
+| `baseUrl` | `string` | Yes | The Zocdoc API base URL |
+| `getToken` | `() => string \| Promise<string>` | Yes | Function that returns a valid API token |
+
+### baseUrl
+
+The base URL for API requests. Use the production URL for live traffic:
+
+```javascript
+baseUrl: 'https://api.zocdoc.com'
+```
+
+Or the sandbox for testing:
+
+```javascript
+baseUrl: 'https://api-developer-sandbox.zocdoc.com'
+```
+
+### getToken
+
+A function called before each API request. It can be synchronous or async:
+
+```javascript
+// Sync
+getToken: () => localStorage.getItem('zocdoc_token')
+
+// Async
+getToken: async () => {
+  const res = await fetch('/api/token');
+  const { token } = await res.json();
+  return token;
+}
+```
+
+See [Authentication](/powered-by-zocdoc/getting-started/authentication/) for patterns including token refresh.
+
+## Singleton Behavior
+
+`configureZocdoc` sets global configuration. Calling it again replaces the previous config:
+
+```javascript
+configureZocdoc({ baseUrl: 'https://api.zocdoc.com', getToken: () => token1 });
+
+// Later...
+configureZocdoc({ baseUrl: 'https://sandbox.zocdoc.com', getToken: () => token2 });
+// All subsequent requests use token2 and sandbox URL
+```
+
+## Mock Transport
+
+For testing, use `configureZocdocMock` instead:
+
+```javascript
+import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+
+configureZocdocMock();
+```
+
+This configures the client to return fixture data without making network requests. See [Testing](/powered-by-zocdoc/guides/testing/) for details.
+
+## Timing
+
+Configure the client before any component renders. A common pattern:
+
+```javascript
+// config.js
+import { configureZocdoc } from '@powered-by-zocdoc/api-components';
+
+export function initZocdoc() {
+  configureZocdoc({
+    baseUrl: import.meta.env.VITE_ZOCDOC_URL,
+    getToken: () => getStoredToken(),
+  });
+}
+```
+
+```javascript
+// main.js
+import { initZocdoc } from './config.js';
+import '@powered-by-zocdoc/api-components';
+
+initZocdoc();
+// Now safe to render components
+```
