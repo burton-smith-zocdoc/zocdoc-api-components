@@ -1,0 +1,23 @@
+.component-preview {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-block: 1.5rem;
+}
+
+.component-preview__canvas {
+  padding: 1.5rem;
+  background: var(--sl-color-gray-7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.component-preview__code {
+  border-top: 1px solid var(--sl-color-gray-5);
+}
+
+.component-preview__code pre {
+  margin: 0;
+  border-radius: 0;
+}

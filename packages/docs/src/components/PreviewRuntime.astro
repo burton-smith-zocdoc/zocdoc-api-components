@@ -1,0 +1,15 @@
+---
+/**
+ * Loads the component bundle and configures the mock transport.
+ * Include this component once on any page with live previews.
+ */
+---
+
+<script>
+  import '@powered-by-zocdoc/primitives/theme/reset.css';
+  import '@powered-by-zocdoc/primitives/theme/utilities.css';
+  import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+  import '@powered-by-zocdoc/api-components';
+
+  configureZocdocMock();
+</script>

@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import remarkComponentPreview from './src/plugins/remark-component-preview.js';
 
 export default defineConfig({
   site: 'https://burton-smith-zocdoc.github.io',
@@ -44,7 +45,16 @@ export default defineConfig({
           autogenerate: { directory: 'components' },
         },
       ],
-      customCss: ['./src/styles/custom.css'],
+      customCss: [
+        './src/styles/custom.css',
+        './src/styles/preview.css',
+      ],
+      components: {
+        // Auto-import custom components for MDX
+      },
     }),
   ],
+  markdown: {
+    remarkPlugins: [remarkComponentPreview],
+  },
 });

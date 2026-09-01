@@ -1,0 +1,19 @@
+---
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+  code: string;
+  lang?: string;
+}
+
+const { code, lang = 'html' } = Astro.props;
+---
+
+<div class="component-preview">
+  <div class="component-preview__canvas not-content">
+    <slot />
+  </div>
+  <div class="component-preview__code">
+    <Code code={code} lang={lang} />
+  </div>
+</div>

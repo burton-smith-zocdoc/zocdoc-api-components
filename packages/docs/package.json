@@ -11,7 +11,8 @@
   "dependencies": {
     "@astrojs/starlight": "^0.41.0",
     "astro": "^5.9.0",
-    "sharp": "^0.34.3"
+    "sharp": "^0.34.3",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
     "@powered-by-zocdoc/api-components": "workspace:*",
