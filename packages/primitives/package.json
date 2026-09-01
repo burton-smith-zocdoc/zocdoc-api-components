@@ -8,6 +8,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./configure-only": {
+      "types": "./dist/configure-only.d.ts",
+      "default": "./dist/configure-only.js"
+    },
     "./theme/tokens.css": "./dist/theme/tokens.css",
     "./theme/reset.css": "./dist/theme/reset.css",
     "./theme/utilities.css": "./dist/theme/utilities.css",

@@ -11,14 +11,24 @@
     "./mock": {
       "types": "./dist/client/mock/index.d.ts",
       "default": "./dist/client/mock/index.js"
+    },
+    "./bundle": {
+      "default": "./dist/bundle/zocdoc.esm.js"
+    },
+    "./bundle/iife": {
+      "default": "./dist/bundle/zocdoc.js"
     }
   },
   "scripts": {
-    "analyze": "cem analyze"
+    "analyze": "cem analyze",
+    "build:bundle": "vite build"
   },
   "dependencies": {
     "@powered-by-zocdoc/primitives": "workspace:*",
     "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
   },
   "customElements": "custom-elements.json"
 }
