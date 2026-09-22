@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import type { Package } from 'custom-elements-manifest/schema';
+import { type Plugin } from '@wc-toolkit/cem-generator';
 import { cssPrefixPlugin } from './index.ts';
+
+// The manifest shape afterGenerate receives, derived from the Plugin interface so this
+// test needs no direct dependency on `custom-elements-manifest/schema` (a phantom dep
+// nested inside cem-generator, not resolvable from this package under tsc).
+type CemPackage = Parameters<NonNullable<Plugin['afterGenerate']>>[0];
 
 // Build a minimal CemPackage the afterGenerate hook can mutate. `null` cssProperties
 // on the second declaration reproduces the probe's observed emitted shape.
-const manifest = (): Package =>
+const manifest = (): CemPackage =>
   ({
     schemaVersion: '2.1.0',
     modules: [
@@ -24,7 +29,7 @@ const manifest = (): Package =>
         ],
       },
     ],
-  }) as unknown as Package;
+  }) as unknown as CemPackage;
 
 describe('cssPrefixPlugin', () => {
   it('prefixes css parts and custom properties with the given prefix', () => {

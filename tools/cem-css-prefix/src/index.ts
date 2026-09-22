@@ -1,5 +1,4 @@
 import { type Plugin } from '@wc-toolkit/cem-generator';
-import type { Package } from 'custom-elements-manifest/schema';
 
 interface Named {
   name: string;
@@ -21,7 +20,7 @@ export function cssPrefixPlugin({ prefix }: { prefix: string }): Plugin {
     name: 'zd-css-prefix',
     // afterGenerate runs last, on the final already-sorted CemPackage; mutate in place,
     // return nothing (no patch-throw risk). See controller ruling in the ledger.
-    afterGenerate(manifest: Package): void {
+    afterGenerate(manifest): void {
       for (const module of manifest.modules) {
         for (const decl of module.declarations ?? []) {
           // cssParts / cssProperties are optional and may be emitted as null.
