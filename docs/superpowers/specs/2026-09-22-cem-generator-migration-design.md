@@ -54,11 +54,23 @@ chain and a TS-program override:
 **Outputs:** root `custom-elements.json` (gitignored, Storybook), plus committed
 `packages/{primitives,api-components}/custom-elements.json`.
 
-**Consumers:**
+**Consumers (present on `main`, this branch's base):**
 - `.storybook/preview.ts` → `setCustomElementsManifest(root manifest)`;
   `@wc-toolkit/storybook-helpers` configured with `typeRef: 'expandedType'`.
-- `packages/docs/src/components/Head.astro` → `setWcDoxConfig(api-components manifest)`.
 - CI `docs:check` fails on drift of committed manifests + agent-docs references.
+
+**Correction (post-brainstorm, verified against the branch):**
+- **wc-dox is NOT in scope for this branch.** `packages/docs/src/components/Head.astro`
+  and the `wc-dox` dependency exist only on `docs/code-bubble-previews`, not on
+  `main`. This migration branches off `main` (user-selected), so wc-dox does not
+  exist here. It will be updated when `docs/code-bubble-previews` later rebases
+  onto the migrated `main` (see Out of scope / follow-up).
+- **The `expandedType` field rename is isolated to ONE line.** The agent-docs
+  render pipeline already reads `parsedType.text` (`resolve-type.ts:82-92`), which
+  is exactly what cem-generator emits — so the pipeline needs no field-rename
+  change. `expandedType` appears only in `.storybook/preview.ts`'s
+  `setStorybookHelpersConfig({ typeRef: 'expandedType' })`. The spec's earlier
+  "highest-touch risk" framing was wrong; it is a one-line consumer change.
 
 **Scripts:** root `analyze`/`build`/`storybook`/`docs:check`; per-package `analyze`.
 
@@ -116,14 +128,14 @@ the new field. This is the same field-rename risk as Storybook (below).
 
 ### Consumer updates
 
-- **Storybook:** change `setStorybookHelpersConfig({ typeRef: ... })` from
-  `'expandedType'` to the generator's field (`'parsedType'`), verify controls
-  still render types. Root manifest still fed via `setCustomElementsManifest`.
-- **wc-dox:** re-point to the regenerated api-components manifest; verify
-  `<wc-props>`/`<wc-events>`/`<wc-slots>`/`<wc-css-props>` still populate.
+- **Storybook (only consumer on this branch):** change
+  `setStorybookHelpersConfig({ typeRef: 'expandedType' })` to the generator's
+  field (`'parsedType'`), verify controls still render types. Root manifest still
+  fed via `setCustomElementsManifest`.
 - **Committed manifests + agent-docs references:** regenerate; the diff is
   expected (new tool, new shape) and is the reviewable artifact. `docs:check`
   must pass (no drift) after regeneration.
+- **wc-dox: out of scope for this branch** (does not exist on `main`; see below).
 
 ### Dependency changes
 
@@ -155,16 +167,23 @@ the new field. This is the same field-rename risk as Storybook (below).
 
 ## Risks & unknowns
 
-1. **Field rename `expandedType` → `parsedType`** ripples to Storybook config AND
-   the agent-docs render pipeline. Highest-touch risk; verified by tests 3 & 2.
-2. **CSS-prefix ordering** — depends on generator hook ordering (see Port 1 open item).
-3. **Manifest shape differences** beyond the type field could subtly change
-   wc-dox/Storybook rendering; caught by tests 3–5.
+1. **CSS-prefix ordering** — depends on generator hook ordering (see Port 1 open
+   item). Now the highest real risk. Verified by test 5.
+2. **Manifest shape differences** could change Storybook rendering or the
+   agent-docs output; caught by tests 2–4.
+3. **`typeParsing` output vs. `resolve-type.ts`'s literal-union rule** — the
+   pipeline's `resolveType` prefers `parsedType.text` only for literal unions and
+   routes around type-parser object-type bugs. cem-generator's `typeParsing`
+   output may differ in shape; verified by the regenerated agent-docs diff (test 2).
 4. **Sandbox install** — deps installed outside sandbox by user before verification.
 
 ## Out of scope
 
+- **wc-dox consumer** — lives only on `docs/code-bubble-previews`. Follow-up: when
+  that branch rebases onto the migrated `main`, update its `Head.astro` /
+  `setWcDoxConfig` wiring against the new manifest shape. Not this PR.
 - Changing what components are documented, JSDoc tag conventions, or the
   agent-docs markdown format/output location.
-- Refactoring the render pipeline beyond the `expandedType`→`parsedType` read.
+- Refactoring the render pipeline beyond what the new manifest shape requires
+  (the `parsedType` read already exists).
 - ARCH-001 stack-exception documentation (Lit is a pre-existing documented exception).
