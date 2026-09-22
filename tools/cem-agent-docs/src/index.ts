@@ -1,5 +1,6 @@
 export { generateAgentDocs, selectComponents } from './generate.ts';
 export { agentDocsPlugin, type CemPlugin } from './plugin.ts';
+export { runCli } from './cli.ts';
 export { cell, code, table } from './markdown.ts';
 export { renderComponentPage } from './render-component.ts';
 export { stylingSections } from './render-styling.ts';
