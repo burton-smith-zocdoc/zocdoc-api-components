@@ -15,7 +15,7 @@
     "test": "pnpm run build:types && vitest run",
     "test:client": "pnpm run build:types && vitest run --project client",
     "test:components": "pnpm run build:types && vitest run --project components",
-    "cem": "cem generate --config cem-generator.config.mjs",
+    "cem": "cem generate && pnpm -r run cem",
     "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .claude/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
     "storybook": "pnpm run build:types && pnpm run cem && storybook dev -p 6006",
     "storybook:build": "pnpm run build:types && pnpm run cem && storybook build",
