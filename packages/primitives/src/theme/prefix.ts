@@ -6,8 +6,8 @@
  * 1. `configure.ts` passes it as `tokenPrefix`, which is what Charm bakes into
  *    component styles when their style modules evaluate.
  * 2. `theme/tokens.ts` generates the declarations with it.
- * 3. `custom-elements-manifest.config.mjs` rewrites documented `@cssprop` names
- *    to it via Charm's `cssPrefixPlugin`.
+ * 3. The CSS-prefix cem-generator plugin (`tools/cem-css-prefix/src/index.ts`)
+ *    rewrites generated `@cssprop` and `@csspart` names to it.
  *
  * It lives in its own module so `configure.ts` can read it without importing the
  * token generator, which must not run before component registration.
