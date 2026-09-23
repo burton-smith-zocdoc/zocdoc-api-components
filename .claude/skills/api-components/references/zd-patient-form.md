@@ -16,7 +16,7 @@ in the code below rather than aspirational:
   `attribute: false`, so nothing here is reflected into markup where `outerHTML`, a DOM
   snapshot, or a session replay tool would pick it up.
 
-**Class** `ZdPatientForm` — **Module** `src/components/patient-form/patient-form.ts` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdPatientForm` — **Package** `@powered-by-zocdoc/api-components`
 
 ```html
 <zd-patient-form></zd-patient-form>
@@ -26,17 +26,17 @@ in the code below rather than aspirational:
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `busy` | `busy` | `boolean` | `false` | Set while whoever is listening to `patient-submit` is still working on it. A booking is not idempotent: a second `POST /v1/appointments` books a second appointment. The listener has to guard that itself, but a Continue button that stays live and silent through a slow request is an invitation to press it again, so the form that owns the button owns disabling it. `submit()` refuses too, which covers the Enter key — Charm's inputs call `requestSubmit()` without consulting the button. |
+| `busy` | `busy` | `boolean` | — | Set while whoever is listening to `patient-submit` is still working on it. A booking is not idempotent: a second `POST /v1/appointments` books a second appointment. The listener has to guard that itself, but a Continue button that stays live and silent through a slow request is an invitation to press it again, so the form that owns the button owns disabling it. `submit()` refuses too, which covers the Enter key — Charm's inputs call `requestSubmit()` without consulting the button. |
 | — | `addEventListener` | `TypedEventTarget<ZdPatientFormEventMap>['addEventListener']` | — | — |
-| — | `notes` | `string` | `''` | Free-text notes for the practice, capped at NOTES_MAX_LENGTH. Optional, and omitted from the event entirely when empty rather than sent as `''`. Patient-authored, so it is PHI as much as the demographics are, and `attribute: false` for the same reason. |
+| — | `notes` | `string` | — | Free-text notes for the practice, capped at {@link NOTES_MAX_LENGTH}. Optional, and omitted from the event entirely when empty rather than sent as `''`. Patient-authored, so it is PHI as much as the demographics are, and `attribute: false` for the same reason. |
 | — | `removeEventListener` | `TypedEventTarget<ZdPatientFormEventMap>['removeEventListener']` | — | — |
-| — | `values` | `Record<string, string>` | `{}` | The collected values, keyed by API field name. Public so a host page can prefill from an account it already has, and so tests can set ten fields without ten interactions. `attribute: false` is the PHI guard, not a convenience: an observed attribute would let a patient's name be written into the DOM as markup, and a reflected one would put it there on every keystroke. |
+| — | `values` | `Record<string, string>` | — | The collected values, keyed by API field name. Public so a host page can prefill from an account it already has, and so tests can set ten fields without ten interactions. `attribute: false` is the PHI guard, not a convenience: an observed attribute would let a patient's name be written into the DOM as markup, and a reflected one would put it there on every keystroke. |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `patient-submit` | `unknown` | Emitted with `{ patient, notes }` once every field is valid. Not emitted at all when validation fails, so a listener never sees a partial patient. |
+| `patient-submit` | `Event` | Emitted with `{ patient, notes }` once every field is valid. Not emitted at all when validation fails, so a listener never sees a partial patient. |
 
 ## Methods
 
@@ -48,19 +48,33 @@ in the code below rather than aspirational:
 
 | Part | Description |
 | --- | --- |
-| `about` | The name, date of birth, and sex at birth group. |
-| `address` | The address group. |
-| `address1` | The street address field. |
-| `city` | The city field. |
-| `contact` | The phone and email group. |
-| `date-of-birth` | The date of birth field. |
-| `email-address` | The email address field. |
-| `first-name` | The first name field. |
-| `form` | The form element. |
-| `last-name` | The last name field. |
-| `notes` | The optional notes field. |
-| `phone-number` | The phone number field. |
-| `sex-at-birth` | The sex at birth select. |
-| `state` | The state field. |
-| `submit` | The submit button. |
-| `zip-code` | The ZIP code field. |
+| `zd-about` | The name, date of birth, and sex at birth group. |
+| `zd-address` | The address group. |
+| `zd-address1` | The street address field. |
+| `zd-city` | The city field. |
+| `zd-contact` | The phone and email group. |
+| `zd-date-of-birth` | The date of birth field. |
+| `zd-email-address` | The email address field. |
+| `zd-first-name` | The first name field. |
+| `zd-form` | The form element. |
+| `zd-last-name` | The last name field. |
+| `zd-notes` | The optional notes field. |
+| `zd-phone-number` | The phone number field. |
+| `zd-sex-at-birth` | The sex at birth select. |
+| `zd-state` | The state field. |
+| `zd-submit` | The submit button. |
+| `zd-zip-code` | The ZIP code field. |
+
+## Inherited
+
+### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `dir` | `dir` | `"ltr" \| "rtl" \| "auto"` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+
+### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |

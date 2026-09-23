@@ -13,7 +13,7 @@ the data, and a host page resuming a half-finished booking only has to set the p
 already has. The cost is that going back has to clear what it goes back past — which is
 correct anyway, since a different provider invalidates the slot picked from the old one.
 
-**Class** `ZdBooking` — **Module** `src/components/booking/booking.ts` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdBooking` — **Package** `@powered-by-zocdoc/api-components`
 
 ```html
 <zd-booking></zd-booking>
@@ -23,31 +23,31 @@ correct anyway, since a different provider invalidates the slot picked from the 
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `insurance-name` | `insuranceName` | `string \| undefined` | — | The display name of the insurance plan, for the network status line. |
-| `insurance-plan-id` | `insurancePlanId` | `string \| undefined` | — | — |
-| `modal` | `modal` | `boolean` | `false` | Runs every step after the search in a dialog over the results, instead of in their place. Off by default, because inline is the arrangement a host page can place and style freely; a modal is a decision about the page rather than about the flow. What it changes is only where the steps are drawn — the state machine, the events and the children are the same either way, and the search stays mounted underneath, so dismissing the dialog returns the patient to their results rather than to a refetch. |
-| `page` | `page` | `number` | `0` | The zero-indexed page in hand. Bound down to both children so they cannot disagree. |
-| `page-size` | `pageSize` | `unknown` | `DEFAULT_PAGE_SIZE` | Results per page, forwarded to the search that requests them and to the list that pages through them. Updated from what the API says it used, since it is free to clamp. |
-| `patient-type` | `patientType` | `'new' \| 'existing'` | `'new'` | Whether the patient is new to the practice. Affects which slots are bookable. |
-| `provider-location-id` | `providerLocationId` | `string \| undefined` | — | The chosen `pr_…\|lo_…`. Setting it advances the flow to the time step. |
-| `show-photos` | `showPhotos` | `boolean` | `false` | Shows provider photos in the results list and booking summary. |
-| `specialty-id` | `specialtyId` | `string \| undefined` | — | The specialty the flow opens on. Kept in step with what the patient searched. The search endpoint requires this or a visit reason, so a flow that opens on neither cannot search until the patient chooses one. |
-| `start-time` | `startTime` | `string \| undefined` | — | The chosen slot's `start_time`, verbatim from the API. Setting it advances to the form. |
-| `total-count` | `totalCount` | `number \| undefined` | — | How many providers the search matched in total, which is what the results list needs to count them and to know where its pager ends. Undefined until a search returns, and left undefined by a host page handing in `providers` with no total — in which case the list renders neither the count nor the pager rather than presenting one page as the whole answer. |
-| `visit-reason-id` | `visitReasonId` | `string \| undefined` | — | Narrows the search and, more importantly, is required for availability and booking. When the patient searched for "Any reason" this stays undefined, and the flow falls back to the reason the API resolved for the search, then to the chosen provider's `default_visit_reason_id` — see effectiveVisitReasonId. |
-| `zip-code` | `zipCode` | `string` | `''` | The ZIP code the flow opens on. Kept in step with what the patient searched. |
+| `insurance-name` | `insuranceName` | `string` | — | The display name of the insurance plan, for the network status line. |
+| `insurance-plan-id` | `insurancePlanId` | `string` | — | — |
+| `modal` | `modal` | `boolean` | — | Runs every step after the search in a dialog over the results, instead of in their place. Off by default, because inline is the arrangement a host page can place and style freely; a modal is a decision about the page rather than about the flow. What it changes is only where the steps are drawn — the state machine, the events and the children are the same either way, and the search stays mounted underneath, so dismissing the dialog returns the patient to their results rather than to a refetch. |
+| `page` | `page` | `number` | — | The zero-indexed page in hand. Bound down to both children so they cannot disagree. |
+| `page-size` | `pageSize` | `number` | — | Results per page, forwarded to the search that requests them and to the list that pages through them. Updated from what the API says it used, since it is free to clamp. |
+| `patient-type` | `patientType` | `'new' \| 'existing'` | — | Whether the patient is new to the practice. Affects which slots are bookable. |
+| `provider-location-id` | `providerLocationId` | `string` | — | The chosen `pr_…\|lo_…`. Setting it advances the flow to the time step. |
+| `show-photos` | `showPhotos` | `boolean` | — | Shows provider photos in the results list and booking summary. |
+| `specialty-id` | `specialtyId` | `string` | — | The specialty the flow opens on. Kept in step with what the patient searched. The search endpoint requires this or a visit reason, so a flow that opens on neither cannot search until the patient chooses one. |
+| `start-time` | `startTime` | `string` | — | The chosen slot's `start_time`, verbatim from the API. Setting it advances to the form. |
+| `total-count` | `totalCount` | `number` | — | How many providers the search matched in total, which is what the results list needs to count them and to know where its pager ends. Undefined until a search returns, and left undefined by a host page handing in `providers` with no total — in which case the list renders neither the count nor the pager rather than presenting one page as the whole answer. |
+| `visit-reason-id` | `visitReasonId` | `string` | — | Narrows the search and, more importantly, is required for availability and booking. When the patient searched for "Any reason" this stays undefined, and the flow falls back to the reason the API resolved for the search, then to the chosen provider's `default_visit_reason_id` — see {@link effectiveVisitReasonId}. |
+| `zip-code` | `zipCode` | `string` | — | The ZIP code the flow opens on. Kept in step with what the patient searched. |
 | — | `addEventListener` | `TypedEventTarget<ZdBookingEventMap>['addEventListener']` | — | — |
-| — | `providers` | `ProviderLocation[]` | `[]` | The last search's results. Public so a host page that ran its own search can hand them in and start the flow at the list. One page of them. `totalCount` is how many the search matched. |
+| — | `providers` | `ProviderLocation[]` | — | The last search's results. Public so a host page that ran its own search can hand them in and start the flow at the list. One page of them. `totalCount` is how many the search matched. |
 | — | `removeEventListener` | `TypedEventTarget<ZdBookingEventMap>['removeEventListener']` | — | — |
-| — | `step` | `'search' \| 'time' \| 'patient' \| 'booked'` | — | Which step the current data puts the patient on. Reading the furthest-satisfied precondition rather than tracking a cursor is what makes the two impossible to desync. (readonly) |
+| — | `step` | `'search' \| 'time' \| 'patient' \| 'booked'` | — | Which step the current data puts the patient on. Reading the furthest-satisfied precondition rather than tracking a cursor is what makes the two impossible to desync. |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `availability-error` | `unknown` | Emitted with `{ error }` when the batched availability request for the results list fails. Nothing is rendered for it — the list keeps working without day counts — so this event is the only notice a host page gets. Same caution about the `error`. |
-| `booking-complete` | `unknown` | Emitted with `{ appointmentId, status }` once the API has taken the appointment. `status` is `confirmed` or `pending_booking`; both are bookings, and the difference is whether the practice has accepted yet, so a host page that treats them alike is telling some patients the wrong thing. |
-| `booking-error` | `unknown` | Emitted with `{ error, status }` when the booking does not happen. `status` is present when the API answered 200 with a status that is not a booking, and absent when the request itself failed. Named `booking-error` rather than `error` because `error` is a native event name that already fires on this element for failed resource loads, and a listener could not tell the two apart (COMP-003). The `error` it carries is the client's own, whose body can echo submitted values — do not log it wholesale (PHI-001). |
+| `availability-error` | `Event` | Emitted with `{ error }` when the batched availability request for the results list fails. Nothing is rendered for it — the list keeps working without day counts — so this event is the only notice a host page gets. Same caution about the `error`. |
+| `booking-complete` | `Event` | Emitted with `{ appointmentId, status }` once the API has taken the appointment. `status` is `confirmed` or `pending_booking`; both are bookings, and the difference is whether the practice has accepted yet, so a host page that treats them alike is telling some patients the wrong thing. |
+| `booking-error` | `Event` | Emitted with `{ error, status }` when the booking does not happen. `status` is present when the API answered 200 with a status that is not a booking, and absent when the request itself failed. Named `booking-error` rather than `error` because `error` is a native event name that already fires on this element for failed resource loads, and a listener could not tell the two apart (COMP-003). The `error` it carries is the client's own, whose body can echo submitted values — do not log it wholesale (PHI-001). |
 
 ## Methods
 
@@ -61,19 +61,33 @@ correct anyway, since a different provider invalidates the slot picked from the 
 
 | Part | Description |
 | --- | --- |
-| `back` | The button returning to the previous step. |
-| `confirmation` | The booking confirmation. |
-| `dialog` | The dialog the steps after the search run in, present only in `modal` mode. |
-| `error` | The alert shown when a booking fails. |
-| `modal-step` | The current step's container inside the dialog, and the focus target on transitions between two steps that are both in the dialog. |
-| `modal-step-heading` | The step's heading inside the dialog. Visually hidden, since the dialog carries a heading of its own, but it is what a screen reader announces on arrival. |
-| `patient-form` | The patient details form. |
-| `picker` | The availability picker. |
-| `provider-summary` | The provider block inside the summary, shared with `zd-provider-results` — see `internal/provider-summary.ts` for its inner parts. |
-| `results` | The provider results list. |
-| `search` | The provider search form. |
-| `status` | The live region announcing that a booking is in flight. |
-| `step` | The current step's container, and the focus target on every transition. In `modal` mode this is always the search, which stays on the page under the dialog. |
-| `step-heading` | The current step's heading. |
-| `summary` | The block restating what is about to be booked. |
-| `summary-time` | The appointment time, on the patient step. |
+| `zd-back` | The button returning to the previous step. |
+| `zd-confirmation` | The booking confirmation. |
+| `zd-dialog` | The dialog the steps after the search run in, present only in `modal` mode. |
+| `zd-error` | The alert shown when a booking fails. |
+| `zd-modal-step` | The current step's container inside the dialog, and the focus target on transitions between two steps that are both in the dialog. |
+| `zd-modal-step-heading` | The step's heading inside the dialog. Visually hidden, since the dialog carries a heading of its own, but it is what a screen reader announces on arrival. |
+| `zd-patient-form` | The patient details form. |
+| `zd-picker` | The availability picker. |
+| `zd-provider-summary` | The provider block inside the summary, shared with `zd-provider-results` — see `internal/provider-summary.ts` for its inner parts. |
+| `zd-results` | The provider results list. |
+| `zd-search` | The provider search form. |
+| `zd-status` | The live region announcing that a booking is in flight. |
+| `zd-step` | The current step's container, and the focus target on every transition. In `modal` mode this is always the search, which stays on the page under the dialog. |
+| `zd-step-heading` | The current step's heading. |
+| `zd-summary` | The block restating what is about to be booked. |
+| `zd-summary-time` | The appointment time, on the patient step. |
+
+## Inherited
+
+### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `dir` | `dir` | `"ltr" \| "rtl" \| "auto"` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+
+### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
