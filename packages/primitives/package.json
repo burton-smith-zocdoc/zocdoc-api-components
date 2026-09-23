@@ -18,7 +18,7 @@
     "./theme/all.css": "./dist/theme/all.css"
   },
   "scripts": {
-    "analyze": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @powered-by-zocdoc/primitives --out ../../.claude/skills/primitives/references"
+    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @powered-by-zocdoc/primitives --out ../../.claude/skills/primitives/references"
   },
   "dependencies": {
     "@charm-ux/core": "link:../../../charm-ux/core/packages/core",

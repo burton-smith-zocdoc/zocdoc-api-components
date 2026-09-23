@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm run build:types && pnpm run build:theme && pnpm run analyze && pnpm -r run analyze",
+    "build": "pnpm run build:types && pnpm run build:theme && pnpm run cem && pnpm -r run cem",
     "build:types": "tsc --build tsconfig.build.json",
     "build:theme": "oxnode scripts/build-theme.ts",
     "typecheck": "pnpm run build:types && tsc --noEmit",
@@ -15,10 +15,10 @@
     "test": "pnpm run build:types && vitest run",
     "test:client": "pnpm run build:types && vitest run --project client",
     "test:components": "pnpm run build:types && vitest run --project components",
-    "analyze": "cem generate --config cem-generator.config.mjs",
-    "docs:check": "pnpm run analyze && pnpm -r run analyze && (DRIFT=\"$(git status --porcelain -- .claude/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
-    "storybook": "pnpm run build:types && pnpm run analyze && storybook dev -p 6006",
-    "storybook:build": "pnpm run build:types && pnpm run analyze && storybook build",
+    "cem": "cem generate --config cem-generator.config.mjs",
+    "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .claude/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
+    "storybook": "pnpm run build:types && pnpm run cem && storybook dev -p 6006",
+    "storybook:build": "pnpm run build:types && pnpm run cem && storybook build",
     "demo": "pnpm --filter demo dev"
   },
   "devDependencies": {

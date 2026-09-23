@@ -254,7 +254,7 @@ export const Default: Story = {};
 - [ ] Tests cover success, empty, error states
 - [ ] Axe accessibility tests for each state
 - [ ] Row added to the Component Events table in `AGENTS.md`
-- [ ] Ran `pnpm run docs:check` (or `pnpm run analyze && pnpm -r run analyze`) and committed the
+- [ ] Ran `pnpm run docs:check` (or `pnpm run cem && pnpm -r run cem`) and committed the
       regenerated `references/<tag>.md` page plus the updated
       `references/index.md` — a new component with no reference page is invisible to every
       agent routed through the index
