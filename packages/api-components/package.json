@@ -20,7 +20,7 @@
     }
   },
   "scripts": {
-    "analyze": "cem analyze",
+    "analyze": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @powered-by-zocdoc/api-components --out ../../.claude/skills/api-components/references",
     "build:bundle": "vite build"
   },
   "dependencies": {
