@@ -1,6 +1,5 @@
 import type { StorybookConfig } from '@storybook/web-components-vite';
 import type { Plugin } from 'vite';
-import { cemAnalyzerPlugin } from '@wc-toolkit/cem-analyzer-plugin/vite';
 
 // Storybook 10.x bundles React Aria which patches HTMLElement.prototype.focus.
 // When accessed on the prototype (not an instance), it throws "Illegal invocation".
@@ -60,13 +59,6 @@ const config: StorybookConfig = {
   viteFinal: async (config) => {
     config.plugins = config.plugins || [];
     config.plugins.unshift(reactAriaFocusFix());
-    config.plugins.push(
-      cemAnalyzerPlugin({
-        globs: ['packages/*/src/**/*.ts'],
-        exclude: ['**/*.stories.ts', '**/*.test.ts', '**/*.styles.ts'],
-        litelement: true,
-      })
-    );
     return config;
   },
 };

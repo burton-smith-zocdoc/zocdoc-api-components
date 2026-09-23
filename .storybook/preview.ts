@@ -20,7 +20,7 @@ document.documentElement.style.colorScheme = 'light';
 
 // Set the manifest for Storybook and helpers
 setCustomElementsManifest(customElements);
-setStorybookHelpersConfig({ typeRef: 'expandedType' });
+setStorybookHelpersConfig({ typeRef: 'parsedType' });
 
 /**
  * Every color token in the generated theme is a `light-dark()` pair sitting
