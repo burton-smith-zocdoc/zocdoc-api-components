@@ -6,12 +6,13 @@ Framework-agnostic web components for the [Zocdoc public API](https://api-docs.z
 
 ```
 packages/
-  primitives/    @zocdoc/api-primitive-components   Charm config + token re-exports
-  api-components/@zocdoc/api-components   API client + booking components
-  demo/          private                         Vite demo site
+  primitives/     @zocdoc/api-primitive-components   Charm config + token re-exports
+  api-components/ @zocdoc/api-components             API client + booking components
+  demo/           private                             Vite demo site
+  docs/           private                             Astro documentation site
 ```
 
-Dependency direction is one-way: `primitives` ← `api-components` ← `demo`.
+Dependency direction is one-way: `primitives` ← `api-components` ← `demo`/`docs`.
 
 ## Critical Rules
 
