@@ -42,6 +42,9 @@ const BROWSER_TESTS = [
 const clearMocks = true;
 
 export default defineConfig({
+  optimizeDeps: {
+    include: ['culori', 'axe-core'],
+  },
   test: {
     projects: [
       {
