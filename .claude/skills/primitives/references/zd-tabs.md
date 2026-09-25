@@ -2,7 +2,7 @@
 
 Coordinates a tab list and its panels.
 
-**Class** `ZdTabs` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdTabs` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-tabs></zd-tabs>

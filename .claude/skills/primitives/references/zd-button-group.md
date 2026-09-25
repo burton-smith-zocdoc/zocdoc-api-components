@@ -2,7 +2,7 @@
 
 Groups related buttons together with connected styling.
 
-**Class** `ZdButtonGroup` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdButtonGroup` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-button-group></zd-button-group>

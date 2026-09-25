@@ -2,7 +2,7 @@
 
 Toggles a region of content from a slotted trigger.
 
-**Class** `ZdDisclosure` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdDisclosure` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-disclosure></zd-disclosure>

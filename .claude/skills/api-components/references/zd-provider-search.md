@@ -11,7 +11,7 @@ developer-facing — so both are checked here and reported on the field that cau
 rather than surfacing as a failed search (CLIENT-003, A11Y-004). This component does not
 collect a visit reason; the API defaults to "any" for the chosen specialty.
 
-**Class** `ZdProviderSearch` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdProviderSearch` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-provider-search></zd-provider-search>

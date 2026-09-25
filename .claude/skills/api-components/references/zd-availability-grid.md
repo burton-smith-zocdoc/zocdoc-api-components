@@ -19,7 +19,7 @@ The day cells stay visible in the empty state rather than being replaced by the 
 window is derived from dates, not from data, so it is still true — and it is the only way to
 page to a range that does have appointments.
 
-**Class** `ZdAvailabilityGrid` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdAvailabilityGrid` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-availability-grid></zd-availability-grid>

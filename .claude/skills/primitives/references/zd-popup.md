@@ -2,7 +2,7 @@
 
 Low-level positioning primitive: places floating content relative to an anchor element.
 
-**Class** `ZdPopup` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdPopup` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-popup></zd-popup>

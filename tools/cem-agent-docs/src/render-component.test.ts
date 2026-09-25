@@ -8,7 +8,7 @@ import type { Component, RenderContext } from './types.ts';
 function context(component: Component): RenderContext {
   const manifest = fixtureManifest();
   return {
-    config: { packageName: '@powered-by-zocdoc/primitives', outDir: 'out' },
+    config: { packageName: '@zocdoc/api-primitive-components', outDir: 'out' },
     api: normalizeApi(component),
     resolveType,
     siblings: [widgetComponent(), thingComponent()],

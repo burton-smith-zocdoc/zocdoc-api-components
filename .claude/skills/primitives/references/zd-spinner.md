@@ -2,7 +2,7 @@
 
 An animated loading indicator.
 
-**Class** `ZdSpinner` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdSpinner` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-spinner></zd-spinner>

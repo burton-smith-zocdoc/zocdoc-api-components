@@ -1,4 +1,4 @@
-# Powered by Zocdoc
+# Zocdoc API Components
 
 Web components for the Zocdoc public API, built on Charm UX.
 

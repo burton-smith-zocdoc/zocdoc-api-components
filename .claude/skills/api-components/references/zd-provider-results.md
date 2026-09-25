@@ -12,7 +12,7 @@ wanted to (COMP-002). `window-change` works the same way.
 Supply `availability` and each card grows a `zd-availability-grid` of day counts, with one
 shared window control above the list driving all of them.
 
-**Class** `ZdProviderResults` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdProviderResults` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-provider-results></zd-provider-results>

@@ -3,7 +3,7 @@
 Displays a provider's photo, name, specialty, location, and insurance status
 in a compact summary layout. Used by provider-card and booking.
 
-**Class** `ZdProviderSummary` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdProviderSummary` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-provider-summary></zd-provider-summary>

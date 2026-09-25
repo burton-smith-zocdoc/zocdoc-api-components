@@ -2,7 +2,7 @@
 
 Displays an image or initials representing a person.
 
-**Class** `ZdAvatar` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdAvatar` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-avatar></zd-avatar>

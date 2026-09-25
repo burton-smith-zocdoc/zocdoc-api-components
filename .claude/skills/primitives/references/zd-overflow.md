@@ -2,7 +2,7 @@
 
 Collapses items that no longer fit into an overflow menu.
 
-**Class** `ZdOverflow` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdOverflow` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-overflow></zd-overflow>

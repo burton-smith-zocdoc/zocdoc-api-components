@@ -2,7 +2,7 @@
 
 A single radio button option within a group.
 
-**Class** `ZdRadio` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdRadio` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-radio></zd-radio>

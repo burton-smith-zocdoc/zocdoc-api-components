@@ -2,7 +2,7 @@
 
 A button group that moves buttons into a menu when space runs out.
 
-**Class** `ZdButtonGroupOverflow` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdButtonGroupOverflow` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-button-group-overflow></zd-button-group-overflow>

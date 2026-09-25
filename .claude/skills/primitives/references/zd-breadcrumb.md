@@ -2,7 +2,7 @@
 
 Shows the hierarchy leading to the current page.
 
-**Class** `ZdBreadcrumb` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdBreadcrumb` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-breadcrumb></zd-breadcrumb>

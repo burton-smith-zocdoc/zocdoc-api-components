@@ -2,7 +2,7 @@
 
 Describes or labels its anchor, showing supplementary text on hover and focus.
 
-**Class** `ZdTooltip` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdTooltip` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-tooltip></zd-tooltip>

@@ -2,7 +2,7 @@
 
 Displays contextual feedback messages, with a variant per severity.
 
-**Class** `ZdAlert` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdAlert` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-alert></zd-alert>

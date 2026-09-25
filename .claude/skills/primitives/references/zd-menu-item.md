@@ -2,7 +2,7 @@
 
 A single selectable action inside a menu.
 
-**Class** `ZdMenuItem` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdMenuItem` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-menu-item></zd-menu-item>

@@ -2,7 +2,7 @@
 
 Applies slotted stylesheets only to its own subtree.
 
-**Class** `ZdScopedStyles` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdScopedStyles` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-scoped-styles></zd-scoped-styles>

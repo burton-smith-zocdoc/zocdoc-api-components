@@ -5,7 +5,7 @@ exports[`renderComponentPage > matches the snapshot for a component with a full 
 
 A widget. Renders a labelled control.
 
-**Class** \`ZdWidget\` — **Module** \`src/components/widget/widget.ts\` — **Package** \`@powered-by-zocdoc/primitives\`
+**Class** \`ZdWidget\` — **Module** \`src/components/widget/widget.ts\` — **Package** \`@zocdoc/api-primitive-components\`
 
 \`\`\`html
 <zd-widget></zd-widget>
@@ -83,7 +83,7 @@ exports[`renderComponentPage > matches the snapshot for a component with no inhe
 
 Fetches and renders a thing.
 
-**Class** \`ZdThing\` — **Module** \`src/components/thing/thing.ts\` — **Package** \`@powered-by-zocdoc/primitives\`
+**Class** \`ZdThing\` — **Module** \`src/components/thing/thing.ts\` — **Package** \`@zocdoc/api-primitive-components\`
 
 \`\`\`html
 <zd-thing></zd-thing>

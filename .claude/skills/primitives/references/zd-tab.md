@@ -2,7 +2,7 @@
 
 A single selectable tab in a tab list.
 
-**Class** `ZdTab` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdTab` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-tab></zd-tab>

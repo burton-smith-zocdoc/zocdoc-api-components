@@ -7,7 +7,7 @@ Everything it shows arrives as an attribute, which is what lets a host page put 
 standalone confirmation page as plain markup rather than only at the end of a flow
 (COMP-004). It emits nothing: there is nothing left to decide.
 
-**Class** `ZdBookingConfirmation` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdBookingConfirmation` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-booking-confirmation></zd-booking-confirmation>

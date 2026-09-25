@@ -4,7 +4,7 @@ import { thingComponent, widgetComponent } from './test/fixtures.ts';
 import type { AgentDocsConfig } from './types.ts';
 
 const config: AgentDocsConfig = {
-  packageName: '@powered-by-zocdoc/primitives',
+  packageName: '@zocdoc/api-primitive-components',
   outDir: 'out',
 };
 
@@ -55,7 +55,7 @@ describe('renderIndex', () => {
 
   it('states the count and the package', () => {
     const md = renderIndex([widgetComponent(), thingComponent()], config);
-    expect(md).toContain('`@powered-by-zocdoc/primitives`');
+    expect(md).toContain('`@zocdoc/api-primitive-components`');
     expect(md).toContain('2 components');
   });
 

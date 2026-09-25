@@ -2,7 +2,7 @@
 
 A popup menu of actions anchored to a trigger.
 
-**Class** `ZdMenu` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdMenu` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-menu></zd-menu>

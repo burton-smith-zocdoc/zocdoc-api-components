@@ -37,7 +37,7 @@ it is also what makes the `<header>` and the `<address>` inside it legal: both a
 relative to their nearest sectioning ancestor, so without the article they would describe the
 embedding *page* — a `banner` landmark and a set of contact details that are not the host's.
 
-**Class** `ZdProviderProfile` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdProviderProfile` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-provider-profile></zd-provider-profile>

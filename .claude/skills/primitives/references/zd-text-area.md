@@ -2,7 +2,7 @@
 
 A multi-line text field with label and validation support.
 
-**Class** `ZdTextArea` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdTextArea` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-text-area></zd-text-area>

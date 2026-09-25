@@ -16,7 +16,7 @@ in the code below rather than aspirational:
   `attribute: false`, so nothing here is reflected into markup where `outerHTML`, a DOM
   snapshot, or a session replay tool would pick it up.
 
-**Class** `ZdPatientForm` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdPatientForm` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-patient-form></zd-patient-form>
