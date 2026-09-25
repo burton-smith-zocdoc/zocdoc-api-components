@@ -1,4 +1,4 @@
-# Powered by Zocdoc — Agent Instructions
+# Zocdoc API Components — Agent Instructions
 
 Framework-agnostic web components for the [Zocdoc public API](https://api-docs.zocdoc.com/guides), built on [Charm UX](https://github.com/charm-ux/core). This is a proof of concept demonstrating browser-direct API calls through custom elements.
 
@@ -6,8 +6,8 @@ Framework-agnostic web components for the [Zocdoc public API](https://api-docs.z
 
 ```
 packages/
-  primitives/    @powered-by-zocdoc/primitives   Charm config + token re-exports
-  api-components/@powered-by-zocdoc/api-components   API client + booking components
+  primitives/    @zocdoc/api-primitive-components   Charm config + token re-exports
+  api-components/@zocdoc/api-components   API client + booking components
   demo/          private                         Vite demo site
 ```
 
@@ -21,8 +21,8 @@ These rules are always loaded. Full details and examples are in [`.agents/rules/
 
 | Rule | Summary |
 |------|---------|
-| [PBZD-001](.agents/rules/internal/PBZD-001.md) | **Configure the prefix first, and never import a Charm barrel.** `configure.ts` runs before anything else; Charm primitives come from `@powered-by-zocdoc/primitives` as classes and register via `dependencies()`, not via `.../button/index.js`. |
-| [PBZD-002](.agents/rules/internal/PBZD-002.md) | **Extend CharmElement.** API components extend `CharmElement` from `@powered-by-zocdoc/primitives`, not `LitElement` directly. |
+| [PBZD-001](.agents/rules/internal/PBZD-001.md) | **Configure the prefix first, and never import a Charm barrel.** `configure.ts` runs before anything else; Charm primitives come from `@zocdoc/api-primitive-components` as classes and register via `dependencies()`, not via `.../button/index.js`. |
+| [PBZD-002](.agents/rules/internal/PBZD-002.md) | **Extend CharmElement.** API components extend `CharmElement` from `@zocdoc/api-primitive-components`, not `LitElement` directly. |
 | [PBZD-003](.agents/rules/internal/PBZD-003.md) | **Write `<scoped-*>` in templates.** `this.html` rewrites `<scoped-button>` to the registered prefix — never hardcode `zd-button`, and don't interpolate `scope.tag()`. Every `<scoped-*>` needs a matching entry in `dependencies()` or it renders as an undefined element, silently. |
 | [PBZD-004](.agents/rules/internal/PBZD-004.md) | **Register through project scope.** Components declare `static override baseName` and register via `project.scope.registerComponent()`. |
 | [PBZD-005](.agents/rules/internal/PBZD-005.md) | **Package dependency direction.** Strictly `primitives` ← `api-components` ← `demo`. |
@@ -141,7 +141,7 @@ PHI-001).
 ### Tooling
 
 - **`tsc --build` emits declarations and JS to `dist/`,** which is where both packages' `exports` point. `pnpm build:types` is a prerequisite of `test`, `typecheck`, and `storybook`, because a stale `dist` is what makes a cross-package import fail on a change that is already on disk.
-- **`@powered-by-zocdoc/api-components` has one extra subpath, `./mock`** — a fake transport and the documented sentinel inputs, for a host page that wants the funnel without a token. Importing `.` pulls in none of it.
+- **`@zocdoc/api-components` has one extra subpath, `./mock`** — a fake transport and the documented sentinel inputs, for a host page that wants the funnel without a token. Importing `.` pulls in none of it.
 - **Storybook** on `@storybook/web-components-vite`, globbing `packages/{primitives,api-components}/src/**/*.stories.ts`.
 - **Vitest browser mode** with `@vitest/browser-playwright` for component tests.
 - **`pnpm run docs:check`** regenerates the manifest for both packages and diffs

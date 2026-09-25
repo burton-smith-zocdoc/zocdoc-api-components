@@ -1,4 +1,4 @@
-# @powered-by-zocdoc/primitives
+# @zocdoc/api-primitive-components
 
 The presentation layer everything else builds on: design tokens, Charm
 configuration, and the Charm primitives the booking components compose.
@@ -22,7 +22,7 @@ Built. 3 token tests (node) and 4 prefix tests (Chromium).
 ## Tokens
 
 ```ts
-import { zocdocThemeCss } from '@powered-by-zocdoc/primitives';
+import { zocdocThemeCss } from '@zocdoc/api-primitive-components';
 ```
 
 `zocdocThemeCss` is a plain CSS string — inject it once at the document level via a
@@ -71,7 +71,7 @@ imports no barrels. `charm.ts` re-exports the **class modules**, which register
 nothing:
 
 ```ts
-import { button, input } from '@powered-by-zocdoc/primitives';
+import { button, input } from '@zocdoc/api-primitive-components';
 
 class MyThing extends CharmElement {
   public static override baseName = 'my-thing';

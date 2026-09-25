@@ -4,15 +4,15 @@ import remarkComponentPreview from './src/plugins/remark-component-preview.js';
 
 export default defineConfig({
   site: 'https://burton-smith-zocdoc.github.io',
-  base: '/powered-by-zocdoc',
+  base: '/zocdoc-api-components',
   integrations: [
     starlight({
-      title: 'Powered by Zocdoc',
+      title: 'Zocdoc API Components',
       social: [
         {
           icon: 'github',
           label: 'GitHub',
-          href: 'https://github.com/burton-smith-zocdoc/powered-by-zocdoc',
+          href: 'https://github.com/burton-smith-zocdoc/zocdoc-api-components',
         },
       ],
       sidebar: [

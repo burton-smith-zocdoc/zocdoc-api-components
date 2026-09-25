@@ -22,7 +22,7 @@ mock/           → Mock transport for demos/tests
 ## Configuration
 
 ```typescript
-import { configureZocdoc } from '@powered-by-zocdoc/api-components';
+import { configureZocdoc } from '@zocdoc/api-components';
 
 configureZocdoc({
   baseUrl: 'https://api-developer-sandbox.zocdoc.com',
