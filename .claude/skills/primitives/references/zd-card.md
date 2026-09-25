@@ -2,7 +2,7 @@
 
 A container for grouping related content.
 
-**Class** `ZdCard` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdCard` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-card></zd-card>

@@ -12,7 +12,7 @@
  * changes mid-session. Moving it is a deliberate override, and from then on this page keeps the
  * chosen scheme — stored so a reload during development does not throw it away.
  */
-import type { ZdSwitch } from '@powered-by-zocdoc/primitives';
+import type { ZdSwitch } from '@zocdoc/api-primitive-components';
 
 /** Where the override lives. Namespaced because a demo shares an origin with whatever else runs on it. */
 const STORAGE_KEY = 'zd-demo-appearance';

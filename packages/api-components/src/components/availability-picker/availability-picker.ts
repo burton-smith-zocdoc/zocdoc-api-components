@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton, ZdButtonGroup, ZdIcon } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdButtonGroup, ZdIcon } from '@zocdoc/api-primitive-components';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { AvailabilitySlot, PatientType } from '../../client/types.js';

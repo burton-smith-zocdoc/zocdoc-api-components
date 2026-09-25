@@ -2,7 +2,7 @@
 
 The content region shown when its tab is selected.
 
-**Class** `ZdTabPanel` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdTabPanel` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-tab-panel></zd-tab-panel>

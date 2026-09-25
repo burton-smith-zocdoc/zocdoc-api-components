@@ -6,7 +6,7 @@ Every component declares `static override baseName` and registers via `project.s
 
 ```ts
 // provider-search/provider-search.ts
-import { CharmElement } from '@powered-by-zocdoc/primitives';
+import { CharmElement } from '@zocdoc/api-primitive-components';
 
 export class ZdProviderSearch extends CharmElement {
   public static override baseName = 'provider-search';
@@ -15,7 +15,7 @@ export class ZdProviderSearch extends CharmElement {
 
 ```ts
 // provider-search/index.ts
-import { project } from '@powered-by-zocdoc/primitives';
+import { project } from '@zocdoc/api-primitive-components';
 import { ZdProviderSearch } from './provider-search.js';
 
 project.scope.registerComponent(ZdProviderSearch);

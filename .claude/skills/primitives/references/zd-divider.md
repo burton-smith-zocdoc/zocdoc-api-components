@@ -2,7 +2,7 @@
 
 A horizontal or vertical rule separating content, with an optional inline label.
 
-**Class** `ZdDivider` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdDivider` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-divider></zd-divider>

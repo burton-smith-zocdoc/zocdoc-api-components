@@ -10,7 +10,7 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 
 ## Two Approaches
 
-You can integrate Powered by Zocdoc in two ways:
+You can integrate Zocdoc API Components in two ways:
 
 1. **Single element** — Use `<zd-booking>` for the complete flow in one tag
 2. **Composed** — Wire individual components together for custom layouts and behavior
@@ -99,7 +99,7 @@ picker.addEventListener('slot-select', (e) => {
 
 // Form emits patient data
 form.addEventListener('patient-submit', async (e) => {
-  const { createAppointment } = await import('@powered-by-zocdoc/api-components');
+  const { createAppointment } = await import('@zocdoc/api-components');
   const appointment = await createAppointment({
     slot: form.slot,
     patient: e.detail,

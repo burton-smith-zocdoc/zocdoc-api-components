@@ -47,7 +47,7 @@ than a nicety.
 Consumers import the class and declare it in `dependencies()`:
 
 ```ts
-import { CharmElement, ZdButton, ZdInput } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdInput } from '@zocdoc/api-primitive-components';
 
 export class ZdProviderSearch extends CharmElement {
   public static override baseName = 'provider-search';

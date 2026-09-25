@@ -2,7 +2,7 @@
 
 Shows determinate or indeterminate progress, for multi-step flows and uploads.
 
-**Class** `ZdProgressBar` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdProgressBar` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-progress-bar></zd-progress-bar>

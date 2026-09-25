@@ -2,7 +2,7 @@
 
 A modal dialog for focused tasks and confirmations, with heading, body, and footer slots.
 
-**Class** `ZdDialog` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdDialog` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-dialog></zd-dialog>

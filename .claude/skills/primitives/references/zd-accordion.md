@@ -2,7 +2,7 @@
 
 Groups accordion items into a single collapsible region.
 
-**Class** `ZdAccordion` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdAccordion` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-accordion></zd-accordion>

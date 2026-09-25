@@ -3,7 +3,7 @@
 Displays a provider's photo, name, specialty, location, and insurance status
 in a horizontal card layout with a slot for availability.
 
-**Class** `ZdProviderCard` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdProviderCard` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-provider-card></zd-provider-card>

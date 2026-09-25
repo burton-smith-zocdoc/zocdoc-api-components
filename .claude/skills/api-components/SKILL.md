@@ -1,6 +1,6 @@
 ---
 name: api-components
-description: Map of @powered-by-zocdoc/api-components - which file to read for what, the shared shape every component follows, and the invariants that look cosmetic but aren't. Use when reading, modifying, or debugging anything in packages/api-components/src/components/.
+description: Map of @zocdoc/api-components - which file to read for what, the shared shape every component follows, and the invariants that look cosmetic but aren't. Use when reading, modifying, or debugging anything in packages/api-components/src/components/.
 ---
 
 # API Components Reference

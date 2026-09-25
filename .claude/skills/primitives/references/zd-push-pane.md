@@ -2,7 +2,7 @@
 
 A dismissible pane anchored to an edge of the viewport, which pushes page content aside.
 
-**Class** `ZdPushPane` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdPushPane` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-push-pane></zd-push-pane>

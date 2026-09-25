@@ -2,7 +2,7 @@
 
 A text input field with label and validation support.
 
-**Class** `ZdInput` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdInput` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-input></zd-input>

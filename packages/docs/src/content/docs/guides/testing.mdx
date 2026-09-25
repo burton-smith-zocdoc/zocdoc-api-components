@@ -8,7 +8,7 @@ description: Test your integration with mock data and documented scenarios
 For testing without real API calls, use the mock transport:
 
 ```javascript
-import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+import { configureZocdocMock } from '@zocdoc/api-components/mock';
 
 configureZocdocMock();
 ```
@@ -30,7 +30,7 @@ The mock transport responds to specific ZIP codes with different scenarios:
 Use these in your tests to verify your integration handles each case:
 
 ```javascript
-import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+import { configureZocdocMock } from '@zocdoc/api-components/mock';
 
 describe('booking flow', () => {
   beforeEach(() => {
@@ -74,7 +74,7 @@ Never use real-looking names, phone numbers, or addresses in tests.
 Each component can be tested in isolation:
 
 ```javascript
-import '@powered-by-zocdoc/api-components';
+import '@zocdoc/api-components';
 
 it('renders provider card', () => {
   const card = document.createElement('zd-provider-card');

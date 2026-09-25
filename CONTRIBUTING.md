@@ -36,7 +36,7 @@ Your directory structure should look like:
 
 ```
 parent/
-  powered-by-zocdoc/   # this repo
+  zocdoc-api-components/   # this repo
   charm-ux/            # Charm checkout
 ```
 

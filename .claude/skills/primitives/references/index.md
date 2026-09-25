@@ -1,4 +1,4 @@
-# `@powered-by-zocdoc/primitives` — Component Index
+# `@zocdoc/api-primitive-components` — Component Index
 
 Generated from the Custom Elements Manifest. Do not edit by hand.
 

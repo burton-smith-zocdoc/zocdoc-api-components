@@ -1,4 +1,4 @@
-import { ZdAlert, ZdButton, ZdSpinner, type CharmElement } from '@powered-by-zocdoc/primitives';
+import { ZdAlert, ZdButton, ZdSpinner, type CharmElement } from '@zocdoc/api-primitive-components';
 import { html, nothing, type TemplateResult } from 'lit';
 
 /**

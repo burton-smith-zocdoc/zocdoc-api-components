@@ -1,6 +1,6 @@
 // Importing primitives first guarantees the zd prefix is set before any
 // component module below is evaluated. Keep this import first (PBZD-001).
-import '@powered-by-zocdoc/primitives';
+import '@zocdoc/api-primitive-components';
 
 export * from './client/appointments.js';
 export * from './client/availability.js';

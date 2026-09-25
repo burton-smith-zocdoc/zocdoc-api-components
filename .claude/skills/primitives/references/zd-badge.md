@@ -2,7 +2,7 @@
 
 A small label or status indicator.
 
-**Class** `ZdBadge` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdBadge` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-badge></zd-badge>

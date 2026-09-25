@@ -21,7 +21,7 @@ packages/api-components/src/components/<name>/
 ## 2. Component Class (`<name>.ts`)
 
 ```typescript
-import { CharmElement, ZdButton } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton } from '@zocdoc/api-primitive-components';
 import { property, state } from 'lit/decorators.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 import { userFacingError } from '../internal/error-message.js';
@@ -138,7 +138,7 @@ export default css`
 ## 4. Registration (`index.ts`)
 
 ```typescript
-import { project } from '@powered-by-zocdoc/primitives';
+import { project } from '@zocdoc/api-primitive-components';
 import { Zd<Name> } from './<name>.js';
 
 project.scope.registerComponent(Zd<Name>);

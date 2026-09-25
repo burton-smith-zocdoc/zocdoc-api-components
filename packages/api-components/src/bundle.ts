@@ -24,11 +24,11 @@
  *
  * Or use the pre-built CSS from the package:
  *
- *   @powered-by-zocdoc/primitives/theme/all.css
+ *   @zocdoc/api-primitive-components/theme/all.css
  */
 
 // Import the lean primitives entry that skips theme generation code (~170KB savings)
-import '@powered-by-zocdoc/primitives/configure-only';
+import '@zocdoc/api-primitive-components/configure-only';
 
 // Client configuration
 import { configureZocdoc } from './client/configure.js';

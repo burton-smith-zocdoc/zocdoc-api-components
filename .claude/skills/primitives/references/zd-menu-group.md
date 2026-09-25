@@ -2,7 +2,7 @@
 
 Groups related menu items under a heading.
 
-**Class** `ZdMenuGroup` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdMenuGroup` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-menu-group></zd-menu-group>

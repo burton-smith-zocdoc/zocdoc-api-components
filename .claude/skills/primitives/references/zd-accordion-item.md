@@ -2,7 +2,7 @@
 
 A single collapsible section of an accordion: a heading that expands to reveal its content.
 
-**Class** `ZdAccordionItem` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdAccordionItem` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-accordion-item></zd-accordion-item>

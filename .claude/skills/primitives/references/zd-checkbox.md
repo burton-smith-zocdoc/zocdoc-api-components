@@ -2,7 +2,7 @@
 
 A labelled checkbox for boolean and multi-select choices, with indeterminate support.
 
-**Class** `ZdCheckbox` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdCheckbox` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-checkbox></zd-checkbox>

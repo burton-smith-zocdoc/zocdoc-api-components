@@ -2,7 +2,7 @@
 
 Renders a named icon from the configured icon set, at a token-driven size.
 
-**Class** `ZdIcon` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdIcon` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-icon></zd-icon>

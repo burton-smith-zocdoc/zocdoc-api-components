@@ -1,4 +1,4 @@
-# @powered-by-zocdoc/api-components
+# @zocdoc/api-components
 
 The booking components — `zd-provider-search`, `zd-availability`, `zd-booking-form`,
 and friends — plus the Zocdoc API client they talk to.
@@ -29,7 +29,7 @@ from `client/` and own all rendering.
 Configured once, globally:
 
 ```ts
-import { configure } from '@powered-by-zocdoc/api-components';
+import { configure } from '@zocdoc/api-components';
 
 configure({ baseUrl: '...', token: '...' });
 ```
@@ -50,7 +50,7 @@ Composition is attributes in, events out. No context protocol — a host page wi
 components together by listening for events and setting attributes, which works in
 any framework or none.
 
-Importing this package pulls in `@powered-by-zocdoc/primitives`, which sets the `zd`
+Importing this package pulls in `@zocdoc/api-primitive-components`, which sets the `zd`
 prefix. See that package's README for why that ordering matters and why nothing here
 imports a Charm barrel.
 

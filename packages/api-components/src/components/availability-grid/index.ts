@@ -1,4 +1,4 @@
-import { project } from '@powered-by-zocdoc/primitives';
+import { project } from '@zocdoc/api-primitive-components';
 import { ZdAvailabilityGrid } from './availability-grid.js';
 
 project.scope.registerComponent(ZdAvailabilityGrid);

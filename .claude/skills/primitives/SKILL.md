@@ -1,21 +1,21 @@
 ---
 name: primitives
-description: Reference for @powered-by-zocdoc/primitives - Charm UX components with zd- prefix. Use when creating components that use primitives, or when you need to know what UI elements are available.
+description: Reference for @zocdoc/api-primitive-components - Charm UX components with zd- prefix. Use when creating components that use primitives, or when you need to know what UI elements are available.
 ---
 
 # Primitives Reference
 
-`@powered-by-zocdoc/primitives` provides Zocdoc-styled Charm UX components with the `zd-` tag prefix.
+`@zocdoc/api-primitive-components` provides Zocdoc-styled Charm UX components with the `zd-` tag prefix.
 
 ## Critical: Import Order
 
 The package configures the `zd-` prefix on import. Always import primitives before using any component:
 
 ```typescript
-import { ZdButton, CharmElement } from '@powered-by-zocdoc/primitives';
+import { ZdButton, CharmElement } from '@zocdoc/api-primitive-components';
 ```
 
-**Never import Charm barrels directly** (e.g., `@charm-ux/core/components/button/index.js`). Import from `@powered-by-zocdoc/primitives` or from class modules.
+**Never import Charm barrels directly** (e.g., `@charm-ux/core/components/button/index.js`). Import from `@zocdoc/api-primitive-components` or from class modules.
 
 ## Using in Templates
 

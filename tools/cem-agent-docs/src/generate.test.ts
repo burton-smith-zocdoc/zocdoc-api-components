@@ -5,7 +5,7 @@ import { memoryFileSystem } from './write.ts';
 import type { AgentDocsConfig, Package } from './types.ts';
 
 const config: AgentDocsConfig = {
-  packageName: '@powered-by-zocdoc/primitives',
+  packageName: '@zocdoc/api-primitive-components',
   outDir: 'refs',
 };
 
@@ -105,7 +105,7 @@ describe('generateAgentDocs', () => {
           if (c.tagName === 'zd-widget') {
             seen = ctx.siblings.map((s) => s.tagName ?? '');
             expect(ctx.api.own.props.length).toBeGreaterThan(0);
-            expect(ctx.config.packageName).toBe('@powered-by-zocdoc/primitives');
+            expect(ctx.config.packageName).toBe('@zocdoc/api-primitive-components');
             expect(ctx.resolveType({ type: { text: 'boolean' } })).toBe('boolean');
           }
           return 'x\n';

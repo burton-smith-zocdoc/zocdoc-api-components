@@ -5,7 +5,7 @@
  *
  * It uses the theme's tokens rather than its own values, which is the point worth demonstrating:
  * a host page picks up the same palette and type scale the components use, because both resolve
- * against the custom properties in `@powered-by-zocdoc/primitives/theme/all.css`.
+ * against the custom properties in `@zocdoc/api-primitive-components/theme/all.css`.
  */
 
 body {

@@ -1,4 +1,4 @@
-import { CharmElement, ZdAlert } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdAlert } from '@zocdoc/api-primitive-components';
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { AppointmentStatus } from '../../client/types.js';

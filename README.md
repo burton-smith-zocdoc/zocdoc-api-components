@@ -1,8 +1,8 @@
-# Powered by Zocdoc
+# Zocdoc API Components
 
 Embed Zocdoc booking flows directly into your website with a single HTML tag.
 
-**[Live Demo](https://burton-smith-zocdoc.github.io/powered-by-zocdoc/)**
+**[Live Demo](https://burton-smith-zocdoc.github.io/zocdoc-api-components/)**
 
 ## Why Use This?
 
@@ -22,7 +22,7 @@ These web components let you embed the full booking experience—search, availab
 
 ```html
 <script type="module">
-  import { configure } from '@powered-by-zocdoc/api-components';
+  import { configure } from '@zocdoc/api-components';
   
   configure({
     getToken: () => fetchTokenFromYourServer(),
@@ -53,8 +53,8 @@ Use `<zd-booking>` for a drop-in solution, or compose the individual components 
 
 | Package | Description |
 |---------|-------------|
-| `@powered-by-zocdoc/primitives` | UI primitives (buttons, inputs, cards) with Zocdoc theming |
-| `@powered-by-zocdoc/api-components` | Booking components that call the Zocdoc API |
+| `@zocdoc/api-primitive-components` | UI primitives (buttons, inputs, cards) with Zocdoc theming |
+| `@zocdoc/api-components` | Booking components that call the Zocdoc API |
 
 ## Status
 

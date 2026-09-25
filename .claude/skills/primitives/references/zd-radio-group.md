@@ -2,7 +2,7 @@
 
 Groups radio buttons for single-selection choices.
 
-**Class** `ZdRadioGroup` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdRadioGroup` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-radio-group></zd-radio-group>

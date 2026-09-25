@@ -1,11 +1,11 @@
 ---
 title: Architecture
-description: Understand how Powered by Zocdoc components communicate
+description: Understand how Zocdoc API Components communicate
 ---
 
 ## Props Down, Events Up
 
-All Powered by Zocdoc components follow a strict unidirectional data flow:
+All Zocdoc API Components follow a strict unidirectional data flow:
 
 - **Properties flow down** — Parent components pass data to children via attributes and properties
 - **Events flow up** — Children emit custom events to notify parents of user actions or state changes
@@ -56,7 +56,7 @@ This enables:
 Each component exports TypeScript types for its events:
 
 ```typescript
-import type { ZdProviderSearchEvents, DetailOf } from '@powered-by-zocdoc/api-components';
+import type { ZdProviderSearchEvents, DetailOf } from '@zocdoc/api-components';
 
 element.addEventListener('provider-results', (event: DetailOf<ZdProviderSearchEvents['provider-results']>) => {
   const { providers, totalCount } = event.detail;

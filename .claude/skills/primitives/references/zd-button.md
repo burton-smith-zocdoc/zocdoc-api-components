@@ -2,7 +2,7 @@
 
 An interactive button, with a variant per visual treatment and two densities.
 
-**Class** `ZdButton` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdButton` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-button></zd-button>

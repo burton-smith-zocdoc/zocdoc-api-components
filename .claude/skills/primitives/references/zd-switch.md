@@ -2,7 +2,7 @@
 
 A labelled on/off toggle for a single setting.
 
-**Class** `ZdSwitch` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdSwitch` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-switch></zd-switch>

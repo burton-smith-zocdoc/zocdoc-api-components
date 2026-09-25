@@ -2,7 +2,7 @@
 
 A single link in a breadcrumb trail.
 
-**Class** `ZdBreadcrumbItem` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdBreadcrumbItem` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-breadcrumb-item></zd-breadcrumb-item>

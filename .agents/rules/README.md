@@ -1,6 +1,6 @@
-# Powered by Zocdoc — Agent Rules
+# Zocdoc API Components — Agent Rules
 
-Authoring standards for the Powered by Zocdoc web-component library. Built on Charm UX and the Zocdoc public API.
+Authoring standards for the Zocdoc API Components web-component library. Built on Charm UX and the Zocdoc public API.
 
 Each rule is a single Markdown file so it can be referenced by ID in reviews and loaded selectively by agents.
 

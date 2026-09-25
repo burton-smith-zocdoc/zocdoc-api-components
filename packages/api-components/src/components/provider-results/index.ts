@@ -1,4 +1,4 @@
-import { project } from '@powered-by-zocdoc/primitives';
+import { project } from '@zocdoc/api-primitive-components';
 import { ZdProviderResults } from './provider-results.js';
 
 project.scope.registerComponent(ZdProviderResults);

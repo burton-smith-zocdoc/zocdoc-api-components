@@ -1,4 +1,4 @@
-# `@powered-by-zocdoc/api-components` — Component Index
+# `@zocdoc/api-components` — Component Index
 
 Generated from the Custom Elements Manifest. Do not edit by hand.
 

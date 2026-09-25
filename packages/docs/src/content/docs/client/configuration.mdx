@@ -8,7 +8,7 @@ description: Configure the Zocdoc API client
 Call `configureZocdoc` once before rendering any components:
 
 ```javascript
-import { configureZocdoc } from '@powered-by-zocdoc/api-components';
+import { configureZocdoc } from '@zocdoc/api-components';
 
 configureZocdoc({
   baseUrl: 'https://api.zocdoc.com',
@@ -53,7 +53,7 @@ getToken: async () => {
 }
 ```
 
-See [Authentication](/powered-by-zocdoc/getting-started/authentication/) for patterns including token refresh.
+See [Authentication](/zocdoc-api-components/getting-started/authentication/) for patterns including token refresh.
 
 ## Singleton Behavior
 
@@ -72,12 +72,12 @@ configureZocdoc({ baseUrl: 'https://sandbox.zocdoc.com', getToken: () => token2 
 For testing, use `configureZocdocMock` instead:
 
 ```javascript
-import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+import { configureZocdocMock } from '@zocdoc/api-components/mock';
 
 configureZocdocMock();
 ```
 
-This configures the client to return fixture data without making network requests. See [Testing](/powered-by-zocdoc/guides/testing/) for details.
+This configures the client to return fixture data without making network requests. See [Testing](/zocdoc-api-components/guides/testing/) for details.
 
 ## Timing
 
@@ -85,7 +85,7 @@ Configure the client before any component renders. A common pattern:
 
 ```javascript
 // config.js
-import { configureZocdoc } from '@powered-by-zocdoc/api-components';
+import { configureZocdoc } from '@zocdoc/api-components';
 
 export function initZocdoc() {
   configureZocdoc({
@@ -98,7 +98,7 @@ export function initZocdoc() {
 ```javascript
 // main.js
 import { initZocdoc } from './config.js';
-import '@powered-by-zocdoc/api-components';
+import '@zocdoc/api-components';
 
 initZocdoc();
 // Now safe to render components

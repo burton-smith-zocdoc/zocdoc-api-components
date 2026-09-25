@@ -18,7 +18,7 @@ stays rendered in the empty and error states for exactly that reason, and settin
 Emits the chosen slot rather than booking it, so it composes with `zd-patient-form` or
 with a host page that owns its own booking step (COMP-002).
 
-**Class** `ZdAvailabilityPicker` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdAvailabilityPicker` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-availability-picker></zd-availability-picker>

@@ -8,7 +8,7 @@ attribute (how many options to show at once), so the name is taken. Consumers
 that need the compact treatment can set `--zd-form-control-input-height` and
 `--zd-form-control-padding-y` directly.
 
-**Class** `ZdSelect` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdSelect` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-select></zd-select>

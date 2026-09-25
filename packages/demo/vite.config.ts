@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: process.env.CI ? '/powered-by-zocdoc/' : '/',
+  base: process.env.CI ? '/zocdoc-api-components/' : '/',
   resolve: {
     alias: {
       '/zocdoc.js': resolve(import.meta.dirname, '../api-components/dist/bundle/zocdoc.js'),

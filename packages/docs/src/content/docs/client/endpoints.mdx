@@ -12,7 +12,7 @@ The client layer exposes typed functions for each API endpoint. Use these when b
 Search for providers by location, specialty, and insurance:
 
 ```typescript
-import { searchProviderLocations } from '@powered-by-zocdoc/api-components';
+import { searchProviderLocations } from '@zocdoc/api-components';
 
 const results = await searchProviderLocations({
   zipCode: '10001',
@@ -43,7 +43,7 @@ const results = await searchProviderLocations({
 Fetch available time slots for a provider:
 
 ```typescript
-import { getAvailability } from '@powered-by-zocdoc/api-components';
+import { getAvailability } from '@zocdoc/api-components';
 
 const timeslots = await getAvailability({
   providerLocationId: 'pl_001',
@@ -71,7 +71,7 @@ const timeslots = await getAvailability({
 Book an appointment:
 
 ```typescript
-import { createAppointment } from '@powered-by-zocdoc/api-components';
+import { createAppointment } from '@zocdoc/api-components';
 
 const appointment = await createAppointment({
   providerLocationId: 'pl_001',
@@ -113,7 +113,7 @@ const appointment = await createAppointment({
 Fetch available specialties:
 
 ```typescript
-import { getSpecialties } from '@powered-by-zocdoc/api-components';
+import { getSpecialties } from '@zocdoc/api-components';
 
 const specialties = await getSpecialties();
 // [{ id: 'sp_001', name: 'Internal Medicine' }, ...]
@@ -124,7 +124,7 @@ const specialties = await getSpecialties();
 Fetch insurance plans, optionally filtered:
 
 ```typescript
-import { getInsurancePlans } from '@powered-by-zocdoc/api-components';
+import { getInsurancePlans } from '@zocdoc/api-components';
 
 const plans = await getInsurancePlans({ carrierName: 'Blue Cross' });
 // [{ id: 'ip_001', name: 'Blue Cross PPO', carrier: 'Blue Cross' }, ...]
@@ -135,7 +135,7 @@ const plans = await getInsurancePlans({ carrierName: 'Blue Cross' });
 Fetch visit reasons for a specialty:
 
 ```typescript
-import { getVisitReasons } from '@powered-by-zocdoc/api-components';
+import { getVisitReasons } from '@zocdoc/api-components';
 
 const reasons = await getVisitReasons({ specialtyId: 'sp_internal_medicine' });
 // [{ id: 'vr_001', name: 'New Patient Visit' }, ...]

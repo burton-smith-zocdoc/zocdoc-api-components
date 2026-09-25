@@ -7,7 +7,7 @@ Uses `formatRange` for the date display, which handles locale-specific formattin
 "Aug 5 – 18" vs "Aug 5 – Aug 18" (I18N-002, I18N-004). Each control uses a ghost icon-only
 button with a visually hidden label for accessibility (I18N-001).
 
-**Class** `ZdAvailabilityWindow` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdAvailabilityWindow` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-availability-window></zd-availability-window>

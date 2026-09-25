@@ -15,7 +15,7 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
-    "@powered-by-zocdoc/api-components": "workspace:*",
-    "@powered-by-zocdoc/primitives": "workspace:*"
+    "@zocdoc/api-components": "workspace:*",
+    "@zocdoc/api-primitive-components": "workspace:*"
   }
 }

@@ -2,7 +2,7 @@
 
 A placeholder shown while content is loading.
 
-**Class** `ZdSkeleton` — **Package** `@powered-by-zocdoc/primitives`
+**Class** `ZdSkeleton` — **Package** `@zocdoc/api-primitive-components`
 
 ```html
 <zd-skeleton></zd-skeleton>

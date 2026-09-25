@@ -13,7 +13,7 @@ the data, and a host page resuming a half-finished booking only has to set the p
 already has. The cost is that going back has to clear what it goes back past — which is
 correct anyway, since a different provider invalidates the slot picked from the old one.
 
-**Class** `ZdBooking` — **Package** `@powered-by-zocdoc/api-components`
+**Class** `ZdBooking` — **Package** `@zocdoc/api-components`
 
 ```html
 <zd-booking></zd-booking>
