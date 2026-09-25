@@ -1,4 +1,4 @@
-import { generateThemeSync } from '@charm-ux/theming';
+import { generateThemeSync } from '@charm-ux/theming/generator';
 import { zocdocTokensBase } from './zocdoc.js';
 
 /**

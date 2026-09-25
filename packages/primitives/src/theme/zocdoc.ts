@@ -1,4 +1,5 @@
-import { charmTokens, cssVarName, generateThemeSync } from '@charm-ux/theming';
+import { charmTokens, cssVarName } from '@charm-ux/theming';
+import { generateThemeSync } from '@charm-ux/theming/generator';
 import { tokenPrefix } from './prefix.js';
 
 /**

@@ -1,4 +1,5 @@
-import { cssVarName, generateThemeSync } from '@charm-ux/theming';
+import { cssVarName } from '@charm-ux/theming';
+import { generateThemeSync } from '@charm-ux/theming/generator';
 import { zocdocTokensBase } from './zocdoc.js';
 import { tokenPrefix } from './prefix.js';
 

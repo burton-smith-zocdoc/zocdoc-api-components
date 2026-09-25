@@ -12,7 +12,7 @@
 import { writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { generateThemeSync } from '@charm-ux/theming';
+import { generateThemeSync } from '@charm-ux/theming/generator';
 import { zocdocTokenDefinition } from '../src/theme/zocdoc-tokens.js';
 import { schweigerTokenDefinition } from '../src/theme/schweiger-tokens.js';
 import { priviaTokenDefinition } from '../src/theme/privia-tokens.js';
