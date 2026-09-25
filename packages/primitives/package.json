@@ -1,5 +1,5 @@
 {
-  "name": "@powered-by-zocdoc/primitives",
+  "name": "@zocdoc/api-primitive-components",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "./theme/all.css": "./dist/theme/all.css"
   },
   "scripts": {
-    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @powered-by-zocdoc/primitives --out ../../.claude/skills/primitives/references"
+    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @zocdoc/api-primitive-components --out ../../.claude/skills/primitives/references"
   },
   "dependencies": {
     "@charm-ux/core": "link:../../../charm-ux/core/packages/core",

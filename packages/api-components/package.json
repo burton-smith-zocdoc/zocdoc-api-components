@@ -1,5 +1,5 @@
 {
-  "name": "@powered-by-zocdoc/api-components",
+  "name": "@zocdoc/api-components",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -20,11 +20,11 @@
     }
   },
   "scripts": {
-    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @powered-by-zocdoc/api-components --out ../../.claude/skills/api-components/references",
+    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @zocdoc/api-components --out ../../.claude/skills/api-components/references",
     "build:bundle": "vite build"
   },
   "dependencies": {
-    "@powered-by-zocdoc/primitives": "workspace:*",
+    "@zocdoc/api-primitive-components": "workspace:*",
     "lit": "^3.2.1"
   },
   "devDependencies": {
