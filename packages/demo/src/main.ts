@@ -10,11 +10,11 @@
  * The package import defines the tags — importing it also runs `configure.ts` first, which sets
  * the `zd` prefix before any component class is evaluated (PBZD-001).
  */
-import '@powered-by-zocdoc/primitives/theme/reset.css';
-import '@powered-by-zocdoc/primitives/theme/utilities.css';
+import '@zocdoc/api-primitive-components/theme/reset.css';
+import '@zocdoc/api-primitive-components/theme/utilities.css';
 import './demo.css';
 import { renderThemeSwitcher } from './theme.js';
-import '@powered-by-zocdoc/api-components';
+import '@zocdoc/api-components';
 import { renderAppearanceToggle } from './appearance.js';
 import { renderAssistantPanel } from './chat.js';
 import { configureDemo, renderModeBanner } from './config.js';

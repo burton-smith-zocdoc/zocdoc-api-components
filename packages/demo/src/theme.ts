@@ -4,7 +4,7 @@
  * Partner themes override only the token layer — reset and utilities stay shared. This module
  * swaps the tokens stylesheet dynamically so the page can demonstrate each theme without a reload.
  */
-import type { ZdMenu } from '@powered-by-zocdoc/primitives';
+import type { ZdMenu } from '@zocdoc/api-primitive-components';
 
 const STORAGE_KEY = 'zd-demo-theme';
 
@@ -36,8 +36,8 @@ function storeTheme(theme: Theme): void {
 
 function tokensHref(theme: Theme): string {
   return theme === 'zocdoc'
-    ? '/node_modules/@powered-by-zocdoc/primitives/dist/theme/tokens.css'
-    : `/node_modules/@powered-by-zocdoc/primitives/dist/theme/${theme}-tokens.css`;
+    ? '/node_modules/@zocdoc/api-primitive-components/dist/theme/tokens.css'
+    : `/node_modules/@zocdoc/api-primitive-components/dist/theme/${theme}-tokens.css`;
 }
 
 /**

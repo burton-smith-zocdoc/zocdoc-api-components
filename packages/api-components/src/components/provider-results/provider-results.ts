@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton, ZdCard, ZdDialog } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdCard, ZdDialog } from '@zocdoc/api-primitive-components';
 import { nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { DEFAULT_PAGE_SIZE } from '../../client/provider-locations.js';

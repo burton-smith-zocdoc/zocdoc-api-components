@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton, ZdIcon } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdIcon } from '@zocdoc/api-primitive-components';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import {

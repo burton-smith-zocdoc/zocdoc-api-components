@@ -4,7 +4,7 @@ import {
   ZdInput,
   ZdSelect,
   ZdTextArea,
-} from '@powered-by-zocdoc/primitives';
+} from '@zocdoc/api-primitive-components';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import type { Patient, SexAtBirth } from '../../client/types.js';

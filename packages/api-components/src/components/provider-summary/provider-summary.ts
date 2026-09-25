@@ -1,4 +1,4 @@
-import { CharmElement, ZdAvatar, ZdIcon } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdAvatar, ZdIcon } from '@zocdoc/api-primitive-components';
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { ProviderLocation } from '../../client/types.js';

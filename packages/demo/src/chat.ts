@@ -19,9 +19,9 @@ import {
   type ProviderLocation,
   type ZdBooking,
   type ZdProviderSummary,
-} from '@powered-by-zocdoc/api-components';
-import { SCENARIOS } from '@powered-by-zocdoc/api-components/mock';
-import type { ZdDialog } from '@powered-by-zocdoc/primitives';
+} from '@zocdoc/api-components';
+import { SCENARIOS } from '@zocdoc/api-components/mock';
+import type { ZdDialog } from '@zocdoc/api-primitive-components';
 
 /**
  * Where the assistant "looked". The documented sentinel that returns results (PHI-002), so this

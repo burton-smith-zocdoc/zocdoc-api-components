@@ -20,8 +20,8 @@ const stubGeneratorPlugin: Plugin = {
       console.log(`Stubbing root theming: from ${importer}`);
       return { id: resolve(__dirname, 'src/stubs/theming-stub.js'), moduleSideEffects: false };
     }
-    // Redirect @powered-by-zocdoc/primitives to configure-only (avoids theme exports)
-    if (source === '@powered-by-zocdoc/primitives') {
+    // Redirect @zocdoc/api-primitive-components to configure-only (avoids theme exports)
+    if (source === '@zocdoc/api-primitive-components') {
       console.log(`Redirecting primitives: from ${importer}`);
       return resolve(__dirname, '../primitives/dist/configure-only.js');
     }

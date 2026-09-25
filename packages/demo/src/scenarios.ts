@@ -5,7 +5,7 @@
  * list cannot drift from what the mock actually matches on. They are the documented sandbox
  * sentinels (PHI-002), which is why they work in live mode too — this panel is not mock-only.
  */
-import { SCENARIOS } from '@powered-by-zocdoc/api-components/mock';
+import { SCENARIOS } from '@zocdoc/api-components/mock';
 
 const ZIP_SCENARIOS: readonly { zip: string; outcome: string }[] = [
   { zip: SCENARIOS.zipWithResults, outcome: 'Providers, with booking requirements' },

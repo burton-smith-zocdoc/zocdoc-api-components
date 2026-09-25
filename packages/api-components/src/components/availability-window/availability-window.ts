@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton, ZdIcon } from '@powered-by-zocdoc/primitives';
+import { CharmElement, ZdButton, ZdIcon } from '@zocdoc/api-primitive-components';
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { TypedEmit, TypedEventTarget } from '../events.js';

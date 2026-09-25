@@ -12,8 +12,8 @@
  * being present — so that having a credential in `.env.local` for some other purpose is not by
  * itself enough to start sending real requests.
  */
-import { configureZocdoc } from '@powered-by-zocdoc/api-components';
-import { configureZocdocMock } from '@powered-by-zocdoc/api-components/mock';
+import { configureZocdoc } from '@zocdoc/api-components';
+import { configureZocdocMock } from '@zocdoc/api-components/mock';
 
 /** The default live target. Overridable with `VITE_ZOCDOC_BASE_URL`. */
 const SANDBOX_BASE_URL = 'https://api-developer-sandbox.zocdoc.com';

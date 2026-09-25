@@ -2,7 +2,7 @@ import type {
   ProviderLocation,
   Timeslot,
   Appointment,
-} from '@powered-by-zocdoc/api-components';
+} from '@zocdoc/api-components';
 
 export const sampleProvider: ProviderLocation = {
   id: 'pl_sandbox_001',

@@ -1,4 +1,4 @@
-import { project } from '@powered-by-zocdoc/primitives';
+import { project } from '@zocdoc/api-primitive-components';
 import { ZdBooking } from './booking.js';
 
 project.scope.registerComponent(ZdBooking);
