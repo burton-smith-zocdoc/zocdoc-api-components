@@ -12,11 +12,22 @@ The `<zd-availability-window>` component provides previous/next navigation for a
 
 ## Usage
 
-```html
-<zd-availability-window
-  start-date="2026-09-01"
-  end-date="2026-09-07"
-></zd-availability-window>
+```html preview
+<zd-availability-window id="date-window" can-go-earlier></zd-availability-window>
+<script>
+  const dateWindow = document.getElementById('date-window');
+  const startDate = new Date();
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + 6);
+  const toDateKey = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  dateWindow.setAttribute('start-date', toDateKey(startDate));
+  dateWindow.setAttribute('end-date', toDateKey(endDate));
+</script>
 ```
 
 ## Attributes
@@ -25,13 +36,13 @@ The `<zd-availability-window>` component provides previous/next navigation for a
 |-----------|------|---------|-------------|
 | `start-date` | `string` | — | Start of current range |
 | `end-date` | `string` | — | End of current range |
-| `can-go-earlier` | `boolean` | `false` | Enable previous button |
+| `can-go-earlier` | `boolean` | `true` | Enable the earlier-dates button; automatically disabled at today by the parent |
 
 ## Events
 
 | Event | Detail | Description |
 |-------|--------|-------------|
-| `window-shift` | `{ direction: 'earlier' \| 'later' }` | Navigation clicked |
+| `window-shift` | `{ direction: -1 \| 1 }` | Navigation clicked; `-1` moves earlier and `1` later |
 
 ## Accessibility
 

@@ -12,11 +12,29 @@ The `<zd-provider-summary>` component shows a compact view of provider informati
 
 ## Usage
 
-```html
-<zd-provider-summary
-  .provider=${provider}
-  show-photo
-></zd-provider-summary>
+```html preview
+<zd-provider-summary id="provider-summary"></zd-provider-summary>
+<script>
+  document.getElementById('provider-summary').provider = {
+    provider_location_id: 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890',
+    provider_location_type: 'in_person_provider',
+    accepts_patient_insurance: 'accepted',
+    provider: {
+      provider_id: 'pr_abc123-def456_wxyz7890',
+      first_name: 'Avery',
+      last_name: 'Sandoval',
+      title: 'MD',
+      specialties: ['Primary Care Doctor'],
+    },
+    location: {
+      address1: '1 Sandbox Plaza',
+      city: 'Brooklyn',
+      state: 'NY',
+      zip_code: '11201',
+      distance_to_patient_mi: 0.8,
+    },
+  };
+</script>
 ```
 
 ## Attributes

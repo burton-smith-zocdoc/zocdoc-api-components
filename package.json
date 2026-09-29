@@ -19,7 +19,8 @@
     "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .claude/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
     "storybook": "pnpm run build:types && pnpm run cem && storybook dev -p 6006",
     "storybook:build": "pnpm run build:types && pnpm run cem && storybook build",
-    "demo": "pnpm --filter demo dev"
+    "demo": "pnpm --filter demo dev",
+    "dev:docs": "pnpm --filter docs dev"
   },
   "devDependencies": {
     "@charm-ux/theming": "link:../charm-ux/core/packages/theming",

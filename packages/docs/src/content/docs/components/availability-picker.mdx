@@ -12,10 +12,10 @@ The `<zd-availability-picker>` component lets patients select a specific appoint
 
 ## Usage
 
-```html
+```html preview
 <zd-availability-picker
-  provider-location-id="pl_001"
-  visit-reason-id="vr_new_patient"
+  provider-location-id="pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890"
+  visit-reason-id="pc_FRO-18leckytNKtruw5dLR"
 ></zd-availability-picker>
 ```
 
@@ -25,10 +25,10 @@ The `<zd-availability-picker>` component lets patients select a specific appoint
 
 Horizontal day tabs with times below:
 
-```html
+```html preview
 <zd-availability-picker
-  provider-location-id="pl_001"
-  visit-reason-id="vr_new_patient"
+  provider-location-id="pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890"
+  visit-reason-id="pc_FRO-18leckytNKtruw5dLR"
   layout="strip"
 ></zd-availability-picker>
 ```
@@ -37,10 +37,10 @@ Horizontal day tabs with times below:
 
 All days shown vertically:
 
-```html
+```html preview
 <zd-availability-picker
-  provider-location-id="pl_001"
-  visit-reason-id="vr_new_patient"
+  provider-location-id="pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890"
+  visit-reason-id="pc_FRO-18leckytNKtruw5dLR"
   layout="stacked"
 ></zd-availability-picker>
 ```
@@ -52,15 +52,18 @@ All days shown vertically:
 | `provider-location-id` | `string` | — | Provider to show availability for |
 | `visit-reason-id` | `string` | — | Visit reason filter |
 | `layout` | `'strip' \| 'stacked'` | `'strip'` | Layout mode |
-| `timeslots` | `Timeslot[]` | — | Pre-fetched slots (optional) |
+| `hide-patient-type` | `boolean` | `false` | Hide the New/Existing patient control |
+| `start-date` | `string` | today | First day to request, as `YYYY-MM-DD` |
+| `days` | `number` | `7` | Number of days to request (max 30) |
+| `selected-start-time` | `string` | — | Pre-select a slot by its start time |
 
 ## Events
 
 | Event | Detail | Description |
 |-------|--------|-------------|
-| `slot-select` | `{ startTime, providerLocationId, visitReasonId }` | Slot clicked |
-| `patient-type-change` | `{ patientType: 'new' \| 'returning' }` | Patient type toggled |
-| `availability-error` | `{ error, message }` | Fetch failed |
+| `slot-select` | `{ startTime, providerLocationId }` | Slot clicked |
+| `patient-type-change` | `{ patientType: 'new' \| 'existing' }` | Patient type toggled |
+| `availability-error` | `{ error }` | Fetch failed |
 
 ## Accessibility
 

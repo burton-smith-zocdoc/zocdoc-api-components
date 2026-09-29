@@ -1,0 +1,24 @@
+
+export default new Map([
+["src/content/docs/client/configuration.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fclient%2Fconfiguration.mdx&astroContentModuleFlag=true")],
+["src/content/docs/client/endpoints.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fclient%2Fendpoints.mdx&astroContentModuleFlag=true")],
+["src/content/docs/client/errors.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fclient%2Ferrors.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/availability-grid.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Favailability-grid.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/availability-picker.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Favailability-picker.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/availability-window.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Favailability-window.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/booking-confirmation.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fbooking-confirmation.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/booking.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fbooking.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/patient-form.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fpatient-form.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/provider-card.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fprovider-card.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/provider-profile.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fprovider-profile.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/provider-results.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fprovider-results.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/provider-search.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fprovider-search.mdx&astroContentModuleFlag=true")],
+["src/content/docs/components/provider-summary.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fcomponents%2Fprovider-summary.mdx&astroContentModuleFlag=true")],
+["src/content/docs/getting-started/authentication.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fgetting-started%2Fauthentication.mdx&astroContentModuleFlag=true")],
+["src/content/docs/getting-started/installation.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fgetting-started%2Finstallation.mdx&astroContentModuleFlag=true")],
+["src/content/docs/getting-started/quick-start.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fgetting-started%2Fquick-start.mdx&astroContentModuleFlag=true")],
+["src/content/docs/guides/architecture.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fguides%2Farchitecture.mdx&astroContentModuleFlag=true")],
+["src/content/docs/guides/composed-vs-single.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fguides%2Fcomposed-vs-single.mdx&astroContentModuleFlag=true")],
+["src/content/docs/guides/testing.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fguides%2Ftesting.mdx&astroContentModuleFlag=true")],
+["src/content/docs/index.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Findex.mdx&astroContentModuleFlag=true")]]);
+		

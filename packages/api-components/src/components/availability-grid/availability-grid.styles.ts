@@ -20,6 +20,19 @@ export default css`
     white-space: nowrap;
   }
 
+  [part~='loading'] {
+    display: none;
+  }
+
+  [part~='loading-message'] {
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
   /*
    * Seven columns, so the same weekday sits under itself on the second row and a patient can
    * read down the column for "Tuesdays". That alignment is the reason for a fixed count
@@ -96,6 +109,13 @@ export default css`
       outline: 2px solid currentcolor;
       outline-offset: -2px;
     }
+  }
+
+  .day-skeleton {
+    --zd-skeleton-border-radius: 0.25rem;
+    --zd-skeleton-min-height: 5.5rem;
+    --zd-skeleton-width: 100%;
+    display: block;
   }
 
   .more {

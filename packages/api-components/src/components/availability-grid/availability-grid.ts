@@ -1,4 +1,4 @@
-import { CharmElement } from '@zocdoc/api-primitive-components';
+import { CharmElement, ZdSkeleton } from '@zocdoc/api-primitive-components';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { AvailabilitySlot, PatientType } from '../../client/types.js';
@@ -8,7 +8,10 @@ import type {
   TypedEmit,
   TypedEventTarget,
 } from '../events.js';
-import { ZdAvailabilityWindow, type WindowShiftDetail } from '../availability-window/availability-window.js';
+import {
+  ZdAvailabilityWindow,
+  type WindowShiftDetail,
+} from '../availability-window/availability-window.js';
 import {
   getLocationSlots,
   nextWindowStart,
@@ -111,6 +114,7 @@ export interface ZdAvailabilityGridEventMap {
  * @csspart day-weekday - The weekday line of a cell.
  * @csspart day-date - The month and day line of a cell.
  * @csspart day-count - The appointment count line of a cell.
+ * @csspart day-skeleton - A day placeholder while self-fetching availability.
  * @csspart more - The "More" control, when `show-more` is set.
  */
 export class ZdAvailabilityGrid extends CharmElement {
@@ -128,7 +132,7 @@ export class ZdAvailabilityGrid extends CharmElement {
    * with variants.
    */
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [...requestStateDependencies, ZdAvailabilityWindow];
+    return [...requestStateDependencies, ZdAvailabilityWindow, ZdSkeleton];
   }
 
   /**
@@ -166,6 +170,15 @@ export class ZdAvailabilityGrid extends CharmElement {
    */
   @property({ attribute: false })
   public timeslots?: readonly AvailabilitySlot[];
+
+  /**
+   * Whether the host is loading availability it supplied through `timeslots`.
+   *
+   * Set this while replacing supplied slots to keep stale counts out of view and announce loading.
+   * It does not start a request.
+   */
+  @property({ type: Boolean })
+  public loading = false;
 
   /**
    * The first day on show, as `YYYY-MM-DD`. Defaults to today, and moves when the range does.
@@ -462,17 +475,38 @@ export class ZdAvailabilityGrid extends CharmElement {
     `;
   }
 
+  /** Renders one non-interactive placeholder for each day while the next window is fetched. */
+  protected renderDaySkeletons(): unknown {
+    return this.html`
+      <div class="days" part="days" aria-hidden="true">
+        ${Array.from(
+          { length: windowSpan(this.days) },
+          () => this.html`
+            <scoped-skeleton
+              class="day-skeleton"
+              part="day-skeleton"
+              animation="wave"
+            ></scoped-skeleton>
+          `
+        )}
+      </div>
+    `;
+  }
+
   /**
    * The days render for every state but `loading` and `error`, which is what keeps the pager
    * reachable when a range comes back empty — the message says there is nothing here, and the
-   * control that goes somewhere else is still there to press. A failed request is the exception:
-   * counts that are all zero because the call failed would be a lie the retry button contradicts.
+   * control that goes somewhere else is still there to press. During loading, skeletons hold the
+   * days' place while the pager remains visible. A failed request hides both: zero counts would
+   * be a lie the retry button contradicts, and retry is the action for that state.
    */
   protected override render(): unknown {
-    const showDays = this.requestState !== 'loading' && this.requestState !== 'error';
+    const requestState = this.loading ? 'loading' : this.requestState;
+    const showDays = requestState !== 'loading' && requestState !== 'error';
+    const showWindow = requestState !== 'error';
 
     return this.html`
-      ${renderRequestState(this.requestState, {
+      ${renderRequestState(requestState, {
         emptyMessage: 'No appointments available in these dates.',
         errorMessage: this.errorMessage,
         loadingMessage: 'Loading availability…',
@@ -481,7 +515,14 @@ export class ZdAvailabilityGrid extends CharmElement {
         // they have to survive `empty` and `idle` too.
         children: () => nothing,
       })}
-      ${showDays ? this.html`${this.renderWindow()}${this.renderDays()}` : nothing}
+      ${showWindow ? this.renderWindow() : nothing}
+      ${
+        requestState === 'loading'
+          ? this.renderDaySkeletons()
+          : showDays
+            ? this.renderDays()
+            : nothing
+      }
     `;
   }
 }

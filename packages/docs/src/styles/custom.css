@@ -3,3 +3,11 @@
   --sl-color-accent: hsl(212, 92%, 45%);
   --sl-color-accent-high: hsl(212, 70%, 90%);
 }
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}

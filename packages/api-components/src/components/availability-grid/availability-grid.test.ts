@@ -46,6 +46,7 @@ type Grid = HTMLElement & {
   startDate?: string;
   selectedDay?: string;
   days: number;
+  loading: boolean;
   showMore: boolean;
   load(): Promise<void>;
   shiftWindow(direction: -1 | 1): void;
@@ -63,7 +64,9 @@ function windowControl(element: Grid): HTMLElement | null {
 function windowButton(element: Grid, direction: 'previous' | 'next'): HTMLButtonElement {
   const windowEl = windowControl(element);
   if (!windowEl) throw new Error('availability-grid rendered no window control');
-  const btn = windowEl.shadowRoot?.querySelector<HTMLButtonElement>(`[part~="window-${direction}"]`);
+  const btn = windowEl.shadowRoot?.querySelector<HTMLButtonElement>(
+    `[part~="window-${direction}"]`
+  );
   if (!btn) throw new Error(`window control rendered no [part~="window-${direction}"]`);
   return btn;
 }
@@ -375,6 +378,21 @@ describe('zd-availability-grid', () => {
   });
 
   describe('supplied slots', () => {
+    it('shows placeholders while a parent marks supplied slots as loading', async () => {
+      const element = await mountSupplied('loading days="7"');
+
+      expect(element.loading).toBe(true);
+      expect(dayCells(element)).toHaveLength(0);
+      expect(parts(element, 'day-skeleton')).toHaveLength(7);
+      expect(texts(element, 'loading-message')).toEqual(['Loading availability…']);
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+
+      element.removeAttribute('loading');
+      await settled(element);
+
+      expect(dayCells(element)).toHaveLength(7);
+    });
+
     it('fetches nothing when a parent hands it slots', async () => {
       await mountSupplied();
 
@@ -481,6 +499,32 @@ describe('zd-availability-grid', () => {
       await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalledTimes(2));
       const [params] = vi.mocked(availability.getAvailability).mock.calls.at(-1)!;
       expect(params.startDate).toBe(dayFromToday(14));
+    });
+
+    it('shows date skeletons and keeps the pager visible while fetching a new window', async () => {
+      const element = await mountFetching('days="7"');
+      await vi.waitFor(() => expect(dayCells(element)).toHaveLength(7));
+      vi.mocked(availability.getAvailability).mockReturnValueOnce(new Promise(() => {}));
+
+      windowButton(element, 'next').click();
+      await settled(element);
+
+      expect(windowControl(element)).not.toBeNull();
+      const skeletons = parts(element, 'day-skeleton');
+      expect(skeletons).toHaveLength(7);
+      expect(skeletons.every((skeleton) => skeleton.localName === 'zd-skeleton')).toBe(true);
+      expect(skeletons.every((skeleton) => skeleton.getAttribute('animation') === 'wave')).toBe(
+        true
+      );
+      expect(getComputedStyle(skeletons[0]!).getPropertyValue('--zd-skeleton-width').trim()).toBe(
+        '100%'
+      );
+      expect(
+        getComputedStyle(skeletons[0]!).getPropertyValue('--zd-skeleton-min-height').trim()
+      ).toBe('5.5rem');
+      expect(dayCells(element)).toHaveLength(0);
+      expect(getComputedStyle(part(element, 'loading')).display).toBe('none');
+      expect(texts(element, 'loading-message')).toEqual(['Loading availability…']);
     });
 
     it('refetches when the visit reason changes', async () => {

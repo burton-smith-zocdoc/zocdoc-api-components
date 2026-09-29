@@ -16,42 +16,70 @@ The `<zd-availability-grid>` component displays a day-by-day view of available a
 
 Provide IDs and the component fetches availability:
 
-```html
+```html preview
 <zd-availability-grid
-  provider-location-id="pl_001"
-  visit-reason-id="vr_new_patient"
-  availability-days="7"
+  provider-location-id="pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890"
+  visit-reason-id="pc_FRO-18leckytNKtruw5dLR"
+  days="7"
 ></zd-availability-grid>
 ```
+
+While a range loads, the pager stays visible and each date cell becomes a full-cell skeleton with a shimmer. The loading status is announced to assistive technology, and the animation adapts to reduced-motion preferences.
 
 ### Batched Data Mode
 
-Pass pre-fetched timeslots:
+When a parent has already fetched availability, assign its slots through the `timeslots` JavaScript property. This example builds dates relative to today so the slots remain inside the grid's visible week:
 
-```html
-<zd-availability-grid
-  .timeslots=${timeslots}
-></zd-availability-grid>
+```html preview
+<zd-availability-grid id="batched-grid" days="7"></zd-availability-grid>
+<script>
+  const dateFromToday = (offset) => {
+    const date = new Date();
+    date.setDate(date.getDate() + offset);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  document.getElementById('batched-grid').timeslots = [
+    { start_time: `${dateFromToday(0)}T09:00:00-04:00`, booking_url: null },
+    { start_time: `${dateFromToday(1)}T10:30:00-04:00`, booking_url: null },
+    { start_time: `${dateFromToday(1)}T14:00:00-04:00`, booking_url: null },
+  ];
+</script>
 ```
+
+`timeslots` is a JavaScript property, not an HTML attribute. An empty array means the parent supplied availability with no slots; leave it `undefined` when the grid should fetch for itself.
 
 ## Attributes
 
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `provider-location-id` | `string` | — | Provider to fetch availability for |
-| `visit-reason-id` | `string` | — | Visit reason for availability |
-| `timeslots` | `Timeslot[]` | — | Pre-fetched timeslots |
-| `start-date` | `string` | today | Start of date range |
-| `availability-days` | `number` | `7` | Days to show |
+| Attribute              | Type      | Default | Description                                           |
+| ---------------------- | --------- | ------- | ----------------------------------------------------- |
+| `provider-location-id` | `string`  | —       | Provider location to fetch for                        |
+| `visit-reason-id`      | `string`  | —       | Visit reason required for fetching                    |
+| `patient-type`         | `string`  | `new`   | Patient type for availability                         |
+| `loading`              | `boolean` | `false` | Show placeholders while the host loads supplied slots |
+| `start-date`           | `string`  | today   | First day in the visible range                        |
+| `days`                 | `number`  | `14`    | Number of days to show (max 30)                       |
+| `selected-day`         | `string`  | —       | Selected day as `YYYY-MM-DD`                          |
+| `show-more`            | `boolean` | `false` | Show the "More" control                               |
+| `hide-window`          | `boolean` | `false` | Hide the range header and its pager                   |
+
+### JavaScript Properties
+
+| Property    | Type                          | Description                                     |
+| ----------- | ----------------------------- | ----------------------------------------------- |
+| `timeslots` | `readonly AvailabilitySlot[]` | Pre-fetched slots; setting it disables fetching |
 
 ## Events
 
-| Event | Detail | Description |
-|-------|--------|-------------|
-| `day-select` | `{ date }` | Day clicked |
-| `window-change` | `{ startDate, endDate }` | Date range shifted |
-| `more-select` | `{ providerLocationId }` | "More times" clicked |
-| `availability-error` | `{ error, message }` | Fetch failed |
+| Event                | Detail                         | Description        |
+| -------------------- | ------------------------------ | ------------------ |
+| `day-select`         | `{ day, providerLocationId? }` | Day clicked        |
+| `window-change`      | `{ startDate, endDate }`       | Date range shifted |
+| `more-select`        | `{}`                           | "More" clicked     |
+| `availability-error` | `{ error }`                    | Fetch failed       |
 
 ## Accessibility
 
@@ -61,7 +89,4 @@ Pass pre-fetched timeslots:
 
 ## Styling
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-grid-day-size` | `48px` | Day cell dimensions |
-| `--zd-grid-gap` | `0.25rem` | Spacing between days |
+The grid uses a seven-column layout that adapts to its container. Day cells inherit the host text color and use the Zocdoc design tokens for available and unavailable states.

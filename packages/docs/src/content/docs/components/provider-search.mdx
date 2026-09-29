@@ -14,7 +14,8 @@ The `<zd-provider-search>` component collects search criteria and fetches matchi
 
 ```html preview
 <zd-provider-search
-  zip-code="10001"
+  zip-code="11201"
+  specialty-id="sp_153"
 ></zd-provider-search>
 ```
 
@@ -24,17 +25,17 @@ The `<zd-provider-search>` component collects search criteria and fetches matchi
 
 ```html preview
 <zd-provider-search
-  zip-code="10001"
-  insurance-name="Aetna"
+  zip-code="11201"
+  insurance-plan-id="ip_9111"
 ></zd-provider-search>
 ```
 
 ### With Specialty
 
-```html
+```html preview
 <zd-provider-search
-  zip-code="10001"
-  specialty-id="sp_dermatology"
+  zip-code="11201"
+  specialty-id="sp_153"
 ></zd-provider-search>
 ```
 
@@ -51,8 +52,8 @@ The `<zd-provider-search>` component collects search criteria and fetches matchi
 
 | Event | Detail | Description |
 |-------|--------|-------------|
-| `provider-results` | `{ providers, totalCount, page }` | Search returned results |
-| `provider-search-error` | `{ error, message }` | Search failed |
+| `provider-results` | `{ providers, totalCount, page, pageSize, searchParameters, zipCode, specialtyId?, insurancePlanId?, insurancePlanName?, visitType? }` | Search returned results and the criteria used |
+| `provider-search-error` | `{ error }` | Search failed |
 
 ## Accessibility
 

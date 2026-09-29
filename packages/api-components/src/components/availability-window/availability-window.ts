@@ -84,7 +84,7 @@ export class ZdAvailabilityWindow extends CharmElement {
           ?disabled=${!this.canGoEarlier}
           @click=${() => this.shift(-1)}
         >
-          <scoped-icon slot="start" name="chevron-left"></scoped-icon>
+          <scoped-icon name="chevron-left"></scoped-icon>
           <span class="window-label">Earlier dates</span>
         </scoped-button>
 
@@ -97,7 +97,7 @@ export class ZdAvailabilityWindow extends CharmElement {
           icon-only
           @click=${() => this.shift(1)}
         >
-          <scoped-icon slot="start" name="chevron-right"></scoped-icon>
+          <scoped-icon name="chevron-right"></scoped-icon>
           <span class="window-label">Later dates</span>
         </scoped-button>
       </div>

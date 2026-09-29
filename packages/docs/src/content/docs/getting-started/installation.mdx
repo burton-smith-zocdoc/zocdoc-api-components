@@ -29,14 +29,13 @@ Install the components package and its peer dependencies:
 
 ## Required CSS
 
-Import the theme reset and utilities before using any components:
+The component bundle does not include the Zocdoc theme stylesheet. Import it separately before using the components:
 
 ```javascript
-import '@zocdoc/api-primitive-components/theme/reset.css';
-import '@zocdoc/api-primitive-components/theme/utilities.css';
+import '@zocdoc/api-primitive-components/theme/all.css';
 ```
 
-These provide CSS custom properties that all components resolve against. Without them, components will render with missing styles.
+This stylesheet includes the design tokens, reset, and utility classes used by the components. If you need to preserve existing global styles, import `theme/tokens.css` and `theme/utilities.css` separately and apply the reset only where appropriate.
 
 ## Script Tag Alternative
 
@@ -46,7 +45,7 @@ For pages without a build step, use the IIFE bundle:
 <script src="https://unpkg.com/@zocdoc/api-components/bundle/iife"></script>
 ```
 
-This registers all components globally and includes the required CSS.
+This registers all components globally, but it does not include theme CSS. Load `@zocdoc/api-primitive-components/theme/all.css` separately as described above.
 
 ## TypeScript
 

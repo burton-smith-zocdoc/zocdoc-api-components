@@ -12,12 +12,29 @@ The `<zd-provider-card>` component displays a single provider with photo, name, 
 
 ## Usage
 
-```html
-<zd-provider-card
-  .provider=${provider}
-  show-photo
-  insurance-name="Blue Cross"
-></zd-provider-card>
+```html preview
+<zd-provider-card id="provider-card" insurance-name="Sandbox National PPO"></zd-provider-card>
+<script>
+  document.getElementById('provider-card').provider = {
+    provider_location_id: 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890',
+    provider_location_type: 'in_person_provider',
+    accepts_patient_insurance: 'accepted',
+    provider: {
+      provider_id: 'pr_abc123-def456_wxyz7890',
+      first_name: 'Avery',
+      last_name: 'Sandoval',
+      title: 'MD',
+      specialties: ['Primary Care Doctor'],
+    },
+    location: {
+      address1: '1 Sandbox Plaza',
+      city: 'Brooklyn',
+      state: 'NY',
+      zip_code: '11201',
+      distance_to_patient_mi: 0.8,
+    },
+  };
+</script>
 ```
 
 ## Attributes

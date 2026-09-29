@@ -42,13 +42,10 @@ export default defineConfig({
         },
         {
           label: 'Components',
-          autogenerate: { directory: 'components' },
+          items: [{ autogenerate: { directory: 'components' } }],
         },
       ],
-      customCss: [
-        './src/styles/custom.css',
-        './src/styles/preview.css',
-      ],
+      customCss: ['./src/styles/custom.css', './src/styles/preview.css'],
       components: {
         // Auto-import custom components for MDX
       },

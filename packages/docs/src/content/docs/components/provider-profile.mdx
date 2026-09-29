@@ -12,11 +12,38 @@ The `<zd-provider-profile>` component displays complete provider details includi
 
 ## Usage
 
-```html
-<zd-provider-profile
-  .provider=${provider}
-  show-photo
-></zd-provider-profile>
+```html preview
+<zd-provider-profile id="provider-profile"></zd-provider-profile>
+<script>
+  const providerProfile = document.getElementById('provider-profile');
+  providerProfile.provider = {
+    provider_location_id: 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890',
+    provider_location_type: 'in_person_provider',
+    provider: {
+      provider_id: 'pr_abc123-def456_wxyz7890',
+      first_name: 'Avery',
+      last_name: 'Sandoval',
+      title: 'MD',
+      specialties: ['Primary Care Doctor'],
+      statement: 'I have practised primary care in Brooklyn for twelve years.',
+      languages: ['English', 'Spanish'],
+      credentials: {
+        certifications: ['American Board of Family Medicine'],
+        education: { institutions: ['Sandbox University School of Medicine'] },
+      },
+    },
+    practice: { practice_id: 'pt_abc123-def456_wxyz7890', practice_name: 'Sandbox Health Partners' },
+    location: {
+      location_name: 'Sandbox Plaza Family Medicine',
+      address1: '1 Sandbox Plaza',
+      city: 'Brooklyn',
+      state: 'NY',
+      zip_code: '11201',
+      phone_number: '(555) 555-0100',
+      time_zone: 'America/New_York',
+    },
+  };
+</script>
 ```
 
 ## Attributes

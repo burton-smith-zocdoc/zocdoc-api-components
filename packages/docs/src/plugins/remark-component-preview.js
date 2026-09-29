@@ -2,7 +2,7 @@ import { visit } from 'unist-util-visit';
 
 /**
  * Remark plugin that transforms fenced code blocks with `preview` meta
- * into ComponentPreview elements with the code rendered inside.
+ * into ComponentPreview elements that render a CodeBubble.
  *
  * Usage in MDX:
  *   ```html preview
@@ -24,12 +24,7 @@ export function remarkComponentPreview() {
           { type: 'mdxJsxAttribute', name: 'code', value: code },
           { type: 'mdxJsxAttribute', name: 'lang', value: lang },
         ],
-        children: [
-          {
-            type: 'html',
-            value: code,
-          },
-        ],
+        children: [],
       };
     });
   };

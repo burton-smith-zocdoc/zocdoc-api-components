@@ -31,6 +31,7 @@ page to a range that does have appointments.
 | --- | --- | --- | --- | --- |
 | `days` | `days` | `number` | — | How many days the window covers, counting the first. Fourteen is two rows of seven, which is the shape the production UI uses; clamped to the 30 the API allows. |
 | `hide-window` | `hideWindow` | `boolean` | — | Drops this component's own window control, leaving the days. What a results list sets on every card: the production search page has one range control above the list governing every provider in it, not ten of them disagreeing. The pager still works through `shiftWindow` and `start-date`, so whoever owns the shared control drives all of them by binding the same `start-date` down. Named for what it does rather than as `show-window`, which would default to true and could then never be turned off through an attribute — a boolean attribute's presence is its value. |
+| `loading` | `loading` | `boolean` | — | Whether the host is loading availability it supplied through `timeslots`. Set this while replacing supplied slots to keep stale counts out of view and announce loading. It does not start a request. |
 | `patient-type` | `patientType` | `'new' \| 'existing'` | — | — |
 | `provider-location-id` | `providerLocationId` | `string` | — | The `pr_…\|lo_…` pair the days belong to. Required to fetch, and carried on `day-select` either way, so a parent-driven grid still says which card the patient picked a day on. |
 | `selected-day` | `selectedDay` | `string` | — | The day currently open, if any. Settable so a host page can restore it (COMP-004). |
@@ -64,6 +65,7 @@ page to a range that does have appointments.
 | `zd-day` | One day cell. |
 | `zd-day-count` | The appointment count line of a cell. |
 | `zd-day-date` | The month and day line of a cell. |
+| `zd-day-skeleton` | A day placeholder while self-fetching availability. |
 | `zd-day-weekday` | The weekday line of a cell. |
 | `zd-days` | The grid of days. |
 | `zd-more` | The "More" control, when `show-more` is set. |

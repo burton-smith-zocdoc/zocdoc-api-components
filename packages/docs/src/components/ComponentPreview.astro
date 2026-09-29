@@ -1,19 +1,14 @@
 ---
-import { Code } from '@astrojs/starlight/components';
-
 interface Props {
   code: string;
   lang?: string;
 }
 
 const { code, lang = 'html' } = Astro.props;
+const escapeHtml = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+const languageClass = `language-${lang}`;
 ---
 
-<div class="component-preview">
-  <div class="component-preview__canvas not-content">
-    <slot />
-  </div>
-  <div class="component-preview__code">
-    <Code code={code} lang={lang} />
-  </div>
-</div>
+<code-bubble class="component-preview" sandbox="stackblitz">
+  <pre><code class={languageClass} set:html={escapeHtml(code)}></code></pre>
+</code-bubble>

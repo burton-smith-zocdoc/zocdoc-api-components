@@ -250,6 +250,16 @@
             },
             {
               "kind": "field",
+              "name": "loading",
+              "description": "Whether the host is loading availability it supplied through `timeslots`.\n\nSet this while replacing supplied slots to keep stale counts out of view and announce loading.\nIt does not start a request.",
+              "privacy": "public",
+              "attribute": "loading",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "patientType",
               "privacy": "public",
               "attribute": "patient-type",
@@ -285,6 +295,17 @@
               "kind": "method",
               "name": "renderDays",
               "description": "The days as a listbox of selectable options. Each day is an option; disabled days have\n`aria-disabled`. Uses roving tabindex: only one enabled day is tabbable at a time, and arrow\nkeys move between enabled days.\n\nThe \"More\" button lives outside the listbox since it is not a selectable date.",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderDaySkeletons",
+              "description": "Renders one non-interactive placeholder for each day while the next window is fetched.",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -474,6 +495,14 @@
               "fieldName": "hideWindow"
             },
             {
+              "name": "loading",
+              "description": "Whether the host is loading availability it supplied through `timeslots`.\n\nSet this while replacing supplied slots to keep stale counts out of view and announce loading.\nIt does not start a request.",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "loading"
+            },
+            {
               "name": "patient-type",
               "type": {
                 "text": "PatientType"
@@ -577,6 +606,10 @@
             {
               "name": "zd-day-date",
               "description": "The month and day line of a cell."
+            },
+            {
+              "name": "zd-day-skeleton",
+              "description": "A day placeholder while self-fetching availability."
             },
             {
               "name": "zd-day-weekday",

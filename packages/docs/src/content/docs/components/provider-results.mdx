@@ -12,14 +12,34 @@ The `<zd-provider-results>` component renders a paginated list of providers with
 
 ## Usage
 
-Pass an array of providers to display:
+Pass provider data as JavaScript properties; HTML attributes cannot carry object arrays. This preview uses a documented mock provider and keeps photos off to avoid requesting an external image:
 
-```html
-<zd-provider-results
-  .providers=${providers}
-  .totalCount=${42}
-  show-photos
-></zd-provider-results>
+```html preview
+<zd-provider-results id="provider-results" total-count="1"></zd-provider-results>
+<script>
+  const providerResults = document.getElementById('provider-results');
+  providerResults.providers = [
+    {
+      provider_location_id: 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890',
+      provider_location_type: 'in_person_provider',
+      accepts_patient_insurance: 'accepted',
+      provider: {
+        provider_id: 'pr_abc123-def456_wxyz7890',
+        first_name: 'Avery',
+        last_name: 'Sandoval',
+        title: 'MD',
+        specialties: ['Primary Care Doctor'],
+      },
+      location: {
+        address1: '1 Sandbox Plaza',
+        city: 'Brooklyn',
+        state: 'NY',
+        zip_code: '11201',
+        distance_to_patient_mi: 0.8,
+      },
+    },
+  ];
+</script>
 ```
 
 ## Attributes
