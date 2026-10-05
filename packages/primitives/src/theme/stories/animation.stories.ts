@@ -218,36 +218,54 @@ export const ZIndexLayers: Story = {
     <div
       style="position: relative; height: 400px; background: var(--zd-color-neutral-100); border-radius: 12px; padding: 24px;"
     >
-      <div
-        style="position: absolute; top: 40px; left: 40px; width: 200px; height: 120px; background: var(--zd-color-neutral-200); border-radius: 8px; z-index: var(--zd-zIndex-base); display: flex; align-items: center; justify-content: center; font-weight: 500;"
+      <zd-flex
+        gap="0"
+        align="center"
+        justify="center"
+        style="position: absolute; top: 40px; left: 40px; width: 200px; height: 120px; background: var(--zd-color-neutral-200); border-radius: 8px; z-index: var(--zd-zIndex-base); font-weight: 500;"
       >
         base (0)
-      </div>
-      <div
-        style="position: absolute; top: 80px; left: 80px; width: 200px; height: 120px; background: var(--zd-color-brand-100); border-radius: 8px; z-index: var(--zd-zIndex-dropdown); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-md);"
+      </zd-flex>
+      <zd-flex
+        gap="0"
+        align="center"
+        justify="center"
+        style="position: absolute; top: 80px; left: 80px; width: 200px; height: 120px; background: var(--zd-color-brand-100); border-radius: 8px; z-index: var(--zd-zIndex-dropdown); font-weight: 500; box-shadow: var(--zd-shadow-md);"
       >
         dropdown (100)
-      </div>
-      <div
-        style="position: absolute; top: 120px; left: 120px; width: 200px; height: 120px; background: var(--zd-color-success-100); border-radius: 8px; z-index: var(--zd-zIndex-sticky); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-md);"
+      </zd-flex>
+      <zd-flex
+        gap="0"
+        align="center"
+        justify="center"
+        style="position: absolute; top: 120px; left: 120px; width: 200px; height: 120px; background: var(--zd-color-success-100); border-radius: 8px; z-index: var(--zd-zIndex-sticky); font-weight: 500; box-shadow: var(--zd-shadow-md);"
       >
         sticky (200)
-      </div>
-      <div
-        style="position: absolute; top: 160px; left: 160px; width: 200px; height: 120px; background: var(--zd-color-warning-100); border-radius: 8px; z-index: var(--zd-zIndex-modal); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-lg);"
+      </zd-flex>
+      <zd-flex
+        gap="0"
+        align="center"
+        justify="center"
+        style="position: absolute; top: 160px; left: 160px; width: 200px; height: 120px; background: var(--zd-color-warning-100); border-radius: 8px; z-index: var(--zd-zIndex-modal); font-weight: 500; box-shadow: var(--zd-shadow-lg);"
       >
         modal (300)
-      </div>
-      <div
-        style="position: absolute; top: 200px; left: 200px; width: 200px; height: 120px; background: var(--zd-color-accent-100); border-radius: 8px; z-index: var(--zd-zIndex-popover); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-lg);"
+      </zd-flex>
+      <zd-flex
+        gap="0"
+        align="center"
+        justify="center"
+        style="position: absolute; top: 200px; left: 200px; width: 200px; height: 120px; background: var(--zd-color-accent-100); border-radius: 8px; z-index: var(--zd-zIndex-popover); font-weight: 500; box-shadow: var(--zd-shadow-lg);"
       >
         popover (400)
-      </div>
-      <div
-        style="position: absolute; top: 240px; left: 240px; width: 200px; height: 120px; background: var(--zd-color-danger-100); border-radius: 8px; z-index: var(--zd-zIndex-tooltip); display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: var(--zd-shadow-xl);"
+      </zd-flex>
+      <zd-flex
+        gap="0"
+        align="center"
+        justify="center"
+        style="position: absolute; top: 240px; left: 240px; width: 200px; height: 120px; background: var(--zd-color-danger-100); border-radius: 8px; z-index: var(--zd-zIndex-tooltip); font-weight: 500; box-shadow: var(--zd-shadow-xl);"
       >
         tooltip (500)
-      </div>
+      </zd-flex>
     </div>
   `,
 };

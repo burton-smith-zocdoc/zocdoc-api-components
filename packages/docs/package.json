@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "pnpm --dir ../.. run build:theme",
     "dev": "astro dev",
+    "prebuild": "pnpm --dir ../.. run build:theme",
     "build": "astro build",
     "preview": "astro preview"
   },

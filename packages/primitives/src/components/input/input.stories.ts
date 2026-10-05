@@ -33,12 +33,12 @@ export const Disabled: Story = {
 
 export const Types: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
+    <zd-flex direction="column" gap="16">
       <zd-input label="Text" type="text" placeholder="Text input"></zd-input>
       <zd-input label="Email" type="email" placeholder="email@example.com"></zd-input>
       <zd-input label="Password" type="password" placeholder="Password"></zd-input>
       <zd-input label="Phone" type="tel" placeholder="(555) 555-5555"></zd-input>
       <zd-input label="Number" type="number" placeholder="0"></zd-input>
-    </div>
+    </zd-flex>
   `,
 };

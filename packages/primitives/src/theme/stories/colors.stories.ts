@@ -125,7 +125,7 @@ export const AllColors: Story = {
 
 export const BrandColors: Story = {
   render: () => html`
-    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <zd-flex gap="8" wrap>
       ${colorSteps.map(
         (step) => html`
           <div style="text-align: center;">
@@ -136,41 +136,53 @@ export const BrandColors: Story = {
           </div>
         `
       )}
-    </div>
+    </zd-flex>
   `,
 };
 
 export const SemanticColors: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+    <zd-grid gap="16" columns="4">
       <div style="text-align: center;">
-        <div
-          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-success-500); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-success-500); color: white; font-weight: 600;"
         >
           Success
-        </div>
+        </zd-flex>
       </div>
       <div style="text-align: center;">
-        <div
-          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-warning-500); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-warning-500); color: white; font-weight: 600;"
         >
           Warning
-        </div>
+        </zd-flex>
       </div>
       <div style="text-align: center;">
-        <div
-          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-danger-500); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-danger-500); color: white; font-weight: 600;"
         >
           Danger
-        </div>
+        </zd-flex>
       </div>
       <div style="text-align: center;">
-        <div
-          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-brand-500); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="height: 80px; border-radius: 8px; background-color: var(--zd-color-brand-500); color: white; font-weight: 600;"
         >
           Brand
-        </div>
+        </zd-flex>
       </div>
-    </div>
+    </zd-grid>
   `,
 };

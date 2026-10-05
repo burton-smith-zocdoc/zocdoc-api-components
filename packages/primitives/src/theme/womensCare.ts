@@ -1,5 +1,6 @@
 import { generateThemeSync } from '@charm-ux/theming/generator';
-import { zocdocTokensBase } from './zocdoc.js';
+import { generateLayoutElementsCss } from './layout-elements.js';
+import { zocdocSpacingTokens, zocdocTokensBase } from './zocdoc.js';
 
 /**
  * Women's Care Theme
@@ -70,8 +71,11 @@ export const womensCareThemeCss: string = womensCareTheme.css ?? '';
 export const womensCareResetCss: string = womensCareTheme.cssReset ?? '';
 export const womensCareUtilitiesCss: string = womensCareTheme.cssUtilities ?? '';
 
+const layoutElementsCss = generateLayoutElementsCss(zocdocSpacingTokens);
+
 export const womensCareAllCss: string = [
   womensCareThemeCss,
   womensCareResetCss,
   womensCareUtilitiesCss,
+  layoutElementsCss,
 ].join('\n');

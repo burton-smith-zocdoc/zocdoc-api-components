@@ -64,12 +64,12 @@ export const Danger: Story = {
  */
 export const Severities: Story = {
   render: () => html`
-    <div style="display: grid; gap: 0.75rem;">
+    <zd-grid gap="12">
       <zd-alert open variant="info">This provider is accepting new patients.</zd-alert>
       <zd-alert open variant="success">Your appointment has been booked.</zd-alert>
       <zd-alert open variant="warning">We couldn't confirm your insurance plan.</zd-alert>
       <zd-alert open variant="danger">We couldn't complete your booking.</zd-alert>
-    </div>
+    </zd-grid>
   `,
 };
 

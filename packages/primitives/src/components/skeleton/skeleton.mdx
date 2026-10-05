@@ -66,13 +66,13 @@ Match the shape of the real content — same rough sizes, same number of lines.
 <code-bubble>
 
 ```html
-<div style="display: flex; gap: 1rem; align-items: center;">
+<zd-flex align="center" gap="16">
   <zd-skeleton shape="circle" style="--zd-skeleton-width: 48px; height: 48px;"></zd-skeleton>
-  <div style="flex: 1; display: grid; gap: 0.5rem;">
+  <zd-grid gap="8" style="flex: 1;">
     <zd-skeleton style="--zd-skeleton-width: 50%;"></zd-skeleton>
     <zd-skeleton style="--zd-skeleton-width: 80%;"></zd-skeleton>
-  </div>
-</div>
+  </zd-grid>
+</zd-flex>
 ```
 
 </code-bubble>

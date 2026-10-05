@@ -11,12 +11,18 @@ const outDir = join(packageDir, 'dist/theme');
 const docsPath = join(packageDir, 'TOKENS.md');
 
 async function buildTheme() {
-  const [zocdoc, schweiger, womensCare, privia] = await Promise.all([
+  const [zocdoc, schweiger, womensCare, privia, layoutElements] = await Promise.all([
     import('../packages/primitives/src/theme/zocdoc.js'),
     import('../packages/primitives/src/theme/schweiger.js'),
     import('../packages/primitives/src/theme/womensCare.js'),
     import('../packages/primitives/src/theme/privia.js'),
+    import('../packages/primitives/src/theme/layout-elements.js'),
   ]);
+
+  const layoutElementsCss = layoutElements.generateLayoutElementsCss(zocdoc.zocdocSpacingTokens);
+  const layoutElementsCssPath = join(packageDir, 'src/theme/generated/layout-elements.css');
+  await mkdir(dirname(layoutElementsCssPath), { recursive: true });
+  await writeFile(layoutElementsCssPath, layoutElementsCss);
 
   await mkdir(outDir, { recursive: true });
 
@@ -25,6 +31,7 @@ async function buildTheme() {
     writeFile(join(outDir, 'tokens.css'), zocdoc.zocdocThemeCss),
     writeFile(join(outDir, 'reset.css'), zocdoc.zocdocResetCss),
     writeFile(join(outDir, 'utilities.css'), zocdoc.zocdocUtilitiesCss),
+    writeFile(join(outDir, 'layout-elements.css'), layoutElementsCss),
     writeFile(join(outDir, 'all.css'), zocdoc.zocdocAllCss),
     // Partner themes (tokens only - they share reset/utilities with zocdoc)
     writeFile(join(outDir, 'schweiger-tokens.css'), schweiger.schweigerThemeCss),

@@ -61,10 +61,10 @@ type Story = StoryObj;
 
 export const SpacingScale: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 16px;">
+    <zd-flex gap="16" direction="column">
       ${spacingScale.map(
         (size, index) => html`
-          <div style="display: flex; align-items: center; gap: 16px;">
+          <zd-flex gap="16" align="center">
             <div style="width: 60px; font-size: 14px; font-weight: 500;">${size}</div>
             <div style="width: 60px; font-size: 12px; color: var(--zd-color-neutral-500);">
               ${spacingValues[index]}
@@ -72,16 +72,16 @@ export const SpacingScale: Story = {
             <div
               style="width: var(--zd-spacing-${size}); height: 24px; background-color: var(--zd-color-brand-500); border-radius: 4px;"
             ></div>
-          </div>
+          </zd-flex>
         `
       )}
-    </div>
+    </zd-flex>
   `,
 };
 
 export const PaddingExample: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+    <zd-grid gap="24" columns="3">
       <div>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 8px;">
           Padding SM (8px)
@@ -112,13 +112,13 @@ export const PaddingExample: Story = {
           <div style="background: var(--zd-color-brand-100); padding: 8px;">Content</div>
         </div>
       </div>
-    </div>
+    </zd-grid>
   `,
 };
 
 export const GapExample: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 32px;">
+    <zd-flex gap="32" direction="column">
       <div>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 8px;">
           Gap XS (4px)
@@ -183,6 +183,6 @@ export const GapExample: Story = {
           ></div>
         </div>
       </div>
-    </div>
+    </zd-flex>
   `,
 };

@@ -39,7 +39,7 @@ type Story = StoryObj;
 
 export const FontSizes: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 16px;">
+    <zd-flex gap="16" direction="column">
       <div style="font-size: var(--zd-typography-fontSize-xxs);">
         Font Size XXS (0.75rem) — The quick brown fox jumps over the lazy dog
       </div>
@@ -59,15 +59,13 @@ export const FontSizes: Story = {
         Font Size XL (2rem) — The quick brown fox
       </div>
       <div style="font-size: var(--zd-typography-fontSize-2xl);">Font Size 2XL (3rem)</div>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const FontWeights: Story = {
   render: () => html`
-    <div
-      style="display: flex; flex-direction: column; gap: 12px; font-size: var(--zd-typography-fontSize-md);"
-    >
+    <zd-flex gap="12" direction="column" style="font-size: var(--zd-typography-fontSize-md);">
       <div style="font-weight: var(--zd-typography-fontWeight-normal);">
         Normal (400) — The quick brown fox jumps over the lazy dog
       </div>
@@ -80,13 +78,13 @@ export const FontWeights: Story = {
       <div style="font-weight: var(--zd-typography-fontWeight-bold);">
         Bold (700) — The quick brown fox jumps over the lazy dog
       </div>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const FontFamilies: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 16px;">
+    <zd-flex gap="16" direction="column">
       <div>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 4px;">
           Base
@@ -117,13 +115,13 @@ export const FontFamilies: Story = {
           const greeting = "Hello, World!"; // 0123456789
         </div>
       </div>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const LineHeights: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+    <zd-grid gap="24" columns="4">
       <div>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 8px;">
           Line Height XS (1)
@@ -164,15 +162,13 @@ export const LineHeights: Story = {
           Loose line height for increased readability in specific contexts.
         </div>
       </div>
-    </div>
+    </zd-grid>
   `,
 };
 
 export const LetterSpacing: Story = {
   render: () => html`
-    <div
-      style="display: flex; flex-direction: column; gap: 16px; font-size: var(--zd-typography-fontSize-lg);"
-    >
+    <zd-flex gap="16" direction="column" style="font-size: var(--zd-typography-fontSize-lg);">
       <div>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 4px;">
           Tight (-0.025em)
@@ -197,6 +193,6 @@ export const LetterSpacing: Story = {
           The quick brown fox jumps over the lazy dog
         </div>
       </div>
-    </div>
+    </zd-flex>
   `,
 };

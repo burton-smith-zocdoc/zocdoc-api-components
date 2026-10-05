@@ -13,7 +13,7 @@ The `<zd-provider-profile>` component displays complete provider details includi
 ## Usage
 
 ```html preview
-<zd-provider-profile id="provider-profile"></zd-provider-profile>
+<zd-provider-profile id="provider-profile" show-photo></zd-provider-profile>
 <script>
   const providerProfile = document.getElementById('provider-profile');
   providerProfile.provider = {
@@ -25,6 +25,7 @@ The `<zd-provider-profile>` component displays complete provider details includi
       last_name: 'Sandoval',
       title: 'MD',
       specialties: ['Primary Care Doctor'],
+      provider_photo_url: '/zocdoc-api-components/images/michael-scott.png',
       statement: 'I have practised primary care in Brooklyn for twelve years.',
       languages: ['English', 'Spanish'],
       credentials: {

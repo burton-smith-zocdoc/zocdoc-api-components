@@ -1,0 +1,56 @@
+---
+title: Scoped Styles
+description: "Applies slotted stylesheets only to its own subtree."
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+Use `zd-scoped-styles` to apply CSS custom properties or stylesheets to only the wrapped subtree. This is useful for a local theme adjustment that should not affect matching components elsewhere on the page.
+
+## Usage
+
+### Change a token only inside this subtree
+
+```html preview
+<zd-scoped-styles id="local-theme">
+  <zd-flex gap="8" wrap>
+    <zd-button variant="primary">Locally themed</zd-button>
+    <zd-button variant="secondary">Also inside the scope</zd-button>
+  </zd-flex>
+</zd-scoped-styles>
+<zd-button variant="primary">Unchanged outside the scope</zd-button>
+<script>
+  document.querySelector('#local-theme').css = '--zd-button-primary-bg-color: #315a46; --zd-button-primary-fg-color: #ffffff;';
+</script>
+```
+
+The `.css` property accepts CSS text. Keep overrides scoped to the smallest subtree that needs them, and use tokens from the primitive theme.
+
+## API Reference
+
+**Class** `ZdScopedStyles` — **Package** `@zocdoc/api-primitive-components`
+
+### Inherited
+
+#### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `css` | `css` | `string \| string[]` | — | CSS styles to scope to this element. Alternatively you can slot `<link>` tags in the `stylesheets` slot. | `CoreScopedStyles` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+
+#### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `ready` | `Event` | Emitted when the component has completed its initial render. | `CharmElement` |
+| `styles-loaded` | `Event` | Emitted when the styles are loaded. | `CoreScopedStyles` |
+
+#### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `stylesheets` | The slot for disabled `<link>` elements with stylesheets to scope to this element. Alternatively you can use the `css` property. | `CoreScopedStyles` |

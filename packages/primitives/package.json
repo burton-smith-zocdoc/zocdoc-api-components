@@ -15,10 +15,11 @@
     "./theme/tokens.css": "./dist/theme/tokens.css",
     "./theme/reset.css": "./dist/theme/reset.css",
     "./theme/utilities.css": "./dist/theme/utilities.css",
+    "./theme/layout-elements.css": "./dist/theme/layout-elements.css",
     "./theme/all.css": "./dist/theme/all.css"
   },
   "scripts": {
-    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @zocdoc/api-primitive-components --out ../../.claude/skills/primitives/references"
+    "cem": "pnpm --dir ../.. run build:theme && cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @zocdoc/api-primitive-components --out ../../.claude/skills/primitives/references"
   },
   "dependencies": {
     "@charm-ux/core": "link:../../../charm-ux/core/packages/core",

@@ -7,16 +7,23 @@
 
 <script>
   import { CodeBubble } from 'code-bubble';
+  import '@zocdoc/api-primitive-components';
   import '@zocdoc/api-primitive-components/theme/tokens.css';
+  import '@zocdoc/api-primitive-components/theme/utilities.css';
+  import '@zocdoc/api-primitive-components/theme/layout-elements.css';
   import themeSource from '@zocdoc/api-primitive-components/theme/all.css?raw';
   import bundleSource from '@zocdoc/api-components/bundle/iife?raw';
   import { configureZocdocMock } from '@zocdoc/api-components/mock';
   import '@zocdoc/api-components';
 
-  configureZocdocMock();
+  // The fixtures' `/images/…` photos live under the site's base path, not the origin root.
+  configureZocdocMock({ assetBaseUrl: import.meta.env.BASE_URL });
 
   new CodeBubble({
     sandbox: 'stackblitz',
+    component: {
+      sandboxButton: { hide: true },
+    },
     sandboxConfig: {
       stackBlitz: {
         html: {

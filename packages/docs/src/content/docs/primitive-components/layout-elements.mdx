@@ -1,0 +1,126 @@
+---
+title: Layout Elements
+description: CSS-only flex, grid, and grid-column layout tags styled by the Zocdoc theme.
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+`zd-flex`, `zd-grid`, and `zd-column` provide layout and positioning using CSS-only, custom-element-shaped tags. They are not registered components: they add no JavaScript behavior or semantic role. Their styles apply when your application loads `@zocdoc/api-primitive-components/theme/all.css`, or `theme/layout-elements.css` on its own if you load tokens and utilities separately.
+
+Because the tags are intentionally unregistered, developer tools or markup validators may flag them as unknown elements; this is expected. Loading the theme stylesheet applies their layout styles without registering them.
+
+## Layout contract
+
+- `<zd-flex>` establishes `display: flex`, with a row direction, no wrapping, and a default gap of `16`.
+- Set `direction="column"` for a vertical layout. `direction` supports `row` and `column`; an omitted or unsupported value keeps the row default.
+- Add the presence-only `wrap` attribute to allow items to wrap. Omit it to keep items on one line; `wrap="false"` still enables wrapping because the attribute is present.
+- Set `align` (`start`, `center`, `end`, `stretch`, `baseline`) to align items on the cross axis, and `justify` (`start`, `center`, `end`, `between`, `around`, `evenly`) to distribute them on the main axis. Defaults are `stretch` and `start`.
+- `<zd-grid>` establishes `display: grid` and a default gap of `16`. Set `columns` to `1`, `2`, `3`, `4`, `6`, or `12` for equal-width tracks; otherwise define tracks in your own CSS.
+- On `<zd-grid>`, `align` and `justify` (`start`, `center`, `end`, `stretch`) position each item inside its grid area.
+- Add `inline` to either container to render it as `inline-flex` or `inline-grid`.
+- `<zd-column>` is a block-level grid child. `column` and `row` (`1`–`12`) set its starting line and `span` (`1`–`12`) sets how many columns it covers; they combine, so `column="3" span="2"` occupies columns 3 and 4.
+- Both tags accept `gap` values generated from the numeric keys in the Zocdoc spacing scale. The selectors are generated during the theme build, so they follow the canonical tokens rather than a separately maintained list.
+- Set `--zd-flex-gap` or `--zd-grid-gap` to customize the gap. An inline or consumer stylesheet declaration can override the token selected by `gap`.
+
+These tags only arrange their children. Keep semantic elements such as `form`, `label`, `button`, `section`, and `article` in the DOM, and preserve their DOM order—do not use visual reordering to change the reading or focus sequence.
+
+## Vertical form layout
+
+Use native form elements for meaning and labels; `zd-flex` only handles their layout.
+
+```html preview
+<form>
+  <zd-flex direction="column" gap="12">
+    <h3>Contact preferences</h3>
+    <label class="gap-8" style="display: flex; flex-direction: column;">
+      Email address
+      <input type="email" autocomplete="email">
+    </label>
+    <label class="gap-8" style="display: flex; flex-direction: column;">
+      Preferred contact time
+      <select>
+        <option>Morning</option>
+        <option>Afternoon</option>
+      </select>
+    </label>
+    <button type="button">Save preferences</button>
+  </zd-flex>
+</form>
+```
+
+## Wrapping actions
+
+Use `wrap` when a group should flow onto another line at narrower widths. This example selects a spacing token with `gap`, then overrides it through `--zd-flex-gap`.
+
+```html preview
+<section>
+  <h3>Manage your list</h3>
+  <zd-flex wrap gap="8" style="--zd-flex-gap: var(--zd-spacing-12);">
+    <button type="button">Move up</button>
+    <button type="button">Move down</button>
+    <button type="button">Save changes</button>
+    <button type="button">Cancel</button>
+  </zd-flex>
+</section>
+```
+
+## Aligned toolbar
+
+`align` and `justify` position items without consumer CSS.
+
+```html preview
+<zd-flex align="center" justify="between" gap="12">
+  <h3>Upcoming appointments</h3>
+  <button type="button">View all</button>
+</zd-flex>
+```
+
+## Grid placement
+
+Use `columns` for equal tracks and `zd-column` to place content. Keep the DOM order matching the visual order.
+
+```html preview
+<zd-grid columns="4" gap="16">
+  <zd-column span="4">
+    <h3>Overview</h3>
+  </zd-column>
+  <zd-column span="2">
+    <h3>Activity</h3>
+  </zd-column>
+  <zd-column column="3" span="2">
+    <h3>Usage</h3>
+  </zd-column>
+</zd-grid>
+```
+
+## Responsive grid
+
+Choose tracks in a regular consumer CSS rule. Here, `auto-fit` and `minmax()` let the grid fit as many cards as the available width allows; each article uses the `gap-8` CSS utility for its internal spacing.
+
+```html preview
+<style>
+  .resource-cards {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+</style>
+<zd-grid class="resource-cards" gap="16" style="--zd-grid-gap: var(--zd-spacing-12);">
+  <article class="gap-8" style="display: flex; flex-direction: column;">
+    <h3>Getting started</h3>
+    <p>Learn the basics and find the right place to begin.</p>
+    <a href="#getting-started">Read the guide</a>
+  </article>
+  <article class="gap-8" style="display: flex; flex-direction: column;">
+    <h3>Account settings</h3>
+    <p>Review the preferences available for your account.</p>
+    <a href="#account-settings">View settings</a>
+  </article>
+  <article class="gap-8" style="display: flex; flex-direction: column;">
+    <h3>Help and support</h3>
+    <p>Find answers to common questions.</p>
+    <a href="#help">Get help</a>
+  </article>
+</zd-grid>
+```

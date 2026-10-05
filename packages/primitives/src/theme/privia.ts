@@ -1,5 +1,6 @@
 import { generateThemeSync } from '@charm-ux/theming/generator';
-import { zocdocTokensBase } from './zocdoc.js';
+import { generateLayoutElementsCss } from './layout-elements.js';
+import { zocdocSpacingTokens, zocdocTokensBase } from './zocdoc.js';
 
 /**
  * Privia Health Theme
@@ -24,4 +25,11 @@ export const priviaThemeCss: string = priviaTheme.css ?? '';
 export const priviaResetCss: string = priviaTheme.cssReset ?? '';
 export const priviaUtilitiesCss: string = priviaTheme.cssUtilities ?? '';
 
-export const priviaAllCss: string = [priviaThemeCss, priviaResetCss, priviaUtilitiesCss].join('\n');
+const layoutElementsCss = generateLayoutElementsCss(zocdocSpacingTokens);
+
+export const priviaAllCss: string = [
+  priviaThemeCss,
+  priviaResetCss,
+  priviaUtilitiesCss,
+  layoutElementsCss,
+].join('\n');

@@ -102,13 +102,16 @@ export default css`
     min-height: var(--zd-button-height);
     padding-block: max(
       0px,
-      calc(var(--zd-button-padding-y, 0px) - var(--zd-button-border-width)),
-      calc(
-        (
-            var(--zd-button-height) - 1em - var(--zd-button-border-width) *
-              2
-          ) /
-          2
+      min(
+        calc(var(--zd-button-padding-y, 0px) - var(--zd-button-border-width)),
+        calc(
+          (
+              var(--zd-button-height) -
+                max(1em, var(--zd-button-icon-size, 1em)) -
+                var(--zd-button-border-width) * 2
+            ) /
+            2
+        )
       )
     );
   }

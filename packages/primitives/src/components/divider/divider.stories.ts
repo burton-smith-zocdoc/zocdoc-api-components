@@ -27,10 +27,10 @@ export const WithContent: Story = {
 
 export const Vertical: Story = {
   render: () => html`
-    <div style="display: flex; align-items: center; gap: 0.5rem; height: 2rem;">
+    <zd-flex align="center" gap="8" style="height: 2rem;">
       <span>In person</span>
       <zd-divider orientation="vertical"></zd-divider>
       <span>Video visit</span>
-    </div>
+    </zd-flex>
   `,
 };

@@ -43,7 +43,7 @@ type Story = StoryObj;
 
 export const BorderRadius: Story = {
   render: () => html`
-    <div style="display: flex; gap: 24px; flex-wrap: wrap; padding: 16px;">
+    <zd-flex gap="24" wrap style="padding: 16px;">
       <div style="text-align: center;">
         <div
           style="width: 80px; height: 80px; background: var(--zd-color-brand-500); border-radius: var(--zd-borderRadius-none);"
@@ -100,13 +100,13 @@ export const BorderRadius: Story = {
           full (circle)
         </div>
       </div>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const BorderWidth: Story = {
   render: () => html`
-    <div style="display: flex; gap: 32px; padding: 16px;">
+    <zd-flex gap="32" style="padding: 16px;">
       <div style="text-align: center;">
         <div
           style="width: 100px; height: 100px; background: var(--zd-color-neutral-50); border: var(--zd-borderWidth-none) solid var(--zd-color-brand-500); border-radius: 8px;"
@@ -139,13 +139,13 @@ export const BorderWidth: Story = {
           thick (4px)
         </div>
       </div>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const CombinedExample: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 16px;">
+    <zd-grid gap="24" columns="3" style="padding: 16px;">
       <div
         style="padding: 24px; background: white; border: var(--zd-borderWidth-thin) solid var(--zd-color-neutral-200); border-radius: var(--zd-borderRadius-md);"
       >
@@ -170,6 +170,6 @@ export const CombinedExample: Story = {
           thick border, xl radius
         </div>
       </div>
-    </div>
+    </zd-grid>
   `,
 };

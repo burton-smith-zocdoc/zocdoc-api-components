@@ -24,36 +24,36 @@ export const Default: Story = {};
 
 export const Variants: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="primary">Primary</zd-button>
       <zd-button variant="secondary">Secondary</zd-button>
       <zd-button variant="inverse">Inverse</zd-button>
       <zd-button variant="ghost">Ghost</zd-button>
       <zd-button variant="destructive">Destructive</zd-button>
       <zd-button variant="link">Link</zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const VariantsDisabled: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="primary" disabled>Primary</zd-button>
       <zd-button variant="secondary" disabled>Secondary</zd-button>
       <zd-button variant="inverse" disabled>Inverse</zd-button>
       <zd-button variant="ghost" disabled>Ghost</zd-button>
       <zd-button variant="destructive" disabled>Destructive</zd-button>
       <zd-button variant="link" disabled>Link</zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const Sizes: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="primary">Default</zd-button>
       <zd-button variant="primary" size="small">Small</zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 
@@ -63,7 +63,7 @@ export const Fluid: Story = {
 
 export const WithStartIcon: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="primary">
         <zd-icon slot="start" name="person"></zd-icon>
         View Profile
@@ -72,13 +72,13 @@ export const WithStartIcon: Story = {
         <zd-icon slot="start" name="checkmark"></zd-icon>
         Confirm
       </zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const WithEndIcon: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="primary">
         Next
         <zd-icon slot="end" name="chevron-right"></zd-icon>
@@ -87,7 +87,7 @@ export const WithEndIcon: Story = {
         More
         <zd-icon slot="end" name="chevron-down"></zd-icon>
       </zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 
@@ -103,7 +103,7 @@ export const WithBothIcons: Story = {
 
 export const IconOnly: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="primary" icon-only aria-label="Close">
         <zd-icon slot="start" name="dismiss"></zd-icon>
       </zd-button>
@@ -116,28 +116,28 @@ export const IconOnly: Story = {
       <zd-button variant="primary" icon-only size="small" aria-label="Close">
         <zd-icon slot="start" name="dismiss"></zd-icon>
       </zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const AsLink: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="primary" href="https://zocdoc.com">Visit Zocdoc</zd-button>
       <zd-button variant="secondary" href="https://zocdoc.com" target="_blank">
         Open in New Tab
         <zd-icon slot="end" name="chevron-right"></zd-icon>
       </zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const Toggle: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-button variant="secondary" toggle>Toggle me</zd-button>
       <zd-button variant="secondary" toggle pressed>Already pressed</zd-button>
-    </div>
+    </zd-flex>
   `,
 };
 

@@ -2,7 +2,7 @@
 
 Generated from the Custom Elements Manifest. Do not edit by hand.
 
-36 components. Read this file first, then open the one page you need.
+39 components. Read this file first, then open the one page you need.
 
 - [`zd-accordion`](zd-accordion.md) — Groups accordion items into a single collapsible region.
 - [`zd-accordion-item`](zd-accordion-item.md) — A single collapsible section of an accordion: a heading that expands to reveal its content.
@@ -16,9 +16,12 @@ Generated from the Custom Elements Manifest. Do not edit by hand.
 - [`zd-button-group-overflow`](zd-button-group-overflow.md) — A button group that moves buttons into a menu when space runs out.
 - [`zd-card`](zd-card.md) — A container for grouping related content.
 - [`zd-checkbox`](zd-checkbox.md) — A labelled checkbox for boolean and multi-select choices, with indeterminate support.
+- [`zd-column`](zd-column.md) — A grid child that places its content within a zd-grid.
 - [`zd-dialog`](zd-dialog.md) — A modal dialog for focused tasks and confirmations, with heading, body, and footer slots.
 - [`zd-disclosure`](zd-disclosure.md) — Toggles a region of content from a slotted trigger.
 - [`zd-divider`](zd-divider.md) — A horizontal or vertical rule separating content, with an optional inline label.
+- [`zd-flex`](zd-flex.md) — A one-dimensional flex layout container.
+- [`zd-grid`](zd-grid.md) — A two-dimensional grid layout container.
 - [`zd-icon`](zd-icon.md) — Renders a named icon from the configured icon set, at a token-driven size.
 - [`zd-input`](zd-input.md) — A text input field with label and validation support.
 - [`zd-menu`](zd-menu.md) — A popup menu of actions anchored to a trigger.

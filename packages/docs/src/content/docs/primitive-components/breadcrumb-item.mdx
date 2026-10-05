@@ -1,0 +1,92 @@
+---
+title: Breadcrumb Item
+description: "A single link in a breadcrumb trail."
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+Breadcrumb items are the links and current-page label inside `zd-breadcrumb`. Use an `href` for navigable ancestors, and leave the final, current item without a destination.
+
+## Usage
+
+### Compose items in a breadcrumb
+
+```html preview
+<zd-breadcrumb label="Breadcrumb">
+  <zd-breadcrumb-item href="/">Home</zd-breadcrumb-item>
+  <zd-breadcrumb-item href="/account/">Account</zd-breadcrumb-item>
+  <zd-breadcrumb-item>Notifications</zd-breadcrumb-item>
+</zd-breadcrumb>
+```
+
+The parent breadcrumb sets the current state and separators when items change. Keep item order aligned with the site hierarchy.
+
+## API Reference
+
+**Class** `ZdBreadcrumbItem` — **Package** `@zocdoc/api-primitive-components`
+
+### Inherited
+
+#### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
+| `current` | `current` | `'page' \| 'step'` | — | Sets `aria-current` on the div. | `CoreBreadcrumbItem` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `href` | `href` | `string` | — | When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`. | `CoreBreadcrumbItem` |
+| `referrerpolicy` | `referrerPolicy` | `'no-referrer' \| 'no-referrer-when-downgrade' \| 'origin' \| 'origin-when-cross-origin' \| 'same-origin' \| 'strict-origin' \| 'strict-origin-when-cross-origin' \| 'unsafe-url' \| (string & {})` | `'strict-origin-when-cross-origin'` | Defining which referrer is sent when fetching the resource. Only applies to links. | `CoreBreadcrumbItem` |
+| `separator` | `separator` | `boolean` | `true` | When true, will render the separator content. | `CoreBreadcrumbItem` |
+| `target` | `target` | `'_blank' \| '_parent' \| '_self' \| '_top' \| (string & {})` | — | Tells the browser where to open the link. Only used when `href` is set. | `CoreBreadcrumbItem` |
+
+#### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+#### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `end` | A presentational suffix icon or similar element. | `CoreBreadcrumbItem` |
+| `separator` | A separator between breadcrumb items. | `CoreBreadcrumbItem` |
+| `start` | A presentational prefix icon or similar element. | `CoreBreadcrumbItem` |
+
+#### CSS Parts
+
+| Part | Description | From |
+| --- | --- | --- |
+| `zd-breadcrumb-item-base` | The component's base wrapper. | `CoreBreadcrumbItem` |
+| `zd-breadcrumb-item-control` | The container for start, default, and end slot. | `CoreBreadcrumbItem` |
+| `zd-breadcrumb-item-separator` | The separator between breadcrumb items. | `CoreBreadcrumbItem` |
+| `zd-content` | The container for the default slot. | `CoreBreadcrumbItem` |
+| `zd-end` | The container for the 'end' slot. | `CoreBreadcrumbItem` |
+| `zd-start` | The container for the 'start' slot. | `CoreBreadcrumbItem` |
+
+#### CSS Custom Properties
+
+| Property | Syntax | Default | Description | From |
+| --- | --- | --- | --- | --- |
+| `--zd-charm-breadcrumb-item-active-bg-color` | — | — | Set the background color of the breadcrumb item when active. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-active-border-color` | — | — | Set the border color of the breadcrumb item when active. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-active-fg-color` | — | — | Set the foreground color of the breadcrumb item when active. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-bg-color` | — | — | Set the background color of the breadcrumb item. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-border-color` | — | — | Set the border color of the breadcrumb item. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-border-width` | — | — | Determines the width of the breadcrumb item border. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-control-width` | — | — | Determines the width of the control. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-disabled-bg-color` | — | — | Set the background color of the breadcrumb item when disabled. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-disabled-border-color` | — | — | Set the border color of the breadcrumb item when disabled. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-disabled-fg-color` | — | — | Set the foreground color of the breadcrumb item when disabled. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-fg-color` | — | — | Set the foreground color of the breadcrumb item. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-focus-bg-color` | — | — | Set the background color of the breadcrumb item when focus. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-focus-border-color` | — | — | Set the border color of the breadcrumb item when focus. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-focus-fg-color` | — | — | Set the foreground color of the breadcrumb item when focus. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-gap` | — | — | Determines margin around start/end slot and separator. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-hover-bg-color` | — | — | Set the background color of the breadcrumb item when hover. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-hover-border-color` | — | — | Set the border color of the breadcrumb item when hover. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-hover-fg-color` | — | — | Set the foreground color of the breadcrumb item when hover. | `CoreBreadcrumbItem` |
+| `--zd-charm-breadcrumb-item-padding` | — | — | Determines the padding of the breadcrumb item. | `CoreBreadcrumbItem` |

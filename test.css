@@ -1,0 +1,18 @@
+@property --zinc-container   { syntax: 'xs | sm | md | lg | xl'; inherits: true; initial-value: xl; }
+:has(.responsive-container) {
+    container-type: inline-size;
+    @container (width <= 1440px) { --zinc-container: xl; }
+    @container (width <= 1280px)  { --zinc-container: lg; }
+    @container (width <= 1024px)  { --zinc-container: md; }
+    @container (width <= 768px)  { --zinc-container: sm; }
+    @container (width <= 375px)  { --zinc-container: xs; }
+}
+
+
+:root {
+  --zinc-viewport: wide;
+  @media (width <= 1024px) { --zinc-viewport: regular; }
+  @media (width <= 640px)  { --zinc-viewport: compact; }
+
+  --zinc-layout: var(--zinc-viewport);
+}

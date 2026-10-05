@@ -47,89 +47,113 @@ type Story = StoryObj;
 
 export const ShadowScale: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; padding: 24px;">
+    <zd-grid gap="32" columns="4" style="padding: 24px;">
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-none); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-none);"
         >
           None
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">
           none
         </div>
       </div>
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-xs); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-xs);"
         >
           XS
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">xs</div>
       </div>
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-sm); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-sm);"
         >
           SM
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">sm</div>
       </div>
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-md); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-md);"
         >
           MD
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">md</div>
       </div>
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-lg); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-lg);"
         >
           LG
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">lg</div>
       </div>
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-xl); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-xl);"
         >
           XL
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">xl</div>
       </div>
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: var(--zd-color-neutral-100); border-radius: 8px; box-shadow: var(--zd-shadow-inner); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: var(--zd-color-neutral-100); border-radius: 8px; box-shadow: var(--zd-shadow-inner);"
         >
           Inner
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">
           inner
         </div>
       </div>
       <div style="text-align: center;">
-        <div
-          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-outline); display: flex; align-items: center; justify-content: center;"
+        <zd-flex
+          gap="0"
+          align="center"
+          justify="center"
+          style="width: 100%; height: 80px; background: white; border-radius: 8px; box-shadow: var(--zd-shadow-outline);"
         >
           Outline
-        </div>
+        </zd-flex>
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-top: 8px;">
           outline (focus)
         </div>
       </div>
-    </div>
+    </zd-grid>
   `,
 };
 
 export const ElevationLevels: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 48px; padding: 24px;">
+    <zd-flex gap="48" direction="column" style="padding: 24px;">
       <div>
         <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">
           Cards at different elevations
         </div>
-        <div style="display: flex; gap: 24px; align-items: flex-end;">
+        <zd-flex gap="24" align="end">
           <div
             style="padding: 24px; background: white; border-radius: 12px; box-shadow: var(--zd-shadow-xs);"
           >
@@ -148,8 +172,8 @@ export const ElevationLevels: Story = {
             <div style="font-weight: 500;">Floating Card</div>
             <div style="font-size: 14px; color: var(--zd-color-neutral-500);">shadow-xl</div>
           </div>
-        </div>
+        </zd-flex>
       </div>
-    </div>
+    </zd-flex>
   `,
 };

@@ -11,6 +11,7 @@ test-results/
 # data they came from.
 /custom-elements.json
 packages/primitives/TOKENS.md
+/packages/primitives/src/theme/generated/layout-elements.css
 packages/api-components/assets/
 dist
 .vitest-attachments

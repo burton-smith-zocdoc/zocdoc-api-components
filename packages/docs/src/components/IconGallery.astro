@@ -1,0 +1,56 @@
+---
+/**
+ * Renders every icon in the configured icon set, each with its name as a hover title.
+ */
+---
+
+<ul class="icon-gallery" data-icon-gallery></ul>
+
+<script>
+  import { project } from '@zocdoc/api-primitive-components';
+
+  for (const gallery of document.querySelectorAll<HTMLUListElement>('[data-icon-gallery]')) {
+    const names = Object.keys(project.iconSet).sort();
+    gallery.replaceChildren(
+      ...names.map((name) => {
+        const item = document.createElement('li');
+        const icon = document.createElement('zd-icon');
+        icon.setAttribute('name', name);
+        icon.setAttribute('size', 'large');
+        icon.setAttribute('title', name);
+        const label = document.createElement('code');
+        label.textContent = name;
+        item.append(icon, label);
+        return item;
+      }),
+    );
+  }
+</script>
+
+<style>
+  .icon-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+
+    & li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+      padding-block: 1rem;
+      padding-inline: 0.5rem;
+      border: 1px solid var(--sl-color-gray-5);
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+
+    & code {
+      font-size: 0.75rem;
+      overflow-wrap: anywhere;
+    }
+  }
+</style>

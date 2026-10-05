@@ -13,7 +13,7 @@ The `<zd-provider-card>` component displays a single provider with photo, name, 
 ## Usage
 
 ```html preview
-<zd-provider-card id="provider-card" insurance-name="Sandbox National PPO"></zd-provider-card>
+<zd-provider-card id="provider-card" show-photo insurance-name="Sandbox National PPO"></zd-provider-card>
 <script>
   document.getElementById('provider-card').provider = {
     provider_location_id: 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890',
@@ -25,6 +25,7 @@ The `<zd-provider-card>` component displays a single provider with photo, name, 
       last_name: 'Sandoval',
       title: 'MD',
       specialties: ['Primary Care Doctor'],
+      provider_photo_url: '/zocdoc-api-components/images/michael-scott.png',
     },
     location: {
       address1: '1 Sandbox Plaza',

@@ -1,0 +1,82 @@
+---
+title: Icon
+description: "Renders a named icon from the configured icon set, at a token-driven size."
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import IconGallery from '@/components/IconGallery.astro';
+
+<PreviewRuntime />
+
+An icon adds a compact visual cue from the configured icon set. Choose a supported `name`; provide `label` when the icon conveys information by itself, and treat icons next to equivalent text as decorative.
+
+## Usage
+
+### Icons with visible labels
+
+```html preview
+<zd-flex gap="16" wrap>
+  <span><zd-icon name="calendar" label="Calendar"></zd-icon> Schedule</span>
+  <span><zd-icon name="location-pin" label="Location"></zd-icon> Location</span>
+  <span><zd-icon name="checkmark" label="Complete"></zd-icon> Complete</span>
+</zd-flex>
+```
+
+The examples use icons included in the configured set and keep each meaning visible as text. For icon-only controls, give the control itself an accessible name.
+
+### Size and rotation
+
+```html preview
+<zd-flex gap="16" align="center">
+  <zd-icon name="info-circle" label="Information" size="small"></zd-icon>
+  <zd-icon name="info-circle" label="Information"></zd-icon>
+  <zd-icon name="info-circle" label="Information" size="large"></zd-icon>
+  <zd-icon name="chevron-right" label="Next" rotate="90"></zd-icon>
+</zd-flex>
+```
+
+When size is omitted, the icon scales with the surrounding text. Explicit sizes use theme tokens.
+
+## Available icons
+
+Every icon in the configured set. Hover an icon to see its `name`.
+
+<IconGallery />
+
+## API Reference
+
+**Class** `ZdIcon` — **Package** `@zocdoc/api-primitive-components`
+
+### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `size` | `'small' \| 'default' \| 'large' \| undefined` | — | The icon's rendered size. Charm's icon is `1em` square, so it scales with whatever text it sits in. That's the right default inside a button or a label, so omitting `size` keeps it. Setting `size` pins the icon to a token instead, for the cases where it stands on its own. |
+
+### Inherited
+
+#### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `flip` | `flip` | `'x' \| 'y' \| 'both'` | — | Sets the flip direction of the icon. | `CoreIcon` |
+| `label` | `label` | `string` | — | Label of the icon for assertive technologies. This is required for accessibility. | `CoreIcon` |
+| `name` | `name` | `string` | — | The name of the icon to draw. | `CoreIcon` |
+| `rotate` | `rotate` | `number` | `0` | Sets the rotation degree of the icon. | `CoreIcon` |
+| `url` | `url` | `string` | — | A string that points to an external SVG. | `CoreIcon` |
+
+#### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `icon-error` | `Event` | Emitted when the icon fails to load. | `CoreIcon` |
+| `icon-load` | `Event` | Emitted when the icon has loaded. | `CoreIcon` |
+| `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+#### CSS Parts
+
+| Part | Description | From |
+| --- | --- | --- |
+| `zd-icon-base` | The base of the icon. | `CoreIcon` |

@@ -1,0 +1,72 @@
+---
+title: Menu Group
+description: "Groups related menu items under a heading."
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+A menu group organizes related `zd-menu-item` elements under a heading. It is typically used inside `zd-menu`, where the menu provides the trigger and popup behavior.
+
+## Usage
+
+### Grouped single-selection choices
+
+```html preview
+<zd-menu placement="bottom-start">
+  <zd-button slot="trigger" variant="secondary">Visit format</zd-button>
+  <zd-menu-group heading="Choose a format" select="single">
+    <zd-menu-item>In person</zd-menu-item>
+    <zd-menu-item>Video call</zd-menu-item>
+  </zd-menu-group>
+</zd-menu>
+```
+
+The group heading supplies context, and `select="single"` makes the options a one-at-a-time selection. Use `multiple` for independent selections.
+
+## API Reference
+
+**Class** `ZdMenuGroup` — **Package** `@zocdoc/api-primitive-components`
+
+### Inherited
+
+#### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `heading` | `heading` | `string` | — | The heading text for the menu group. | `CoreMenuGroup` |
+| `select` | `select` | `'single' \| 'multiple'` | — | Determines if the elements inside the group are selectable as "single" (only one selected at a time) or "multiple" (checkbox behavior). | `CoreMenuGroup` |
+
+#### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `menu-group-select` | `Event` | Emitted when a menu item is selected in a group. | `CoreMenuGroup` |
+| `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+#### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `heading` | Slot for the group heading. | `CoreMenuGroup` |
+
+#### CSS Parts
+
+| Part | Description | From |
+| --- | --- | --- |
+| `zd-menu-group-base` | The base wrapper for the menu group. | `CoreMenuGroup` |
+| `zd-menu-group-heading` | The heading element for the menu group. | `CoreMenuGroup` |
+
+#### CSS Custom Properties
+
+| Property | Syntax | Default | Description | From |
+| --- | --- | --- | --- | --- |
+| `--zd-charm-menu-group-heading-line-height` | — | — | The line height for the menu group header. | `CoreMenuGroup` |
+| `--zd-charm-menu-group-heading-margin` | — | — | The margin for the menu group header. | `CoreMenuGroup` |
+| `--zd-charm-menu-group-heading-padding-x` | — | — | The x padding for the menu group header. | `CoreMenuGroup` |
+| `--zd-charm-menu-group-heading-padding-y` | — | — | The y padding for the menu group header. | `CoreMenuGroup` |
+| `--zd-charm-menu-group-heading-size` | — | — | The font size for the menu group header. | `CoreMenuGroup` |
+| `--zd-charm-menu-group-heading-weight` | — | — | The font weight for the menu group header. | `CoreMenuGroup` |

@@ -7,4 +7,21 @@
   --code-bubble-button-bg-color: var(--sl-color-gray-6);
   --code-bubble-button-fg-color: var(--sl-color-text);
   --code-bubble-copy-button-fg-color: var(--sl-color-text);
+
+  /* Shiki `css-variables` theme tokens, mapped to Starlight's palette so they follow light/dark mode. */
+  --astro-code-foreground: var(--sl-color-text);
+  --astro-code-background: var(--code-bubble-bg-color);
+  --astro-code-token-constant: var(--sl-color-blue-high);
+  --astro-code-token-string: var(--sl-color-green-high);
+  --astro-code-token-string-expression: var(--sl-color-green-high);
+  --astro-code-token-comment: var(--sl-color-gray-3);
+  --astro-code-token-keyword: var(--sl-color-purple-high);
+  --astro-code-token-parameter: var(--sl-color-orange-high);
+  --astro-code-token-function: var(--sl-color-blue-high);
+  --astro-code-token-punctuation: var(--sl-color-gray-2);
+  --astro-code-token-link: var(--sl-color-accent-high);
+
+  & pre.astro-code {
+    font-size: var(--sl-text-code);
+  }
 }

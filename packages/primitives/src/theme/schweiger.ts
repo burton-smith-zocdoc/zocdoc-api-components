@@ -1,6 +1,7 @@
 import { cssVarName } from '@charm-ux/theming';
 import { generateThemeSync } from '@charm-ux/theming/generator';
-import { zocdocTokensBase } from './zocdoc.js';
+import { generateLayoutElementsCss } from './layout-elements.js';
+import { zocdocSpacingTokens, zocdocTokensBase } from './zocdoc.js';
 import { tokenPrefix } from './prefix.js';
 
 /**
@@ -87,6 +88,11 @@ export const schweigerThemeCss: string = schweigerTheme.css ?? '';
 export const schweigerResetCss: string = schweigerTheme.cssReset ?? '';
 export const schweigerUtilitiesCss: string = schweigerTheme.cssUtilities ?? '';
 
-export const schweigerAllCss: string = [schweigerThemeCss, schweigerResetCss, schweigerUtilitiesCss].join(
-  '\n',
-);
+const layoutElementsCss = generateLayoutElementsCss(zocdocSpacingTokens);
+
+export const schweigerAllCss: string = [
+  schweigerThemeCss,
+  schweigerResetCss,
+  schweigerUtilitiesCss,
+  layoutElementsCss,
+].join('\n');

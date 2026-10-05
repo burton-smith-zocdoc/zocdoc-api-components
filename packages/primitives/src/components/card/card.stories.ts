@@ -32,14 +32,14 @@ export const Default: Story = {};
 export const ProviderCard: Story = {
   render: () => html`
     <zd-card style="max-width: 400px;">
-      <div style="display: flex; gap: 1rem;">
+      <zd-flex gap="16">
         <zd-avatar name="Dr. Jane Smith"></zd-avatar>
         <div>
           <h3 style="margin: 0;">Dr. Jane Smith</h3>
           <p style="margin: 0; color: var(--color-text-secondary);">Dentist</p>
           <p style="margin: 0.5rem 0 0;">123 Main St, New York, NY</p>
         </div>
-      </div>
+      </zd-flex>
     </zd-card>
   `,
 };

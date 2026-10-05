@@ -24,11 +24,11 @@ export const Default: Story = {};
 
 export const Text: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+    <zd-flex direction="column" gap="8">
       <zd-skeleton style="width: 100%; height: 1rem;"></zd-skeleton>
       <zd-skeleton style="width: 80%; height: 1rem;"></zd-skeleton>
       <zd-skeleton style="width: 60%; height: 1rem;"></zd-skeleton>
-    </div>
+    </zd-flex>
   `,
 };
 
@@ -42,14 +42,14 @@ export const Circle: Story = {
 export const ProviderCard: Story = {
   render: () => html`
     <zd-card style="max-width: 400px;">
-      <div style="display: flex; gap: 1rem;">
+      <zd-flex gap="16">
         <zd-skeleton shape="circle" style="width: 64px; height: 64px;"></zd-skeleton>
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+        <zd-flex direction="column" gap="8" style="flex: 1;">
           <zd-skeleton style="width: 60%; height: 1.25rem;"></zd-skeleton>
           <zd-skeleton style="width: 40%; height: 1rem;"></zd-skeleton>
           <zd-skeleton style="width: 80%; height: 1rem;"></zd-skeleton>
-        </div>
-      </div>
+        </zd-flex>
+      </zd-flex>
     </zd-card>
   `,
 };

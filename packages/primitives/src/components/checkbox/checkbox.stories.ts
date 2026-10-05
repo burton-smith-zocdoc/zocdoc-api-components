@@ -23,10 +23,10 @@ export const Default: Story = {};
 
 export const Sizes: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+    <zd-flex direction="column" gap="12">
       <zd-checkbox>Default size</zd-checkbox>
       <zd-checkbox size="small">Small size</zd-checkbox>
-    </div>
+    </zd-flex>
   `,
 };
 

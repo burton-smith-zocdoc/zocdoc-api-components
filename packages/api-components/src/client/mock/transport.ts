@@ -12,7 +12,7 @@
  * no outbound destination at all.
  */
 import { configureZocdoc, type ZocdocTransport } from '../configure.js';
-import type { Patient, ZocdocErrorResponse } from '../types.js';
+import type { Patient, ProviderLocation, ZocdocErrorResponse } from '../types.js';
 import {
   BOOKINGS,
   DEFAULT_BOOKING,
@@ -37,6 +37,12 @@ export interface MockTransportOptions {
    * this only when dates have to hold still, as in a test or a visual snapshot.
    */
   availabilityStartDate?: string;
+  /**
+   * Prefix for the fixtures' root-relative photo paths (`/images/…`). Those resolve against
+   * the origin, so a host served under a sub-path — the docs site at `/zocdoc-api-components/`
+   * — passes its base here or every photo 404s. Defaults to the origin root.
+   */
+  assetBaseUrl?: string;
 }
 
 /**
@@ -104,7 +110,23 @@ function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function handleProviderLocations(url: URL): Response {
+/**
+ * Rebases a root-relative fixture photo onto `assetBaseUrl`. Protocol-relative and absolute
+ * URLs pass through untouched, since they already name their host.
+ */
+function withAssetBase(location: ProviderLocation, assetBaseUrl: string): ProviderLocation {
+  const photo = location.provider.provider_photo_url;
+  if (!assetBaseUrl || !photo?.startsWith('/') || photo.startsWith('//')) return location;
+  return {
+    ...location,
+    provider: {
+      ...location.provider,
+      provider_photo_url: `${assetBaseUrl.replace(/\/$/, '')}${photo}`,
+    },
+  };
+}
+
+function handleProviderLocations(url: URL, assetBaseUrl: string): Response {
   const zip = url.searchParams.get('zip_code');
   const specialtyId = url.searchParams.get('specialty_id');
   const visitReasonId = url.searchParams.get('visit_reason_id');
@@ -156,7 +178,9 @@ function handleProviderLocations(url: URL): Response {
       specialty_id: specialtyId ?? undefined,
       visit_reason_id: visitReasonId ?? locations[0]?.provider.default_visit_reason_id,
     },
-    provider_locations: locations.slice(start, start + p.pageSize),
+    provider_locations: locations
+      .slice(start, start + p.pageSize)
+      .map((location) => withAssetBase(location, assetBaseUrl)),
   });
 }
 
@@ -276,7 +300,7 @@ function handleCreateAppointment(rawBody: unknown): Response {
  * sentinel zip codes and provider location ids live in the query string or the body.
  */
 export function createMockTransport(options: MockTransportOptions = {}): ZocdocTransport {
-  const { latencyMs = 300, availabilityStartDate } = options;
+  const { latencyMs = 300, availabilityStartDate, assetBaseUrl = '' } = options;
 
   return async (rawUrl: string, init: RequestInit = {}): Promise<Response> => {
     if (latencyMs > 0) {
@@ -310,7 +334,7 @@ export function createMockTransport(options: MockTransportOptions = {}): ZocdocT
     }
 
     if (path === '/v1/provider_locations') {
-      return handleProviderLocations(url);
+      return handleProviderLocations(url, assetBaseUrl);
     }
 
     if (path === '/v1/provider_locations/availability') {

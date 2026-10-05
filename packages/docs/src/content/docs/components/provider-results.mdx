@@ -12,10 +12,10 @@ The `<zd-provider-results>` component renders a paginated list of providers with
 
 ## Usage
 
-Pass provider data as JavaScript properties; HTML attributes cannot carry object arrays. This preview uses a documented mock provider and keeps photos off to avoid requesting an external image:
+Pass provider data as JavaScript properties; HTML attributes cannot carry object arrays. This preview uses a documented mock provider with a photo served from the docs site:
 
 ```html preview
-<zd-provider-results id="provider-results" total-count="1"></zd-provider-results>
+<zd-provider-results id="provider-results" total-count="1" show-photos></zd-provider-results>
 <script>
   const providerResults = document.getElementById('provider-results');
   providerResults.providers = [
@@ -29,6 +29,7 @@ Pass provider data as JavaScript properties; HTML attributes cannot carry object
         last_name: 'Sandoval',
         title: 'MD',
         specialties: ['Primary Care Doctor'],
+        provider_photo_url: '/zocdoc-api-components/images/michael-scott.png',
       },
       location: {
         address1: '1 Sandbox Plaza',

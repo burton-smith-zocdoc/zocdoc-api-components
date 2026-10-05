@@ -1,14 +1,22 @@
 ---
+import { Code } from 'astro:components';
+import type { ShikiTransformer } from 'shiki';
+
 interface Props {
   code: string;
   lang?: string;
 }
 
 const { code, lang = 'html' } = Astro.props;
-const escapeHtml = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-const languageClass = `language-${lang}`;
+
+// code-bubble reads the snippet's language from a `language-*` class on the `<code>` element.
+const languageClass: ShikiTransformer = {
+  code(node) {
+    this.addClassToHast(node, `language-${lang}`);
+  },
+};
 ---
 
-<code-bubble class="component-preview" sandbox="stackblitz">
-  <pre><code class={languageClass} set:html={escapeHtml(code)}></code></pre>
+<code-bubble class="component-preview not-content" sandbox="stackblitz">
+  <Code code={code} lang={lang as any} theme="css-variables" transformers={[languageClass]} />
 </code-bubble>

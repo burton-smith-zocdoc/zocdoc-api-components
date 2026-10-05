@@ -30780,6 +30780,178 @@
           }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "source": "src/theme/generated/layout-elements.css",
+      "path": "dist/theme/generated/layout-elements.css.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "customElement": true,
+          "name": "zd-column",
+          "description": "A grid child that places its content within a zd-grid.",
+          "tagName": "zd-column",
+          "attributes": [
+            {
+              "name": "column",
+              "description": "Sets the starting column line.",
+              "type": {
+                "text": "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12"
+              }
+            },
+            {
+              "name": "row",
+              "description": "Sets the starting row line.",
+              "type": {
+                "text": "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12"
+              }
+            },
+            {
+              "name": "span",
+              "description": "Sets how many columns to span.",
+              "type": {
+                "text": "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "customElement": true,
+          "name": "zd-flex",
+          "description": "A one-dimensional flex layout container.",
+          "tagName": "zd-flex",
+          "attributes": [
+            {
+              "name": "align",
+              "description": "Aligns items on the cross axis.",
+              "type": {
+                "text": "start | center | end | stretch | baseline"
+              }
+            },
+            {
+              "name": "direction",
+              "description": "Selects the main-axis direction.",
+              "type": {
+                "text": "row | column"
+              }
+            },
+            {
+              "name": "gap",
+              "description": "Sets the gap using a numeric Zocdoc spacing token.",
+              "type": {
+                "text": "0 | 1 | 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 128"
+              }
+            },
+            {
+              "name": "inline",
+              "description": "Renders as an inline-level flex container.",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "name": "justify",
+              "description": "Distributes items on the main axis.",
+              "type": {
+                "text": "start | center | end | between | around | evenly"
+              }
+            },
+            {
+              "name": "wrap",
+              "description": "Allows items to wrap onto another line.",
+              "type": {
+                "text": "boolean"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--zd-flex-gap",
+              "description": "Overrides the flex gap.",
+              "default": "var(--zd-spacing-16)"
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "customElement": true,
+          "name": "zd-grid",
+          "description": "A two-dimensional grid layout container.",
+          "tagName": "zd-grid",
+          "attributes": [
+            {
+              "name": "align",
+              "description": "Aligns items in their block-axis grid area.",
+              "type": {
+                "text": "start | center | end | stretch"
+              }
+            },
+            {
+              "name": "columns",
+              "description": "Creates equal-width column tracks.",
+              "type": {
+                "text": "1 | 2 | 3 | 4 | 6 | 12"
+              }
+            },
+            {
+              "name": "gap",
+              "description": "Sets the gap using a numeric Zocdoc spacing token.",
+              "type": {
+                "text": "0 | 1 | 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 128"
+              }
+            },
+            {
+              "name": "inline",
+              "description": "Renders as an inline-level grid container.",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "name": "justify",
+              "description": "Aligns items in their inline-axis grid area.",
+              "type": {
+                "text": "start | center | end | stretch"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--zd-grid-gap",
+              "description": "Overrides the grid gap.",
+              "default": "var(--zd-spacing-16)"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "zd-column",
+          "declaration": {
+            "name": "zd-column",
+            "module": "dist/theme/generated/layout-elements.css.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "zd-flex",
+          "declaration": {
+            "name": "zd-flex",
+            "module": "dist/theme/generated/layout-elements.css.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "zd-grid",
+          "declaration": {
+            "name": "zd-grid",
+            "module": "dist/theme/generated/layout-elements.css.js"
+          }
+        }
+      ]
     }
   ]
 }

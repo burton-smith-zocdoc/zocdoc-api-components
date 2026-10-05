@@ -1,0 +1,64 @@
+---
+title: Accordion
+description: "Groups accordion items into a single collapsible region."
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+Use an accordion to organize related sections that readers can expand when they need more detail. Place one or more `zd-accordion-item` elements inside it; each item provides a heading and its panel content.
+
+## Usage
+
+### Several expandable sections
+
+```html preview
+<zd-accordion>
+  <zd-accordion-item heading="Before you begin">
+    Review the steps and gather the information you need.
+  </zd-accordion-item>
+  <zd-accordion-item heading="After you finish">
+    You can return to this section to review your choices.
+  </zd-accordion-item>
+</zd-accordion>
+```
+
+Each child item supplies its own heading and default-slot content. Use `open-single` when readers should only be able to keep one panel open at a time.
+
+### Keep only one item open
+
+```html preview
+<zd-accordion open-single>
+  <zd-accordion-item heading="Email notifications">Receive updates by email.</zd-accordion-item>
+  <zd-accordion-item heading="Text notifications">Receive updates by text.</zd-accordion-item>
+</zd-accordion>
+```
+
+The `open-single` attribute coordinates the child items; without it, items can be opened independently.
+
+## API Reference
+
+**Class** `ZdAccordion` — **Package** `@zocdoc/api-primitive-components`
+
+### Inherited
+
+#### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `open-single` | `openSingle` | `boolean` | `false` | If set, allows only one child accordion-item to be open at a time. | `CoreAccordion` |
+
+#### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+#### CSS Custom Properties
+
+| Property | Syntax | Default | Description | From |
+| --- | --- | --- | --- | --- |
+| `--zd-charm-accordion-top-border-color` | — | — | The border top color of the accordion. | `CoreAccordion` |

@@ -1,0 +1,88 @@
+---
+title: Disclosure
+description: "Toggles a region of content from a slotted trigger."
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+A disclosure reveals or hides supplementary content from a trigger. Put an interactive control in the `trigger` slot and the content to reveal in the default slot.
+
+## Usage
+
+### Reveal supplementary information
+
+```html preview
+<zd-disclosure>
+  <zd-button slot="trigger" variant="link">Show additional details</zd-button>
+  <p>This content becomes available when the trigger is activated.</p>
+</zd-disclosure>
+```
+
+The trigger remains the user’s way to expand or collapse the content. Keep the trigger wording descriptive and the revealed text close to its context.
+
+### Start expanded
+
+```html preview
+<zd-disclosure open>
+  <zd-button slot="trigger" variant="link">Hide advanced options</zd-button>
+  <p>Advanced options are currently visible.</p>
+</zd-disclosure>
+```
+
+Set `open` when the initial state should be expanded. The disclosure emits show and hide events as its state changes.
+
+## API Reference
+
+**Class** `ZdDisclosure` — **Package** `@zocdoc/api-primitive-components`
+
+### Inherited
+
+#### Attributes & Properties
+
+| Attribute | Property | Type | Default | Description | From |
+| --- | --- | --- | --- | --- | --- |
+| `content-below` | `contentBelow` | `boolean` | — | Controls the expand direction of the component. | `CoreDisclosure` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+
+#### Events
+
+| Event | Type | Description | From |
+| --- | --- | --- | --- |
+| `disclosure-after-hide` | `Event` | Emitted after the disclosure has hidden and all animations are complete. | `CoreDisclosure` |
+| `disclosure-after-show` | `Event` | Emitted after the disclosure has shown and all animations are complete. | `CoreDisclosure` |
+| `disclosure-hide` | `Event` | Emitted when the disclosure begins to hide. | `CoreDisclosure` |
+| `disclosure-show` | `Event` | Emitted when the disclosure begins to show. | `CoreDisclosure` |
+| `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+#### Methods
+
+| Method | Description | From |
+| --- | --- | --- |
+| `hide(): void` | Hides/closes the component. | `CharmDismissibleElement` |
+| `show(): void` | Shows/opens the component. | `CharmDismissibleElement` |
+| `toggle(): void` | Shows or hides the component depending on whether it is currently visible. | `CharmDismissibleElement` |
+
+#### CSS Parts
+
+| Part | Description | From |
+| --- | --- | --- |
+| `zd-disclosure-base` | The component's base wrapper. | `CoreDisclosure` |
+| `zd-disclosure-content` | Wrapper around the main slotted content. | `CoreDisclosure` |
+
+#### CSS Custom Properties
+
+| Property | Syntax | Default | Description | From |
+| --- | --- | --- | --- | --- |
+| `--zd-charm-disclosure-bg-color` | — | — | controls the background color of the expanded region. | `CoreDisclosure` |
+| `--zd-charm-disclosure-closed-max-height` | — | — | controls the height of the collapsed region when it's closed (default is 0). | `CoreDisclosure` |
+| `--zd-charm-disclosure-content-border` | — | — | controls the border styles of expanded region. | `CoreDisclosure` |
+| `--zd-charm-disclosure-content-border-radius` | — | — | controls the border styles of expanded region. | `CoreDisclosure` |
+| `--zd-charm-disclosure-fg-color` | — | — | controls the text color of the expanded region. | `CoreDisclosure` |
+| `--zd-charm-disclosure-gap` | — | — | controls the space between the trigger and the expandable content. | `CoreDisclosure` |
+| `--zd-charm-disclosure-hide-transition` | — | — | Transition for the content when closing. | `CoreDisclosure` |
+| `--zd-charm-disclosure-opened-max-height` | — | — | controls the height of the collapsed region when it's opened. | `CoreDisclosure` |
+| `--zd-charm-disclosure-show-transition` | — | — | Transition for the content when opening. | `CoreDisclosure` |

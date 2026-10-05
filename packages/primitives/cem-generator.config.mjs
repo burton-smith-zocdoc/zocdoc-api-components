@@ -4,7 +4,7 @@ export default {
   ...sharedConfig({
     charmManifestPath: 'node_modules/@charm-ux/core/custom-elements.json',
     tsConfigPath: 'tsconfig.build.json',
-    include: ['src/**/*.ts'],
+    include: ['src/**/*.ts', 'src/theme/generated/layout-elements.css'],
   }),
   filePath: 'custom-elements.json',
 };

@@ -1,5 +1,6 @@
 import { charmTokens, cssVarName } from '@charm-ux/theming';
 import { generateThemeSync } from '@charm-ux/theming/generator';
+import { generateLayoutElementsCss } from './layout-elements.js';
 import { tokenPrefix } from './prefix.js';
 
 /**
@@ -75,6 +76,32 @@ type TokenRef = (...segments: (string | number)[]) => string;
  */
 const varRef: TokenRef = (...segments) => `var(${cssVarName(tokenPrefix, ...segments)})`;
 
+export const zocdocSpacingTokens = {
+  0: '0',
+  1: '1px',
+  2: '2px',
+  4: '4px',
+  6: '6px',
+  8: '8px',
+  10: '10px',
+  12: '12px',
+  14: '14px',
+  16: '16px',
+  20: '20px',
+  24: '24px',
+  28: '28px',
+  32: '32px',
+  36: '36px',
+  40: '40px',
+  44: '44px',
+  48: '48px',
+  56: '56px',
+  64: '64px',
+  128: '128px',
+};
+
+const layoutElementsCss = generateLayoutElementsCss(zocdocSpacingTokens);
+
 const zocdocTokensBase = charmTokens
   .updatePrefix(tokenPrefix)
   .extendPrimitives({
@@ -97,29 +124,7 @@ const zocdocTokensBase = charmTokens
       caution: '#FEED5A',
       info: '#4E93F3',
     },
-    spacing: {
-      0: '0',
-      1: '1px',
-      2: '2px',
-      4: '4px',
-      6: '6px',
-      8: '8px',
-      10: '10px',
-      12: '12px',
-      14: '14px',
-      16: '16px',
-      20: '20px',
-      24: '24px',
-      28: '28px',
-      32: '32px',
-      36: '36px',
-      40: '40px',
-      44: '44px',
-      48: '48px',
-      56: '56px',
-      64: '64px',
-      128: '128px',
-    },
+    spacing: zocdocSpacingTokens,
     borderRadius: {
       none: '0',
       xs: '2px',
@@ -1728,12 +1733,12 @@ const zocdocTokensBase = charmTokens
      */
     const alertVariant = (ramp: string) => ({
       bgColor: {
-        light: primitive('color', ramp, 100),
-        dark: primitive('color', ramp, 200),
+        light: primitive('color', ramp, 50),
+        dark: primitive('color', ramp, 50),
       },
       fgColor: {
-        light: varRef('color', 'on', ramp, 100),
-        dark: varRef('color', 'on', ramp, 200),
+        light: varRef('color', 'on', ramp, 50),
+        dark: varRef('color', 'on', ramp, 50),
       },
       borderColor: {
         light: primitive('color', ramp, 400),
@@ -2619,4 +2624,6 @@ export const zocdocThemeCss: string = zocdocTheme.css ?? '';
 export const zocdocResetCss: string = zocdocTheme.cssReset ?? '';
 export const zocdocUtilitiesCss: string = zocdocTheme.cssUtilities ?? '';
 
-export const zocdocAllCss: string = [zocdocThemeCss, zocdocResetCss, zocdocUtilitiesCss].join('\n');
+export const zocdocAllCss: string = [zocdocThemeCss, zocdocResetCss, zocdocUtilitiesCss, layoutElementsCss].join(
+  '\n',
+);

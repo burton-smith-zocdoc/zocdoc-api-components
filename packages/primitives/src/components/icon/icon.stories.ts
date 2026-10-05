@@ -23,11 +23,11 @@ export const Default: Story = {};
 
 export const Sizes: Story = {
   render: () => html`
-    <div style="display: flex; align-items: center; gap: 0.75rem;">
+    <zd-flex align="center" gap="12">
       <zd-icon name="checkmark" size="small"></zd-icon>
       <zd-icon name="checkmark"></zd-icon>
       <zd-icon name="checkmark" size="large"></zd-icon>
-    </div>
+    </zd-flex>
   `,
 };
 
@@ -45,15 +45,15 @@ const zocdocIconNames = [
 
 export const ZocdocIcons: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem;">
+    <zd-grid gap="16" style="grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));">
       ${zocdocIconNames.map(
         (name) => html`
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+          <zd-flex direction="column" align="center" gap="8">
             <zd-icon name=${name}></zd-icon>
             <span style="font-size: 0.75rem; color: #666;">${name}</span>
-          </div>
+          </zd-flex>
         `
       )}
-    </div>
+    </zd-grid>
   `,
 };

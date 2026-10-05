@@ -27,9 +27,9 @@ export const WithLabel: Story = {
 
 export const Sizes: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
+    <zd-flex direction="column" gap="16">
       <zd-text-area label="Default size"></zd-text-area>
       <zd-text-area label="Small size" size="small"></zd-text-area>
-    </div>
+    </zd-flex>
   `,
 };

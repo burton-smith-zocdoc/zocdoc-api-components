@@ -37,10 +37,10 @@ export const WithImage: Story = {
 
 export const Initials: Story = {
   render: () => html`
-    <div style="display: flex; gap: 1rem;">
+    <zd-flex gap="16">
       <zd-avatar initials="AB" label="Alice Brown"></zd-avatar>
       <zd-avatar initials="BC" label="Bob Carter"></zd-avatar>
       <zd-avatar initials="CD" label="Carol Davis"></zd-avatar>
-    </div>
+    </zd-flex>
   `,
 };

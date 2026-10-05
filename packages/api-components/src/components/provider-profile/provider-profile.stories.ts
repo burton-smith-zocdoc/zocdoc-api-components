@@ -107,10 +107,10 @@ export const WithHeaderActions: Story = {
     template(
       args,
       html`
-        <span slot="actions" style="display: flex; gap: 0.5rem">
+        <zd-flex inline gap="8" slot="actions">
           <zd-button variant="secondary" size="small">Share</zd-button>
           <zd-button variant="secondary" size="small">Save</zd-button>
-        </span>
+        </zd-flex>
       `
     ),
 };

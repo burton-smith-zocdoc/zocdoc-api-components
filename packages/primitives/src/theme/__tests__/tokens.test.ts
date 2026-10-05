@@ -117,3 +117,20 @@ describe('privia tokens', () => {
     expect(priviaThemeCss).toContain('#006bac');
   });
 });
+
+describe('layout element theme CSS', () => {
+  it('includes the shared layout rules in every combined theme', () => {
+    for (const css of [zocdocAllCss, schweigerAllCss, womensCareAllCss, priviaAllCss]) {
+      expect(css).toContain(':where(zd-flex)');
+      expect(css).toContain(':where(zd-grid)');
+      expect(css).toContain('&:where([gap="16"])');
+      expect(css).toContain('--zd-flex-gap');
+      expect(css).toContain('--zd-grid-gap');
+    }
+  });
+
+  it('keeps layout element rules out of utility CSS', () => {
+    expect(zocdocUtilitiesCss).not.toContain(':where(zd-flex)');
+    expect(zocdocUtilitiesCss).not.toContain(':where(zd-grid)');
+  });
+});

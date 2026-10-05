@@ -67,6 +67,23 @@ describe('createMockTransport', () => {
   });
 
   describe('provider location search', () => {
+    it('rebases root-relative fixture photos onto assetBaseUrl', async () => {
+      configureZocdoc({
+        baseUrl: 'https://mock.test',
+        getToken: 'tok',
+        transport: createMockTransport({ latencyMs: 0, assetBaseUrl: '/docs/' }),
+      });
+
+      const result = await searchProviderLocations({
+        zipCode: SCENARIOS.zipWithResults,
+        specialtyId: SEARCH_SPECIALTY_ID,
+      });
+
+      const photos = result.providerLocations.map((l) => l.provider.provider_photo_url);
+      expect(photos).toContain('/docs/images/michael-scott.png');
+      expect(photos.filter(Boolean).every((url) => url?.startsWith('/docs/images/'))).toBe(true);
+    });
+
     it('returns results for the documented populated zip code', async () => {
       const result = await searchProviderLocations({
         zipCode: SCENARIOS.zipWithResults,

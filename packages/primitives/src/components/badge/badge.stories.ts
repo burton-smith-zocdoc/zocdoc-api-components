@@ -23,7 +23,7 @@ export const Default: Story = {};
 
 export const Variants: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <zd-flex wrap align="center" gap="8">
       <zd-badge variant="neutral">Neutral</zd-badge>
       <zd-badge variant="inverse">Inverse</zd-badge>
       <zd-badge variant="info">Info</zd-badge>
@@ -32,25 +32,25 @@ export const Variants: Story = {
       <zd-badge variant="danger">Danger</zd-badge>
       <zd-badge variant="caution">Caution</zd-badge>
       <zd-badge variant="brand">Brand</zd-badge>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const InContext: Story = {
   render: () => html`
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
+    <zd-flex align="center" gap="8">
       <span>Availability</span>
       <zd-badge>Available today</zd-badge>
-    </div>
+    </zd-flex>
   `,
 };
 
 export const Specialty: Story = {
   render: () => html`
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <zd-flex wrap gap="8">
       <zd-badge>Dentist</zd-badge>
       <zd-badge>Accepts new patients</zd-badge>
       <zd-badge>Highly rated</zd-badge>
-    </div>
+    </zd-flex>
   `,
 };
