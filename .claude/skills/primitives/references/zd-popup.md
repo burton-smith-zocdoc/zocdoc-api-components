@@ -32,7 +32,7 @@ Low-level positioning primitive: places floating content relative to an anchor e
 | `focus-trap` | `focusTrap` | `boolean \| undefined` | `false` | Provides keyboard focus trapping within the overlay content. | `CorePopup` |
 | `label` | `label` | `string` | `'popup'` | The `aria-label` of the popup for assistive technologies. | `CorePopup` |
 | `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
-| `placement` | `placement` | `'start' \| 'end' \| 'top' \| 'top-start' \| 'top-end' \| 'bottom' \| 'bottom-start' \| 'bottom-end' \| 'start-top' \| 'start-bottom' \| 'end-top' \| 'end-bottom' \| undefined` | `'top'` | The preferred placement of the popup. Note that the actual placement will vary as configured to keep the panel inside of the viewport. | `CorePopup` |
+| `placement` | `placement` | `PopupPlacement` | `'top'` | The preferred placement of the popup. Note that the actual placement will vary as configured to keep the panel inside of the viewport. | `CorePopup` |
 | `shift` | `shift` | `boolean` | `false` | Moves the popup along the axis to keep it in view when clipped. | `CorePopup` |
 | `shift-padding` | `shiftPadding` | `number` | — | The amount of padding, in pixels, to exceed before the shift behavior will occur. | `CorePopup` |
 | `shiftBoundary` | `shiftBoundary` | `Element \| Element[]` | — | The shift boundary describes clipping element(s) that overflow will be checked relative to when shifting. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property. | `CorePopup` |

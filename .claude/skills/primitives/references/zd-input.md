@@ -47,7 +47,7 @@ A text input field with label and validation support.
 | `spellcheck` | `spellcheck` | `boolean` | `false` | Enables spell checking on the input. | `CoreInput` |
 | `step` | `step` | `number` | — | The input's step attribute. | `CoreInput` |
 | `title` | `title` | `string` | `''` | Tooltip text for the input. | `CoreInput` |
-| `type` | `type` | `'number' \| 'date' \| 'time' \| 'search' \| 'text' \| 'tel' \| 'email' \| 'url' \| 'datetime-local' \| 'password' \| 'range' \| undefined` | — | — | `CoreInput` |
+| `type` | `type` | `InputTypes` | — | — | `CoreInput` |
 | `value` | `value` | `string` | — | The input's value attribute. | `CharmFormControlElement` |
 | `with-clear` | `withClear` | `boolean` | `false` | Adds a clear button when the input is not empty. | `CoreInput` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |

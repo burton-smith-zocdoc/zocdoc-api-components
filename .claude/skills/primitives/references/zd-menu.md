@@ -17,7 +17,7 @@ A popup menu of actions anchored to a trigger.
 | `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
 | `fixed-placement` | `fixedPlacement` | `boolean` | `false` | Prevents the menu from being clipped when the component is placed inside a container with `overflow` of 'auto', 'hidden' , or 'scroll'. | `CoreMenu` |
 | `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
-| `placement` | `placement` | `'start' \| 'end' \| 'top' \| 'top-start' \| 'top-end' \| 'bottom' \| 'bottom-start' \| 'bottom-end' \| 'start-top' \| 'start-bottom' \| 'end-top' \| 'end-bottom'` | `'bottom-start'` | The placement of the menu. | `CoreMenu` |
+| `placement` | `placement` | `PopupPlacement` | `'bottom-start'` | The placement of the menu. | `CoreMenu` |
 | — | `popup` | `CorePopup \| undefined` | — | — | `CoreMenu` |
 
 ### Events
