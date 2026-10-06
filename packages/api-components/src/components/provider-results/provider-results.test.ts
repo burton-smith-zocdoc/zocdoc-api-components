@@ -63,7 +63,7 @@ function batch(): ProviderLocationAvailability[] {
 type Results = HTMLElement & {
   providers: ProviderLocation[];
   selectedId?: string;
-  showPhotos: boolean;
+  hidePhotos: boolean;
   insuranceName?: string;
   totalCount?: number;
   page: number;
@@ -79,7 +79,7 @@ type Results = HTMLElement & {
 type Grid = HTMLElement & { timeslots?: readonly unknown[]; startDate?: string };
 
 /** One provider card, which is a `zd-provider-card` element with its own shadow root. */
-type Card = HTMLElement & { provider?: ProviderLocation; showPhoto?: boolean; insuranceName?: string };
+type Card = HTMLElement & { provider?: ProviderLocation; hidePhoto?: boolean; insuranceName?: string };
 
 /** Get all provider cards in the results. */
 function cards(element: Results): Card[] {
@@ -244,14 +244,14 @@ describe('zd-provider-results', () => {
     expect(where).toContain('1 Sandbox Plaza, Brooklyn, NY 11201');
   });
 
-  it('passes showPhoto to provider cards', async () => {
+  it('passes hidePhotos to provider cards', async () => {
     const element = await mountResults(PROVIDERS);
-    expect(cards(element)[0]!.showPhoto).toBeFalsy();
+    expect(cards(element)[0]!.hidePhoto).toBeFalsy();
 
-    element.showPhotos = true;
+    element.hidePhotos = true;
     await settled(element);
 
-    expect(cards(element)[0]!.showPhoto).toBe(true);
+    expect(cards(element)[0]!.hidePhoto).toBe(true);
   });
 
   /* Without a plan named there is nothing for `accepts_patient_insurance` to be relative to. */

@@ -3,6 +3,8 @@ title: Architecture
 description: Understand how Zocdoc API Components communicate
 ---
 
+import ComponentHierarchy from '@/components/ComponentHierarchy.astro';
+
 ## Props Down, Events Up
 
 All Zocdoc API Components follow a strict unidirectional data flow:
@@ -14,30 +16,7 @@ There is no shared state container, no context protocol, and no global store. Ea
 
 ## Component Hierarchy
 
-```
-┌─────────────────────────────────────────────┐
-│  <zd-booking>                               │
-│  ┌─────────────────────────────────────────┐│
-│  │ <zd-provider-search>                    ││
-│  │   ↓ emits: provider-results             ││
-│  └─────────────────────────────────────────┘│
-│  ┌─────────────────────────────────────────┐│
-│  │ <zd-provider-results>                   ││
-│  │   ↓ emits: provider-select              ││
-│  └─────────────────────────────────────────┘│
-│  ┌─────────────────────────────────────────┐│
-│  │ <zd-availability-picker>                ││
-│  │   ↓ emits: slot-select                  ││
-│  └─────────────────────────────────────────┘│
-│  ┌─────────────────────────────────────────┐│
-│  │ <zd-patient-form>                       ││
-│  │   ↓ emits: patient-submit               ││
-│  └─────────────────────────────────────────┘│
-│  ┌─────────────────────────────────────────┐│
-│  │ <zd-booking-confirmation>               ││
-│  └─────────────────────────────────────────┘│
-└─────────────────────────────────────────────┘
-```
+<ComponentHierarchy />
 
 The `<zd-booking>` component listens for events from its children and updates their properties in response. You can replicate this wiring yourself for custom flows.
 

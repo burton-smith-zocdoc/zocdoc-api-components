@@ -2076,6 +2076,16 @@
               }
             },
             {
+              "kind": "field",
+              "name": "hidePhotos",
+              "description": "Hides provider photos in the results list and booking summary.",
+              "privacy": "public",
+              "attribute": "hide-photos",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
               "kind": "method",
               "name": "html",
               "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
@@ -2395,16 +2405,6 @@
             },
             {
               "kind": "field",
-              "name": "showPhotos",
-              "description": "Shows provider photos in the results list and booking summary.",
-              "privacy": "public",
-              "attribute": "show-photos",
-              "type": {
-                "text": "boolean"
-              }
-            },
-            {
-              "kind": "field",
               "name": "specialtyId",
               "description": "The specialty the flow opens on. Kept in step with what the patient searched.\n\nThe search endpoint requires this or a visit reason, so a flow that opens on neither\ncannot search until the patient chooses one.",
               "privacy": "public",
@@ -2477,6 +2477,14 @@
               }
             },
             {
+              "name": "hide-photos",
+              "description": "Hides provider photos in the results list and booking summary.",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "hidePhotos"
+            },
+            {
               "name": "insurance-name",
               "description": "The display name of the insurance plan, for the network status line.",
               "type": {
@@ -2533,14 +2541,6 @@
                 "text": "string"
               },
               "fieldName": "providerLocationId"
-            },
-            {
-              "name": "show-photos",
-              "description": "Shows provider photos in the results list and booking summary.",
-              "type": {
-                "text": "boolean"
-              },
-              "fieldName": "showPhotos"
             },
             {
               "name": "specialty-id",
@@ -3281,6 +3281,16 @@
               }
             },
             {
+              "kind": "field",
+              "name": "hidePhoto",
+              "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
+              "privacy": "public",
+              "attribute": "hide-photo",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
               "kind": "method",
               "name": "html",
               "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
@@ -3386,16 +3396,6 @@
               "type": {
                 "text": "any"
               }
-            },
-            {
-              "kind": "field",
-              "name": "showPhoto",
-              "description": "Renders the provider's photo from CDN. Off by default because the photo\ncomes from an external CDN, not the configured baseUrl (PHI-003 note).",
-              "privacy": "public",
-              "attribute": "show-photo",
-              "type": {
-                "text": "boolean"
-              }
             }
           ],
           "attributes": [
@@ -3409,20 +3409,20 @@
               }
             },
             {
+              "name": "hide-photo",
+              "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "hidePhoto"
+            },
+            {
               "name": "insurance-name",
               "description": "The insurance plan name the search was run with. Enables the network\nstatus line when provided.",
               "type": {
                 "text": "string"
               },
               "fieldName": "insuranceName"
-            },
-            {
-              "name": "show-photo",
-              "description": "Renders the provider's photo from CDN. Off by default because the photo\ncomes from an external CDN, not the configured baseUrl (PHI-003 note).",
-              "type": {
-                "text": "boolean"
-              },
-              "fieldName": "showPhoto"
             }
           ],
           "events": [
@@ -3602,6 +3602,16 @@
                 "type": {
                   "text": "string | undefined"
                 }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hidePhoto",
+              "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
+              "privacy": "public",
+              "attribute": "hide-photo",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -3793,16 +3803,6 @@
               "type": {
                 "text": "any"
               }
-            },
-            {
-              "kind": "field",
-              "name": "showPhoto",
-              "description": "Renders the provider's photo. Off by default for the same reason `zd-provider-results`\ndefaults it off: `provider_photo_url` points at Zocdoc's image CDN rather than the\nconfigured `baseUrl`, so painting it makes an outbound request to a host PHI-003 does not\notherwise allow. A host page that wants production parity opts in knowingly.",
-              "privacy": "public",
-              "attribute": "show-photo",
-              "type": {
-                "text": "boolean"
-              }
             }
           ],
           "attributes": [
@@ -3816,20 +3816,20 @@
               }
             },
             {
+              "name": "hide-photo",
+              "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "hidePhoto"
+            },
+            {
               "name": "insurance-name",
               "description": "The insurance plan name the search was run with. Enables the network status line when\nprovided.",
               "type": {
                 "text": "string"
               },
               "fieldName": "insuranceName"
-            },
-            {
-              "name": "show-photo",
-              "description": "Renders the provider's photo. Off by default for the same reason `zd-provider-results`\ndefaults it off: `provider_photo_url` points at Zocdoc's image CDN rather than the\nconfigured `baseUrl`, so painting it makes an outbound request to a host PHI-003 does not\notherwise allow. A host page that wants production parity opts in knowingly.",
-              "type": {
-                "text": "boolean"
-              },
-              "fieldName": "showPhoto"
             }
           ],
           "events": [
@@ -3929,7 +3929,7 @@
             },
             {
               "name": "zd-photo",
-              "description": "The provider's photo, when `show-photo` is set."
+              "description": "The provider's photo, unless `hide-photo` is set."
             },
             {
               "name": "zd-place",
@@ -4155,6 +4155,16 @@
                 "type": {
                   "text": "void"
                 }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hidePhotos",
+              "description": "Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see\n`ProviderSummaryOptions.hidePhoto`.",
+              "privacy": "public",
+              "attribute": "hide-photos",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -4424,16 +4434,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "showPhotos",
-              "description": "Renders each provider's photo. Off by default because the photo comes from an image CDN\nrather than the configured `baseUrl` — see `ProviderSummaryOptions.showPhoto`.",
-              "privacy": "public",
-              "attribute": "show-photos",
-              "type": {
-                "text": "boolean"
-              }
-            },
-            {
               "kind": "method",
               "name": "timeslotsFor",
               "description": "One card's slots, or {@link NO_TIMESLOTS} when the batch did not answer for it.\n\nThe distinction matters: the grid treats an absent `timeslots` as permission to fetch for\nitself, so returning nothing here would turn one batched request into one per card.",
@@ -4490,6 +4490,14 @@
               }
             },
             {
+              "name": "hide-photos",
+              "description": "Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see\n`ProviderSummaryOptions.hidePhoto`.",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "hidePhotos"
+            },
+            {
               "name": "insurance-name",
               "description": "The insurance plan the search was run with. Supplying it is what allows the network line\nto render at all, since `accepts_patient_insurance` is only meaningful against a plan.",
               "type": {
@@ -4520,14 +4528,6 @@
                 "text": "string"
               },
               "fieldName": "selectedId"
-            },
-            {
-              "name": "show-photos",
-              "description": "Renders each provider's photo. Off by default because the photo comes from an image CDN\nrather than the configured `baseUrl` — see `ProviderSummaryOptions.showPhoto`.",
-              "type": {
-                "text": "boolean"
-              },
-              "fieldName": "showPhotos"
             },
             {
               "name": "total-count",
@@ -4650,7 +4650,7 @@
             },
             {
               "name": "zd-provider-photo",
-              "description": "The provider's photo, when `show-photos` is set."
+              "description": "The provider's photo, unless `hide-photos` is set."
             },
             {
               "name": "zd-provider-specialty",
@@ -5335,6 +5335,16 @@
               }
             },
             {
+              "kind": "field",
+              "name": "hidePhoto",
+              "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
+              "privacy": "public",
+              "attribute": "hide-photo",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
               "kind": "method",
               "name": "html",
               "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
@@ -5427,16 +5437,6 @@
               "type": {
                 "text": "any"
               }
-            },
-            {
-              "kind": "field",
-              "name": "showPhoto",
-              "description": "Renders the provider's photo from CDN. Off by default because the photo\ncomes from an external CDN, not the configured baseUrl (PHI-003 note).",
-              "privacy": "public",
-              "attribute": "show-photo",
-              "type": {
-                "text": "boolean"
-              }
             }
           ],
           "attributes": [
@@ -5450,20 +5450,20 @@
               }
             },
             {
+              "name": "hide-photo",
+              "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "hidePhoto"
+            },
+            {
               "name": "insurance-name",
               "description": "The insurance plan name the search was run with. Enables the network\nstatus line when provided.",
               "type": {
                 "text": "string"
               },
               "fieldName": "insuranceName"
-            },
-            {
-              "name": "show-photo",
-              "description": "Renders the provider's photo from CDN. Off by default because the photo\ncomes from an external CDN, not the configured baseUrl (PHI-003 note).",
-              "type": {
-                "text": "boolean"
-              },
-              "fieldName": "showPhoto"
             }
           ],
           "events": [

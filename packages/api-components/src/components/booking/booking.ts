@@ -195,9 +195,9 @@ export class ZdBooking extends CharmElement {
   @property({ type: Boolean })
   public modal = false;
 
-  /** Shows provider photos in the results list and booking summary. */
-  @property({ type: Boolean, attribute: 'show-photos' })
-  public showPhotos = false;
+  /** Hides provider photos in the results list and booking summary. */
+  @property({ type: Boolean, attribute: 'hide-photos' })
+  public hidePhotos = false;
 
   /** The ZIP code the flow opens on. Kept in step with what the patient searched. */
   @property({ attribute: 'zip-code' })
@@ -663,7 +663,7 @@ export class ZdBooking extends CharmElement {
                 part="results"
                 .providers=${this.providers}
                 .totalCount=${this.totalCount}
-                ?show-photos=${this.showPhotos}
+                ?hide-photos=${this.hidePhotos}
                 .insuranceName=${this.insuranceName}
                 .page=${this.page}
                 .pageSize=${this.pageSize}
@@ -814,7 +814,7 @@ export class ZdBooking extends CharmElement {
           <scoped-provider-summary
             part="provider-summary"
             .provider=${provider}
-            ?show-photo=${this.showPhotos}
+            ?hide-photo=${this.hidePhotos}
           ></scoped-provider-summary>
         `
             : nothing

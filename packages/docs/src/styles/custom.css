@@ -11,3 +11,24 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 }
+
+/* Reduce FOUC while custom elements are defined - mirrors the rule in the primitives reset */
+@property --zd-wc-loaded {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+body {
+  animation: zd-wc-loaded 0s linear var(--zd-wc-loaded-timeout, 100ms) forwards;
+
+  &:has(:not(:defined)) {
+    opacity: var(--zd-wc-loaded, 0);
+  }
+}
+
+@keyframes zd-wc-loaded {
+  to {
+    --zd-wc-loaded: 1;
+  }
+}

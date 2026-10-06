@@ -62,7 +62,6 @@ const BOOKED_STATUSES: ReadonlySet<AppointmentStatus> = new Set(['confirmed', 'p
 const search = document.querySelector<ZdProviderSearch>('zd-provider-search')!;
 const results = document.querySelector<ZdProviderResults>('zd-provider-results')!;
 results.insuranceName = 'Sandbox National PPO';
-results.showPhotos = true;
 const picker = document.querySelector<ZdAvailabilityPicker>('zd-availability-picker')!;
 const form = document.querySelector<ZdPatientForm>('zd-patient-form')!;
 const confirmation = document.querySelector<ZdBookingConfirmation>('zd-booking-confirmation')!;

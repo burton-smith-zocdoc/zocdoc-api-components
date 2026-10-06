@@ -141,7 +141,6 @@ function wirePanel({ trigger, panel, list, flow }: PanelElements): void {
     const rows = answer.providers.map((provider) => {
       const summary = document.createElement('zd-provider-summary') as ZdProviderSummary;
       summary.provider = provider;
-      summary.showPhoto = true;
 
       const choice = document.createElement('button');
       choice.type = 'button';

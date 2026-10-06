@@ -16,7 +16,7 @@ const PROVIDER = PROVIDER_LOCATIONS[0]!;
 
 type Card = HTMLElement & {
   provider?: ProviderLocation;
-  showPhoto: boolean;
+  hidePhoto: boolean;
   insuranceName?: string;
 };
 
@@ -90,9 +90,13 @@ describe('zd-provider-card', () => {
   });
 
   describe('avatar', () => {
-    it('shows avatar with initials when showPhoto is false', async () => {
+    it('shows avatar with initials when hidePhoto is true', async () => {
       const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
-      card.provider = PROVIDER;
+      card.provider = {
+        ...PROVIDER,
+        provider: { ...PROVIDER.provider, provider_photo_url: '//images.test/photo.jpg' },
+      };
+      card.hidePhoto = true;
       await card.updateComplete;
 
       const avatar = shadow(card).querySelector('zd-avatar');
@@ -101,13 +105,12 @@ describe('zd-provider-card', () => {
       expect(avatar?.getAttribute('image')).toBeNull();
     });
 
-    it('shows avatar with image when showPhoto is true', async () => {
+    it('shows avatar with image by default', async () => {
       const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
       card.provider = {
         ...PROVIDER,
         provider: { ...PROVIDER.provider, provider_photo_url: '//images.test/photo.jpg' },
       };
-      card.showPhoto = true;
       await card.updateComplete;
 
       const avatar = shadow(card).querySelector('zd-avatar');

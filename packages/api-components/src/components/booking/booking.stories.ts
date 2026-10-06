@@ -44,7 +44,6 @@ const meta: Meta<ZdBooking> = {
   args: {
     ...args,
     zipCode: SCENARIOS.zipWithResults,
-    showPhotos: true,
   },
   argTypes,
   render: (args) => template(args),

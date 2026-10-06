@@ -89,7 +89,7 @@ function telHref(number: string | undefined, extension?: string | null): string 
  * @csspart profile - The `<article>` wrapping the whole profile, and the element every section
  *   is spaced by.
  * @csspart header - The photo, name, specialty, and address together.
- * @csspart photo - The provider's photo, when `show-photo` is set.
+ * @csspart photo - The provider's photo, unless `hide-photo` is set.
  * @csspart identity - The text column beside the photo.
  * @csspart name - The provider's name and credential, as an `<h2>`.
  * @csspart specialty - The provider's primary specialty.
@@ -131,13 +131,11 @@ export class ZdProviderProfile extends CharmElement {
   public provider?: ProviderLocation;
 
   /**
-   * Renders the provider's photo. Off by default for the same reason `zd-provider-results`
-   * defaults it off: `provider_photo_url` points at Zocdoc's image CDN rather than the
-   * configured `baseUrl`, so painting it makes an outbound request to a host PHI-003 does not
-   * otherwise allow. A host page that wants production parity opts in knowingly.
+   * Hides the provider's photo, which otherwise renders from Zocdoc's image CDN
+   * (see `ProviderSummaryOptions.hidePhoto`).
    */
-  @property({ type: Boolean, attribute: 'show-photo' })
-  public showPhoto = false;
+  @property({ type: Boolean, attribute: 'hide-photo' })
+  public hidePhoto = false;
 
   /**
    * The insurance plan name the search was run with. Enables the network status line when
@@ -183,7 +181,7 @@ export class ZdProviderProfile extends CharmElement {
   }
 
   protected renderHeader(provider: ProviderLocation): unknown {
-    const photo = this.showPhoto ? providerPhotoUrl(provider) : undefined;
+    const photo = this.hidePhoto ? undefined : providerPhotoUrl(provider);
     const specialty = provider.provider.specialties?.[0];
     const where = this.headerLocation(provider);
 

@@ -15,7 +15,7 @@ The `<zd-provider-results>` component renders a paginated list of providers with
 Pass provider data as JavaScript properties; HTML attributes cannot carry object arrays. This preview uses a documented mock provider with a photo served from the docs site:
 
 ```html preview
-<zd-provider-results id="provider-results" total-count="1" show-photos></zd-provider-results>
+<zd-provider-results id="provider-results" total-count="1"></zd-provider-results>
 <script>
   const providerResults = document.getElementById('provider-results');
   providerResults.providers = [
@@ -51,7 +51,7 @@ Pass provider data as JavaScript properties; HTML attributes cannot carry object
 | `availability` | `Map<string, number>` | — | Provider ID → appointment count |
 | `total-count` | `number` | `0` | Total results for pagination |
 | `page` | `number` | `1` | Current page number |
-| `show-photos` | `boolean` | `false` | Display provider photos |
+| `hide-photos` | `boolean` | `false` | Hide provider photos |
 | `insurance-name` | `string` | — | Insurance to show on cards |
 
 ## Events

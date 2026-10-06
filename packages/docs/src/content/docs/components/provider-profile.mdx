@@ -13,7 +13,7 @@ The `<zd-provider-profile>` component displays complete provider details includi
 ## Usage
 
 ```html preview
-<zd-provider-profile id="provider-profile" show-photo></zd-provider-profile>
+<zd-provider-profile id="provider-profile"></zd-provider-profile>
 <script>
   const providerProfile = document.getElementById('provider-profile');
   providerProfile.provider = {
@@ -52,7 +52,7 @@ The `<zd-provider-profile>` component displays complete provider details includi
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `provider` | `ProviderLocation` | — | Provider data to display |
-| `show-photo` | `boolean` | `false` | Display provider photo |
+| `hide-photo` | `boolean` | `false` | Hide provider photo |
 | `insurance-name` | `string` | — | Insurance to highlight |
 
 ## Slots

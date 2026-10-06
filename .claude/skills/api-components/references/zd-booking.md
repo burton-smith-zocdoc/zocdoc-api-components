@@ -23,6 +23,7 @@ correct anyway, since a different provider invalidates the slot picked from the 
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `hide-photos` | `hidePhotos` | `boolean` | — | Hides provider photos in the results list and booking summary. |
 | `insurance-name` | `insuranceName` | `string` | — | The display name of the insurance plan, for the network status line. |
 | `insurance-plan-id` | `insurancePlanId` | `string` | — | — |
 | `modal` | `modal` | `boolean` | — | Runs every step after the search in a dialog over the results, instead of in their place. Off by default, because inline is the arrangement a host page can place and style freely; a modal is a decision about the page rather than about the flow. What it changes is only where the steps are drawn — the state machine, the events and the children are the same either way, and the search stays mounted underneath, so dismissing the dialog returns the patient to their results rather than to a refetch. |
@@ -30,7 +31,6 @@ correct anyway, since a different provider invalidates the slot picked from the 
 | `page-size` | `pageSize` | `number` | — | Results per page, forwarded to the search that requests them and to the list that pages through them. Updated from what the API says it used, since it is free to clamp. |
 | `patient-type` | `patientType` | `'new' \| 'existing'` | — | Whether the patient is new to the practice. Affects which slots are bookable. |
 | `provider-location-id` | `providerLocationId` | `string` | — | The chosen `pr_…\|lo_…`. Setting it advances the flow to the time step. |
-| `show-photos` | `showPhotos` | `boolean` | — | Shows provider photos in the results list and booking summary. |
 | `specialty-id` | `specialtyId` | `string` | — | The specialty the flow opens on. Kept in step with what the patient searched. The search endpoint requires this or a visit reason, so a flow that opens on neither cannot search until the patient chooses one. |
 | `start-time` | `startTime` | `string` | — | The chosen slot's `start_time`, verbatim from the API. Setting it advances to the form. |
 | `total-count` | `totalCount` | `number` | — | How many providers the search matched in total, which is what the results list needs to count them and to know where its pager ends. Undefined until a search returns, and left undefined by a host page handing in `providers` with no total — in which case the list renders neither the count nor the pager rather than presenting one page as the whole answer. |

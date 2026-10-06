@@ -2612,6 +2612,37 @@ const zocdocTokensBase = charmTokens
         popupPadding: primitive('spacing', 4),
       },
     };
+  })
+  /**
+   * Reduce FOUC while custom elements are defined. The body stays transparent
+   * while it contains an undefined element, until every element is defined or
+   * the timeout lapses - whichever comes first - so a component that fails to
+   * define never hides the page. Opacity (not visibility) keeps the content in
+   * the accessibility tree. After the timeout, `--zd-wc-loaded` stays 1 so
+   * elements added later don't flash the page out again.
+   */
+  .extendRawCss({
+    reset: `
+@property --zd-wc-loaded {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+body {
+  animation: zd-wc-loaded 0s linear var(--zd-wc-loaded-timeout, 50ms) forwards;
+
+  &:has(:not(:defined)) {
+    opacity: var(--zd-wc-loaded, 0);
+  }
+}
+
+@keyframes zd-wc-loaded {
+  to {
+    --zd-wc-loaded: 1;
+  }
+}
+`,
   });
 
 export { zocdocTokensBase };

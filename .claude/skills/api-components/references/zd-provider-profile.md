@@ -47,8 +47,8 @@ embedding *page* — a `banner` landmark and a set of contact details that are n
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `hide-photo` | `hidePhoto` | `boolean` | — | Hides the provider's photo, which otherwise renders from Zocdoc's image CDN (see `ProviderSummaryOptions.hidePhoto`). |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan name the search was run with. Enables the network status line when provided. |
-| `show-photo` | `showPhoto` | `boolean` | — | Renders the provider's photo. Off by default for the same reason `zd-provider-results` defaults it off: `provider_photo_url` points at Zocdoc's image CDN rather than the configured `baseUrl`, so painting it makes an outbound request to a host PHI-003 does not otherwise allow. A host page that wants production parity opts in knowingly. |
 | — | `provider` | `ProviderLocation` | — | The location to describe. `ProviderLocation` and not `Provider`, because half of what a profile says is about *where* — the address, the practice, the phone number, whether it is a video visit — and a provider practising at three locations has three of those. It is also the shape every other component in this package passes around, so nothing has to be unpacked to get here. |
 
 ## Slots
@@ -80,7 +80,7 @@ embedding *page* — a `banner` landmark and a set of contact details that are n
 | `zd-location` | The practice, address, and phone section. |
 | `zd-name` | The provider's name and credential, as an `<h2>`. |
 | `zd-phone` | The practice's phone number, as a `tel:` link. |
-| `zd-photo` | The provider's photo, when `show-photo` is set. |
+| `zd-photo` | The provider's photo, unless `hide-photo` is set. |
 | `zd-place` | One line naming the office or the practice. |
 | `zd-profile` | The `<article>` wrapping the whole profile, and the element every section is spaced by. |
 | `zd-section` | Every section, so one rule can space them all. |

@@ -13,8 +13,8 @@ in a compact summary layout. Used by provider-card and booking.
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `hide-photo` | `hidePhoto` | `boolean` | — | Hides the provider's photo, which otherwise renders from Zocdoc's image CDN (see `ProviderSummaryOptions.hidePhoto`). |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan name the search was run with. Enables the network status line when provided. |
-| `show-photo` | `showPhoto` | `boolean` | — | Renders the provider's photo from CDN. Off by default because the photo comes from an external CDN, not the configured baseUrl (PHI-003 note). |
 | — | `provider` | `ProviderLocation` | — | The provider location data to render. |
 
 ## CSS Parts

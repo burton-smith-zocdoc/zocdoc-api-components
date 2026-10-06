@@ -95,7 +95,7 @@ export interface ZdProviderResultsEventMap {
  * @csspart list - The list wrapper.
  * @csspart provider - The selectable control for one provider.
  * @csspart provider-summary - The summary block for one provider.
- * @csspart provider-photo - The provider's photo, when `show-photos` is set.
+ * @csspart provider-photo - The provider's photo, unless `hide-photos` is set.
  * @csspart provider-detail - The text column beside the photo.
  * @csspart provider-name - The provider's display name and credential.
  * @csspart provider-specialty - The provider's primary specialty.
@@ -138,11 +138,11 @@ export class ZdProviderResults extends CharmElement {
   public selectedId?: string;
 
   /**
-   * Renders each provider's photo. Off by default because the photo comes from an image CDN
-   * rather than the configured `baseUrl` — see `ProviderSummaryOptions.showPhoto`.
+   * Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see
+   * `ProviderSummaryOptions.hidePhoto`.
    */
-  @property({ type: Boolean, attribute: 'show-photos' })
-  public showPhotos = false;
+  @property({ type: Boolean, attribute: 'hide-photos' })
+  public hidePhotos = false;
 
   /**
    * The insurance plan the search was run with. Supplying it is what allows the network line
@@ -391,7 +391,7 @@ export class ZdProviderResults extends CharmElement {
                 class="provider"
                 part="provider"
                 .provider=${location}
-                ?show-photo=${this.showPhotos}
+                ?hide-photo=${this.hidePhotos}
                 insurance-name=${this.insuranceName ?? nothing}
                 @profile-request=${(e: CustomEvent<{ provider: ProviderLocation }>) =>
                   this.openProfileDialog(e.detail.provider)}
@@ -411,7 +411,7 @@ export class ZdProviderResults extends CharmElement {
         @dialog-hide=${() => this.closeProfileDialog()}
       >
         ${this.profileProvider
-          ? this.html`<scoped-provider-profile .provider=${this.profileProvider} ?show-photo=${this.showPhotos}></scoped-provider-profile>`
+          ? this.html`<scoped-provider-profile .provider=${this.profileProvider} ?hide-photo=${this.hidePhotos}></scoped-provider-profile>`
           : nothing}
       </scoped-dialog>
     `;

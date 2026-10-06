@@ -43,7 +43,7 @@ These rules are always loaded. Full details and examples are in [`.agents/rules/
 |------|---------|
 | [PHI-001](.agents/rules/phi/PHI-001.md) | **No PHI in logs, errors, or messages.** Patient field values never appear in console, errors, or debug output. |
 | [PHI-002](.agents/rules/phi/PHI-002.md) | **Test data from documented scenarios only.** Use `https://api-docs.zocdoc.com/guides/testing-data`. |
-| [PHI-003](.agents/rules/phi/PHI-003.md) | **No analytics or third-party calls.** Only outbound destination is the configured Zocdoc `baseUrl`. |
+| [PHI-003](.agents/rules/phi/PHI-003.md) | **No analytics or third-party calls.** Only outbound destinations are the configured Zocdoc `baseUrl` and Zocdoc's image CDN for provider photos. |
 
 ### A11Y — Accessibility
 

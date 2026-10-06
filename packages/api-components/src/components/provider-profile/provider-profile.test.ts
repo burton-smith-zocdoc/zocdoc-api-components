@@ -13,7 +13,7 @@ import './index.js';
 const FULL = PROVIDER_LOCATIONS[0]!;
 const VIRTUAL = PROVIDER_LOCATIONS[1]!;
 
-type Profile = HTMLElement & { provider?: ProviderLocation; showPhoto: boolean };
+type Profile = HTMLElement & { provider?: ProviderLocation; hidePhoto: boolean };
 
 /** Nullable on purpose — several assertions here are about a section *not* rendering. */
 const part = queryPart;
@@ -86,13 +86,19 @@ describe('zd-provider-profile', () => {
       expect(text(element, 'header-location')).toContain('Video visit');
     });
 
-    /**
-     * `provider_photo_url` points at an image CDN rather than the configured `baseUrl`, so
-     * painting it is an outbound request to a host PHI-003 does not otherwise allow. The avatar
-     * always renders (showing initials), but has no image unless `show-photo` is set.
-     */
-    it('renders an avatar with initials but no image unless show-photo is set', async () => {
+    it('renders the provider photo in the avatar by default', async () => {
       const element = await mountProfile(FULL);
+      const avatar = part(element, 'photo') as HTMLElement & { image?: string };
+
+      expect(avatar.image).toBeTruthy();
+    });
+
+    /* The avatar always renders, falling back to initials when the photo is hidden. */
+    it('renders an avatar with initials but no image when hide-photo is set', async () => {
+      const element = await mountProfile(
+        FULL,
+        '<zd-provider-profile hide-photo></zd-provider-profile>'
+      );
       const avatar = part(element, 'photo') as HTMLElement & { image?: string };
 
       expect(avatar).not.toBeNull();

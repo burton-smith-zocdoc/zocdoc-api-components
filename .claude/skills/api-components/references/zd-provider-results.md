@@ -24,11 +24,11 @@ shared window control above the list driving all of them.
 | --- | --- | --- | --- | --- |
 | `availability-days` | `availabilityDays` | `number` | — | How many days of availability each card shows. Clamped to the API's 30-day maximum. |
 | `availability-start` | `availabilityStart` | `string` | — | The first day of the availability window, as `YYYY-MM-DD`. Defaults to today. Set by this component's own window control and read by every card, which is what keeps them showing the same dates. Whoever supplies `availability` is expected to bind this back down after a `window-change` so the counts and the dates above them cannot disagree. |
+| `hide-photos` | `hidePhotos` | `boolean` | — | Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see `ProviderSummaryOptions.hidePhoto`. |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan the search was run with. Supplying it is what allows the network line to render at all, since `accepts_patient_insurance` is only meaningful against a plan. |
 | `page` | `page` | `number` | — | The zero-indexed page `providers` holds, matching the API's own indexing. |
 | `page-size` | `pageSize` | `number` | — | The page size the search used. Defaults to the API's own, which is what it fell back to. |
 | `selected-id` | `selectedId` | `string` | — | The currently selected `provider_location_id`, if any. |
-| `show-photos` | `showPhotos` | `boolean` | — | Renders each provider's photo. Off by default because the photo comes from an image CDN rather than the configured `baseUrl` — see `ProviderSummaryOptions.showPhoto`. |
 | `total-count` | `totalCount` | `number` | — | The **unpaged** total from `total_count`, which is what makes the count line and the pager possible: `providers` only ever holds the page in hand. Left undefined by a host page that has no total, in which case neither renders — a count of the current page presented as the count of the search would be a lie, and a pager cannot know where it ends. |
 | — | `addEventListener` | `TypedEventTarget<ZdProviderResultsEventMap>['addEventListener']` | — | — |
 | — | `availability` | `ProviderLocationAvailability[]` | — | Day counts per card, from one batched availability request for the whole page. Batched by whoever owns the search, not by the cards: the endpoint takes an array of `provider_location_ids` and answers for all of them at once, so ten cards fetching for themselves would be ten requests for one screen. Left undefined by a host page with no availability to show, in which case no card renders a grid at all — which is the standalone case, and the list still works (COMP-004). Entries the batch did not answer for get {@link NO_TIMESLOTS} rather than nothing, so a card says "no appointments" instead of quietly going and asking on its own. |
@@ -72,7 +72,7 @@ shared window control above the list driving all of them.
 | `zd-provider-insurance` | The network line, when `insurance-name` is set. |
 | `zd-provider-location` | The distance and address, or the video-visit line. |
 | `zd-provider-name` | The provider's display name and credential. |
-| `zd-provider-photo` | The provider's photo, when `show-photos` is set. |
+| `zd-provider-photo` | The provider's photo, unless `hide-photos` is set. |
 | `zd-provider-specialty` | The provider's primary specialty. |
 | `zd-provider-summary` | The summary block for one provider. |
 | `zd-summary` | The line counting what the search found. |

@@ -39,12 +39,12 @@ type Story = StoryObj<ZdProviderCard>;
 
 export const Default: Story = {};
 
-export const WithPhoto: Story = {
-  args: { showPhoto: true },
+export const HiddenPhoto: Story = {
+  args: { hidePhoto: true },
 };
 
 export const WithInsurance: Story = {
-  args: { showPhoto: true, insuranceName: 'Anthem Blue Cross' },
+  args: { insuranceName: 'Anthem Blue Cross' },
 };
 
 /**
@@ -55,7 +55,7 @@ export const WithAvailability: Story = {
   render: (storyArgs) => html`
     <zd-provider-card
       .provider=${storyArgs.provider}
-      ?show-photo=${storyArgs.showPhoto}
+      ?hide-photo=${storyArgs.hidePhoto}
       insurance-name=${storyArgs.insuranceName ?? ''}
     >
       <zd-availability-grid
@@ -66,14 +66,13 @@ export const WithAvailability: Story = {
       ></zd-availability-grid>
     </zd-provider-card>
   `,
-  args: { showPhoto: true },
 };
 
 export const WithBadges: Story = {
   render: (storyArgs) => html`
     <zd-provider-card
       .provider=${storyArgs.provider}
-      ?show-photo=${storyArgs.showPhoto}
+      ?hide-photo=${storyArgs.hidePhoto}
       insurance-name=${storyArgs.insuranceName ?? ''}
     >
       <span slot="badges" style="color: var(--zd-color-success, green); font-size: 0.875rem;">
@@ -81,11 +80,9 @@ export const WithBadges: Story = {
       </span>
     </zd-provider-card>
   `,
-  args: { showPhoto: true },
 };
 
 /** The card in a narrow container, showing how the layout wraps. */
 export const NarrowContainer: Story = {
   decorators: [(story) => html`<div style="max-inline-size: 20rem">${story()}</div>`],
-  args: { showPhoto: true },
 };

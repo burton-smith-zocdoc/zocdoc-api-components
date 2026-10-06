@@ -21,3 +21,4 @@ __fixtures__
 *.log
 # pnpm project-local store
 .pnpm-store/
+*/.astro

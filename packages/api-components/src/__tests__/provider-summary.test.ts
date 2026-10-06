@@ -169,7 +169,7 @@ describe('renderProviderSummary', () => {
    */
   it('renders the same name for the card and the booking summary', () => {
     expect(text(summary(IN_PERSON), 'provider-name')).toBe(
-      text(summary(IN_PERSON, { showPhoto: true }), 'provider-name')
+      text(summary(IN_PERSON, { hidePhoto: true }), 'provider-name')
     );
   });
 
@@ -179,23 +179,19 @@ describe('renderProviderSummary', () => {
       provider: { ...IN_PERSON.provider, provider_photo_url: '//images.test/ada.jpg' },
     };
 
-    /*
-     * PHI-003: the photo is on an image CDN, not the configured baseUrl. Off by default means
-     * no test and no story makes that request without asking for it.
-     */
-    it('is not rendered unless asked for, even when the API supplied one', () => {
-      expect(summary(withPhoto).querySelector('img')).toBeNull();
-    });
-
-    it('is rendered on request', () => {
-      const img = summary(withPhoto, { showPhoto: true }).querySelector('img');
+    it('is rendered by default when the API supplied one', () => {
+      const img = summary(withPhoto).querySelector('img');
 
       expect(img?.getAttribute('src')).toBe('https://images.test/ada.jpg');
     });
 
+    it('is not rendered when hidden, even when the API supplied one', () => {
+      expect(summary(withPhoto, { hidePhoto: true }).querySelector('img')).toBeNull();
+    });
+
     /* Decorative: the name it depicts is the very next node, so describing it repeats it. */
     it('carries empty alt text', () => {
-      const img = summary(withPhoto, { showPhoto: true }).querySelector('img');
+      const img = summary(withPhoto).querySelector('img');
 
       expect(img?.getAttribute('alt')).toBe('');
     });

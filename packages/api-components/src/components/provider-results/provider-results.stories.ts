@@ -52,7 +52,7 @@ export default meta;
 type Story = StoryObj<ZdProviderResults>;
 
 export const WithResults: Story = {
-  args: { insuranceName: 'Sandbox National PPO', showPhotos: true },
+  args: { insuranceName: 'Sandbox National PPO' },
 };
 
 export const Empty: Story = {
@@ -157,17 +157,13 @@ export const AvailabilityLaterWindow: Story = {
 };
 
 /**
- * Photos, which are off by default.
+ * A row with a photo beside one without.
  *
- * `provider_photo_url` points at an image CDN rather than the configured `baseUrl`, so
- * painting it makes an outbound request to a host PHI-003 does not otherwise allow — a host
- * page opts in knowingly. This story uses an inline `data:` placeholder rather than a real
- * `//d2uur…` URL, so demonstrating the layout does not itself make the request the flag exists
- * to gate.
+ * This story uses an inline `data:` placeholder rather than a real `//d2uur…` URL, so
+ * demonstrating the layout does not depend on reaching Zocdoc's image CDN.
  */
 export const WithPhotos: Story = {
   args: {
-    showPhotos: true,
     providers: [
       {
         provider_location_id: 'pr_photo|lo_photo',

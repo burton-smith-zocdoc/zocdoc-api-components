@@ -27,13 +27,12 @@ import { providerDisplayName } from './provider-name.js';
 /** Options every consumer sets differently. Everything else is read off the location. */
 export interface ProviderSummaryOptions {
   /**
-   * Renders the provider's photo. **Off by default, and that is a policy choice, not a
-   * styling one:** `provider_photo_url` points at Zocdoc's image CDN, which is not the
-   * configured `baseUrl`, so painting it makes an outbound request to a host PHI-003 does
-   * not otherwise allow. A host page that wants production parity opts in knowingly; tests
-   * and stories leave it off and make no third-party request.
+   * Suppresses the provider's photo. Photos render by default: `provider_photo_url` points at
+   * Zocdoc's image CDN, which PHI-003 allows alongside the configured `baseUrl` because it is
+   * Zocdoc's own host and the request carries no patient data. A host page that wants no
+   * image requests at all sets this.
    */
-  showPhoto?: boolean;
+  hidePhoto?: boolean;
   /**
    * The insurance plan the patient searched with, which is what gives
    * `accepts_patient_insurance` something to be accepted *by* — see
@@ -155,7 +154,7 @@ export function renderProviderSummary(
 ): TemplateResult {
   const specialty = location.provider.specialties?.[0];
   const where = providerLocationLine(location);
-  const photo = options.showPhoto ? providerPhotoUrl(location) : undefined;
+  const photo = options.hidePhoto ? undefined : providerPhotoUrl(location);
 
   return html`
     <div class="provider-summary" part="provider-summary">

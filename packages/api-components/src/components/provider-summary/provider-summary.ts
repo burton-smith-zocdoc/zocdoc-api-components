@@ -37,11 +37,11 @@ export class ZdProviderSummary extends CharmElement {
   public provider?: ProviderLocation;
 
   /**
-   * Renders the provider's photo from CDN. Off by default because the photo
-   * comes from an external CDN, not the configured baseUrl (PHI-003 note).
+   * Hides the provider's photo, which otherwise renders from Zocdoc's image CDN
+   * (see `ProviderSummaryOptions.hidePhoto`).
    */
-  @property({ type: Boolean, attribute: 'show-photo' })
-  public showPhoto = false;
+  @property({ type: Boolean, attribute: 'hide-photo' })
+  public hidePhoto = false;
 
   /**
    * The insurance plan name the search was run with. Enables the network
@@ -60,7 +60,7 @@ export class ZdProviderSummary extends CharmElement {
   protected renderAvatar(): unknown {
     if (!this.provider) return nothing;
 
-    const photo = this.showPhoto ? providerPhotoUrl(this.provider) : undefined;
+    const photo = this.hidePhoto ? undefined : providerPhotoUrl(this.provider);
     const label = providerHeading(this.provider);
     const initials = this.providerInitials();
 
