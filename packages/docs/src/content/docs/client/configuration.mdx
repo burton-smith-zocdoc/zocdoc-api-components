@@ -5,13 +5,13 @@ description: Configure the Zocdoc API client
 
 ## configureZocdoc
 
-Call `configureZocdoc` once before rendering any components:
+Call `configureZocdoc` once, before any component fetches:
 
 ```javascript
 import { configureZocdoc } from '@zocdoc/api-components';
 
 configureZocdoc({
-  baseUrl: 'https://api.zocdoc.com',
+  baseUrl: 'https://api-developer-sandbox.zocdoc.com',
   getToken: () => fetchTokenFromBackend(),
 });
 ```
@@ -20,30 +20,28 @@ configureZocdoc({
 
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
-| `baseUrl` | `string` | Yes | The Zocdoc API base URL |
-| `getToken` | `() => string \| Promise<string>` | Yes | Function that returns a valid API token |
+| `baseUrl` | `string` | Yes | The Zocdoc API host for your environment |
+| `getToken` | `string \| () => string \| Promise<string>` | Yes | A token, or a function returning one. Called before every request |
+| `transport` | `(url, init) => Promise<Response>` | No | Replaces `fetch`. Used by the [mock transport](/zocdoc-api-components/guides/testing/#mock-transport), or supply your own proxy or replay harness |
 
 ### baseUrl
 
-The base URL for API requests. Use the production URL for live traffic:
+Use the host that matches your credentials. Tokens only work in the environment that issued them:
 
-```javascript
-baseUrl: 'https://api.zocdoc.com'
-```
+| Environment | `baseUrl` |
+|---|---|
+| Sandbox | `https://api-developer-sandbox.zocdoc.com` |
+| Production | `https://api-developer.zocdoc.com` |
 
-Or the sandbox for testing:
-
-```javascript
-baseUrl: 'https://api-developer-sandbox.zocdoc.com'
-```
+Develop and test against the sandbox. It responds to the documented [test scenarios](/zocdoc-api-components/guides/testing/#test-scenarios). Switch to production only with production credentials minted by a secure backend.
 
 ### getToken
 
-A function called before each API request. It can be synchronous or async:
+A function is called before each API request. It can be sync or async:
 
 ```javascript
 // Sync
-getToken: () => localStorage.getItem('zocdoc_token')
+getToken: () => sessionStorage.getItem('zocdoc_token')
 
 // Async
 getToken: async () => {
@@ -53,18 +51,26 @@ getToken: async () => {
 }
 ```
 
-See [Authentication](/zocdoc-api-components/getting-started/authentication/) for patterns including token refresh.
+Access tokens last 60 minutes, and `getToken` runs for every request, so cache the token inside it. See [Authentication](/zocdoc-api-components/getting-started/authentication/) for token flows and a caching pattern.
 
 ## Singleton Behavior
 
 `configureZocdoc` sets global configuration. Calling it again replaces the previous config:
 
 ```javascript
-configureZocdoc({ baseUrl: 'https://api.zocdoc.com', getToken: () => token1 });
+configureZocdoc({ baseUrl: 'https://api-developer-sandbox.zocdoc.com', getToken: () => sandboxToken });
 
 // Later...
-configureZocdoc({ baseUrl: 'https://sandbox.zocdoc.com', getToken: () => token2 });
-// All subsequent requests use token2 and sandbox URL
+configureZocdoc({ baseUrl: 'https://api-developer.zocdoc.com', getToken: () => productionToken });
+// All subsequent requests use productionToken and the production host
+```
+
+Cached reference data isn't cleared when you reconfigure. Call `clearReferenceDataCache()` after switching environments:
+
+```javascript
+import { clearReferenceDataCache } from '@zocdoc/api-components';
+
+clearReferenceDataCache();
 ```
 
 ## Mock Transport
@@ -81,7 +87,7 @@ This configures the client to return fixture data without making network request
 
 ## Timing
 
-Configure the client before any component renders. A common pattern:
+Configure the client as early as possible. Components that fetch on their own, such as `<zd-provider-search>` loading specialties, wait until the client is configured. A request you trigger by setting a property fails immediately if the client isn't configured yet. A common pattern:
 
 ```javascript
 // config.js

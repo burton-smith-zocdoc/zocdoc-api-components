@@ -3,104 +3,83 @@ title: Errors
 description: Handle API errors gracefully
 ---
 
+import { Aside } from '@astrojs/starlight/components';
+
 ## Error Hierarchy
 
-The client throws typed errors you can catch and handle:
+Any non-2xx response is thrown as a typed error:
 
 ```typescript
-import {
-  ZocdocError,
-  ZocdocAuthError,
-  ZocdocNotFoundError,
-  ZocdocNetworkError,
-} from '@zocdoc/api-components';
+import { ZocdocError, ZocdocAuthError, ZocdocNotFoundError } from '@zocdoc/api-components';
 ```
 
-### ZocdocError
+| Class | Status | `code` | Typical cause |
+|---|---|---|---|
+| `ZocdocAuthError` | `401` | `AUTH_ERROR` | Expired token (access tokens last 60 minutes), or a token from the wrong environment |
+| `ZocdocNotFoundError` | `404` | `NOT_FOUND` | A resource ID that doesn't exist |
+| `ZocdocError` | Anything else | `undefined` | `400` validation errors, `403` missing scope, `429` rate limit, `5xx` server errors |
 
-Base class for all client errors. All errors extend this.
+All three extend `ZocdocError`, which has these properties:
 
-```typescript
-try {
-  await searchProviderLocations({ zipCode: '10001' });
-} catch (error) {
-  if (error instanceof ZocdocError) {
-    console.error('API error:', error.message);
-  }
-}
-```
+- `status`: the HTTP status code
+- `code`: the short code from the table above
+- `body`: the parsed response body, kept for debugging
+
+An empty search isn't an error. A search that matches nothing resolves with an empty list, and components show their empty state rather than their error state.
+
+Network failures, such as being offline or blocked by CORS, aren't wrapped. They surface as the `TypeError` that `fetch` throws.
+
+<Aside type="danger">
+  Never render or log `error.body`. A `400` from the booking endpoint can echo submitted patient field values, which are PHI.
+</Aside>
 
 ### ZocdocAuthError
 
-Thrown when authentication fails (401 response or `getToken` failure):
-
 ```typescript
 try {
-  await searchProviderLocations({ zipCode: '10001' });
+  await searchProviderLocations({ zipCode: '11201' });
 } catch (error) {
   if (error instanceof ZocdocAuthError) {
-    // Redirect to login, refresh token, etc.
-    await refreshToken();
-    // Retry the request
+    // Clear your cached token so the next request fetches a fresh one
   }
 }
 ```
+
+If a fresh token still gets `401` or `403`, see [Troubleshooting 401 and 403](/zocdoc-api-components/getting-started/authentication/#troubleshooting-401-and-403).
 
 ### ZocdocNotFoundError
 
-Thrown when a resource doesn't exist (404 response):
-
-```typescript
-try {
-  await getAvailability({ providerLocationId: 'invalid_id', ... });
-} catch (error) {
-  if (error instanceof ZocdocNotFoundError) {
-    // Show "provider not found" message
-  }
-}
-```
-
-### ZocdocNetworkError
-
-Thrown when the request fails due to network issues:
-
-```typescript
-try {
-  await searchProviderLocations({ zipCode: '10001' });
-} catch (error) {
-  if (error instanceof ZocdocNetworkError) {
-    // Show "check your connection" message
-  }
-}
-```
+Thrown for a `404`. It's kept distinct from `ZocdocError` so a missing resource reads differently from a failure. A search that finds nothing is never a `404`.
 
 ## Component Error Handling
 
-Components handle errors internally and emit error events:
+Components catch errors, render an accessible error state, and emit an error event with the original error in `detail.error`:
+
+| Event | Emitted by |
+|---|---|
+| `provider-search-error` | `<zd-provider-search>` |
+| `availability-error` | `<zd-availability-picker>`, `<zd-availability-grid>`, `<zd-booking>` |
+| `booking-error` | `<zd-booking>` |
 
 ```javascript
+import { ZocdocAuthError } from '@zocdoc/api-components';
+
 const search = document.querySelector('zd-provider-search');
 
 search.addEventListener('provider-search-error', (event) => {
-  const { error, message } = event.detail;
-
-  if (error instanceof ZocdocAuthError) {
-    showLoginPrompt();
-  } else {
-    showErrorBanner(message);
+  if (event.detail.error instanceof ZocdocAuthError) {
+    showSignInPrompt();
   }
 });
 ```
 
-The `message` in the event detail is a user-friendly string. The `error` is the original error object for programmatic handling.
-
 ## User-Facing Messages
 
-Never show raw API error messages to users. The error classes provide `message` properties, but these are for developers:
+An error's `message` is for developers. It names the status and nothing else. Never show it, or the raw API response, to patients:
 
 ```typescript
 // Don't do this
-alert(error.message); // "Request failed with status 401"
+alert(error.message); // "Zocdoc API rejected the access token. It may have expired."
 
 // Do this
 if (error instanceof ZocdocAuthError) {
@@ -108,30 +87,54 @@ if (error instanceof ZocdocAuthError) {
 }
 ```
 
-Components display appropriate user-facing messages in their error states. If you're handling errors manually, provide your own copy.
+Components already render appropriate copy in their error states. If you handle errors yourself, write your own.
+
+## Booking Failures on a Success Status
+
+`createAppointment` can resolve without the appointment being booked. Always check `appointment_status`:
+
+```typescript
+const appointment = await createAppointment(input);
+
+switch (appointment.appointment_status) {
+  case 'confirmed':
+    // Booked
+    break;
+  case 'pending_booking':
+    // Waiting on the practice to confirm
+    break;
+  case 'booking_failed':
+    // Not booked, even though the request succeeded
+    break;
+}
+```
 
 ## Retry Logic
 
-For transient errors, implement retry with backoff:
+Zocdoc's [Performance](https://api-docs.zocdoc.com/guides/performance) guide asks clients to use **exponential backoff** when rate-limited (`429`). Retry only `429` and `5xx` responses:
 
 ```typescript
-async function fetchWithRetry(fn, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
+import { ZocdocError } from '@zocdoc/api-components';
+
+function isRetryable(error) {
+  return error instanceof ZocdocError && (error.status === 429 || error.status >= 500);
+}
+
+async function withBackoff(fn, maxRetries = 3) {
+  for (let attempt = 0; ; attempt++) {
     try {
       return await fn();
     } catch (error) {
-      if (error instanceof ZocdocNetworkError && i < maxRetries - 1) {
-        await new Promise(r => setTimeout(r, 1000 * (i + 1)));
-        continue;
+      if (!isRetryable(error) || attempt >= maxRetries) {
+        throw error;
       }
-      throw error;
+      const delay = 2 ** attempt * 500 + Math.random() * 250; // 500ms, 1s, 2s, plus jitter
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
 
-const results = await fetchWithRetry(() =>
-  searchProviderLocations({ zipCode: '10001' })
-);
+const results = await withBackoff(() => searchProviderLocations({ zipCode: '11201' }));
 ```
 
-Don't retry authentication errors — they require user action.
+Don't retry other failures. A `400` will fail again, and a `401` or `403` needs a new or different token. Don't automatically retry `createAppointment` after a `5xx`, either. The API doesn't document idempotency, so a retry could double-book.

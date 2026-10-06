@@ -3,154 +3,192 @@ title: Endpoints
 description: API endpoint functions for direct data access
 ---
 
-The client layer exposes typed functions for each API endpoint. Use these when building custom flows or fetching data outside components.
+import { Aside } from '@astrojs/starlight/components';
+
+The client exposes one typed function per API endpoint. Use these to build custom flows or to fetch data outside the components. Parameters are camelCase here and snake_case on the wire. Response objects keep the API's snake_case field names.
+
+For request and response schemas, see the [Zocdoc API Reference](https://api-docs.zocdoc.com/apis). For how the calls fit together, see [Find Provider Availability and Book Appointments](https://api-docs.zocdoc.com/guides/patient/book-appointments).
 
 ## Provider Search
 
 ### searchProviderLocations
 
-Search for providers by location, specialty, and insurance:
+`GET /v1/provider_locations`: search for provider locations near a ZIP code.
 
 ```typescript
 import { searchProviderLocations } from '@zocdoc/api-components';
 
-const results = await searchProviderLocations({
-  zipCode: '10001',
-  specialtyId: 'sp_internal_medicine',
-  insurancePlanId: 'ip_blue_cross_ppo',
-  page: 1,
-  pageSize: 10,
+const result = await searchProviderLocations({
+  zipCode: '11201',
+  specialtyId: 'sp_153',
+  insurancePlanId: 'ip_9111',
 });
 
-// results.providers: ProviderLocation[]
-// results.totalCount: number
+// result.providerLocations: ProviderLocation[]
+// result.totalCount: number
+// result.pageSize: number
+// result.searchParameters: the filters the API applied, including defaults
 ```
-
-**Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `zipCode` | `string` | Yes | 5-digit ZIP code |
+| `zipCode` | `string` | Yes | 5-digit ZIP code. The API has no "search everywhere" mode |
 | `specialtyId` | `string` | No | Filter by specialty |
-| `insurancePlanId` | `string` | No | Filter by insurance |
-| `page` | `number` | No | Page number (default: 1) |
-| `pageSize` | `number` | No | Results per page (default: 10) |
+| `visitReasonId` | `string` | No | Filter by visit reason |
+| `insurancePlanId` | `string` | No | Only providers in-network for this plan |
+| `visitType` | `'all' \| 'in_person' \| 'video_visit'` | No | In-person, video, or both |
+| `maxDistanceToPatientMi` | `number` | No | Search radius in miles |
+| `page` | `number` | No | Zero-based page index |
+| `pageSize` | `number` | No | Results per page (default: `DEFAULT_PAGE_SIZE`, 10) |
+
+A search that matches nothing resolves with an empty `providerLocations` array. It doesn't throw.
+
+Some provider locations include `booking_requirements`, such as insurance member and plan IDs that are required to book. Check these before collecting patient details.
 
 ## Availability
 
 ### getAvailability
 
-Fetch available time slots for a provider:
+`GET /v1/provider_locations/availability`: open timeslots for one or more provider locations.
 
 ```typescript
 import { getAvailability } from '@zocdoc/api-components';
 
-const timeslots = await getAvailability({
-  providerLocationId: 'pl_001',
-  visitReasonId: 'vr_new_patient',
-  startDate: '2026-09-01',
-  endDate: '2026-09-07',
+const entries = await getAvailability({
+  providerLocationIds: ['pr_abc|lo_xyz'],
+  visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
+  patientType: 'new',
+  startDate: '2026-10-07',
+  endDate: '2026-10-13',
 });
 
-// timeslots: Timeslot[]
+// entries: ProviderLocationAvailability[], one per requested location
+// entries[0].timeslots: AvailabilitySlot[] (always an array, possibly empty)
 ```
-
-**Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `providerLocationId` | `string` | Yes | Provider location ID |
-| `visitReasonId` | `string` | Yes | Visit reason ID |
-| `startDate` | `string` | Yes | Start of date range (YYYY-MM-DD) |
-| `endDate` | `string` | Yes | End of date range (YYYY-MM-DD) |
+| `providerLocationIds` | `string[]` | Yes | `pr_…\|lo_…` IDs, passed through unchanged. Batch several locations in one call |
+| `visitReasonId` | `string` | Yes | Availability differs by visit reason |
+| `patientType` | `'new' \| 'existing'` | Yes | Availability differs for new and existing patients |
+| `startDate` | `string` | No | `YYYY-MM-DD` in provider local time. Defaults to today |
+| `endDate` | `string` | No | `YYYY-MM-DD`. Defaults to 7 days after the start, and must be within 30 days of it |
+| `insurancePlanId` | `string` | No | Insurance plan ID |
+| `insuranceCarrierId` | `string` | No | Insurance carrier ID |
+
+<Aside>
+  The API rejects windows longer than 30 days, and Zocdoc guarantees availability only up to 150 days out. The client exports the 30-day limit as `MAX_AVAILABILITY_DAYS` so you can clamp windows to it.
+</Aside>
 
 ## Appointments
 
 ### createAppointment
 
-Book an appointment:
+`POST /v1/appointments`: book a timeslot.
 
 ```typescript
 import { createAppointment } from '@zocdoc/api-components';
 
 const appointment = await createAppointment({
-  providerLocationId: 'pl_001',
-  visitReasonId: 'vr_new_patient',
-  startTime: '2026-09-02T09:00:00',
+  providerLocationId: 'pr_abc|lo_xyz',
+  visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
+  startTime: slot.start_time, // Exactly as returned by getAvailability
+  patientType: 'new',
   patient: {
-    firstName: 'Test',
-    lastName: 'Patient',
-    dateOfBirth: '1990-01-15',
-    sexAtBirth: 'female',
-    phoneNumber: '5550000000',
-    emailAddress: 'test@example.com',
-    address: {
-      line1: '123 Main St',
-      city: 'New York',
+    first_name: 'Test',
+    last_name: 'Patient',
+    date_of_birth: '1990-01-15',
+    sex_at_birth: 'female',
+    phone_number: '2125550001',
+    email_address: 'test@example.com',
+    patient_address: {
+      address1: '1 Test St',
+      city: 'Brooklyn',
       state: 'NY',
-      zipCode: '10001',
+      zip_code: '11201',
     },
+    insurance: { is_self_pay: true },
   },
 });
 
-// appointment.id: string
-// appointment.status: 'confirmed' | 'pending_booking'
+// appointment.appointment_id: string
+// appointment.appointment_status: 'confirmed' | 'pending_booking' | 'booking_failed' | ...
 ```
-
-**Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `providerLocationId` | `string` | Yes | Provider location ID |
 | `visitReasonId` | `string` | Yes | Visit reason ID |
-| `startTime` | `string` | Yes | Slot start time (ISO 8601) |
-| `patient` | `PatientData` | Yes | Patient details |
+| `startTime` | `string` | Yes | A `start_time` from `getAvailability`, unchanged, offset included |
+| `patientType` | `'new' \| 'existing'` | Yes | Must match the availability you searched |
+| `patient` | `Patient` | Yes | Patient details. Every field is PHI |
+| `notes` | `string` | No | Patient-written note, maximum 100 characters. Also PHI |
+
+`phone_number` must be 10 digits with no formatting, and the 1st and 4th digits can't be `0` or `1`.
+
+<Aside type="caution">
+  A resolved promise doesn't mean a confirmed appointment. Check `appointment_status`, since `pending_booking` and `booking_failed` both arrive on a successful response. See [Booking Failures on a Success Status](/zocdoc-api-components/client/errors/#booking-failures-on-a-success-status).
+</Aside>
+
+Use `appointment_id` to reschedule or cancel. See Zocdoc's [Reschedule](https://api-docs.zocdoc.com/guides/patient/reschedule-appointments) and [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointments) guides. The client doesn't wrap those endpoints yet. To hear about status changes, such as a pending booking becoming confirmed, subscribe your backend to Zocdoc [Webhooks](https://api-docs.zocdoc.com/guides/webhooks).
 
 ## Reference Data
 
+Specialties, visit reasons, and insurance plans supply the IDs the other endpoints take. See Zocdoc's [Reference Data](https://api-docs.zocdoc.com/guides/reference-data) guide. Each function fetches every page and returns the complete list.
+
 ### getSpecialties
 
-Fetch available specialties:
+`GET /v1/specialties`
 
 ```typescript
 import { getSpecialties } from '@zocdoc/api-components';
 
 const specialties = await getSpecialties();
-// [{ id: 'sp_001', name: 'Internal Medicine' }, ...]
-```
-
-### getInsurancePlans
-
-Fetch insurance plans, optionally filtered:
-
-```typescript
-import { getInsurancePlans } from '@zocdoc/api-components';
-
-const plans = await getInsurancePlans({ carrierName: 'Blue Cross' });
-// [{ id: 'ip_001', name: 'Blue Cross PPO', carrier: 'Blue Cross' }, ...]
+// [{ id: 'sp_153', name: 'Primary Care Doctor', default_visit_reason_id: '…', ... }, ...]
 ```
 
 ### getVisitReasons
 
-Fetch visit reasons for a specialty:
+`GET /v1/visit_reasons`, optionally filtered by specialty:
 
 ```typescript
 import { getVisitReasons } from '@zocdoc/api-components';
 
-const reasons = await getVisitReasons({ specialtyId: 'sp_internal_medicine' });
-// [{ id: 'vr_001', name: 'New Patient Visit' }, ...]
+const reasons = await getVisitReasons('sp_153');
+// [{ id: 'pc_FRO-18leckytNKtruw5dLR', name: 'New patient visit', specialty_id: 'sp_153' }, ...]
 ```
+
+### getInsurancePlans
+
+`GET /v1/insurance_plans`, with optional filters:
+
+```typescript
+import { getInsurancePlans } from '@zocdoc/api-components';
+
+const plans = await getInsurancePlans({ state: 'NY', careCategory: 'health' });
+```
+
+| Filter | Type | Description |
+|---|---|---|
+| `state` | `string` | Two-letter code. Returns plans whose coverage includes the state |
+| `careCategory` | `'health' \| 'dental' \| 'vision'` | Plan category |
+| `networkType` | `string` | Network type |
+| `programType` | `InsuranceProgramType` | For example, `commercial` or `medicare` |
+| `status` | `'active' \| 'inactive' \| 'deleted'` | Defaults to `active` on the server |
+
+<Aside type="caution">
+  Always filter where you can. The unfiltered production list has more than 10,000 plans. That's dozens of requests and megabytes of JSON to fill one dropdown. `state` is the natural filter for a booking flow.
+</Aside>
 
 ## Caching
 
-Reference data (specialties, insurance plans, visit reasons) is cached in memory. The first call fetches from the API; subsequent calls return the cached data.
+Reference data is cached in memory for the page lifetime. Each distinct set of filters gets its own cache entry. Concurrent callers share one in-flight request, and a failed request isn't cached, so the next call retries.
 
 ```typescript
-// First call: network request
-const specialties1 = await getSpecialties();
-
-// Second call: returns cached data
-const specialties2 = await getSpecialties();
+const a = await getSpecialties(); // Network request
+const b = await getSpecialties(); // Cached
 ```
 
-The cache persists for the page lifetime. To force a refresh, reload the page.
+To force a refresh, for example after switching between sandbox and production, call `clearReferenceDataCache()`.
+
+Provider search and availability aren't cached, because they change constantly.

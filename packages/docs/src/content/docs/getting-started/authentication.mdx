@@ -3,30 +3,68 @@ title: Authentication
 description: Configure API authentication for production use
 ---
 
+import { Aside } from '@astrojs/starlight/components';
+
+Every request the components make carries an `Authorization: Bearer <token>` header. This library never mints tokens. You supply them through `getToken`, and Zocdoc's auth service issues them. For the full flow details, see Zocdoc's [Authentication and Access Tokens](https://api-docs.zocdoc.com/guides/authentication) guide.
+
+## Environments
+
+Sandbox and production use separate credentials, hosts, and token endpoints. A token only works in the environment that issued it, so a sandbox token sent to the production host returns `401`.
+
+| | Sandbox | Production |
+|---|---|---|
+| API base URL (`baseUrl`) | `https://api-developer-sandbox.zocdoc.com` | `https://api-developer.zocdoc.com` |
+| Token endpoint | `https://auth-api-developer-sandbox.zocdoc.com/oauth/token` | `https://auth.zocdoc.com/oauth/token` |
+| Client credentials `audience` | `https://api-developer-sandbox.zocdoc.com/` | `https://api-developer.zocdoc.com/` |
+
+## Choosing a Token Flow
+
+Zocdoc supports several OAuth flows. Which one fits depends on where the token is used:
+
+| Flow | Use it for | Runs in the browser? |
+|---|---|---|
+| **Client credentials** | Server-to-server calls. Your backend authenticates with `client_id`, `client_secret`, and `audience`. | **No.** Zocdoc says these tokens "must not be distributed to browsers or mobile applications." |
+| **Anonymous user** | Public search: providers, provider locations, and reference data, with no sign-in. Your backend exchanges its token at `POST /v1/token/anonymous-user`. | Yes |
+| **Authorization code + PKCE** | Signed-in patients booking and managing appointments. Requires `S256` (the `plain` method isn't supported). Scopes: `external.appointment.read` and `external.appointment.write`. Add `offline_access` to get a refresh token. | Yes, with your SPA client credentials |
+
+You can pass an anonymous token into the authorization code flow later. This links the patient's search session to their account when they sign in to book.
+
+<Aside type="caution">
+  Never put a `client_secret` in client-side code. `getToken` should call your own backend or run a PKCE flow. It should never call the token endpoint with a secret embedded in the page.
+</Aside>
+
+## Token Lifetimes
+
+| Token | Lifetime |
+|---|---|
+| Access token | 60 minutes (`expires_in: 3600`) |
+| Refresh token | 15 days of inactivity, 30 days maximum |
+| Login session | 30 minutes of inactivity, 1 day maximum |
+
+Cache access tokens rather than requesting a new one for every API call. Zocdoc asks integrators to avoid "generating too many."
+
 ## Token Setup
 
-The `getToken` option in `configureZocdoc` is a function that returns a valid API token. It's called before each request, which enables several patterns:
+`getToken` in `configureZocdoc` is either a string or a function that returns a token, sync or async. A function is called before **every** request. Caching is your job, which keeps the client stateless and lets refresh happen without the components' cooperation.
 
 ### Static Token
 
-For development or server-rendered pages where the token is available at load time:
+For development, or for server-rendered pages where the token is available at load time:
 
 ```javascript
-const token = 'your-api-token';
-
 configureZocdoc({
-  baseUrl: 'https://api.zocdoc.com',
-  getToken: () => token,
+  baseUrl: 'https://api-developer-sandbox.zocdoc.com',
+  getToken: 'your-sandbox-token',
 });
 ```
 
 ### Async Token Fetch
 
-For client-side apps that fetch tokens from your backend:
+For client-side apps that get tokens from your backend:
 
 ```javascript
 configureZocdoc({
-  baseUrl: 'https://api.zocdoc.com',
+  baseUrl: 'https://api-developer-sandbox.zocdoc.com',
   getToken: async () => {
     const response = await fetch('/api/zocdoc-token');
     const { token } = await response.json();
@@ -35,9 +73,9 @@ configureZocdoc({
 });
 ```
 
-### Token Refresh
+### Token Caching and Refresh
 
-Because `getToken` is called per-request, you can implement refresh logic:
+Because `getToken` runs per request, put caching and refresh in it. Access tokens last an hour, so refresh a little early:
 
 ```javascript
 let cachedToken = null;
@@ -48,46 +86,53 @@ async function getToken() {
     return cachedToken;
   }
 
+  // Your backend returns Zocdoc's token response: { access_token, expires_in, ... }
   const response = await fetch('/api/zocdoc-token');
-  const { token, expiresIn } = await response.json();
+  const { access_token, expires_in } = await response.json();
 
-  cachedToken = token;
-  tokenExpiry = Date.now() + (expiresIn * 1000) - 60000; // Refresh 1 min early
+  cachedToken = access_token;
+  tokenExpiry = Date.now() + expires_in * 1000 - 60_000; // Refresh 1 min early
 
-  return token;
+  return access_token;
 }
 
 configureZocdoc({
-  baseUrl: 'https://api.zocdoc.com',
+  baseUrl: 'https://api-developer-sandbox.zocdoc.com',
   getToken,
 });
 ```
 
 ## Error Handling
 
-If `getToken` throws or returns `null`, the request fails with `ZocdocAuthError`. Components handle this gracefully and show an error state:
+A `401` response becomes a `ZocdocAuthError`. Components catch it, show their error state, and emit their `*-error` event, so the host can react:
 
 ```javascript
-configureZocdoc({
-  baseUrl: 'https://api.zocdoc.com',
-  getToken: async () => {
-    const response = await fetch('/api/zocdoc-token');
-    if (!response.ok) {
-      throw new Error('Failed to fetch token');
-    }
-    const { token } = await response.json();
-    return token;
-  },
+import { ZocdocAuthError } from '@zocdoc/api-components';
+
+document.querySelector('zd-booking').addEventListener('booking-error', (event) => {
+  if (event.detail.error instanceof ZocdocAuthError) {
+    cachedToken = null; // Force a fresh token on the next request
+  }
 });
 ```
 
+If `getToken` throws, the request is never sent and your error is passed through unchanged.
+
+## Troubleshooting 401 and 403
+
+From Zocdoc's [FAQs](https://api-docs.zocdoc.com/guides/faqs), check that:
+
+- The token is present and hasn't expired.
+- The token's environment matches `baseUrl` (sandbox token → sandbox host).
+- The token has the scopes the operation needs. For example, booking requires `external.appointment.write`.
+
 ## Security Considerations
 
-- **Never expose your API secret in client-side code.** The `getToken` function should call your backend, which mints tokens using your secret.
-- **Use short-lived tokens.** The Zocdoc API supports tokens with configurable expiry. Shorter is better.
-- **Rotate tokens on auth errors.** If you receive a `ZocdocAuthError`, clear any cached token and fetch a new one.
+- **Keep secrets on the server.** Zocdoc: "Avoid distributing secrets to frontend apps such as browsers or mobile applications."
+- **Keep sandbox and production credentials separate.** Treat both like passwords. Never hardcode them or store them as plaintext.
+- **Clear cached tokens on auth errors.** On a `ZocdocAuthError`, drop the cached token so the next request gets a new one.
 
 ## Next Steps
 
-- Learn the [component architecture](/zocdoc-api-components/guides/architecture/)
+- Read the [Zocdoc API overview](/zocdoc-api-components/guides/zocdoc-api/) for rate limits, booking rules, and links to Zocdoc's guides
 - See the [full client configuration options](/zocdoc-api-components/client/configuration/)

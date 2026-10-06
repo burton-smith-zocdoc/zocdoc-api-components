@@ -21,15 +21,23 @@ This guide walks through rendering a complete booking flow with a single compone
    import { configureZocdoc } from '@zocdoc/api-components';
 
    configureZocdoc({
-     baseUrl: 'https://api.zocdoc.com',
+     baseUrl: 'https://api-developer-sandbox.zocdoc.com',
      getToken: async () => {
-       // Return a valid API token
+       // Return a valid access token minted by your backend
        return await fetchTokenFromYourBackend();
      },
    });
    ```
 
-   The `getToken` function is called before each API request, so you can implement token refresh here.
+   Start with the sandbox and [sandbox credentials](https://api-docs.zocdoc.com/guides/authentication). The `getToken` function runs before each API request, so put token caching and refresh there.
+
+   No credentials yet? Use the mock transport instead. It serves fixture data with no network calls:
+
+   ```javascript
+   import { configureZocdocMock } from '@zocdoc/api-components/mock';
+
+   configureZocdocMock();
+   ```
 
 2. **Add the booking component**
 
@@ -45,14 +53,15 @@ This guide walks through rendering a complete booking flow with a single compone
 
 3. **Handle the completion event**
 
-   Listen for `booking-complete` to know when a patient finishes booking:
+   Listen for `booking-complete` to know when a patient finishes booking. Check `status`, because a booking can be `pending_booking` while the practice confirms it:
 
    ```javascript
    const booking = document.querySelector('zd-booking');
 
    booking.addEventListener('booking-complete', (event) => {
      const { appointmentId, startTime, status } = event.detail;
-     console.log(`Appointment ${appointmentId} booked for ${startTime}`);
+     // Store appointmentId to reschedule or cancel later.
+     // Don't log patient details; they're PHI.
    });
    ```
 
@@ -62,7 +71,7 @@ This guide walks through rendering a complete booking flow with a single compone
 
 The `<zd-booking>` component:
 
-1. Showed a search form for specialty, location, and insurance
+1. Showed a search form for specialty, location, and insurance (the ZIP `11201` and plan `ip_9111` above are [documented sandbox test values](/zocdoc-api-components/guides/testing/#test-scenarios))
 2. Fetched matching providers from the Zocdoc API
 3. Let the patient pick a provider and time slot
 4. Collected patient details and submitted the booking
@@ -73,5 +82,6 @@ All from a single tag.
 ## Next Steps
 
 - Learn about [authentication patterns](/zocdoc-api-components/getting-started/authentication/)
+- See how the components [map onto the Zocdoc API](/zocdoc-api-components/guides/zocdoc-api/)
 - Understand the [component architecture](/zocdoc-api-components/guides/architecture/)
 - Build a [custom flow with individual components](/zocdoc-api-components/guides/composed-vs-single/)

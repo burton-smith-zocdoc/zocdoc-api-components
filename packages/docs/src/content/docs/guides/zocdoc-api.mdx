@@ -1,0 +1,115 @@
+---
+title: Zocdoc API Overview
+description: How the components map onto the Zocdoc public API, and what the API expects of your integration
+---
+
+import { Aside, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+These components are a UI layer over the [Zocdoc public API](https://api-docs.zocdoc.com/guides). They implement Zocdoc's **availability search and patient booking** integration path. This page covers the parts of the API that shape your integration, and links to Zocdoc's guides for the details.
+
+## How the Booking Flow Maps to the API
+
+Zocdoc's [Find Provider Availability and Book Appointments](https://api-docs.zocdoc.com/guides/patient/book-appointments) guide describes a sequence of calls. Each step maps to a client function and the components involved:
+
+| Step | API endpoint | Client function | Fetched by | Rendered by |
+|---|---|---|---|---|
+| Load search options | `GET /v1/specialties`, `GET /v1/visit_reasons`, `GET /v1/insurance_plans` | `getSpecialties`, `getVisitReasons`, `getInsurancePlans` | `<zd-provider-search>` | `<zd-provider-search>` |
+| Find providers | `GET /v1/provider_locations` | `searchProviderLocations` | `<zd-provider-search>` | `<zd-provider-results>`, `<zd-provider-card>` |
+| Show open times | `GET /v1/provider_locations/availability` | `getAvailability` | `<zd-booking>` | `<zd-availability-picker>`, `<zd-availability-grid>` |
+| Book | `POST /v1/appointments` | `createAppointment` | `<zd-booking>` | `<zd-patient-form>` |
+| Confirm | (booking response) | — | — | `<zd-booking-confirmation>` |
+
+`<zd-booking>` runs every step in order. If you compose the components yourself, your code makes the availability and booking calls and passes the results down as properties. See [Composed vs Single Element](/zocdoc-api-components/guides/composed-vs-single/).
+
+## Rules the API Enforces
+
+The components already follow these rules. You'll need them if you call the client functions directly.
+
+### Provider search
+
+- `zip_code` is required. There's no "search everywhere" mode.
+- Results are paged (`page`, `page_size`; the default page size is 10).
+- Provider location IDs are literal `pr_…|lo_…` pairs. Pass them through unchanged.
+
+### Availability
+
+- Dates are `YYYY-MM-DD` in the provider's local time.
+- The start date defaults to today, and the end date defaults to 7 days later.
+- The end date **must be within 30 days** of the start. The client exports this limit as `MAX_AVAILABILITY_DAYS`.
+- Zocdoc guarantees availability up to **150 days out**. Later dates may be accepted but aren't supported.
+- `patient_type` (`new` or `existing`) and `visit_reason_id` are required. Availability depends on both.
+
+### Booking
+
+- `start_time` must exactly match a timeslot returned by availability, offset included.
+- **A successful response doesn't mean a confirmed appointment.** Check `appointment_status`. It may be `confirmed`, `pending_booking` (waiting on the practice), or `booking_failed`, which is a failure that arrives with a `200` status.
+- Some provider locations have booking requirements. For example, insurance member and plan IDs may be required, self-pay may not be accepted, or the location may be in-network only. Violating a requirement returns `400`.
+- `notes` is limited to 100 characters.
+- To reschedule or cancel an appointment, use the returned `appointment_id`. See Zocdoc's [Reschedule](https://api-docs.zocdoc.com/guides/patient/reschedule-appointments) and [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointments) guides. The components don't cover these flows yet.
+
+<Aside type="note">
+  Instead of booking through the API, you can send the patient to the `booking_url` on a timeslot to complete booking on zocdoc.com. Zocdoc notes this only suits certain use cases and partnerships. See the [FAQs](https://api-docs.zocdoc.com/guides/faqs).
+</Aside>
+
+## Reference Data
+
+Specialties, visit reasons, and insurance plans are Zocdoc-specific IDs that other endpoints require. They're described in Zocdoc's [Reference Data](https://api-docs.zocdoc.com/guides/reference-data) guide. Visit reasons can be filtered by specialty. The sandbox comes pre-populated with sample records.
+
+The client caches each list for the page lifetime. Filter insurance plans by `state` where you can, because the unfiltered production list has more than 10,000 entries. See [Endpoints](/zocdoc-api-components/client/endpoints/#reference-data).
+
+## Rate Limits and Performance
+
+From Zocdoc's [Performance](https://api-docs.zocdoc.com/guides/performance) guide:
+
+- Requests over the rate limit return **`429`**. Zocdoc doesn't publish the numbers, and limits can be lowered without notice to prevent abuse or raised for high-traffic apps.
+- Back off **exponentially** when you get a `429`. See [Retry Logic](/zocdoc-api-components/client/errors/#retry-logic).
+- Gzip compression is supported for both requests and responses. Browsers send `Accept-Encoding: gzip` automatically.
+
+## Data Handling
+
+Patient details sent to `POST /v1/appointments` are protected health information. The components send them only to the configured `baseUrl`. They never log them or include them in error messages. If you use `createAppointment` or listen to component events directly, follow the same rules: log actions, not field values.
+
+## Zocdoc Guides
+
+<CardGrid>
+  <LinkCard
+    title="Authentication and Access Tokens"
+    href="https://api-docs.zocdoc.com/guides/authentication"
+    description="OAuth flows, token endpoints, scopes, and lifetimes."
+  />
+  <LinkCard
+    title="Book Appointments"
+    href="https://api-docs.zocdoc.com/guides/patient/book-appointments"
+    description="The full availability search and booking flow."
+  />
+  <LinkCard
+    title="API Endpoint Test Scenarios"
+    href="https://api-docs.zocdoc.com/guides/testing-data"
+    description="Sandbox inputs that trigger each documented response."
+  />
+  <LinkCard
+    title="Reference Data"
+    href="https://api-docs.zocdoc.com/guides/reference-data"
+    description="Specialties, visit reasons, and insurance plans."
+  />
+  <LinkCard
+    title="Performance"
+    href="https://api-docs.zocdoc.com/guides/performance"
+    description="Rate limits, backoff, and compression."
+  />
+  <LinkCard
+    title="Webhooks"
+    href="https://api-docs.zocdoc.com/guides/webhooks"
+    description="Appointment event notifications for your backend."
+  />
+  <LinkCard
+    title="Glossary"
+    href="https://api-docs.zocdoc.com/guides/glossary"
+    description="Definitions of Zocdoc API terms."
+  />
+  <LinkCard
+    title="API Reference"
+    href="https://api-docs.zocdoc.com/apis"
+    description="Every endpoint, schema, and example."
+  />
+</CardGrid>
