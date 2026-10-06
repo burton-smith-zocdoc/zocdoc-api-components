@@ -33,6 +33,8 @@ jobs:
 
       - run: pnpm run build
 
+      - run: pnpm --filter @zocdoc/api-components build:bundle
+
       - run: pnpm --filter docs build
 
       - uses: actions/upload-pages-artifact@v3
