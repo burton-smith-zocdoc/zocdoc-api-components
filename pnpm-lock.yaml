@@ -12,8 +12,8 @@ importers:
   .:
     devDependencies:
       '@charm-ux/theming':
-        specifier: link:../charm-ux/core/packages/theming
-        version: link:../charm-ux/core/packages/theming
+        specifier: 0.0.0-beta-20260901162808
+        version: 0.0.0-beta-20260901162808(lit@3.3.3)
       '@oxc-node/cli':
         specifier: ^0.1.0
         version: 0.1.0
@@ -129,11 +129,11 @@ importers:
   packages/primitives:
     dependencies:
       '@charm-ux/core':
-        specifier: link:../../../charm-ux/core/packages/core
-        version: link:../../../charm-ux/core/packages/core
+        specifier: 0.0.0-beta-20260901162808
+        version: 0.0.0-beta-20260901162808(@floating-ui/utils@0.2.12)
       '@charm-ux/theming':
-        specifier: link:../../../charm-ux/core/packages/theming
-        version: link:../../../charm-ux/core/packages/theming
+        specifier: 0.0.0-beta-20260901162808
+        version: 0.0.0-beta-20260901162808(lit@3.3.3)
       lit:
         specifier: ^3.2.1
         version: 3.3.3
@@ -389,6 +389,17 @@ packages:
     resolution: {integrity: sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ==}
     engines: {node: '>=18'}
 
+  '@charm-ux/core@0.0.0-beta-20260901162808':
+    resolution: {integrity: sha512-kbee4z1uk6ZuNGDzysL8IHebG1UWvsRw1liGacI2GWlvei3Xplcyp/mSaJ3QQE6cSCgXygXVPgMIt3se3sddwQ==}
+
+  '@charm-ux/theming@0.0.0-beta-20260901162808':
+    resolution: {integrity: sha512-C8jaOM465oTIyeYxFE0qZr75/aKQlOflJi5rWLoz7L2qk66EhjJoLwkYXyc9l7SckwYORzbCXr99MCB3BnVsAQ==}
+    peerDependencies:
+      lit: ^3.0.0
+    peerDependenciesMeta:
+      lit:
+        optional: true
+
   '@clack/core@1.5.1':
     resolution: {integrity: sha512-iHTrHA8MtVuLl2TfZySmcKv1qO2PoyC9Z7pfSDozEuV5vtY3/wcOPKJXlqJ5Oq2Cx5DDGQGAMVx6HZfRRoVEbQ==}
     engines: {node: '>= 20.12.0'}
@@ -610,6 +621,15 @@ packages:
 
   '@expressive-code/plugin-text-markers@0.44.1':
     resolution: {integrity: sha512-B3BsJoJ8CFMlcIX9f+X9tcI3C4zPDO601+YuLi9GheSTNro7ZfqSjLptMQKBHOWZvxnAtY5zvIX7iO/qtBhNBg==}
+
+  '@floating-ui/core@1.8.0':
+    resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
+
+  '@floating-ui/dom@1.8.0':
+    resolution: {integrity: sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==}
+
+  '@floating-ui/utils@0.2.12':
+    resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2407,6 +2427,11 @@ packages:
     resolution: {integrity: sha512-dnN3ibLeoRf2HNC+OlCiNc5d2zxbLJXOtiZUudNFSXZrNSydxcCsSpRzXwfu7BBWCIfHPw+xTayeBvJCP/D8Ng==}
     engines: {node: '>= 18'}
 
+  composed-offset-position@0.0.6:
+    resolution: {integrity: sha512-Q7dLompI6lUwd7LWyIcP66r4WcS9u7AL2h8HaeipiRfCRPLMWqRx8fYsjb4OHi6UQFifO7XtNC2IlEJ1ozIFxw==}
+    peerDependencies:
+      '@floating-ui/utils': ^0.2.5
+
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
@@ -2452,6 +2477,10 @@ packages:
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
+
+  culori@4.0.2:
+    resolution: {integrity: sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   custom-elements-manifest@2.1.0:
     resolution: {integrity: sha512-4TU+YhBQpCGYWonsZVTOPx6aYJXenOiSRT7TNGvDB7ipa4SZSJKed1DYXG77XKL9JFZ86sDSDVkwgv1mqw3V3A==}
@@ -4198,6 +4227,21 @@ snapshots:
     dependencies:
       fontkitten: 1.0.3
 
+  '@charm-ux/core@0.0.0-beta-20260901162808(@floating-ui/utils@0.2.12)':
+    dependencies:
+      '@charm-ux/theming': 0.0.0-beta-20260901162808(lit@3.3.3)
+      '@floating-ui/dom': 1.8.0
+      composed-offset-position: 0.0.6(@floating-ui/utils@0.2.12)
+      lit: 3.3.3
+    transitivePeerDependencies:
+      - '@floating-ui/utils'
+
+  '@charm-ux/theming@0.0.0-beta-20260901162808(lit@3.3.3)':
+    dependencies:
+      culori: 4.0.2
+    optionalDependencies:
+      lit: 3.3.3
+
   '@clack/core@1.5.1':
     dependencies:
       fast-wrap-ansi: 0.2.2
@@ -4389,6 +4433,17 @@ snapshots:
   '@expressive-code/plugin-text-markers@0.44.1':
     dependencies:
       '@expressive-code/core': 0.44.1
+
+  '@floating-ui/core@1.8.0':
+    dependencies:
+      '@floating-ui/utils': 0.2.12
+
+  '@floating-ui/dom@1.8.0':
+    dependencies:
+      '@floating-ui/core': 1.8.0
+      '@floating-ui/utils': 0.2.12
+
+  '@floating-ui/utils@0.2.12': {}
 
   '@img/colour@1.1.0': {}
 
@@ -5831,6 +5886,10 @@ snapshots:
 
   common-ancestor-path@2.0.0: {}
 
+  composed-offset-position@0.0.6(@floating-ui/utils@0.2.12):
+    dependencies:
+      '@floating-ui/utils': 0.2.12
+
   convert-source-map@2.0.0: {}
 
   cookie-es@1.2.3: {}
@@ -5872,6 +5931,8 @@ snapshots:
       css-tree: 2.2.1
 
   csstype@3.2.3: {}
+
+  culori@4.0.2: {}
 
   custom-elements-manifest@2.1.0: {}
 

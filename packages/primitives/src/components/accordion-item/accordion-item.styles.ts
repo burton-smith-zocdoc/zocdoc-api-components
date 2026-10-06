@@ -21,6 +21,15 @@ import { css } from 'lit';
  * writing; other engines snap open with no animation, which degrades cleanly.
  */
 export default css`
+  /*
+   * Charm renders .base as inline-block, which sits on the host's text baseline
+   * and leaves descender space below each item - a visible gap between stacked
+   * items. It's already width: 100%, so block loses nothing.
+   */
+  .base {
+    display: block;
+  }
+
   .base::details-content {
     transition:
       block-size var(--zd-accordion-item-animation-duration)
