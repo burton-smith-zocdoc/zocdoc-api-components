@@ -6,3 +6,8 @@ allowBuilds:
   esbuild: true
   rs-module-lexer: false
   sharp: true
+patchedDependencies:
+  '@wc-toolkit/jsx-types@1.8.2': patches/@wc-toolkit__jsx-types@1.8.2.patch
+  '@wc-toolkit/react-wrappers@1.2.11': patches/@wc-toolkit__react-wrappers@1.2.11.patch
+  '@wc-toolkit/svelte-types@1.0.3': patches/@wc-toolkit__svelte-types@1.0.3.patch
+  '@wc-toolkit/vuejs-types@1.0.3': patches/@wc-toolkit__vuejs-types@1.0.3.patch

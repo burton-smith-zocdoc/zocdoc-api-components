@@ -57,5 +57,15 @@ export default css`
     .submit {
       justify-self: end;
     }
+
+    /*
+     * The missing-plan notice's focus target. Focus lands here only by script, so the ring
+     * shows for keyboard and screen reader users and not for a pointer that never asked.
+     */
+    .notice:focus-visible {
+      outline: var(--zd-focus-outline-width) var(--zd-focus-outline-style)
+        var(--zd-focus-outline-color);
+      outline-offset: var(--zd-focus-outline-offset);
+    }
   }
 `;

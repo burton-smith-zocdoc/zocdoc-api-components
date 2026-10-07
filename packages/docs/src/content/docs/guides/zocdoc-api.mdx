@@ -15,11 +15,11 @@ Zocdoc's [Find Provider Availability and Book Appointments](https://api-docs.zoc
 |---|---|---|---|---|
 | Load search options | `GET /v1/specialties`, `GET /v1/visit_reasons`, `GET /v1/insurance_plans` | `getSpecialties`, `getVisitReasons`, `getInsurancePlans` | `<zd-provider-search>` | `<zd-provider-search>` |
 | Find providers | `GET /v1/provider_locations` | `searchProviderLocations` | `<zd-provider-search>` | `<zd-provider-results>`, `<zd-provider-card>` |
-| Show open times | `GET /v1/provider_locations/availability` | `getAvailability` | `<zd-booking>` | `<zd-availability-picker>`, `<zd-availability-grid>` |
+| Show open times | `GET /v1/provider_locations/availability` | `getAvailability` | `<zd-availability-picker>` and `<zd-availability-grid>` (one location each); `<zd-booking>` (batched day counts for a results page) | `<zd-availability-picker>`, `<zd-availability-grid>`, `<zd-provider-results>` |
 | Book | `POST /v1/appointments` | `createAppointment` | `<zd-booking>` | `<zd-patient-form>` |
 | Confirm | (booking response) | — | — | `<zd-booking-confirmation>` |
 
-`<zd-booking>` runs every step in order. If you compose the components yourself, your code makes the availability and booking calls and passes the results down as properties. See [Composed vs Single Element](/zocdoc-api-components/guides/composed-vs-single/).
+`<zd-booking>` runs every step in order. If you compose the components yourself, the picker still fetches its own times, but your code passes data between the components and makes the booking call. See [Composed vs Single Element](/zocdoc-api-components/guides/composed-vs-single/).
 
 ## Rules the API Enforces
 
@@ -43,7 +43,7 @@ The components already follow these rules. You'll need them if you call the clie
 
 - `start_time` must exactly match a timeslot returned by availability, offset included.
 - **A successful response doesn't mean a confirmed appointment.** Check `appointment_status`. It may be `confirmed`, `pending_booking` (waiting on the practice), or `booking_failed`, which is a failure that arrives with a `200` status.
-- Some provider locations have booking requirements. For example, insurance member and plan IDs may be required, self-pay may not be accepted, or the location may be in-network only. Violating a requirement returns `400`.
+- Some provider locations have booking requirements. For example, insurance member and plan IDs may be required, self-pay may not be accepted, or the location may be in-network only. Violating a requirement returns `400`. `<zd-patient-form>` requires the insurance fields a location lists. See [Insurance](/zocdoc-api-components/components/patient-form/#insurance).
 - `notes` is limited to 100 characters.
 - To reschedule or cancel an appointment, use the returned `appointment_id`. See Zocdoc's [Reschedule](https://api-docs.zocdoc.com/guides/patient/reschedule-appointments) and [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointments) guides. The components don't cover these flows yet.
 

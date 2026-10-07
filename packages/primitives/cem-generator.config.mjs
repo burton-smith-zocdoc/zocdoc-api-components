@@ -8,7 +8,6 @@ const shared = sharedConfig({
 
 export default {
   ...shared,
-  // Layout elements are CSS-only (no class to import), so they're left out of the framework outputs.
-  plugins: [...shared.plugins, ...frameworkPlugins({ exclude: ['zd-column', 'zd-flex', 'zd-grid'] })],
+  plugins: [...shared.plugins, ...frameworkPlugins()],
   filePath: 'custom-elements.json',
 };

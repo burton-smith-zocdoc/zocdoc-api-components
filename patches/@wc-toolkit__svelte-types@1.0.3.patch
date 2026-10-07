@@ -1,0 +1,352 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..c63e443f25e72ff52b2fdd59b78890efb296dd8a 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -89,7 +89,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
+     return components;
+   }
+   resetCache();
+-  manifest = customElementsManifest;
++  manifest = structuredClone(customElementsManifest);
+   setAllDefinitionExports(customElementsManifest);
+   manifest.modules.forEach((module2) => {
+     const ces = module2.declarations?.filter(
+@@ -100,12 +100,12 @@ function getAllComponents(customElementsManifest, exclude = []) {
+         if (exclude?.includes(ce.name)) {
+           return;
+         }
+-        ce.modulePath = module2.path;
+-        ce.definitionPath = definitionExports.get(ce.name);
+-        if ("typeDefinitionPath" in module2 && module2.typeDefinitionPath) {
+-          ce.typeDefinitionPath = module2.typeDefinitionPath;
+-        }
+-        components.push(ce);
++        components.push({
++          ...ce,
++          modulePath: module2.path,
++          definitionPath: definitionExports.get(ce.name),
++          ...("typeDefinitionPath" in module2 && module2.typeDefinitionPath ? { typeDefinitionPath: module2.typeDefinitionPath } : {})
++        });
+       });
+     }
+   });
+@@ -136,10 +136,9 @@ function getComponentPublicMethods(component) {
+     component?.members?.filter(
+       (member) => member.kind === "method" && member.privacy !== "private" && member.privacy !== "protected" && !member.name.startsWith("#")
+     )?.map((m) => {
+-      m.type = {
++      return { ...m, type: {
+         text: `${m.name}(${m.parameters?.map((p) => getParameter(p)).join(", ") || ""}) => ${m.return?.type?.text || "void"}`
+-      };
+-      return m;
++      } };
+     })
+   );
+ }
+@@ -642,7 +641,7 @@ function generateSvelteTypes(manifest2, options = {}) {
+     log.red("[svelte-types] - No output directory specified.");
+     return;
+   }
+-  const template = getTypeTemplate(manifest2, mergedOptions);
++  const template = getTypeTemplate(getGenerationManifest(manifest2, mergedOptions), mergedOptions);
+   if (mergedOptions.fileName) {
+     createOutDir(mergedOptions.outdir);
+     const outputPath = saveFile(
+@@ -684,19 +683,22 @@ ${components2.map((component) => {
+   }).join("\n")}
+ };
+ 
+-declare namespace svelteHTML {
+-  interface IntrinsicElements extends CustomElements {}
++declare global {
++  namespace svelteHTML {
++    interface IntrinsicElements extends CustomElements {}
++  }
+ }
+ `;
+ }
+ function getImports(manifest2, components2, options) {
+   const names = /* @__PURE__ */ new Map();
+   for (const component of components2) {
++    if (component.cssOnly) continue;
+     const importPath = options.globalTypePath ? options.globalTypePath : typeof options.componentTypePath === "function" ? options.componentTypePath(
+       component.name,
+       component.tagName,
+       getComponentModulePath(manifest2, component)
+-    ) : void 0;
++    ) : getRelativeModulePath(getComponentModulePath(manifest2, component), options.outdir);
+     if (!importPath) continue;
+     addImport(names, importPath, component.name);
+     for (const eventType of getCustomEventDetailTypes(
+@@ -712,7 +714,7 @@ function getImports(manifest2, components2, options) {
+ }
+ function getComponentPropsTemplate(component, options) {
+   const typeFor = (name, source, fallback) => {
+-    if (options.globalTypePath || options.componentTypePath) {
++    if (!component.cssOnly) {
+       return `${component.name}['${name}']`;
+     }
+     const configured = getConfiguredType(source, options.typesSrc);
+@@ -753,6 +755,67 @@ ${events}
+ ${cssProperties}
+ };`;
+ }
++function getGenerationManifest(manifest2, options) {
++  const exclude = options.exclude || [];
++  return {
++    ...manifest2,
++    modules: manifest2.modules.map((module2) => {
++      const cssOnlyNames = /* @__PURE__ */ new Set();
++      const declarations = module2.declarations?.filter((d) => !exclude.includes(d.name)).map((d) => {
++        if (!d.customElement || !d.tagName || !isCssOnlyElement(d, module2)) {
++          return d;
++        }
++        cssOnlyNames.add(d.name);
++        return toCssOnlyComponent(d);
++      });
++      const exports = module2.exports?.filter(
++        (e) => !exclude.includes(e.declaration?.name) && !cssOnlyNames.has(e.declaration?.name)
++      );
++      return { ...module2, declarations, exports };
++    })
++  };
++}
++function isCssOnlyElement(component, module2) {
++  return !/^[A-Za-z_$][\w$]*$/.test(component.name) || component.name === component.tagName || !module2.exports?.some(
++    (e) => e.kind === "js" && (e.name === component.name || e.declaration?.name === component.name)
++  );
++}
++function toCssOnlyComponent(component) {
++  return {
++    ...component,
++    name: toPascalCase(component.tagName),
++    cssOnly: true,
++    attributes: component.attributes?.map(
++      (attr) => attr.type?.text ? { ...attr, type: { ...attr.type, text: quoteBareUnionMembers(attr.type.text) } } : attr
++    )
++  };
++}
++var TS_TYPE_KEYWORDS = /* @__PURE__ */ new Set(["any", "bigint", "boolean", "false", "never", "null", "number", "object", "string", "symbol", "true", "undefined", "unknown", "void"]);
++function quoteBareUnionMembers(text) {
++  if (!/^[\w\s|-]+$/.test(text)) {
++    return text;
++  }
++  return text.split("|").map((member) => {
++    const value = member.trim();
++    return /^[a-z][\w-]*$/.test(value) && !TS_TYPE_KEYWORDS.has(value) ? JSON.stringify(value) : value;
++  }).join(" | ");
++}
++function toPascalCase(value) {
++  return value.replace(new RegExp(/[-_]+/, "g"), " ").replace(new RegExp(/[^\w\s]/, "g"), "").replace(
++    new RegExp(/\s+(.)(\w*)/, "g"),
++    ($1, $2, $3) => `${$2.toUpperCase() + $3}`
++  ).replace(new RegExp(/\w/), (s) => s.toUpperCase());
++}
++function getRelativeModulePath(modulePath, outdir) {
++  if (!modulePath || !looksLikeFilePath(modulePath)) {
++    return modulePath;
++  }
++  const relativePath = import_path.default.relative(import_path.default.resolve(outdir || "./"), import_path.default.resolve(modulePath)).split(import_path.default.sep).join("/");
++  return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
++}
++function looksLikeFilePath(value) {
++  return import_path.default.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
++}
+ function addImport(imports, importPath, name) {
+   if (!imports.has(importPath)) imports.set(importPath, /* @__PURE__ */ new Set());
+   imports.get(importPath).add(name);
+@@ -761,7 +824,7 @@ function getComponentElementTemplate(component, options) {
+   const elementType = `${component.name}Element`;
+   const slots = component.slots?.map((slot) => JSON.stringify(slot.name)) ?? [];
+   const slotType = slots.length ? `export type ${component.name}Slots = ${slots.join(" | ")};` : "";
+-  if (options.globalTypePath || options.componentTypePath) {
++  if (!component.cssOnly) {
+     return `export type ${elementType} = ${component.name};
+ ${slotType}`;
+   }
+@@ -774,7 +837,8 @@ ${slotType}`;
+     return `  /** ${getMemberDescription(method.description, method.deprecated)} */
+   ${method.name}(${parameters}): ${method.return?.type?.text || "void"};`;
+   }).join("\n");
+-  return `export interface ${elementType} extends HTMLElement {
++  return `${component.cssOnly ? `export type ${component.name} = HTMLElement;` : ""}
++export interface ${elementType} extends HTMLElement {
+ ${methods}
+ }
+ ${slotType}`;
+diff --git a/dist/index.js b/dist/index.js
+index 8f92861c67531632e22b7676185beb727cfda11e..01fa5d05e6176ac33e774677762c055cf58e63a7 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -51,7 +51,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
+     return components;
+   }
+   resetCache();
+-  manifest = customElementsManifest;
++  manifest = structuredClone(customElementsManifest);
+   setAllDefinitionExports(customElementsManifest);
+   manifest.modules.forEach((module) => {
+     const ces = module.declarations?.filter(
+@@ -62,12 +62,12 @@ function getAllComponents(customElementsManifest, exclude = []) {
+         if (exclude?.includes(ce.name)) {
+           return;
+         }
+-        ce.modulePath = module.path;
+-        ce.definitionPath = definitionExports.get(ce.name);
+-        if ("typeDefinitionPath" in module && module.typeDefinitionPath) {
+-          ce.typeDefinitionPath = module.typeDefinitionPath;
+-        }
+-        components.push(ce);
++        components.push({
++          ...ce,
++          modulePath: module.path,
++          definitionPath: definitionExports.get(ce.name),
++          ...("typeDefinitionPath" in module && module.typeDefinitionPath ? { typeDefinitionPath: module.typeDefinitionPath } : {})
++        });
+       });
+     }
+   });
+@@ -98,10 +98,9 @@ function getComponentPublicMethods(component) {
+     component?.members?.filter(
+       (member) => member.kind === "method" && member.privacy !== "private" && member.privacy !== "protected" && !member.name.startsWith("#")
+     )?.map((m) => {
+-      m.type = {
++      return { ...m, type: {
+         text: `${m.name}(${m.parameters?.map((p) => getParameter(p)).join(", ") || ""}) => ${m.return?.type?.text || "void"}`
+-      };
+-      return m;
++      } };
+     })
+   );
+ }
+@@ -604,7 +603,7 @@ function generateSvelteTypes(manifest2, options = {}) {
+     log.red("[svelte-types] - No output directory specified.");
+     return;
+   }
+-  const template = getTypeTemplate(manifest2, mergedOptions);
++  const template = getTypeTemplate(getGenerationManifest(manifest2, mergedOptions), mergedOptions);
+   if (mergedOptions.fileName) {
+     createOutDir(mergedOptions.outdir);
+     const outputPath = saveFile(
+@@ -646,19 +645,22 @@ ${components2.map((component) => {
+   }).join("\n")}
+ };
+ 
+-declare namespace svelteHTML {
+-  interface IntrinsicElements extends CustomElements {}
++declare global {
++  namespace svelteHTML {
++    interface IntrinsicElements extends CustomElements {}
++  }
+ }
+ `;
+ }
+ function getImports(manifest2, components2, options) {
+   const names = /* @__PURE__ */ new Map();
+   for (const component of components2) {
++    if (component.cssOnly) continue;
+     const importPath = options.globalTypePath ? options.globalTypePath : typeof options.componentTypePath === "function" ? options.componentTypePath(
+       component.name,
+       component.tagName,
+       getComponentModulePath(manifest2, component)
+-    ) : void 0;
++    ) : getRelativeModulePath(getComponentModulePath(manifest2, component), options.outdir);
+     if (!importPath) continue;
+     addImport(names, importPath, component.name);
+     for (const eventType of getCustomEventDetailTypes(
+@@ -674,7 +676,7 @@ function getImports(manifest2, components2, options) {
+ }
+ function getComponentPropsTemplate(component, options) {
+   const typeFor = (name, source, fallback) => {
+-    if (options.globalTypePath || options.componentTypePath) {
++    if (!component.cssOnly) {
+       return `${component.name}['${name}']`;
+     }
+     const configured = getConfiguredType(source, options.typesSrc);
+@@ -715,6 +717,67 @@ ${events}
+ ${cssProperties}
+ };`;
+ }
++function getGenerationManifest(manifest2, options) {
++  const exclude = options.exclude || [];
++  return {
++    ...manifest2,
++    modules: manifest2.modules.map((module) => {
++      const cssOnlyNames = /* @__PURE__ */ new Set();
++      const declarations = module.declarations?.filter((d) => !exclude.includes(d.name)).map((d) => {
++        if (!d.customElement || !d.tagName || !isCssOnlyElement(d, module)) {
++          return d;
++        }
++        cssOnlyNames.add(d.name);
++        return toCssOnlyComponent(d);
++      });
++      const exports = module.exports?.filter(
++        (e) => !exclude.includes(e.declaration?.name) && !cssOnlyNames.has(e.declaration?.name)
++      );
++      return { ...module, declarations, exports };
++    })
++  };
++}
++function isCssOnlyElement(component, module) {
++  return !/^[A-Za-z_$][\w$]*$/.test(component.name) || component.name === component.tagName || !module.exports?.some(
++    (e) => e.kind === "js" && (e.name === component.name || e.declaration?.name === component.name)
++  );
++}
++function toCssOnlyComponent(component) {
++  return {
++    ...component,
++    name: toPascalCase(component.tagName),
++    cssOnly: true,
++    attributes: component.attributes?.map(
++      (attr) => attr.type?.text ? { ...attr, type: { ...attr.type, text: quoteBareUnionMembers(attr.type.text) } } : attr
++    )
++  };
++}
++var TS_TYPE_KEYWORDS = /* @__PURE__ */ new Set(["any", "bigint", "boolean", "false", "never", "null", "number", "object", "string", "symbol", "true", "undefined", "unknown", "void"]);
++function quoteBareUnionMembers(text) {
++  if (!/^[\w\s|-]+$/.test(text)) {
++    return text;
++  }
++  return text.split("|").map((member) => {
++    const value = member.trim();
++    return /^[a-z][\w-]*$/.test(value) && !TS_TYPE_KEYWORDS.has(value) ? JSON.stringify(value) : value;
++  }).join(" | ");
++}
++function toPascalCase(value) {
++  return value.replace(new RegExp(/[-_]+/, "g"), " ").replace(new RegExp(/[^\w\s]/, "g"), "").replace(
++    new RegExp(/\s+(.)(\w*)/, "g"),
++    ($1, $2, $3) => `${$2.toUpperCase() + $3}`
++  ).replace(new RegExp(/\w/), (s) => s.toUpperCase());
++}
++function getRelativeModulePath(modulePath, outdir) {
++  if (!modulePath || !looksLikeFilePath(modulePath)) {
++    return modulePath;
++  }
++  const relativePath = path.relative(path.resolve(outdir || "./"), path.resolve(modulePath)).split(path.sep).join("/");
++  return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
++}
++function looksLikeFilePath(value) {
++  return path.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
++}
+ function addImport(imports, importPath, name) {
+   if (!imports.has(importPath)) imports.set(importPath, /* @__PURE__ */ new Set());
+   imports.get(importPath).add(name);
+@@ -723,7 +786,7 @@ function getComponentElementTemplate(component, options) {
+   const elementType = `${component.name}Element`;
+   const slots = component.slots?.map((slot) => JSON.stringify(slot.name)) ?? [];
+   const slotType = slots.length ? `export type ${component.name}Slots = ${slots.join(" | ")};` : "";
+-  if (options.globalTypePath || options.componentTypePath) {
++  if (!component.cssOnly) {
+     return `export type ${elementType} = ${component.name};
+ ${slotType}`;
+   }
+@@ -736,7 +799,8 @@ ${slotType}`;
+     return `  /** ${getMemberDescription(method.description, method.deprecated)} */
+   ${method.name}(${parameters}): ${method.return?.type?.text || "void"};`;
+   }).join("\n");
+-  return `export interface ${elementType} extends HTMLElement {
++  return `${component.cssOnly ? `export type ${component.name} = HTMLElement;` : ""}
++export interface ${elementType} extends HTMLElement {
+ ${methods}
+ }
+ ${slotType}`;

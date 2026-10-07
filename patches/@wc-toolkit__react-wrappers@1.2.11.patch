@@ -1,0 +1,436 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 610bf88819ed35f9dd624f97d84f20900c0e703c..3be9aeb97c3bbed06c0797633132317120e84498 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -284,21 +284,18 @@ function getAllComponents(customElementsManifest, exclude = []) {
+     return components;
+   }
+   resetCache();
+-  manifest = customElementsManifest;
++  manifest = structuredClone(customElementsManifest);
+   setAllDefinitionExports(customElementsManifest);
+   manifest.modules?.forEach((module2) => {
+     const declarations = module2.declarations?.filter((d) => {
+       const ce = d;
+-      if (exclude?.includes(d.name) || !ce.tagName || !ce.customElement) {
+-        return false;
+-      }
+-      ce.modulePath = module2.path;
+-      ce.definitionPath = definitionExports.get(ce.name);
+-      if ("typeDefinitionPath" in module2 && module2.typeDefinitionPath) {
+-        ce.typeDefinitionPath = module2.typeDefinitionPath;
+-      }
+-      return true;
+-    }) ?? [];
++      return !(exclude?.includes(d.name) || !ce.tagName || !ce.customElement);
++    }).map((ce) => ({
++      ...ce,
++      modulePath: module2.path,
++      definitionPath: definitionExports.get(ce.name),
++      ...("typeDefinitionPath" in module2 && module2.typeDefinitionPath ? { typeDefinitionPath: module2.typeDefinitionPath } : {})
++    })) ?? [];
+     components.push(...declarations);
+   });
+   return components;
+@@ -322,14 +319,9 @@ function getComponentPublicProperties(component, altType) {
+   if (!component || !component.members) {
+     return [];
+   }
+-  component.members?.forEach((member) => {
+-    if (member.kind === "field" && altType) {
+-      member.type = member[altType] || member.type;
+-    }
+-  });
+   return component?.members?.filter(
+     (member) => member.kind === "field" && member.privacy !== "private" && member.privacy !== "protected" && !member.static && !member.name.startsWith("#")
+-  ) || [];
++  ).map((member) => altType ? { ...member, type: member[altType] || member.type } : member) || [];
+ }
+ function getComponentPublicMethods(component) {
+   if (!component || !component.members) {
+@@ -343,10 +335,9 @@ function getComponentPublicMethods(component) {
+     component?.members?.filter(
+       (member) => member.kind === "method" && member.privacy !== "private" && member.privacy !== "protected" && !member.name.startsWith("#")
+     )?.map((m) => {
+-      m.type = {
++      return { ...m, type: {
+         text: `${m.name}(${m.parameters?.map((p) => getParameter(p)).join(", ") || ""}) => ${m.return?.type?.text || "void"}`
+-      };
+-      return m;
++      } };
+     })
+   );
+ }
+@@ -472,10 +463,7 @@ function getApiByOrderOption(component, api, altType) {
+   }
+   switch (api) {
+     case "attributes":
+-      component.attributes?.forEach((attr) => {
+-        attr.type = altType ? attr[altType] || attr.type : attr.type;
+-      });
+-      return component.attributes || [];
++      return component.attributes?.map((attr) => ({ ...attr, type: altType ? attr[altType] || attr.type : attr.type })) || [];
+     case "properties":
+       return getComponentPublicProperties(component, altType) || [];
+     case "attrsAndProps": {
+@@ -913,7 +901,7 @@ function generateReactWrappers(customElementsManifest, options) {
+   log.default("[react-wrappers] - Generating wrappers...");
+   updateConfig(options);
+   const components2 = getAllComponents(
+-    customElementsManifest,
++    getGenerationManifest(customElementsManifest),
+     config.exclude
+   );
+   createOutDir(config.outdir);
+@@ -964,6 +952,42 @@ function updateConfig(options) {
+   };
+   globalEvents = options.globalEvents || [];
+ }
++function getGenerationManifest(customElementsManifest) {
++  return {
++    ...customElementsManifest,
++    modules: customElementsManifest.modules?.map((module2) => ({
++      ...module2,
++      declarations: module2.declarations?.map(
++        (d) => d.customElement && d.tagName && isCssOnlyElement(d, module2) ? toCssOnlyComponent(d) : d
++      )
++    }))
++  };
++}
++function isCssOnlyElement(component, module2) {
++  return !/^[A-Za-z_$][\w$]*$/.test(component.name) || component.name === component.tagName || !module2.exports?.some(
++    (e) => e.kind === "js" && (e.name === component.name || e.declaration?.name === component.name)
++  );
++}
++function toCssOnlyComponent(component) {
++  return {
++    ...component,
++    name: toPascalCase(component.tagName),
++    cssOnly: true,
++    attributes: component.attributes?.map(
++      (attr) => attr.type?.text ? { ...attr, type: { ...attr.type, text: quoteBareUnionMembers(attr.type.text) } } : attr
++    )
++  };
++}
++var TS_TYPE_KEYWORDS = /* @__PURE__ */ new Set(["any", "bigint", "boolean", "false", "never", "null", "number", "object", "string", "symbol", "true", "undefined", "unknown", "void"]);
++function quoteBareUnionMembers(text) {
++  if (!/^[\w\s|-]+$/.test(text)) {
++    return text;
++  }
++  return text.split("|").map((member) => {
++    const value = member.trim();
++    return /^[a-z][\w-]*$/.test(value) && !TS_TYPE_KEYWORDS.has(value) ? JSON.stringify(value) : value;
++  }).join(" | ");
++}
+ function getFormattedComponentName(component) {
+   return config.componentNameFormatter?.(component.tagName, component.name) || component.name;
+ }
+@@ -1147,7 +1171,7 @@ function getReactComponentTemplate(component, events, booleanAttributes, attribu
+   return `
+     ${config.ssrSafe ? '"use client"' : ""}
+     import React, { forwardRef ${config.ssrSafe ? ", useEffect" : ""}, useRef ${config.scopedTags ? ", useContext" : ""} } from "react";
+-    ${!config.ssrSafe ? `import '${modulePath}';` : ""}
++    ${!config.ssrSafe && !component.cssOnly ? `import '${modulePath}';` : ""}
+     import {
+       ${has(eventTemplates) ? "useEventListener," : ""}
+       ${has(propTemplates) ? "useProperties," : ""}
+@@ -1160,7 +1184,7 @@ function getReactComponentTemplate(component, events, booleanAttributes, attribu
+       ${has(unusedProps) ? `const { ${unusedProps.join(", ")}, ...restProps } = props;` : ""}
+       ${config.scopedTags ? "const scope = useContext(ScopeContext);" : ""}
+ 
+-      ${config.ssrSafe ? `
++      ${config.ssrSafe && !component.cssOnly ? `
+       /** Waits for the client before loading the custom element */
+       useEffect(() => {
+         import('${modulePath}');
+@@ -1194,16 +1218,17 @@ function getTypeDefinitionTemplate(component, events, booleanAttributes, attribu
+     booleanAttributes,
+     attributes,
+     events,
+-    properties
++    properties,
++    component.cssOnly
+   );
+-  const eventTypes = getEventDetailImportTypes(component);
++  const eventTypes = component.cssOnly ? [] : getEventDetailImportTypes(component);
+   const formattedComponentName = getFormattedComponentName(component);
+   return `
+     import React from "react";
+-    import {
++    ${component.cssOnly ? `type ${formattedComponentName}Element = HTMLElement;` : `import {
+       ${config.defaultExport ? "default" : component.name} as ${formattedComponentName}Element
+       ${eventTypes?.length ? `, ${eventTypes}` : ""}
+-    } from '${modulePath}';
++    } from '${modulePath}';`}
+ 
+     ${config.stronglyTypedEvents ? getStronglyTypedEvents(component, formattedComponentName) : ""}
+ 
+@@ -1299,10 +1324,10 @@ function getExtendedProps() {
+     ...config.reactProps || []
+   ].map((x) => `'${x}'`).join(" | ")}>`;
+ }
+-function getPropsInterface(componentName, booleanAttributes, attributes, events, properties) {
++function getPropsInterface(componentName, booleanAttributes, attributes, events, properties, cssOnly) {
+   return [
+     ...getBooleanPropsTemplate(booleanAttributes),
+-    ...getAttributePropsTemplate(attributes, componentName),
++    ...getAttributePropsTemplate(attributes, componentName, cssOnly),
+     ...getPropertyPropsTemplate(properties, componentName),
+     ...getEventPropsTemplate(events, componentName),
+     ...getGlobalEventPropsTemplate()
+@@ -1329,11 +1354,11 @@ function getBooleanPropsTemplate(booleanAttributes) {
+     `
+   ) || [];
+ }
+-function getAttributePropsTemplate(attributes, componentName) {
++function getAttributePropsTemplate(attributes, componentName, cssOnly) {
+   return (attributes || []).map((attr) => {
+     return `
+       /** ${attr.description} */
+-      ${attr.fieldName}?: ${attr.type?.text.includes("{ELEMENT_NAME}") ? attr.type?.text.replace("{ELEMENT_NAME}", `${componentName}Element`) : MAPPED_PROPS.some((base) => base.propName === attr.fieldName) ? attr.type?.text || "string" : `${componentName}Element['${attr.fieldName}']`};
++      ${attr.fieldName}?: ${attr.type?.text.includes("{ELEMENT_NAME}") ? attr.type?.text.replace("{ELEMENT_NAME}", `${componentName}Element`) : MAPPED_PROPS.some((base) => base.propName === attr.fieldName) || cssOnly ? attr.type?.text || "string" : `${componentName}Element['${attr.fieldName}']`};
+     `;
+   }) || [];
+ }
+@@ -1397,7 +1422,7 @@ function reactWrapperPlugin(options = {}) {
+   return {
+     name: "react-wrappers",
+     packageLinkPhase({ customElementsManifest }) {
+-      generateReactWrappers(customElementsManifest, options);
++      generateReactWrappers(cloneManifest(customElementsManifest), options);
+     }
+   };
+ }
+@@ -1405,10 +1430,13 @@ function reactWrapperGeneratorPlugin(options = {}) {
+   return {
+     name: "@wc-toolkit/react-wrappers:cem-generator",
+     afterGenerate(manifest2) {
+-      generateReactWrappers(manifest2, options);
++      generateReactWrappers(cloneManifest(manifest2), options);
+     }
+   };
+ }
++function cloneManifest(manifest2) {
++  return structuredClone(manifest2);
++}
+ 
+ // src/runtime-wrapper.ts
+ var import_react = __toESM(require("react"), 1);
+diff --git a/dist/index.js b/dist/index.js
+index f68fc97c4aa5cb96df9076caf7aefc7ceb83a86b..b596be2c27123ee88d77065373d56f83431a7855 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -244,21 +244,18 @@ function getAllComponents(customElementsManifest, exclude = []) {
+     return components;
+   }
+   resetCache();
+-  manifest = customElementsManifest;
++  manifest = structuredClone(customElementsManifest);
+   setAllDefinitionExports(customElementsManifest);
+   manifest.modules?.forEach((module) => {
+     const declarations = module.declarations?.filter((d) => {
+       const ce = d;
+-      if (exclude?.includes(d.name) || !ce.tagName || !ce.customElement) {
+-        return false;
+-      }
+-      ce.modulePath = module.path;
+-      ce.definitionPath = definitionExports.get(ce.name);
+-      if ("typeDefinitionPath" in module && module.typeDefinitionPath) {
+-        ce.typeDefinitionPath = module.typeDefinitionPath;
+-      }
+-      return true;
+-    }) ?? [];
++      return !(exclude?.includes(d.name) || !ce.tagName || !ce.customElement);
++    }).map((ce) => ({
++      ...ce,
++      modulePath: module.path,
++      definitionPath: definitionExports.get(ce.name),
++      ...("typeDefinitionPath" in module && module.typeDefinitionPath ? { typeDefinitionPath: module.typeDefinitionPath } : {})
++    })) ?? [];
+     components.push(...declarations);
+   });
+   return components;
+@@ -282,14 +279,9 @@ function getComponentPublicProperties(component, altType) {
+   if (!component || !component.members) {
+     return [];
+   }
+-  component.members?.forEach((member) => {
+-    if (member.kind === "field" && altType) {
+-      member.type = member[altType] || member.type;
+-    }
+-  });
+   return component?.members?.filter(
+     (member) => member.kind === "field" && member.privacy !== "private" && member.privacy !== "protected" && !member.static && !member.name.startsWith("#")
+-  ) || [];
++  ).map((member) => altType ? { ...member, type: member[altType] || member.type } : member) || [];
+ }
+ function getComponentPublicMethods(component) {
+   if (!component || !component.members) {
+@@ -303,10 +295,9 @@ function getComponentPublicMethods(component) {
+     component?.members?.filter(
+       (member) => member.kind === "method" && member.privacy !== "private" && member.privacy !== "protected" && !member.name.startsWith("#")
+     )?.map((m) => {
+-      m.type = {
++      return { ...m, type: {
+         text: `${m.name}(${m.parameters?.map((p) => getParameter(p)).join(", ") || ""}) => ${m.return?.type?.text || "void"}`
+-      };
+-      return m;
++      } };
+     })
+   );
+ }
+@@ -432,10 +423,7 @@ function getApiByOrderOption(component, api, altType) {
+   }
+   switch (api) {
+     case "attributes":
+-      component.attributes?.forEach((attr) => {
+-        attr.type = altType ? attr[altType] || attr.type : attr.type;
+-      });
+-      return component.attributes || [];
++      return component.attributes?.map((attr) => ({ ...attr, type: altType ? attr[altType] || attr.type : attr.type })) || [];
+     case "properties":
+       return getComponentPublicProperties(component, altType) || [];
+     case "attrsAndProps": {
+@@ -873,7 +861,7 @@ function generateReactWrappers(customElementsManifest, options) {
+   log.default("[react-wrappers] - Generating wrappers...");
+   updateConfig(options);
+   const components2 = getAllComponents(
+-    customElementsManifest,
++    getGenerationManifest(customElementsManifest),
+     config.exclude
+   );
+   createOutDir(config.outdir);
+@@ -924,6 +912,42 @@ function updateConfig(options) {
+   };
+   globalEvents = options.globalEvents || [];
+ }
++function getGenerationManifest(customElementsManifest) {
++  return {
++    ...customElementsManifest,
++    modules: customElementsManifest.modules?.map((module) => ({
++      ...module,
++      declarations: module.declarations?.map(
++        (d) => d.customElement && d.tagName && isCssOnlyElement(d, module) ? toCssOnlyComponent(d) : d
++      )
++    }))
++  };
++}
++function isCssOnlyElement(component, module) {
++  return !/^[A-Za-z_$][\w$]*$/.test(component.name) || component.name === component.tagName || !module.exports?.some(
++    (e) => e.kind === "js" && (e.name === component.name || e.declaration?.name === component.name)
++  );
++}
++function toCssOnlyComponent(component) {
++  return {
++    ...component,
++    name: toPascalCase(component.tagName),
++    cssOnly: true,
++    attributes: component.attributes?.map(
++      (attr) => attr.type?.text ? { ...attr, type: { ...attr.type, text: quoteBareUnionMembers(attr.type.text) } } : attr
++    )
++  };
++}
++var TS_TYPE_KEYWORDS = /* @__PURE__ */ new Set(["any", "bigint", "boolean", "false", "never", "null", "number", "object", "string", "symbol", "true", "undefined", "unknown", "void"]);
++function quoteBareUnionMembers(text) {
++  if (!/^[\w\s|-]+$/.test(text)) {
++    return text;
++  }
++  return text.split("|").map((member) => {
++    const value = member.trim();
++    return /^[a-z][\w-]*$/.test(value) && !TS_TYPE_KEYWORDS.has(value) ? JSON.stringify(value) : value;
++  }).join(" | ");
++}
+ function getFormattedComponentName(component) {
+   return config.componentNameFormatter?.(component.tagName, component.name) || component.name;
+ }
+@@ -1107,7 +1131,7 @@ function getReactComponentTemplate(component, events, booleanAttributes, attribu
+   return `
+     ${config.ssrSafe ? '"use client"' : ""}
+     import React, { forwardRef ${config.ssrSafe ? ", useEffect" : ""}, useRef ${config.scopedTags ? ", useContext" : ""} } from "react";
+-    ${!config.ssrSafe ? `import '${modulePath}';` : ""}
++    ${!config.ssrSafe && !component.cssOnly ? `import '${modulePath}';` : ""}
+     import {
+       ${has(eventTemplates) ? "useEventListener," : ""}
+       ${has(propTemplates) ? "useProperties," : ""}
+@@ -1120,7 +1144,7 @@ function getReactComponentTemplate(component, events, booleanAttributes, attribu
+       ${has(unusedProps) ? `const { ${unusedProps.join(", ")}, ...restProps } = props;` : ""}
+       ${config.scopedTags ? "const scope = useContext(ScopeContext);" : ""}
+ 
+-      ${config.ssrSafe ? `
++      ${config.ssrSafe && !component.cssOnly ? `
+       /** Waits for the client before loading the custom element */
+       useEffect(() => {
+         import('${modulePath}');
+@@ -1154,16 +1178,17 @@ function getTypeDefinitionTemplate(component, events, booleanAttributes, attribu
+     booleanAttributes,
+     attributes,
+     events,
+-    properties
++    properties,
++    component.cssOnly
+   );
+-  const eventTypes = getEventDetailImportTypes(component);
++  const eventTypes = component.cssOnly ? [] : getEventDetailImportTypes(component);
+   const formattedComponentName = getFormattedComponentName(component);
+   return `
+     import React from "react";
+-    import {
++    ${component.cssOnly ? `type ${formattedComponentName}Element = HTMLElement;` : `import {
+       ${config.defaultExport ? "default" : component.name} as ${formattedComponentName}Element
+       ${eventTypes?.length ? `, ${eventTypes}` : ""}
+-    } from '${modulePath}';
++    } from '${modulePath}';`}
+ 
+     ${config.stronglyTypedEvents ? getStronglyTypedEvents(component, formattedComponentName) : ""}
+ 
+@@ -1259,10 +1284,10 @@ function getExtendedProps() {
+     ...config.reactProps || []
+   ].map((x) => `'${x}'`).join(" | ")}>`;
+ }
+-function getPropsInterface(componentName, booleanAttributes, attributes, events, properties) {
++function getPropsInterface(componentName, booleanAttributes, attributes, events, properties, cssOnly) {
+   return [
+     ...getBooleanPropsTemplate(booleanAttributes),
+-    ...getAttributePropsTemplate(attributes, componentName),
++    ...getAttributePropsTemplate(attributes, componentName, cssOnly),
+     ...getPropertyPropsTemplate(properties, componentName),
+     ...getEventPropsTemplate(events, componentName),
+     ...getGlobalEventPropsTemplate()
+@@ -1289,11 +1314,11 @@ function getBooleanPropsTemplate(booleanAttributes) {
+     `
+   ) || [];
+ }
+-function getAttributePropsTemplate(attributes, componentName) {
++function getAttributePropsTemplate(attributes, componentName, cssOnly) {
+   return (attributes || []).map((attr) => {
+     return `
+       /** ${attr.description} */
+-      ${attr.fieldName}?: ${attr.type?.text.includes("{ELEMENT_NAME}") ? attr.type?.text.replace("{ELEMENT_NAME}", `${componentName}Element`) : MAPPED_PROPS.some((base) => base.propName === attr.fieldName) ? attr.type?.text || "string" : `${componentName}Element['${attr.fieldName}']`};
++      ${attr.fieldName}?: ${attr.type?.text.includes("{ELEMENT_NAME}") ? attr.type?.text.replace("{ELEMENT_NAME}", `${componentName}Element`) : MAPPED_PROPS.some((base) => base.propName === attr.fieldName) || cssOnly ? attr.type?.text || "string" : `${componentName}Element['${attr.fieldName}']`};
+     `;
+   }) || [];
+ }
+@@ -1357,7 +1382,7 @@ function reactWrapperPlugin(options = {}) {
+   return {
+     name: "react-wrappers",
+     packageLinkPhase({ customElementsManifest }) {
+-      generateReactWrappers(customElementsManifest, options);
++      generateReactWrappers(cloneManifest(customElementsManifest), options);
+     }
+   };
+ }
+@@ -1365,10 +1390,13 @@ function reactWrapperGeneratorPlugin(options = {}) {
+   return {
+     name: "@wc-toolkit/react-wrappers:cem-generator",
+     afterGenerate(manifest2) {
+-      generateReactWrappers(manifest2, options);
++      generateReactWrappers(cloneManifest(manifest2), options);
+     }
+   };
+ }
++function cloneManifest(manifest2) {
++  return structuredClone(manifest2);
++}
+ 
+ // src/runtime-wrapper.ts
+ import React, {

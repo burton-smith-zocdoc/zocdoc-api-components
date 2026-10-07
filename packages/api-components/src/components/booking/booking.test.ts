@@ -704,6 +704,50 @@ describe('zd-booking', () => {
     expect(shadow(element).querySelector('[part="confirmation"]')).not.toBeNull();
   });
 
+  it('hands the form the plan and the location’s booking requirements', async () => {
+    const required = [
+      'data.patient.insurance.insurance_plan_id',
+      'data.patient.insurance.insurance_member_id',
+    ];
+    const element = await mountFlow('insurance-plan-id="ip_9111"');
+    const provider: ProviderLocation = {
+      ...PROVIDER,
+      booking_requirements: { required_fields: required },
+    };
+    element.providers = [provider];
+    await settled(element);
+
+    child(element, 'results').dispatchEvent(
+      new CustomEvent('provider-select', { detail: { provider } })
+    );
+    await settled(element);
+    child(element, 'picker').dispatchEvent(
+      new CustomEvent('slot-select', {
+        detail: { startTime: START_TIME, providerLocationId: provider.provider_location_id },
+      })
+    );
+    await settled(element);
+
+    const form = child(element, 'patient-form') as HTMLElement & {
+      insurancePlanId?: string;
+      requiredFields: readonly string[];
+    };
+    expect(form.insurancePlanId).toBe('ip_9111');
+    expect(form.requiredFields).toEqual(required);
+  });
+
+  it('hands the form no requirements for a location without any', async () => {
+    const element = await mountFlow();
+    await toPatientStep(element);
+
+    const form = child(element, 'patient-form') as HTMLElement & {
+      insurancePlanId?: string;
+      requiredFields: readonly string[];
+    };
+    expect(form.insurancePlanId).toBeUndefined();
+    expect(form.requiredFields).toEqual([]);
+  });
+
   it('emits booking-error and stays on the form when the POST fails', async () => {
     vi.mocked(appointments.createAppointment).mockRejectedValue(
       new ZocdocError('Zocdoc API request failed with 500.', 500)

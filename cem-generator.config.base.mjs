@@ -47,40 +47,17 @@ export function sharedConfig({ charmManifestPath, tsConfigPath, include }) {
  * Framework integration generators (JSX, Vue, Svelte types + React wrappers), emitted into the
  * package's `dist/`. Run per package only — not from the root Storybook manifest.
  *
- * Must follow `sharedConfig().plugins` so they see the cssPrefix-mutated manifest. Manifest
- * module paths are `dist/...` (package-root relative), so type imports are rewritten relative to
- * `dist/types/`. `exclude` takes element names with no JS class (e.g. CSS-only layout elements).
+ * Must follow `sharedConfig().plugins` so they see the cssPrefix-mutated manifest. The generators
+ * are patched (see `patches/@wc-toolkit__*.patch`) to work on their own manifest copy, resolve
+ * module imports relative to `outdir`, and type CSS-only elements (e.g. the layout elements) as
+ * `HTMLElement` aliases. `stronglyTypedEvents` types event targets as the element (Svelte has
+ * no such option). `exclude` takes element names to leave out of every framework output.
  */
 export function frameworkPlugins({ exclude = [] } = {}) {
-  const typesOptions = {
-    outdir: 'dist/types',
-    componentTypePath: (_name, _tag, modulePath) => modulePath?.replace(/^dist\//, '../'),
-  };
   return [
-    jsxTypesGeneratorPlugin(typesOptions),
-    vuejsTypesGeneratorPlugin(typesOptions),
-    svelteTypesGeneratorPlugin(typesOptions),
-    reactWrapperGeneratorPlugin({ outdir: 'dist/react' }),
-  ].map((plugin) => isolated(plugin, exclude));
-}
-
-/**
- * Hands the generator its own manifest copy with `exclude`d elements stripped. Two upstream
- * problems make this necessary: react-wrappers mutates the manifest it's given (adding
- * `modulePath`/`definitionPath`, which would leak into custom-elements.json), and jsx-types'
- * import builder ignores its own `exclude` option.
- */
-function isolated(plugin, exclude) {
-  const keep = (entry) => !exclude.includes(entry.name ?? entry.declaration?.name);
-  return {
-    ...plugin,
-    afterGenerate(manifest) {
-      const copy = structuredClone(manifest);
-      for (const module of copy.modules) {
-        module.declarations = module.declarations?.filter(keep);
-        module.exports = module.exports?.filter(keep);
-      }
-      plugin.afterGenerate(copy);
-    },
-  };
+    jsxTypesGeneratorPlugin({ outdir: 'dist/types', exclude, stronglyTypedEvents: true }),
+    vuejsTypesGeneratorPlugin({ outdir: 'dist/types', exclude, stronglyTypedEvents: true }),
+    svelteTypesGeneratorPlugin({ outdir: 'dist/types', exclude }),
+    reactWrapperGeneratorPlugin({ outdir: 'dist/react', exclude, stronglyTypedEvents: true }),
+  ];
 }

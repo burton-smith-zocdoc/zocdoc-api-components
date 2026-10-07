@@ -2824,6 +2824,24 @@
             },
             {
               "kind": "method",
+              "name": "focusPart",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "name",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "getScopedElementById",
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
               "privacy": "protected",
@@ -2896,6 +2914,43 @@
             },
             {
               "kind": "field",
+              "name": "insurancePlanId",
+              "description": "The insurance plan the patient chose while searching, sent as\n`patient.insurance.insurance_plan_id`. The form does not offer a plan picker of its own:\nthe plan was already chosen to filter the search, and asking again here invites a second\nanswer that disagrees with the first.\n\nSetting it shows the insurance group, so the patient can add a member ID. Insurance details\nare PHI, so like `values` this is `attribute: false`.",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "isRequired",
+              "description": "The member ID is required only alongside a plan. Without one the field is not rendered — the\nmissing-plan notice takes its place — and an error on a field the patient cannot see would\nsend focus nowhere.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "field",
+                  "type": {
+                    "text": "PatientFormField"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "missingPlan",
+              "description": "The location requires a plan and none was chosen. The form cannot fix this itself — it has\nno plan picker — so it says so instead of letting the booking fail on a `400`.",
+              "privacy": "protected",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "notes",
               "description": "Free-text notes for the practice, capped at {@link NOTES_MAX_LENGTH}. Optional, and\nomitted from the event entirely when empty rather than sent as `''`.\n\nPatient-authored, so it is PHI as much as the demographics are, and `attribute: false`\nfor the same reason.",
               "privacy": "public",
@@ -2935,6 +2990,17 @@
             },
             {
               "kind": "method",
+              "name": "renderInsurance",
+              "description": "The notice is focusable but not live. It is on screen from the moment the step renders,\nso announcing it then would interrupt the patient before they have done anything; it is\nreached by focus instead, when `submit()` refuses because of it. The focus target is a\nwrapper rather than the alert itself, because the alert host is not focusable.",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "renderSexAtBirth",
               "description": "`sex_at_birth` is the API's own field name and its own two values; it is not the\npatient's gender, which `Patient.gender` covers separately and which this form does not\ncollect. The empty option is what makes \"nothing chosen yet\" distinct from a choice.",
               "privacy": "protected",
@@ -2942,6 +3008,24 @@
                 "type": {
                   "text": "unknown"
                 }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "requiredFields",
+              "description": "The provider location's `booking_requirements.required_fields`, passed through as the API\nreturns them. A location that lists the plan or member ID path rejects a booking without\nit, so the form requires those fields rather than letting the patient reach a `400` at the\nlast step. Paths the form does not recognise are ignored, since it cannot collect them.",
+              "privacy": "public",
+              "type": {
+                "text": "readonly string[]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "requiresMemberId",
+              "description": "Whether the provider location rejects a booking without a member ID.",
+              "privacy": "protected",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -2981,6 +3065,15 @@
               }
             },
             {
+              "kind": "field",
+              "name": "showsInsurance",
+              "description": "The insurance group is shown when there is a plan to attach a member ID to, or one is owed.",
+              "privacy": "protected",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
               "kind": "method",
               "name": "submit",
               "description": "Validates every field and emits `patient-submit` when all of them pass. Public so the\nhost page or a coordinating parent can trigger it, which is also how the flow in\nTask 15 drives the form from its own Continue button.",
@@ -2993,8 +3086,19 @@
             },
             {
               "kind": "method",
+              "name": "toInsurance",
+              "description": "`insurance` is present only when there is a plan to send. A member ID without a plan is\nnot sent at all: the API reads the pair together, and `submit()` will not emit with a\nrequired plan missing, so the only member ID this drops is one nobody asked for.",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "PatientInsurance | undefined"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "toPatient",
-              "description": "Builds the API's shape from the flat field map. The address is nested, and the\noptional parts of `Patient` — `insurance`, `gender`, the two ids — are left off rather\nthan sent empty, because this form does not collect them.\n\nThe state code is upper-cased on the way out, for the same reason {@link trimmed} exists:\na lower-case state code is a rejected booking rather than a typo the API forgives.",
+              "description": "Builds the API's shape from the flat field map. The address is nested, and the\noptional parts of `Patient` — `gender` and the two ids — are left off rather than sent\nempty, because this form does not collect them. `insurance` is added only when there is\na plan, through {@link toInsurance}.\n\nThe state code is upper-cased on the way out, for the same reason {@link trimmed} exists:\na lower-case state code is a rejected booking rather than a typo the API forgives.",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -3117,6 +3221,18 @@
             {
               "name": "zd-form",
               "description": "The form element."
+            },
+            {
+              "name": "zd-insurance",
+              "description": "The insurance group. Rendered only when a plan is set or the provider\nlocation requires insurance."
+            },
+            {
+              "name": "zd-insurance-member-id",
+              "description": "The insurance member ID field."
+            },
+            {
+              "name": "zd-insurance-required",
+              "description": "The notice shown when the location requires an insurance plan\nand none was chosen."
             },
             {
               "name": "zd-last-name",

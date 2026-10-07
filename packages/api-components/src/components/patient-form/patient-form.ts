@@ -1,13 +1,15 @@
 import {
   CharmElement,
+  ZdAlert,
   ZdButton,
   ZdInput,
   ZdSelect,
   ZdTextArea,
 } from '@zocdoc/api-primitive-components';
+import { nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import type { Patient, SexAtBirth } from '../../client/types.js';
+import type { Patient, PatientInsurance, SexAtBirth } from '../../client/types.js';
 import type { TypedEmit, TypedEventTarget } from '../events.js';
 import styles from './patient-form.styles.js';
 
@@ -30,7 +32,18 @@ const REQUIRED_FIELDS = [
   'zip_code',
 ] as const;
 
-export type PatientFormField = (typeof REQUIRED_FIELDS)[number];
+/**
+ * The `booking_requirements.required_fields` paths this form knows how to satisfy. They are
+ * dotted paths into the booking request body, as the API reports them, so they are compared
+ * whole rather than parsed.
+ */
+const REQUIRES_PLAN = 'data.patient.insurance.insurance_plan_id';
+const REQUIRES_MEMBER_ID = 'data.patient.insurance.insurance_member_id';
+
+export type PatientFormField = (typeof REQUIRED_FIELDS)[number] | 'insurance_member_id';
+
+/** Every field in page order, which is also the order `submit()` looks for the first error in. */
+const FIELD_ORDER: readonly PatientFormField[] = [...REQUIRED_FIELDS, 'insurance_member_id'];
 
 /** The errors a field can carry, keyed by API field name. */
 export type PatientFormErrors = Partial<Record<PatientFormField, string>>;
@@ -118,6 +131,11 @@ const FIELDS: Record<PatientFormField, FieldConfig> = {
     helpText: 'Two-letter code.',
   },
   zip_code: { label: 'ZIP code', autocomplete: 'postal-code', inputmode: 'numeric' },
+  insurance_member_id: {
+    label: 'Member ID',
+    autocomplete: 'off',
+    helpText: 'As shown on your insurance card.',
+  },
 };
 
 /** The three groups A11Y-004 asks for, each rendered as a `fieldset` with a `legend`. */
@@ -163,6 +181,10 @@ function partName(field: PatientFormField): string {
  * @csspart about - The name, date of birth, and sex at birth group.
  * @csspart contact - The phone and email group.
  * @csspart address - The address group.
+ * @csspart insurance - The insurance group. Rendered only when a plan is set or the provider
+ *   location requires insurance.
+ * @csspart insurance-required - The notice shown when the location requires an insurance plan
+ *   and none was chosen.
  * @csspart first-name - The first name field.
  * @csspart last-name - The last name field.
  * @csspart date-of-birth - The date of birth field.
@@ -173,6 +195,7 @@ function partName(field: PatientFormField): string {
  * @csspart city - The city field.
  * @csspart state - The state field.
  * @csspart zip-code - The ZIP code field.
+ * @csspart insurance-member-id - The insurance member ID field.
  * @csspart notes - The optional notes field.
  * @csspart submit - The submit button.
  */
@@ -186,7 +209,7 @@ export class ZdPatientForm extends CharmElement {
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdInput, ZdSelect, ZdTextArea, ZdButton];
+    return [ZdInput, ZdSelect, ZdTextArea, ZdButton, ZdAlert];
   }
 
   /**
@@ -223,6 +246,27 @@ export class ZdPatientForm extends CharmElement {
   public busy = false;
 
   /**
+   * The insurance plan the patient chose while searching, sent as
+   * `patient.insurance.insurance_plan_id`. The form does not offer a plan picker of its own:
+   * the plan was already chosen to filter the search, and asking again here invites a second
+   * answer that disagrees with the first.
+   *
+   * Setting it shows the insurance group, so the patient can add a member ID. Insurance details
+   * are PHI, so like `values` this is `attribute: false`.
+   */
+  @property({ attribute: false })
+  public insurancePlanId?: string;
+
+  /**
+   * The provider location's `booking_requirements.required_fields`, passed through as the API
+   * returns them. A location that lists the plan or member ID path rejects a booking without
+   * it, so the form requires those fields rather than letting the patient reach a `400` at the
+   * last step. Paths the form does not recognise are ignored, since it cannot collect them.
+   */
+  @property({ attribute: false })
+  public requiredFields: readonly string[] = [];
+
+  /**
    * The current validation failures. Cleared and rebuilt on each `submit()`, so a field the
    * patient has since fixed stops showing an error the next time they try.
    */
@@ -239,9 +283,17 @@ export class ZdPatientForm extends CharmElement {
 
     this.fieldErrors = this.validate();
 
-    const firstInvalid = REQUIRED_FIELDS.find((field) => this.fieldErrors[field]);
+    const firstInvalid = FIELD_ORDER.find((field) => this.fieldErrors[field]);
     if (firstInvalid) {
       void this.focusField(firstInvalid);
+      return;
+    }
+
+    // Nothing the patient can type fixes a missing plan, so this comes after the field errors
+    // rather than before them: a patient with both problems fixes the fields first and is not
+    // bounced back up the flow until there is nothing left to fix here.
+    if (this.missingPlan) {
+      void this.focusPart('insurance-required');
       return;
     }
 
@@ -269,8 +321,8 @@ export class ZdPatientForm extends CharmElement {
   protected validate(): PatientFormErrors {
     const errors: PatientFormErrors = {};
 
-    for (const field of REQUIRED_FIELDS) {
-      if (!this.trimmed(field)) {
+    for (const field of FIELD_ORDER) {
+      if (this.isRequired(field) && !this.trimmed(field)) {
         errors[field] = `${FIELDS[field].label} is required.`;
       }
     }
@@ -288,15 +340,63 @@ export class ZdPatientForm extends CharmElement {
     return errors;
   }
 
+  /** Whether the provider location rejects a booking without a member ID. */
+  protected get requiresMemberId(): boolean {
+    return this.requiredFields.includes(REQUIRES_MEMBER_ID);
+  }
+
+  /**
+   * The location requires a plan and none was chosen. The form cannot fix this itself — it has
+   * no plan picker — so it says so instead of letting the booking fail on a `400`.
+   */
+  protected get missingPlan(): boolean {
+    return this.requiredFields.includes(REQUIRES_PLAN) && !this.insurancePlanId;
+  }
+
+  /** The insurance group is shown when there is a plan to attach a member ID to, or one is owed. */
+  protected get showsInsurance(): boolean {
+    return Boolean(this.insurancePlanId) || this.missingPlan || this.requiresMemberId;
+  }
+
+  /**
+   * The member ID is required only alongside a plan. Without one the field is not rendered — the
+   * missing-plan notice takes its place — and an error on a field the patient cannot see would
+   * send focus nowhere.
+   */
+  protected isRequired(field: PatientFormField): boolean {
+    if (field === 'insurance_member_id') {
+      return this.requiresMemberId && Boolean(this.insurancePlanId);
+    }
+    return true;
+  }
+
+  /**
+   * `insurance` is present only when there is a plan to send. A member ID without a plan is
+   * not sent at all: the API reads the pair together, and `submit()` will not emit with a
+   * required plan missing, so the only member ID this drops is one nobody asked for.
+   */
+  protected toInsurance(): PatientInsurance | undefined {
+    if (!this.insurancePlanId) return undefined;
+
+    const memberId = this.trimmed('insurance_member_id');
+    return {
+      insurance_plan_id: this.insurancePlanId,
+      ...(memberId ? { insurance_member_id: memberId } : {}),
+    };
+  }
+
   /**
    * Builds the API's shape from the flat field map. The address is nested, and the
-   * optional parts of `Patient` — `insurance`, `gender`, the two ids — are left off rather
-   * than sent empty, because this form does not collect them.
+   * optional parts of `Patient` — `gender` and the two ids — are left off rather than sent
+   * empty, because this form does not collect them. `insurance` is added only when there is
+   * a plan, through {@link toInsurance}.
    *
    * The state code is upper-cased on the way out, for the same reason {@link trimmed} exists:
    * a lower-case state code is a rejected booking rather than a typo the API forgives.
    */
   protected toPatient(): Patient {
+    const insurance = this.toInsurance();
+
     return {
       first_name: this.trimmed('first_name'),
       last_name: this.trimmed('last_name'),
@@ -310,6 +410,7 @@ export class ZdPatientForm extends CharmElement {
         state: this.trimmed('state').toUpperCase(),
         zip_code: this.trimmed('zip_code'),
       },
+      ...(insurance ? { insurance } : {}),
     };
   }
 
@@ -338,8 +439,12 @@ export class ZdPatientForm extends CharmElement {
    * inside it.
    */
   protected async focusField(field: PatientFormField): Promise<void> {
+    await this.focusPart(partName(field));
+  }
+
+  protected async focusPart(name: string): Promise<void> {
     await this.updateComplete;
-    this.shadowRoot?.querySelector<HTMLElement>(`[part='${partName(field)}']`)?.focus();
+    this.shadowRoot?.querySelector<HTMLElement>(`[part='${name}']`)?.focus();
   }
 
   protected setField(field: PatientFormField, value: string): void {
@@ -381,7 +486,7 @@ export class ZdPatientForm extends CharmElement {
         inputmode=${ifDefined(config.inputmode)}
         maxlength=${ifDefined(config.maxlength)}
         help-text=${ifDefined(config.helpText)}
-        required
+        ?required=${this.isRequired(field)}
         .value=${this.values[field] ?? ''}
         .errorMessage=${this.fieldErrors[field] ?? ''}
         @input=${(event: Event) => this.setField(field, (event.target as ZdInput).value)}
@@ -411,6 +516,35 @@ export class ZdPatientForm extends CharmElement {
     `;
   }
 
+  /**
+   * The notice is focusable but not live. It is on screen from the moment the step renders,
+   * so announcing it then would interrupt the patient before they have done anything; it is
+   * reached by focus instead, when `submit()` refuses because of it. The focus target is a
+   * wrapper rather than the alert itself, because the alert host is not focusable.
+   */
+  protected renderInsurance(): unknown {
+    if (!this.showsInsurance) return nothing;
+
+    return this.html`
+      <fieldset part="insurance">
+        <legend>Insurance</legend>
+        <div class="fields">
+          ${
+            this.missingPlan
+              ? this.html`
+                  <div class="notice" part="insurance-required" tabindex="-1">
+                    <scoped-alert variant="warning" politeness="off" open>
+                      This provider requires insurance to book. Go back and choose your insurance plan.
+                    </scoped-alert>
+                  </div>
+                `
+              : this.renderField('insurance_member_id')
+          }
+        </div>
+      </fieldset>
+    `;
+  }
+
   protected override render(): unknown {
     return this.html`
       <form class="form" part="form" novalidate @submit=${(event: Event) => this.handleSubmit(event)}>
@@ -426,6 +560,8 @@ export class ZdPatientForm extends CharmElement {
             </fieldset>
           `
         )}
+
+        ${this.renderInsurance()}
 
         <scoped-text-area
           part="notes"

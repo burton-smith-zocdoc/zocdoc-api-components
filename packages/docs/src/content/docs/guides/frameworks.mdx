@@ -1,0 +1,166 @@
+---
+title: Framework Integration
+description: Use the components from React, Vue, Svelte, and other JSX frameworks with full type checking
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+The components are standard custom elements, so they work in any framework. Both packages also ship framework-specific entry points. These give you typed props, attributes, and events in your editor and type checker.
+
+| Entry point                   | What it provides                                                                        |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| `<package>/react`             | React wrapper components with camelCase props, `on*` event props, and typed refs        |
+| `<package>/types/jsx`         | `IntrinsicElements` types for React, Preact, Solid, Qwik, Stencil, Hono, and global JSX |
+| `<package>/types/vue`         | `GlobalComponents` types for Vue templates                                              |
+| `<package>/types/svelte`      | `svelteHTML.IntrinsicElements` types for Svelte templates                               |
+
+`<package>` is `@zocdoc/api-components` or `@zocdoc/api-primitive-components`. Import from both if you use elements from both.
+
+Whichever framework you use, still [configure the client](/zocdoc-api-components/getting-started/quick-start/) and load `@zocdoc/api-primitive-components/theme/all.css`.
+
+## React
+
+The `/react` entry points export one wrapper per element. Wrappers take camelCase props, expose events as `on*` props, and forward a ref to the underlying element. They require `react` 18 or later.
+
+```tsx
+import { useRef } from 'react';
+import { configureZocdoc, type BookingCompleteDetail } from '@zocdoc/api-components';
+import {
+  ZdBooking,
+  type ZdBookingElement,
+  type ZdBookingElementEvent,
+} from '@zocdoc/api-components/react';
+import { ZdFlex } from '@zocdoc/api-primitive-components/react';
+
+configureZocdoc({
+  baseUrl: 'https://api-developer-sandbox.zocdoc.com',
+  getToken: fetchTokenFromYourBackend,
+});
+
+type BookingCompleteEvent = ZdBookingElementEvent<CustomEvent<BookingCompleteDetail>>;
+
+export function BookingPage() {
+  const booking = useRef<ZdBookingElement>(null);
+
+  return (
+    <ZdFlex direction="column" gap={16}>
+      <ZdBooking
+        ref={booking}
+        modal
+        zipCode="11201"
+        insurancePlanId="ip_9111"
+        onBookingComplete={(event) => {
+          const { appointmentId, status } = (event as BookingCompleteEvent).detail;
+          // Store appointmentId to reschedule or cancel later.
+          // Don't log patient details; they're PHI.
+        }}
+      />
+    </ZdFlex>
+  );
+}
+```
+
+:::caution[Register the API components]
+API component wrappers don't register their elements. Importing anything from `@zocdoc/api-components` (as `configureZocdoc` above does) registers them all. If you use the mock transport from `@zocdoc/api-components/mock`, also add `import '@zocdoc/api-components';`. Primitive wrappers register their own elements.
+:::
+
+Events are strongly typed: `event.target` is the element instance (`ZdBookingElement` here). The `detail` payload isn't in the generated types, so to read `event.detail`, cast with the wrapper's `<Name>ElementEvent` helper and the detail type from the package root, as above.
+
+## JSX types
+
+If you'd rather render the custom elements directly, without wrappers, import the JSX types once in your app. They augment `IntrinsicElements` for React, Preact, Solid, Qwik, Stencil, Hono, and the global `JSX` namespace.
+
+<Tabs>
+  <TabItem label="Import">
+    ```ts
+    // e.g. src/custom-elements.d.ts
+    import type {} from '@zocdoc/api-components/types/jsx';
+    import type {} from '@zocdoc/api-primitive-components/types/jsx';
+    ```
+  </TabItem>
+  <TabItem label="tsconfig.json">
+    ```json
+    {
+      "compilerOptions": {
+        "types": [
+          "@zocdoc/api-components/types/jsx",
+          "@zocdoc/api-primitive-components/types/jsx"
+        ]
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+Elements then take their attribute names, and event handlers whose `event.target` is typed as the element:
+
+```tsx
+<zd-booking modal zip-code="11201" insurance-plan-id="ip_9111"></zd-booking>
+```
+
+In Solid, set properties with `prop:` (for example `prop:zipCode="11201"`) and listen to events with `on:` (for example `on:booking-complete={handler}`).
+
+## Vue
+
+Tell the Vue compiler that `zd-*` tags are custom elements, then import the Vue types so templates are checked.
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith('zd-'),
+        },
+      },
+    }),
+  ],
+});
+```
+
+```ts
+// e.g. src/custom-elements.d.ts
+import type {} from '@zocdoc/api-components/types/vue';
+import type {} from '@zocdoc/api-primitive-components/types/vue';
+```
+
+```vue
+<template>
+  <zd-booking modal zip-code="11201" insurance-plan-id="ip_9111" @booking-complete="onComplete" />
+</template>
+```
+
+## Svelte
+
+Import the Svelte types, or reference them from a `.d.ts` file. Templates then get typed attributes, events, and `style:--zd-*` custom properties.
+
+<Tabs>
+  <TabItem label="Import">
+    ```ts
+    // e.g. src/custom-elements.d.ts
+    import type {} from '@zocdoc/api-components/types/svelte';
+    import type {} from '@zocdoc/api-primitive-components/types/svelte';
+    ```
+  </TabItem>
+  <TabItem label="Reference">
+    ```ts
+    // e.g. src/app.d.ts
+    /// <reference types="@zocdoc/api-components/types/svelte" />
+    /// <reference types="@zocdoc/api-primitive-components/types/svelte" />
+    ```
+  </TabItem>
+</Tabs>
+
+```svelte
+<!-- Svelte 5; use on:booking-complete in Svelte 4 -->
+<zd-booking modal zip-code="11201" insurance-plan-id="ip_9111" onbooking-complete={onComplete}></zd-booking>
+```
+
+## Layout elements
+
+The [layout elements](/zocdoc-api-components/primitive-components/layout-elements/) (`zd-flex`, `zd-grid`, `zd-column`) are CSS-only. They're never registered as custom elements, but all four outputs still type their attributes. For example, `direction` on `zd-flex` only accepts its documented values. Their element type is a plain `HTMLElement`: `ZdFlex` in the React wrappers, and an `HTMLElement` ref for the custom element itself.
+
+Because they're styled entirely by CSS, they need `theme/all.css` or `theme/layout-elements.css` loaded. Importing the wrapper doesn't load styles.

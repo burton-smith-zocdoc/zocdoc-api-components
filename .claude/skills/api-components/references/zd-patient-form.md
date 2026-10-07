@@ -28,8 +28,10 @@ in the code below rather than aspirational:
 | --- | --- | --- | --- | --- |
 | `busy` | `busy` | `boolean` | — | Set while whoever is listening to `patient-submit` is still working on it. A booking is not idempotent: a second `POST /v1/appointments` books a second appointment. The listener has to guard that itself, but a Continue button that stays live and silent through a slow request is an invitation to press it again, so the form that owns the button owns disabling it. `submit()` refuses too, which covers the Enter key — Charm's inputs call `requestSubmit()` without consulting the button. |
 | — | `addEventListener` | `TypedEventTarget<ZdPatientFormEventMap>['addEventListener']` | — | — |
+| — | `insurancePlanId` | `string` | — | The insurance plan the patient chose while searching, sent as `patient.insurance.insurance_plan_id`. The form does not offer a plan picker of its own: the plan was already chosen to filter the search, and asking again here invites a second answer that disagrees with the first. Setting it shows the insurance group, so the patient can add a member ID. Insurance details are PHI, so like `values` this is `attribute: false`. |
 | — | `notes` | `string` | — | Free-text notes for the practice, capped at {@link NOTES_MAX_LENGTH}. Optional, and omitted from the event entirely when empty rather than sent as `''`. Patient-authored, so it is PHI as much as the demographics are, and `attribute: false` for the same reason. |
 | — | `removeEventListener` | `TypedEventTarget<ZdPatientFormEventMap>['removeEventListener']` | — | — |
+| — | `requiredFields` | `readonly string[]` | — | The provider location's `booking_requirements.required_fields`, passed through as the API returns them. A location that lists the plan or member ID path rejects a booking without it, so the form requires those fields rather than letting the patient reach a `400` at the last step. Paths the form does not recognise are ignored, since it cannot collect them. |
 | — | `values` | `Record<string, string>` | — | The collected values, keyed by API field name. Public so a host page can prefill from an account it already has, and so tests can set ten fields without ten interactions. `attribute: false` is the PHI guard, not a convenience: an observed attribute would let a patient's name be written into the DOM as markup, and a reflected one would put it there on every keystroke. |
 
 ## Events
@@ -57,6 +59,9 @@ in the code below rather than aspirational:
 | `zd-email-address` | The email address field. |
 | `zd-first-name` | The first name field. |
 | `zd-form` | The form element. |
+| `zd-insurance` | The insurance group. Rendered only when a plan is set or the provider location requires insurance. |
+| `zd-insurance-member-id` | The insurance member ID field. |
+| `zd-insurance-required` | The notice shown when the location requires an insurance plan and none was chosen. |
 | `zd-last-name` | The last name field. |
 | `zd-notes` | The optional notes field. |
 | `zd-phone-number` | The phone number field. |

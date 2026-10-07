@@ -82,3 +82,38 @@ export const Narrow: Story = {
     </div>
   `,
 };
+
+/** The documented `booking_requirements` of the `pr_insuranceIdIsRequired` sandbox scenario. */
+const INSURANCE_REQUIRED = [
+  'data.patient.insurance.insurance_plan_id',
+  'data.patient.insurance.insurance_member_id',
+];
+
+/**
+ * A provider location that requires insurance, with a plan chosen during search. The member ID
+ * field is required, and an empty one stops the submit with an error on the field. `ip_9111` is
+ * the testing-data guide's active plan.
+ */
+export const InsuranceRequired: Story = {
+  render: () => html`
+    <zd-patient-form
+      .values=${{ ...PLACEHOLDER }}
+      .insurancePlanId=${'ip_9111'}
+      .requiredFields=${INSURANCE_REQUIRED}
+    ></zd-patient-form>
+  `,
+};
+
+/**
+ * The same location, but no plan was chosen. The form has no plan picker of its own, so it
+ * says what is missing instead of letting the booking fail at the API. Press Continue and focus
+ * moves to the notice.
+ */
+export const InsuranceRequiredWithoutPlan: Story = {
+  render: () => html`
+    <zd-patient-form
+      .values=${{ ...PLACEHOLDER }}
+      .requiredFields=${INSURANCE_REQUIRED}
+    ></zd-patient-form>
+  `,
+};

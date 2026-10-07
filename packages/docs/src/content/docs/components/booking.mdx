@@ -5,6 +5,7 @@ description: Complete booking funnel in a single component
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import { Aside } from '@astrojs/starlight/components';
 
 <PreviewRuntime />
 
@@ -32,42 +33,67 @@ Render the booking flow inline rather than in a modal:
 ></zd-booking>
 ```
 
-### Pre-filled Search
+### Starting Partway
 
-Skip the search step by providing a provider directly:
+The current step is worked out from the properties you've set, so you can start the flow later in by setting them:
+
+- Set `providers` (with `total-count`) to start at a results list from your own search.
+- Set `provider-location-id` to skip to the time step.
+- Set `start-time` as well to skip to the patient form.
 
 ```html
 <zd-booking
   modal
-  provider-location-id="pl_001"
-  visit-reason-id="vr_new_patient"
+  provider-location-id="pr_confirmed|lo_confirmed"
+  visit-reason-id="pc_FRO-18leckytNKtruw5dLR"
 ></zd-booking>
 ```
+
+Read the current step from the `step` property (`'search' | 'time' | 'patient' | 'booked'`). It can't be set directly, and there's no step-change event.
 
 ## Attributes
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `modal` | `boolean` | `false` | Show in a modal dialog |
+| `modal` | `boolean` | `false` | Run the steps after the search in a dialog over the results |
 | `hide-photos` | `boolean` | `false` | Hide provider photos |
-| `zip-code` | `string` | — | Pre-fill ZIP code in search |
-| `insurance-name` | `string` | — | Pre-fill insurance in search |
-| `provider-location-id` | `string` | — | Skip search, start with this provider |
-| `visit-reason-id` | `string` | — | Pre-select visit reason |
+| `zip-code` | `string` | — | ZIP code the search opens on |
+| `specialty-id` | `string` | — | Specialty the search opens on |
+| `visit-reason-id` | `string` | — | Visit reason. If unset, falls back to the reason the search resolved, then to the provider's default |
+| `insurance-plan-id` | `string` | — | Insurance plan. Filters the search and is sent with the booking. See [Insurance](#insurance) |
+| `insurance-name` | `string` | — | Display name of the plan, for the network status line |
+| `patient-type` | `'new' \| 'existing'` | `'new'` | Which slots are bookable. Kept in sync with the picker's toggle |
+| `page` | `number` | `0` | Zero-based results page |
+| `page-size` | `number` | `10` | Results per page |
+| `total-count` | `number` | — | Total matches, for the count and pager when you set `providers` yourself |
+| `provider-location-id` | `string` | — | Chosen `pr_…\|lo_…`. Setting it moves to the time step |
+| `start-time` | `string` | — | Chosen slot's `start_time`, exactly as returned. Setting it moves to the patient form |
+
+`providers` (`ProviderLocation[]`) is a property only.
+
+## Insurance
+
+`<zd-booking>` passes `insurance-plan-id` and the selected location's `booking_requirements.required_fields` to the patient form. When a location requires a member ID, the form asks for one. When it requires a plan and none was chosen, the form asks the patient to go back and choose one. See [Patient Form: Insurance](/zocdoc-api-components/components/patient-form/#insurance).
+
+## Methods
+
+| Method | Description |
+|---|---|
+| `book(patient, notes?)` | Book the chosen slot. Use this if you collect patient details yourself. Does nothing while a booking is in flight |
 
 ## Events
 
 | Event | Detail | Description |
 |-------|--------|-------------|
-| `booking-complete` | `{ appointmentId, startTime, status }` | Booking succeeded |
-| `booking-error` | `{ error, message }` | Booking failed |
-| `step-change` | `{ step: 'search' \| 'time' \| 'patient' \| 'booked' }` | Flow step changed |
+| `booking-complete` | `{ appointmentId, status }` | The API took the appointment. `status` is `confirmed` or `pending_booking`. Word these differently to the patient |
+| `booking-error` | `{ error, status? }` | Booking didn't happen. `status` is set when the API returned `200` with a status that isn't a booking, such as `booking_failed` |
+| `availability-error` | `{ error }` | The batched availability request for the results list failed. Nothing is rendered for it, and the list still works without day counts |
 
-## Slots
+Events from the child components (`provider-select`, `slot-select`, `patient-submit`, and others) bubble out of `<zd-booking>` too, so you can observe them. See [Hybrid Approach](/zocdoc-api-components/guides/composed-vs-single/#hybrid-approach).
 
-| Slot | Description |
-|------|-------------|
-| (default) | Content shown before the booking flow starts |
+<Aside type="danger">
+  `detail.error` is the client's error. Its body can echo submitted patient fields, so never log or render it.
+</Aside>
 
 ## Zocdoc API
 
@@ -75,14 +101,23 @@ Runs Zocdoc's full [availability search and booking flow](https://api-docs.zocdo
 
 ## Accessibility
 
-- Modal traps focus and returns it on close
-- Each step has a heading for screen readers
-- Error states use `role="alert"`
+- Focus moves to the new step's heading container on every step change
+- In `modal` mode, the dialog traps focus and returns it on close
+- A live region announces a booking in flight, and booking failures use an alert
 - All form fields have visible labels
 
 ## Styling
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-booking-max-width` | `600px` | Maximum width in inline mode |
-| `--zd-booking-modal-width` | `90vw` | Modal width |
+Style the flow through CSS parts:
+
+| Part | Description |
+|---|---|
+| `step` | The current step's container (inline mode) |
+| `step-heading` | The current step's heading |
+| `dialog` | The dialog, in `modal` mode |
+| `modal-step` | The current step's container inside the dialog |
+| `back` | The back button |
+| `summary` | The block restating what is about to be booked |
+| `status` | Live region announcing a booking in flight |
+| `error` | The alert shown when a booking fails |
+| `search`, `results`, `picker`, `patient-form`, `confirmation` | The child components |

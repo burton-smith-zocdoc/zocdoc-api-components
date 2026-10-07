@@ -736,6 +736,8 @@ export class ZdBooking extends CharmElement {
       <scoped-patient-form
         part="patient-form"
         .busy=${this.booking}
+        .insurancePlanId=${this.insurancePlanId}
+        .requiredFields=${this.selectedProvider?.booking_requirements?.required_fields ?? []}
         @patient-submit=${(event: CustomEvent) =>
           void this.book(event.detail.patient, event.detail.notes)}
       ></scoped-patient-form>

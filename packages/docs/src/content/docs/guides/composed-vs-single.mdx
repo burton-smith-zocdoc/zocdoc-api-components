@@ -68,45 +68,94 @@ For custom layouts, wire the components yourself:
 ></zd-booking-confirmation>
 ```
 
-Then handle the events:
+Then handle the events. Each component renders from properties and reports back through events. Your code passes data between them and makes the booking call:
 
 ```javascript
+import { createAppointment } from '@zocdoc/api-components';
+
 const search = document.getElementById('search');
 const results = document.getElementById('results');
 const picker = document.getElementById('picker');
 const form = document.getElementById('form');
 const confirmation = document.getElementById('confirmation');
 
-// Search emits results
+let provider;
+let visitReasonId;
+let startTime;
+let patientType = 'new';
+let insurancePlanId;
+
+// Search emits one page of results
 search.addEventListener('provider-results', (e) => {
   results.providers = e.detail.providers;
   results.totalCount = e.detail.totalCount;
+  results.page = e.detail.page;
+  results.pageSize = e.detail.pageSize;
+  insurancePlanId = e.detail.insurancePlanId;
+  visitReasonId = e.detail.searchParameters?.visit_reason_id;
 });
 
-// Results emit provider selection
+// Paging: the search refetches when its page changes
+results.addEventListener('page-change', (e) => {
+  search.page = e.detail.page;
+});
+
+// Results emit the chosen provider location; the picker fetches its own times
 results.addEventListener('provider-select', (e) => {
-  picker.providerLocationId = e.detail.providerLocationId;
-  picker.visitReasonId = e.detail.visitReasonId;
+  provider = e.detail.provider;
+  visitReasonId ??= provider.provider.default_visit_reason_id;
+  picker.providerLocationId = provider.provider_location_id;
+  picker.visitReasonId = visitReasonId;
+  picker.patientType = patientType;
   picker.style.display = 'block';
 });
 
-// Picker emits slot selection
+picker.addEventListener('patient-type-change', (e) => {
+  patientType = e.detail.patientType;
+});
+
+// Picker emits the chosen slot
 picker.addEventListener('slot-select', (e) => {
-  form.slot = e.detail;
+  startTime = e.detail.startTime;
+  // Lets the form ask for what this location requires, such as an insurance member ID
+  form.insurancePlanId = insurancePlanId;
+  form.requiredFields = provider.booking_requirements?.required_fields ?? [];
   form.style.display = 'block';
 });
 
-// Form emits patient data
+// Form emits patient details. These are PHI: send them only to createAppointment, never log them
 form.addEventListener('patient-submit', async (e) => {
-  const { createAppointment } = await import('@zocdoc/api-components');
-  const appointment = await createAppointment({
-    slot: form.slot,
-    patient: e.detail,
-  });
-  confirmation.appointment = appointment;
-  confirmation.style.display = 'block';
+  form.busy = true;
+  try {
+    const appointment = await createAppointment({
+      providerLocationId: provider.provider_location_id,
+      visitReasonId,
+      startTime,
+      patientType,
+      patient: e.detail.patient,
+      notes: e.detail.notes,
+    });
+
+    // A resolved request isn't always a booking
+    if (appointment.appointment_status === 'booking_failed') {
+      showBookingFailed(); // Your own message. Suggest choosing another time
+      return;
+    }
+
+    confirmation.appointmentId = appointment.appointment_id;
+    confirmation.status = appointment.appointment_status;
+    confirmation.startTime = startTime;
+    confirmation.providerName = provider.provider.full_name;
+    confirmation.style.display = 'block';
+  } catch (error) {
+    showBookingFailed(); // Never show error.message or error.body to the patient
+  } finally {
+    form.busy = false;
+  }
 });
 ```
+
+`<zd-booking>` also handles things this example doesn't: batched day counts on the results, Back buttons, focus management between steps, and every `appointment_status`. See [Booking Failures on a Success Status](/zocdoc-api-components/client/errors/#booking-failures-on-a-success-status).
 
 **Pros:**
 - Full control over layout
@@ -129,8 +178,8 @@ const booking = document.querySelector('zd-booking');
 
 booking.addEventListener('provider-select', (e) => {
   // Log analytics, show a custom modal, etc.
-  trackEvent('provider_selected', { providerId: e.detail.providerLocationId });
+  trackEvent('provider_selected', { providerLocationId: e.detail.provider.provider_location_id });
 });
 ```
 
-The event still bubbles to `<zd-booking>`, which continues the flow. You're just observing.
+Child events bubble out of `<zd-booking>`'s shadow DOM, and `<zd-booking>` continues the flow. You're just observing. Log IDs and actions only. Never log `patient-submit` details, which are PHI.

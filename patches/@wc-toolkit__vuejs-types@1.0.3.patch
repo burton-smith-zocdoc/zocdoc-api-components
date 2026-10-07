@@ -1,0 +1,294 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index fbeb47f39f4c9d6f4c69e12bf210e53918ff9195..a5a6f83b9741bc2b54da447f3aeed354b96d253a 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -88,7 +88,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
+     return components;
+   }
+   resetCache();
+-  manifest = customElementsManifest;
++  manifest = structuredClone(customElementsManifest);
+   setAllDefinitionExports(customElementsManifest);
+   manifest.modules.forEach((module2) => {
+     const ces = module2.declarations?.filter(
+@@ -99,12 +99,12 @@ function getAllComponents(customElementsManifest, exclude = []) {
+         if (exclude?.includes(ce.name)) {
+           return;
+         }
+-        ce.modulePath = module2.path;
+-        ce.definitionPath = definitionExports.get(ce.name);
+-        if ("typeDefinitionPath" in module2 && module2.typeDefinitionPath) {
+-          ce.typeDefinitionPath = module2.typeDefinitionPath;
+-        }
+-        components.push(ce);
++        components.push({
++          ...ce,
++          modulePath: module2.path,
++          definitionPath: definitionExports.get(ce.name),
++          ...("typeDefinitionPath" in module2 && module2.typeDefinitionPath ? { typeDefinitionPath: module2.typeDefinitionPath } : {})
++        });
+       });
+     }
+   });
+@@ -286,7 +286,7 @@ function generateVuejsTypes(manifest2, options = {}) {
+     return;
+   }
+   log.log("[vuejs-types] - Generating types...");
+-  const template = getTypeTemplate(manifest2, mergedOptions);
++  const template = getTypeTemplate(getGenerationManifest(manifest2, mergedOptions), mergedOptions);
+   if (mergedOptions.fileName) {
+     createOutDir(mergedOptions.outdir);
+     const outputPath = saveFile(
+@@ -311,7 +311,7 @@ function getImports(manifest2, options) {
+     }
+     module2.declarations?.forEach((element) => {
+       const component = element;
+-      if (!component.customElement || !component.name) {
++      if (!component.customElement || !component.name || component.cssOnly) {
+         return;
+       }
+       componentModules.set(component.name, {
+@@ -330,7 +330,7 @@ function getImports(manifest2, options) {
+     } else {
+       module2.declarations?.forEach((element) => {
+         const component = element;
+-        if (!component.customElement || !component.name) {
++        if (!component.customElement || !component.name || component.cssOnly) {
+           return;
+         }
+         const importPath = normalizeImportPath(
+@@ -481,6 +481,7 @@ ${components2?.map((component) => {
+     return `
+ ${options.stronglyTypedEvents ? getStronglyTypedEvents(component) : ""}
+ 
++${component.cssOnly ? `export type ${component.name} = HTMLElement;` : ""}
+ export type ${component.name}VueProps = {
+ ${(() => {
+       if (!cachedProps?.length) {
+@@ -489,7 +490,7 @@ ${(() => {
+       return cachedProps.reduce((acc, prop) => {
+         const description = getMemberDescription(prop.description, prop.deprecated);
+         const typeInfo = getResolvedPropType(prop, options);
+-        const type = getPropType(component.name, prop, typeInfo, options);
++        const type = component.cssOnly ? typeInfo?.text || "unknown" : getPropType(component.name, prop, typeInfo, options);
+         const propExists = prop.propName ? acc.includes(`  "${prop.propName}"?:`) : false;
+         const attrExists = prop.attrName ? acc.includes(`  "${prop.attrName}"?:`) : false;
+         let result = acc;
+@@ -583,6 +584,61 @@ declare module "vue" {
+ }
+ `;
+ }
++function getGenerationManifest(manifest2, options) {
++  const exclude = options.exclude || [];
++  return {
++    ...manifest2,
++    modules: manifest2.modules.map((module2) => {
++      const cssOnlyNames = /* @__PURE__ */ new Set();
++      const declarations = module2.declarations?.filter((d) => !exclude.includes(d.name)).map((d) => {
++        if (!d.customElement || !d.tagName || !isCssOnlyElement(d, module2)) {
++          return d;
++        }
++        cssOnlyNames.add(d.name);
++        return toCssOnlyComponent(d);
++      });
++      const exports = module2.exports?.filter(
++        (e) => !exclude.includes(e.declaration?.name) && !cssOnlyNames.has(e.declaration?.name)
++      );
++      return { ...module2, declarations, exports };
++    })
++  };
++}
++function isCssOnlyElement(component, module2) {
++  return !/^[A-Za-z_$][\w$]*$/.test(component.name) || component.name === component.tagName || !module2.exports?.some(
++    (e) => e.kind === "js" && (e.name === component.name || e.declaration?.name === component.name)
++  );
++}
++function toCssOnlyComponent(component) {
++  return {
++    ...component,
++    name: toPascalCase(component.tagName),
++    cssOnly: true,
++    attributes: component.attributes?.map(
++      (attr) => attr.type?.text ? { ...attr, type: { ...attr.type, text: quoteBareUnionMembers(attr.type.text) } } : attr
++    )
++  };
++}
++var TS_TYPE_KEYWORDS = /* @__PURE__ */ new Set(["any", "bigint", "boolean", "false", "never", "null", "number", "object", "string", "symbol", "true", "undefined", "unknown", "void"]);
++function quoteBareUnionMembers(text) {
++  if (!/^[\w\s|-]+$/.test(text)) {
++    return text;
++  }
++  return text.split("|").map((member) => {
++    const value = member.trim();
++    return /^[a-z][\w-]*$/.test(value) && !TS_TYPE_KEYWORDS.has(value) ? JSON.stringify(value) : value;
++  }).join(" | ");
++}
++function getRelativeModulePath(modulePath, outdir) {
++  if (!modulePath || !looksLikeFilePath(modulePath)) {
++    return modulePath;
++  }
++  const relativePath = import_path.default.relative(import_path.default.resolve(outdir || "./"), import_path.default.resolve(modulePath)).split(import_path.default.sep).join("/");
++  return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
++}
++function looksLikeFilePath(value) {
++  return import_path.default.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
++}
+ function addImport(imports, importPath, exportName) {
+   const existing = imports.get(importPath);
+   if (existing) {
+@@ -592,7 +648,7 @@ function addImport(imports, importPath, exportName) {
+   imports.set(importPath, /* @__PURE__ */ new Set([exportName]));
+ }
+ function getComponentImportPath(componentName, tagName, modulePath, options) {
+-  return typeof options.componentTypePath === "function" ? options.componentTypePath(componentName, tagName, modulePath) : modulePath;
++  return typeof options.componentTypePath === "function" ? options.componentTypePath(componentName, tagName, modulePath) : getRelativeModulePath(modulePath, options.outdir);
+ }
+ function getTypeImportPath(reference, componentModulePath, component, options) {
+   if (reference.package) {
+diff --git a/dist/index.js b/dist/index.js
+index 487b7791bb188eed9dc3c4d5b47db470596b80f7..7d1d88e4052164ebee0ce0c6e8cf833ba40f1c50 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -50,7 +50,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
+     return components;
+   }
+   resetCache();
+-  manifest = customElementsManifest;
++  manifest = structuredClone(customElementsManifest);
+   setAllDefinitionExports(customElementsManifest);
+   manifest.modules.forEach((module) => {
+     const ces = module.declarations?.filter(
+@@ -61,12 +61,12 @@ function getAllComponents(customElementsManifest, exclude = []) {
+         if (exclude?.includes(ce.name)) {
+           return;
+         }
+-        ce.modulePath = module.path;
+-        ce.definitionPath = definitionExports.get(ce.name);
+-        if ("typeDefinitionPath" in module && module.typeDefinitionPath) {
+-          ce.typeDefinitionPath = module.typeDefinitionPath;
+-        }
+-        components.push(ce);
++        components.push({
++          ...ce,
++          modulePath: module.path,
++          definitionPath: definitionExports.get(ce.name),
++          ...("typeDefinitionPath" in module && module.typeDefinitionPath ? { typeDefinitionPath: module.typeDefinitionPath } : {})
++        });
+       });
+     }
+   });
+@@ -248,7 +248,7 @@ function generateVuejsTypes(manifest2, options = {}) {
+     return;
+   }
+   log.log("[vuejs-types] - Generating types...");
+-  const template = getTypeTemplate(manifest2, mergedOptions);
++  const template = getTypeTemplate(getGenerationManifest(manifest2, mergedOptions), mergedOptions);
+   if (mergedOptions.fileName) {
+     createOutDir(mergedOptions.outdir);
+     const outputPath = saveFile(
+@@ -273,7 +273,7 @@ function getImports(manifest2, options) {
+     }
+     module.declarations?.forEach((element) => {
+       const component = element;
+-      if (!component.customElement || !component.name) {
++      if (!component.customElement || !component.name || component.cssOnly) {
+         return;
+       }
+       componentModules.set(component.name, {
+@@ -292,7 +292,7 @@ function getImports(manifest2, options) {
+     } else {
+       module.declarations?.forEach((element) => {
+         const component = element;
+-        if (!component.customElement || !component.name) {
++        if (!component.customElement || !component.name || component.cssOnly) {
+           return;
+         }
+         const importPath = normalizeImportPath(
+@@ -443,6 +443,7 @@ ${components2?.map((component) => {
+     return `
+ ${options.stronglyTypedEvents ? getStronglyTypedEvents(component) : ""}
+ 
++${component.cssOnly ? `export type ${component.name} = HTMLElement;` : ""}
+ export type ${component.name}VueProps = {
+ ${(() => {
+       if (!cachedProps?.length) {
+@@ -451,7 +452,7 @@ ${(() => {
+       return cachedProps.reduce((acc, prop) => {
+         const description = getMemberDescription(prop.description, prop.deprecated);
+         const typeInfo = getResolvedPropType(prop, options);
+-        const type = getPropType(component.name, prop, typeInfo, options);
++        const type = component.cssOnly ? typeInfo?.text || "unknown" : getPropType(component.name, prop, typeInfo, options);
+         const propExists = prop.propName ? acc.includes(`  "${prop.propName}"?:`) : false;
+         const attrExists = prop.attrName ? acc.includes(`  "${prop.attrName}"?:`) : false;
+         let result = acc;
+@@ -545,6 +546,61 @@ declare module "vue" {
+ }
+ `;
+ }
++function getGenerationManifest(manifest2, options) {
++  const exclude = options.exclude || [];
++  return {
++    ...manifest2,
++    modules: manifest2.modules.map((module) => {
++      const cssOnlyNames = /* @__PURE__ */ new Set();
++      const declarations = module.declarations?.filter((d) => !exclude.includes(d.name)).map((d) => {
++        if (!d.customElement || !d.tagName || !isCssOnlyElement(d, module)) {
++          return d;
++        }
++        cssOnlyNames.add(d.name);
++        return toCssOnlyComponent(d);
++      });
++      const exports = module.exports?.filter(
++        (e) => !exclude.includes(e.declaration?.name) && !cssOnlyNames.has(e.declaration?.name)
++      );
++      return { ...module, declarations, exports };
++    })
++  };
++}
++function isCssOnlyElement(component, module) {
++  return !/^[A-Za-z_$][\w$]*$/.test(component.name) || component.name === component.tagName || !module.exports?.some(
++    (e) => e.kind === "js" && (e.name === component.name || e.declaration?.name === component.name)
++  );
++}
++function toCssOnlyComponent(component) {
++  return {
++    ...component,
++    name: toPascalCase(component.tagName),
++    cssOnly: true,
++    attributes: component.attributes?.map(
++      (attr) => attr.type?.text ? { ...attr, type: { ...attr.type, text: quoteBareUnionMembers(attr.type.text) } } : attr
++    )
++  };
++}
++var TS_TYPE_KEYWORDS = /* @__PURE__ */ new Set(["any", "bigint", "boolean", "false", "never", "null", "number", "object", "string", "symbol", "true", "undefined", "unknown", "void"]);
++function quoteBareUnionMembers(text) {
++  if (!/^[\w\s|-]+$/.test(text)) {
++    return text;
++  }
++  return text.split("|").map((member) => {
++    const value = member.trim();
++    return /^[a-z][\w-]*$/.test(value) && !TS_TYPE_KEYWORDS.has(value) ? JSON.stringify(value) : value;
++  }).join(" | ");
++}
++function getRelativeModulePath(modulePath, outdir) {
++  if (!modulePath || !looksLikeFilePath(modulePath)) {
++    return modulePath;
++  }
++  const relativePath = path.relative(path.resolve(outdir || "./"), path.resolve(modulePath)).split(path.sep).join("/");
++  return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
++}
++function looksLikeFilePath(value) {
++  return path.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
++}
+ function addImport(imports, importPath, exportName) {
+   const existing = imports.get(importPath);
+   if (existing) {
+@@ -554,7 +610,7 @@ function addImport(imports, importPath, exportName) {
+   imports.set(importPath, /* @__PURE__ */ new Set([exportName]));
+ }
+ function getComponentImportPath(componentName, tagName, modulePath, options) {
+-  return typeof options.componentTypePath === "function" ? options.componentTypePath(componentName, tagName, modulePath) : modulePath;
++  return typeof options.componentTypePath === "function" ? options.componentTypePath(componentName, tagName, modulePath) : getRelativeModulePath(modulePath, options.outdir);
+ }
+ function getTypeImportPath(reference, componentModulePath, component, options) {
+   if (reference.package) {

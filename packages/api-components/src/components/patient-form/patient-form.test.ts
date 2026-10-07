@@ -8,8 +8,22 @@ type FormEl = HTMLElement & {
   values: Record<string, string>;
   notes: string;
   busy: boolean;
+  insurancePlanId?: string;
+  requiredFields: readonly string[];
   submit(): void;
 };
+
+/** The documented `booking_requirements` of the `pr_insuranceIdIsRequired` sandbox scenario. */
+const INSURANCE_REQUIRED = [
+  'data.patient.insurance.insurance_plan_id',
+  'data.patient.insurance.insurance_member_id',
+];
+
+/** A documented sandbox plan id (testing-data guide: `ip_9111`, active). */
+const PLAN_ID = 'ip_9111';
+
+/** Synthetic, and shaped nothing like a real carrier's member id (PHI-002). */
+const MEMBER_ID = 'TEST0000';
 
 /** A Charm form control, as far as these tests need to see it. */
 type Control = HTMLElement & { value: string; invalid: boolean; errorMessage: string };
@@ -230,6 +244,109 @@ describe('zd-patient-form', () => {
     expect(el.outerHTML).not.toContain('Wheelchair');
   });
 
+  describe('insurance', () => {
+    it('collects no insurance and sends none when there is no plan or requirement', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      await fill(el);
+
+      expect(shadow(el).querySelector('[part="insurance"]')).toBeNull();
+
+      const events = listen(el);
+      el.submit();
+
+      expect(events).toHaveLength(1);
+      expect(events[0]!.detail.patient).not.toHaveProperty('insurance');
+    });
+
+    it('sends the chosen plan, with a member ID only when one was given', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.insurancePlanId = PLAN_ID;
+      await fill(el);
+
+      // Optional when the location does not require it, so an empty one does not block.
+      expect(field(el, 'insurance-member-id').hasAttribute('required')).toBe(false);
+
+      const events = listen(el);
+      el.submit();
+      expect(events[0]!.detail.patient.insurance).toEqual({ insurance_plan_id: PLAN_ID });
+
+      el.values = { ...el.values, insurance_member_id: ` ${MEMBER_ID} ` };
+      await settled(el);
+      el.submit();
+      expect(events[1]!.detail.patient.insurance).toEqual({
+        insurance_plan_id: PLAN_ID,
+        insurance_member_id: MEMBER_ID,
+      });
+    });
+
+    it('requires a member ID when the location does', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.insurancePlanId = PLAN_ID;
+      el.requiredFields = INSURANCE_REQUIRED;
+      await fill(el);
+
+      const events = listen(el);
+      await submitAndSettle(el);
+
+      expect(events).toHaveLength(0);
+      const memberId = field(el, 'insurance-member-id');
+      expect(memberId.hasAttribute('required')).toBe(true);
+      expect(memberId.invalid).toBe(true);
+      expect(memberId.errorMessage).toBe('Member ID is required.');
+      expect(shadow(el).activeElement).toBe(memberId);
+    });
+
+    it('refuses to submit, and says why, when the location requires a plan none was chosen for', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.requiredFields = INSURANCE_REQUIRED;
+      await fill(el);
+
+      const notice = part(el, 'insurance-required');
+      expect(notice.textContent).toContain('requires insurance');
+      // There is no plan to attach one to, so the member ID field is not offered.
+      expect(shadow(el).querySelector('[part="insurance-member-id"]')).toBeNull();
+
+      const events = listen(el);
+      await submitAndSettle(el);
+
+      expect(events).toHaveLength(0);
+      expect(shadow(el).activeElement).toBe(notice);
+    });
+
+    it('sends field errors to the patient before the missing plan', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.requiredFields = INSURANCE_REQUIRED;
+      await fill(el);
+      el.values = { ...el.values, city: '' };
+      await settled(el);
+
+      await submitAndSettle(el);
+
+      expect(shadow(el).activeElement).toBe(field(el, 'city'));
+    });
+
+    it('ignores required paths it cannot collect', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.requiredFields = ['data.patient.some_future_field'];
+      await fill(el);
+
+      const events = listen(el);
+      el.submit();
+
+      expect(events).toHaveLength(1);
+    });
+
+    it('keeps the member ID out of the DOM as an attribute', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.insurancePlanId = PLAN_ID;
+      el.values = { ...COMPLETE, insurance_member_id: MEMBER_ID };
+      await settled(el);
+
+      expect(el.outerHTML).not.toContain(MEMBER_ID);
+      expect(el.outerHTML).not.toContain(PLAN_ID);
+    });
+  });
+
   describe('accessibility', () => {
     it('passes axe checks when empty', async () => {
       const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
@@ -253,6 +370,24 @@ describe('zd-patient-form', () => {
     it('passes axe checks with every field in error', async () => {
       const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
       await submitAndSettle(el);
+
+      await expectNoViolations(el);
+    });
+
+    it('passes axe checks with a required member ID in error', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.insurancePlanId = PLAN_ID;
+      el.requiredFields = INSURANCE_REQUIRED;
+      await fill(el);
+      await submitAndSettle(el);
+
+      await expectNoViolations(el);
+    });
+
+    it('passes axe checks with the missing-plan notice', async () => {
+      const el = await mount<FormEl>('<zd-patient-form></zd-patient-form>');
+      el.requiredFields = INSURANCE_REQUIRED;
+      await settled(el);
 
       await expectNoViolations(el);
     });
