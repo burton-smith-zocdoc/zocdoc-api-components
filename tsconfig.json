@@ -8,6 +8,7 @@
     "packages/*/src/**/*.ts",
     "scripts/**/*.ts",
     ".storybook/**/*.ts",
-    "tools/*/src/**/*.ts"
+    "tools/*/src/**/*.ts",
+    "packages/demo/sites/*.ts"
   ]
 }
