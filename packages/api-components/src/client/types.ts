@@ -374,3 +374,48 @@ export interface AppointmentResponseData {
   waiting_room_path?: string | null;
   notes?: string | null;
 }
+
+/**
+ * Why an appointment was cancelled. Optional on the request but recommended. Free text in
+ * `cancellation_reason` is only accepted with one of the two `other_*` values.
+ */
+export type CancellationReasonType =
+  | 'patient_no_longer_needs_appointment'
+  | 'patient_no_longer_available'
+  | 'other_patient_reason'
+  | 'missing_needed_patient_information'
+  | 'payment_or_insurance_issue'
+  | 'patient_or_visit_type_not_accepted'
+  | 'provider_not_available'
+  | 'rescheduling_patient'
+  | 'other_provider_reason';
+
+/** The `data` of `POST /v1/appointments/cancel`: the spec's `AppointmentBaseResponseData`. */
+export interface AppointmentBaseResponseData {
+  appointment_id: string;
+  appointment_status: AppointmentStatus;
+  developer_patient_id?: string | null;
+}
+
+/**
+ * The `data` of `GET /v1/appointments/{appointment_id}` (`AppointmentStatusResponseData`).
+ *
+ * The create response's fields, except `visit_type`, which the lookup makes optional, plus
+ * what a lookup adds. `provider_location_id`, `visit_reason_id` and `patient_type` are what a
+ * reschedule has to search availability with, because the API only moves the time.
+ *
+ * `notes` and `cancellation_reason` are free text and treated as PHI (PHI-001). Both, and
+ * `source`, were observed as `null` live; see `docs/api-contract-notes.md`.
+ */
+export interface AppointmentDetails extends Omit<AppointmentResponseData, 'visit_type'> {
+  start_time: string;
+  provider_location_id: string;
+  visit_reason_id: string;
+  visit_type?: AppointmentVisitType;
+  patient_type?: PatientType;
+  created_time_utc?: string;
+  last_modified_time_utc?: string;
+  practice_id?: string;
+  cancellation_reason?: string | null;
+  source?: string | null;
+}
