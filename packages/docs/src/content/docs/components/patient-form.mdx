@@ -37,6 +37,10 @@ The form collects:
 
 The event detail contains all patient fields. **This is PHI** — only send it to your configured Zocdoc `baseUrl`.
 
+## Zocdoc API
+
+Collects the `patient` object for `POST /v1/appointments`. Every field is PHI: the form never logs values or puts them in error messages. Some provider locations list `booking_requirements`, such as insurance member and plan IDs, and the API rejects a booking that omits them with a `400`. For the request schema, see the [API Reference](https://api-docs.zocdoc.com/apis).
+
 ## Accessibility
 
 - All fields have visible labels

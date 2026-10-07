@@ -59,7 +59,7 @@ Components catch errors, render an accessible error state, and emit an error eve
 |---|---|
 | `provider-search-error` | `<zd-provider-search>` |
 | `availability-error` | `<zd-availability-picker>`, `<zd-availability-grid>`, `<zd-booking>` |
-| `booking-error` | `<zd-booking>` |
+| `booking-error` | `<zd-booking>`. When the API returned `200` with a status that isn't a booking (such as `booking_failed`), `detail.status` holds that status |
 
 ```javascript
 import { ZocdocAuthError } from '@zocdoc/api-components';

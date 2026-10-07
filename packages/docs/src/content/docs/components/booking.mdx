@@ -69,6 +69,10 @@ Skip the search step by providing a provider directly:
 |------|-------------|
 | (default) | Content shown before the booking flow starts |
 
+## Zocdoc API
+
+Runs Zocdoc's full [availability search and booking flow](https://api-docs.zocdoc.com/guides/patient/book-appointments): reference data, provider search, availability, then `POST /v1/appointments`. A successful request can still return `pending_booking`, which emits `booking-complete`, or `booking_failed`, which emits `booking-error`. In the sandbox, the booked provider location determines the status. See [Test Scenarios](/zocdoc-api-components/guides/testing/#test-scenarios) and the [Zocdoc API overview](/zocdoc-api-components/guides/zocdoc-api/).
+
 ## Accessibility
 
 - Modal traps focus and returns it on close

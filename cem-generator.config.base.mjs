@@ -1,5 +1,9 @@
 import fs from 'node:fs';
 import { litPlugin } from '@wc-toolkit/cem-generator-lit';
+import { jsxTypesGeneratorPlugin } from '@wc-toolkit/jsx-types';
+import { reactWrapperGeneratorPlugin } from '@wc-toolkit/react-wrappers';
+import { svelteTypesGeneratorPlugin } from '@wc-toolkit/svelte-types';
+import { vuejsTypesGeneratorPlugin } from '@wc-toolkit/vuejs-types';
 import { cssPrefixPlugin } from './tools/cem-css-prefix/src/index.ts';
 
 export const EXCLUDE = ['**/*.stories.ts', '**/*.test.ts', '**/*.styles.ts'];
@@ -36,5 +40,47 @@ export function sharedConfig({ charmManifestPath, tsConfigPath, include }) {
     inheritance: { externalManifests: [charmManifest] },
     // cssPrefix mutates in afterGenerate (post-sort); the emitted manifest carries prefixed names.
     plugins: [litPluginAllFiles(), cssPrefixPlugin({ prefix: 'zd' })],
+  };
+}
+
+/**
+ * Framework integration generators (JSX, Vue, Svelte types + React wrappers), emitted into the
+ * package's `dist/`. Run per package only — not from the root Storybook manifest.
+ *
+ * Must follow `sharedConfig().plugins` so they see the cssPrefix-mutated manifest. Manifest
+ * module paths are `dist/...` (package-root relative), so type imports are rewritten relative to
+ * `dist/types/`. `exclude` takes element names with no JS class (e.g. CSS-only layout elements).
+ */
+export function frameworkPlugins({ exclude = [] } = {}) {
+  const typesOptions = {
+    outdir: 'dist/types',
+    componentTypePath: (_name, _tag, modulePath) => modulePath?.replace(/^dist\//, '../'),
+  };
+  return [
+    jsxTypesGeneratorPlugin(typesOptions),
+    vuejsTypesGeneratorPlugin(typesOptions),
+    svelteTypesGeneratorPlugin(typesOptions),
+    reactWrapperGeneratorPlugin({ outdir: 'dist/react' }),
+  ].map((plugin) => isolated(plugin, exclude));
+}
+
+/**
+ * Hands the generator its own manifest copy with `exclude`d elements stripped. Two upstream
+ * problems make this necessary: react-wrappers mutates the manifest it's given (adding
+ * `modulePath`/`definitionPath`, which would leak into custom-elements.json), and jsx-types'
+ * import builder ignores its own `exclude` option.
+ */
+function isolated(plugin, exclude) {
+  const keep = (entry) => !exclude.includes(entry.name ?? entry.declaration?.name);
+  return {
+    ...plugin,
+    afterGenerate(manifest) {
+      const copy = structuredClone(manifest);
+      for (const module of copy.modules) {
+        module.declarations = module.declarations?.filter(keep);
+        module.exports = module.exports?.filter(keep);
+      }
+      plugin.afterGenerate(copy);
+    },
   };
 }

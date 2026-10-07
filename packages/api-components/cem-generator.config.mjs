@@ -1,10 +1,13 @@
-import { sharedConfig } from '../../cem-generator.config.base.mjs';
+import { frameworkPlugins, sharedConfig } from '../../cem-generator.config.base.mjs';
+
+const shared = sharedConfig({
+  charmManifestPath: '../primitives/node_modules/@charm-ux/core/custom-elements.json',
+  tsConfigPath: 'tsconfig.build.json',
+  include: ['src/**/*.ts'],
+});
 
 export default {
-  ...sharedConfig({
-    charmManifestPath: '../primitives/node_modules/@charm-ux/core/custom-elements.json',
-    tsConfigPath: 'tsconfig.build.json',
-    include: ['src/**/*.ts'],
-  }),
+  ...shared,
+  plugins: [...shared.plugins, ...frameworkPlugins()],
   filePath: 'custom-elements.json',
 };

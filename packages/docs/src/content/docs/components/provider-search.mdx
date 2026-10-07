@@ -55,6 +55,10 @@ The `<zd-provider-search>` component collects search criteria and fetches matchi
 | `provider-results` | `{ providers, totalCount, page, pageSize, searchParameters, zipCode, specialtyId?, insurancePlanId?, insurancePlanName?, visitType? }` | Search returned results and the criteria used |
 | `provider-search-error` | `{ error }` | Search failed |
 
+## Zocdoc API
+
+Loads specialties, visit reasons, and insurance plans from the [reference data](https://api-docs.zocdoc.com/guides/reference-data) endpoints, then searches `GET /v1/provider_locations`. A ZIP code is required. Sandbox ZIPs `11201` (results), `99734` (empty), and `10112` (error) drive each state. See [Test Scenarios](/zocdoc-api-components/guides/testing/#test-scenarios).
+
 ## Accessibility
 
 - Form fields have visible labels

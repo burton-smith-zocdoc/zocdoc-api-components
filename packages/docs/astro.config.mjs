@@ -29,6 +29,7 @@ export default defineConfig({
         {
           label: 'Guides',
           items: [
+            { label: 'Zocdoc API Overview', slug: 'guides/zocdoc-api' },
             { label: 'Architecture', slug: 'guides/architecture' },
             { label: 'Composed vs Single Element', slug: 'guides/composed-vs-single' },
             { label: 'Testing', slug: 'guides/testing' },

@@ -59,7 +59,7 @@ This guide walks through rendering a complete booking flow with a single compone
    const booking = document.querySelector('zd-booking');
 
    booking.addEventListener('booking-complete', (event) => {
-     const { appointmentId, startTime, status } = event.detail;
+     const { appointmentId, status } = event.detail; // status: 'confirmed' | 'pending_booking'
      // Store appointmentId to reschedule or cancel later.
      // Don't log patient details; they're PHI.
    });

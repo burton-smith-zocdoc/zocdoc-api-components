@@ -65,6 +65,10 @@ All days shown vertically:
 | `patient-type-change` | `{ patientType: 'new' \| 'existing' }` | Patient type toggled |
 | `availability-error` | `{ error }` | Fetch failed |
 
+## Zocdoc API
+
+Renders timeslots from `GET /v1/provider_locations/availability`. The host (or `<zd-booking>`) fetches them. The API limits a window to 30 days and guarantees availability up to 150 days out. Each slot's `start_time` must be passed to booking unchanged. See [Find Provider Availability and Book Appointments](https://api-docs.zocdoc.com/guides/patient/book-appointments).
+
 ## Accessibility
 
 - Slots are buttons with full datetime labels
