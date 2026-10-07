@@ -5,10 +5,22 @@
  * would let the envelope drift out of shape without failing.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createAppointment } from '../appointments.js';
+import {
+  cancelAppointment,
+  createAppointment,
+  getAppointment,
+  rescheduleAppointment,
+} from '../appointments.js';
 import { getAvailability } from '../availability.js';
 import { configureZocdoc, resetZocdocConfig } from '../configure.js';
-import { BOOKINGS, PROVIDER_LOCATIONS, SCENARIOS, SPECIALTIES } from '../mock/fixtures.js';
+import { ZocdocError, ZocdocNotFoundError } from '../errors.js';
+import {
+  APPOINTMENTS,
+  BOOKINGS,
+  PROVIDER_LOCATIONS,
+  SCENARIOS,
+  SPECIALTIES,
+} from '../mock/fixtures.js';
 import { createMockTransport } from '../mock/transport.js';
 import { searchProviderLocations } from '../provider-locations.js';
 import type { Patient } from '../types.js';
@@ -302,6 +314,95 @@ describe('createMockTransport', () => {
           patientType: 'new',
         })
       ).rejects.toBeTruthy();
+    });
+  });
+
+  describe('appointment management', () => {
+    async function statusOf(error: Promise<unknown>): Promise<number | undefined> {
+      const caught = await error.catch((e: unknown) => e);
+      return caught instanceof ZocdocError ? caught.status : undefined;
+    }
+
+    it('looks up every documented appointment with its own location and visit reason', async () => {
+      for (const [id, fixture] of Object.entries(APPOINTMENTS)) {
+        const appointment = await getAppointment(id);
+
+        expect(appointment).toMatchObject({
+          appointment_id: id,
+          appointment_status: fixture.status,
+          provider_location_id: fixture.providerLocationId,
+          visit_reason_id: fixture.visitReasonId,
+          patient_type: fixture.patientType,
+        });
+        // Offset kept, as the API sends it.
+        expect(appointment.start_time).toMatch(/T09:00:00-04:00$/);
+      }
+    });
+
+    it('returns 404 for the documented not-found id and for unknown ids', async () => {
+      await expect(getAppointment(SCENARIOS.appointmentNotFound)).rejects.toBeInstanceOf(
+        ZocdocNotFoundError
+      );
+      await expect(getAppointment('00000000-0000-0000-0000-000000000000')).rejects.toBeInstanceOf(
+        ZocdocNotFoundError
+      );
+    });
+
+    it('returns 500 for the documented error id on all three endpoints', async () => {
+      const id = SCENARIOS.appointmentError;
+
+      expect(await statusOf(getAppointment(id))).toBe(500);
+      expect(await statusOf(cancelAppointment({ appointmentId: id }))).toBe(500);
+      expect(
+        await statusOf(rescheduleAppointment({ appointmentId: id, startTime: '2026-08-06T14:00:00-04:00' }))
+      ).toBe(500);
+    });
+
+    it('cancels a confirmed appointment', async () => {
+      const result = await cancelAppointment({
+        appointmentId: SCENARIOS.appointmentConfirmed,
+        reasonType: 'patient_no_longer_available',
+      });
+
+      expect(result).toEqual({
+        appointment_id: SCENARIOS.appointmentConfirmed,
+        appointment_status: 'cancelled',
+      });
+    });
+
+    it('returns 409 for an appointment that is already cancelled or a no-show', async () => {
+      expect(await statusOf(cancelAppointment({ appointmentId: SCENARIOS.appointmentCancelled }))).toBe(409);
+      expect(await statusOf(cancelAppointment({ appointmentId: SCENARIOS.appointmentNoShow }))).toBe(409);
+    });
+
+    it('reschedules a confirmed appointment', async () => {
+      const result = await rescheduleAppointment({
+        appointmentId: SCENARIOS.appointmentConfirmed,
+        startTime: '2026-08-06T14:00:00-04:00',
+      });
+
+      expect(result).toMatchObject({
+        appointment_id: SCENARIOS.appointmentConfirmed,
+        appointment_status: 'rescheduled',
+      });
+    });
+
+    it('rejects rescheduling a status the spec does not allow', async () => {
+      const startTime = '2026-08-06T14:00:00-04:00';
+
+      expect(
+        await statusOf(rescheduleAppointment({ appointmentId: SCENARIOS.appointmentBookingFailed, startTime }))
+      ).toBe(400);
+      expect(
+        await statusOf(rescheduleAppointment({ appointmentId: SCENARIOS.appointmentCancelled, startTime }))
+      ).toBe(400);
+    });
+
+    it('uses the same appointment ids as booking', () => {
+      // A demo that books then manages must land on the same fixture.
+      for (const { appointmentId, status } of Object.values(BOOKINGS)) {
+        expect(APPOINTMENTS[appointmentId]?.status).toBe(status);
+      }
     });
   });
 

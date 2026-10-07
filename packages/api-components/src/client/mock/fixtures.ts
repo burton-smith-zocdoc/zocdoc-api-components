@@ -11,9 +11,11 @@
  * Response shapes follow the published OpenAPI bundle v1.177.
  */
 import type {
+  AppointmentDetails,
   AppointmentStatus,
   AvailabilitySlot,
   InsurancePlan,
+  PatientType,
   ProviderLocation,
   ProviderLocationAvailability,
   Specialty,
@@ -54,6 +56,24 @@ export const SCENARIOS = {
   providerLocationPendingReschedule: 'pr_pendingreschedule|lo_pendingreschedule',
   providerLocationRescheduled: 'pr_rescheduled|lo_rescheduled',
   providerLocationRescheduleFailed: 'pr_reschedulefailed|lo_reschedulefailed',
+  /**
+   * `GET /v1/appointments/{id}` returns each documented status for these ids. They are the
+   * ids `BOOKINGS` hands back, so a flow that books and then manages lands on one fixture.
+   */
+  appointmentPending: '2b29f79b-6d7f-472a-9603-d0c378bc9531',
+  appointmentConfirmed: 'd2ee5bd8-643a-42c8-8c5a-be450e903430',
+  /** Confirmed, for an existing patient. */
+  appointmentConfirmedExisting: '423e6a11-8dac-4873-b933-d8d02f9a370f',
+  appointmentBookingFailed: '34e4ead3-ca69-4448-9438-58702dd1048f',
+  appointmentCancelled: '21990114-ea71-4d7d-9d1e-00c43ae44bcd',
+  appointmentNoShow: 'a0a7770d-e667-416c-9f06-9c3b40a7bb84',
+  appointmentPendingReschedule: '63f995c2-49c4-40c8-a93a-140fb32e913b',
+  appointmentRescheduled: '8507d05f-cbe5-4732-b72a-22add9c80120',
+  appointmentRescheduleFailed: '84d04f67-b2cf-4afd-ab64-193072498ed5',
+  /** Returns a 404 on get, cancel and reschedule. */
+  appointmentNotFound: '83f5cf14-3eb1-4034-be1f-e7c3058aad21',
+  /** Returns a 500 on get, cancel and reschedule. */
+  appointmentError: 'dc69a428-8a73-461b-bd7b-df755910a3fb',
   /**
    * Invalid plan. Note the status depends on how it is used: as a search filter it is a
    * documented 400, and only a direct `/v1/insurance_plans/ip_0` lookup returns 404.
@@ -429,6 +449,99 @@ export const DEFAULT_BOOKING = {
   status: 'confirmed' as AppointmentStatus,
   appointmentId: 'd2ee5bd8-643a-42c8-8c5a-be450e903430',
 };
+
+export interface MockAppointment {
+  status: AppointmentStatus;
+  providerLocationId: string;
+  visitReasonId: string;
+  patientType: PatientType;
+}
+
+/**
+ * The sandbox's documented appointments, keyed by appointment id. Location and visit reason
+ * are the guide's own. The guide gives a patient type only for the two confirmed entries,
+ * so the rest use `new`.
+ */
+export const APPOINTMENTS: Record<string, MockAppointment> = {
+  [SCENARIOS.appointmentPending]: {
+    status: 'pending_booking',
+    providerLocationId: SCENARIOS.providerLocationPending,
+    visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
+    patientType: 'new',
+  },
+  [SCENARIOS.appointmentConfirmed]: {
+    status: 'confirmed',
+    providerLocationId: SCENARIOS.providerLocationConfirmed,
+    visitReasonId: 'pc_TlZW-r06U0W3pCsIGtSI5B',
+    patientType: 'new',
+  },
+  [SCENARIOS.appointmentConfirmedExisting]: {
+    status: 'confirmed',
+    providerLocationId: SCENARIOS.providerLocationConfirmed,
+    visitReasonId: 'pc_TlZW-r06U0W3pCsIGtSI5B',
+    patientType: 'existing',
+  },
+  [SCENARIOS.appointmentBookingFailed]: {
+    status: 'booking_failed',
+    providerLocationId: SCENARIOS.providerLocationBookingFailed,
+    visitReasonId: 'pc_zZWhkaURvEGlZpSimNILaB',
+    patientType: 'new',
+  },
+  [SCENARIOS.appointmentCancelled]: {
+    status: 'cancelled',
+    providerLocationId: SCENARIOS.providerLocationCancelled,
+    visitReasonId: 'pc_p1KdCTTzuU6A04ZjEt837x',
+    patientType: 'new',
+  },
+  [SCENARIOS.appointmentNoShow]: {
+    status: 'no_show',
+    providerLocationId: SCENARIOS.providerLocationNoShow,
+    visitReasonId: 'pc_T1T3MOA0kUuE201i1ZfIWR',
+    patientType: 'new',
+  },
+  [SCENARIOS.appointmentPendingReschedule]: {
+    status: 'pending_reschedule',
+    providerLocationId: SCENARIOS.providerLocationPendingReschedule,
+    visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
+    patientType: 'new',
+  },
+  [SCENARIOS.appointmentRescheduled]: {
+    status: 'rescheduled',
+    providerLocationId: SCENARIOS.providerLocationRescheduled,
+    visitReasonId: 'pc_peZqujk5w0jL8SblyLoIoz',
+    patientType: 'new',
+  },
+  [SCENARIOS.appointmentRescheduleFailed]: {
+    status: 'reschedule_failed',
+    providerLocationId: SCENARIOS.providerLocationRescheduleFailed,
+    visitReasonId: 'pc_PS_BTW9rmkuIfaIH_Hxdwg',
+    patientType: 'new',
+  },
+};
+
+/**
+ * One lookup response. The time is a week after `today`, so it never drifts into the past.
+ * The free-text fields are `null` because that's what production sends.
+ */
+export function buildAppointment(id: string, today: string): AppointmentDetails | undefined {
+  const fixture = APPOINTMENTS[id];
+  if (!fixture) return undefined;
+
+  return {
+    appointment_id: id,
+    appointment_status: fixture.status,
+    is_provider_resource: false,
+    confirmation_type: fixture.status.startsWith('pending') ? 'manual' : 'auto',
+    visit_type: 'in_person',
+    start_time: `${addDays(today, 7)}T09:00:00-04:00`,
+    provider_location_id: fixture.providerLocationId,
+    visit_reason_id: fixture.visitReasonId,
+    patient_type: fixture.patientType,
+    notes: null,
+    cancellation_reason: null,
+    source: null,
+  };
+}
 
 /**
  * One entry for one provider location, with slots spread across `days` of the window.

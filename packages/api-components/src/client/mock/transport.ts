@@ -12,8 +12,10 @@
  * no outbound destination at all.
  */
 import { configureZocdoc, type ZocdocTransport } from '../configure.js';
+import { CANCELLABLE_STATUSES, RESCHEDULABLE_STATUSES } from '../appointments.js';
 import type { Patient, ProviderLocation, ZocdocErrorResponse } from '../types.js';
 import {
+  APPOINTMENTS,
   BOOKINGS,
   DEFAULT_BOOKING,
   INSURANCE_PLANS,
@@ -21,6 +23,7 @@ import {
   SCENARIOS,
   SPECIALTIES,
   VISIT_REASONS,
+  buildAppointment,
   buildAvailability,
 } from './fixtures.js';
 
@@ -294,6 +297,105 @@ function handleCreateAppointment(rawBody: unknown): Response {
   });
 }
 
+/** The two documented error ids, then any id the fixtures don't know, which is a 404. */
+function appointmentSentinel(id: string): Response | undefined {
+  if (id === SCENARIOS.appointmentError) {
+    return json(errorBody('Simulated server error.', 'api_error'), 500);
+  }
+  if (!APPOINTMENTS[id]) {
+    return json(errorBody('Appointment not found.', 'invalid_request'), 404);
+  }
+  return undefined;
+}
+
+/** Serves `GET /v1/appointments/{appointment_id}`. */
+function handleGetAppointment(id: string): Response {
+  return (
+    appointmentSentinel(id) ??
+    json({ request_id: 'req_mock', data: buildAppointment(id, todayIso()) })
+  );
+}
+
+/**
+ * Serves `POST /v1/appointments/cancel`. Stateless: the fixture's status decides, so the
+ * same appointment can be cancelled twice. The free-text reason is checked and dropped,
+ * never echoed (PHI-001).
+ */
+function handleCancelAppointment(rawBody: unknown): Response {
+  const body = rawBody as
+    | { appointment_id?: string; cancellation_reason_type?: string; cancellation_reason?: string }
+    | undefined;
+  const id = body?.appointment_id ?? '';
+
+  if (!id) return json(errorBody('appointment_id is required.', 'invalid_request'), 400);
+  if (
+    body?.cancellation_reason !== undefined &&
+    body.cancellation_reason_type !== 'other_patient_reason' &&
+    body.cancellation_reason_type !== 'other_provider_reason'
+  ) {
+    return json(
+      errorBody('cancellation_reason requires an other_* reason type.', 'invalid_request'),
+      400
+    );
+  }
+
+  const sentinel = appointmentSentinel(id);
+  if (sentinel) return sentinel;
+
+  if (!CANCELLABLE_STATUSES.has(APPOINTMENTS[id]!.status)) {
+    return json(
+      errorBody('Appointment cannot be cancelled in its current status.', 'invalid_request'),
+      409
+    );
+  }
+
+  return json({
+    request_id: 'req_mock',
+    data: { appointment_id: id, appointment_status: 'cancelled' },
+  });
+}
+
+/**
+ * Serves `POST /v1/appointments/reschedule`. It doesn't check that `start_time` was an
+ * offered slot, which the real API does.
+ */
+function handleRescheduleAppointment(rawBody: unknown): Response {
+  const body = rawBody as { appointment_id?: string; start_time?: string } | undefined;
+  const id = body?.appointment_id ?? '';
+
+  if (!id || !body?.start_time) {
+    return json(errorBody('appointment_id and start_time are required.', 'invalid_request'), 400);
+  }
+
+  const sentinel = appointmentSentinel(id);
+  if (sentinel) return sentinel;
+
+  if (!RESCHEDULABLE_STATUSES.has(APPOINTMENTS[id]!.status)) {
+    return json(
+      errorBody('Appointment cannot be rescheduled in its current status.', 'invalid_request'),
+      400
+    );
+  }
+
+  return json({
+    request_id: 'req_mock',
+    data: {
+      appointment_id: id,
+      appointment_status: 'rescheduled',
+      is_provider_resource: false,
+      confirmation_type: 'auto',
+      visit_type: 'in_person',
+    },
+  });
+}
+
+/** `request` always stringifies, so a non-string body means a caller bypassed it. */
+function jsonBody(init: RequestInit): unknown {
+  return typeof init.body === 'string' ? JSON.parse(init.body) : undefined;
+}
+
+const APPOINTMENT_PATH = /^\/v1\/appointments\/([^/]+)$/;
+
 /**
  * Creates the transport. Routing is a chain of explicit path checks rather than a table
  * keyed by path, because the interesting endpoints decide on more than the path — the
@@ -310,11 +412,21 @@ export function createMockTransport(options: MockTransportOptions = {}): ZocdocT
     const url = new URL(rawUrl);
     const path = url.pathname;
 
+    if (path === '/v1/appointments/cancel' && init.method === 'POST') {
+      return handleCancelAppointment(jsonBody(init));
+    }
+
+    if (path === '/v1/appointments/reschedule' && init.method === 'POST') {
+      return handleRescheduleAppointment(jsonBody(init));
+    }
+
     if (path === '/v1/appointments' && init.method === 'POST') {
-      // `request` always stringifies, so a non-string body means a caller bypassed it.
-      return handleCreateAppointment(
-        typeof init.body === 'string' ? JSON.parse(init.body) : undefined
-      );
+      return handleCreateAppointment(jsonBody(init));
+    }
+
+    const appointmentPath = APPOINTMENT_PATH.exec(path);
+    if (appointmentPath && (init.method ?? 'GET') === 'GET') {
+      return handleGetAppointment(decodeURIComponent(appointmentPath[1]!));
     }
 
     if (path === '/v1/specialties') {
