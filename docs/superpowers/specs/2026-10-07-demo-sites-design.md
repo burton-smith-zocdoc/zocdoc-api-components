@@ -91,10 +91,13 @@ through.
 
 ### Fixture coverage per site
 
-The mock fixtures come from the published sandbox test-data guide and cover only Primary Care
-(`sp_153`), Dentist (`sp_154`), and Optometrist (`sp_155`). Search filters by specialty.
+The mock fixtures come from the published sandbox test-data guide. They list Primary Care
+(`sp_153`), Dentist (`sp_154`), and Optometrist (`sp_155`) as specialties, but only Primary Care and
+Dentist have fixture providers. Search filters by specialty.
 
-- Hillbilly Dentistry searches `sp_154`, Eye Caramba `sp_155`, Synergy Partners `sp_153`.
+- Hillbilly Dentistry searches `sp_154` and Synergy Partners `sp_153`.
+- **Eye Caramba has no optometrist fixture.** It searches `sp_153` in mock mode and `sp_155` in live
+  mode (overridable with `VITE_ZOCDOC_SPECIALTY_ID`), on the same reasoning as Toe Truck below.
 - **Toe Truck Podiatry has no podiatry fixture.** It searches `sp_153` (Primary Care) in mock
   mode, and the specialty is a single constant in its config so live mode can use a real podiatry
   specialty. We don't add an invented podiatrist to the fixtures, which would break the "nothing
@@ -137,7 +140,7 @@ implementation, not guessed.
   for Your Bifocals*), Book.
 - **Integration:** the composed flow built in a single `BookingFlow.vue` with a reactive state
   machine:
-  1. `<zd-provider-search zip-code="11201" specialty-id="sp_155">`, where `@provider-results` stores
+  1. `<zd-provider-search zip-code="11201" :specialty-id>` (specialty per fixture coverage above), where `@provider-results` stores
      `providers`, `totalCount`, and the resolved visit reason.
   2. `<zd-provider-results :providers :total-count>`, where `@provider-select` stores the chosen
      location and `@page-change` re-runs the search for that page.
