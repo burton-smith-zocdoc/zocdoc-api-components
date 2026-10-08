@@ -51,8 +51,8 @@ of the twelve components fetch on their own:** `availability-grid` and `availabi
 `load()`, `provider-search` via `search()` (which also loads reference data — specialties,
 insurance plans), `booking` via `book()` (which also calls `createAppointment` and
 `getAvailability` directly), and `appointment` via `load()`, `cancel()` and `reschedule()` (which
-call `getAppointment`, `cancelAppointment` and `rescheduleAppointment`). The other seven only
-import client *types*, never client functions —
+call `getAppointment`, `getProviderLocation`, `cancelAppointment` and `rescheduleAppointment`). The
+other seven only import client *types*, never client functions —
 most notably `provider-results`, whose `goToPage()` and `shiftWindow()` methods look
 state-changing on the reference page but only reshuffle data the caller already fetched.
 Assuming a component fetches because it has a method that changes what's on screen is the most

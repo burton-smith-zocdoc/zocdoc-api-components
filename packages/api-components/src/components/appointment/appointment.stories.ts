@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import type { ZdAppointment } from './appointment.js';
@@ -17,12 +17,13 @@ const meta: Meta<ZdAppointment> = {
   component: 'zd-appointment',
   args: {
     appointmentId: SCENARIOS.appointmentConfirmed,
-    providerName: 'Dr. Avery Sandoval, MD',
+    hidePhoto: false,
   },
   render: (args) => html`
     <zd-appointment
       appointment-id=${args.appointmentId ?? ''}
-      provider-name=${args.providerName ?? ''}
+      provider-name=${args.providerName ?? nothing}
+      ?hide-photo=${args.hidePhoto}
     ></zd-appointment>
   `,
 };
@@ -30,7 +31,7 @@ const meta: Meta<ZdAppointment> = {
 export default meta;
 type Story = StoryObj<ZdAppointment>;
 
-/** Confirmed. Both actions are offered. */
+/** Confirmed. Both actions are offered, and the provider is looked up by location. */
 export const Confirmed: Story = {};
 
 /** Waiting on the practice. Both actions are still offered. */
@@ -57,3 +58,14 @@ export const NotFound: Story = { args: { appointmentId: SCENARIOS.appointmentNot
 
 /** The documented 500 ID. Retry is offered. */
 export const ServerError: Story = { args: { appointmentId: SCENARIOS.appointmentError } };
+
+/** No photo, for host pages that make no image requests. */
+export const WithoutPhoto: Story = { args: { hidePhoto: true } };
+
+/**
+ * A host that also passes `provider-name`. It shows during the mock's latency and is replaced
+ * by the looked-up summary. The lookup-fails fallback is pinned by the component tests instead:
+ * every mock appointment's location answers, and a story must not reach into private members
+ * to force a failure.
+ */
+export const WithProviderName: Story = { args: { providerName: 'Dr. Avery Sandoval, MD' } };

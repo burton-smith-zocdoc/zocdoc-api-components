@@ -14,7 +14,7 @@
           "tagName": "zd-appointment",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -23,7 +23,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -73,7 +73,7 @@
               "default": "'appointment'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -164,7 +164,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -207,7 +207,17 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hidePhoto",
+              "description": "Leaves the provider's photo out, as on `zd-provider-card`.",
+              "privacy": "public",
+              "attribute": "hide-photo",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -237,7 +247,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -245,6 +255,31 @@
               "name": "load",
               "description": "Fetches the appointment. Safe to call repeatedly. Stays idle without an ID.",
               "privacy": "public",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadProvider",
+              "description": "Fills in the provider row. Secondary to the appointment, so it is quiet: a failure keeps the\n`provider-name` fallback and emits nothing. A host acting on `appointment-error` would show a\nfailure while the appointment is on screen and correct.",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "token",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "providerLocationId",
+                  "type": {
+                    "text": "string | undefined"
+                  }
+                }
+              ],
               "return": {
                 "type": {
                   "text": "Promise<void>"
@@ -290,8 +325,17 @@
             },
             {
               "kind": "field",
+              "name": "providerLocation",
+              "privacy": "protected",
+              "internal": true,
+              "type": {
+                "text": "ProviderLocation"
+              }
+            },
+            {
+              "kind": "field",
               "name": "providerName",
-              "description": "Who the appointment is with. The lookup doesn't return a name, so the host passes it.",
+              "description": "Who the appointment is with, shown until the provider lookup succeeds and kept if it fails.\nThe component looks the provider up itself, so this is optional.",
               "privacy": "public",
               "attribute": "provider-name",
               "type": {
@@ -404,6 +448,16 @@
             },
             {
               "kind": "method",
+              "name": "renderProvider",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "renderReschedule",
               "privacy": "protected",
               "parameters": [
@@ -454,7 +508,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -498,8 +552,16 @@
               }
             },
             {
+              "name": "hide-photo",
+              "description": "Leaves the provider's photo out, as on `zd-provider-card`.",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "hidePhoto"
+            },
+            {
               "name": "provider-name",
-              "description": "Who the appointment is with. The lookup doesn't return a name, so the host passes it.",
+              "description": "Who the appointment is with, shown until the provider lookup succeeds and kept if it fails.\nThe component looks the provider up itself, so this is optional.",
               "type": {
                 "text": "string"
               },
@@ -599,7 +661,31 @@
             },
             {
               "name": "zd-provider",
-              "description": "The provider name, when `provider-name` is set."
+              "description": "The provider row's value: the looked-up summary, or `provider-name` as a fallback."
+            },
+            {
+              "name": "zd-provider-detail",
+              "description": "The text column beside the photo."
+            },
+            {
+              "name": "zd-provider-location",
+              "description": "The address, or \"Video visit\"."
+            },
+            {
+              "name": "zd-provider-name",
+              "description": "The provider's name and credential."
+            },
+            {
+              "name": "zd-provider-photo",
+              "description": "The provider's photo, unless `hide-photo` is set."
+            },
+            {
+              "name": "zd-provider-specialty",
+              "description": "The provider's first specialty."
+            },
+            {
+              "name": "zd-provider-summary",
+              "description": "The looked-up provider block."
             },
             {
               "name": "zd-reason",
@@ -652,7 +738,7 @@
           "tagName": "zd-availability-grid",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -661,7 +747,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -681,7 +767,7 @@
                 "text": "TypedEventTarget<ZdAvailabilityGridEventMap>['addEventListener']"
               },
               "parsedType": {
-                "text": "{ <K extends \"day-select\" | \"window-change\" | \"more-select\" | \"availability-error\">(type: K, listener: (event: ZdAvailabilityGridEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
+                "text": "{ <K extends \"availability-error\" | \"day-select\" | \"window-change\" | \"more-select\">(type: K, listener: (event: ZdAvailabilityGridEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -692,7 +778,7 @@
               "default": "'availability-grid'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -733,7 +819,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -794,7 +880,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -872,7 +958,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -926,7 +1012,7 @@
                 "text": "TypedEventTarget<ZdAvailabilityGridEventMap>['removeEventListener']"
               },
               "parsedType": {
-                "text": "{ <K extends \"day-select\" | \"window-change\" | \"more-select\" | \"availability-error\">(type: K, listener: (event: ZdAvailabilityGridEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
+                "text": "{ <K extends \"availability-error\" | \"day-select\" | \"window-change\" | \"more-select\">(type: K, listener: (event: ZdAvailabilityGridEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -986,7 +1072,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -1312,7 +1398,7 @@
           "tagName": "zd-availability-picker",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -1321,7 +1407,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1341,7 +1427,7 @@
                 "text": "TypedEventTarget<ZdAvailabilityPickerEventMap>['addEventListener']"
               },
               "parsedType": {
-                "text": "{ <K extends \"availability-error\" | \"slot-select\" | \"patient-type-change\">(type: K, listener: (event: ZdAvailabilityPickerEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
+                "text": "{ <K extends \"slot-select\" | \"patient-type-change\" | \"availability-error\">(type: K, listener: (event: ZdAvailabilityPickerEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -1352,7 +1438,7 @@
               "default": "'availability-picker'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -1402,7 +1488,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -1445,7 +1531,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1485,7 +1571,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1540,7 +1626,7 @@
                 "text": "TypedEventTarget<ZdAvailabilityPickerEventMap>['removeEventListener']"
               },
               "parsedType": {
-                "text": "{ <K extends \"availability-error\" | \"slot-select\" | \"patient-type-change\">(type: K, listener: (event: ZdAvailabilityPickerEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
+                "text": "{ <K extends \"slot-select\" | \"patient-type-change\" | \"availability-error\">(type: K, listener: (event: ZdAvailabilityPickerEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -1620,7 +1706,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -1900,7 +1986,7 @@
           "tagName": "zd-availability-window",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -1909,7 +1995,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1931,7 +2017,7 @@
               "default": "'availability-window'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -1962,7 +2048,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -2006,7 +2092,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2036,7 +2122,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2056,7 +2142,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -2198,7 +2284,7 @@
           "tagName": "zd-booking-confirmation",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -2207,7 +2293,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2228,7 +2314,7 @@
               "default": "'booking-confirmation'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -2249,7 +2335,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -2275,7 +2361,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2305,7 +2391,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2324,7 +2410,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -2469,7 +2555,7 @@
           "tagName": "zd-booking",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -2478,7 +2564,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2551,7 +2637,7 @@
               "default": "'booking'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -2641,7 +2727,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -2684,7 +2770,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2750,7 +2836,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3015,7 +3101,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -3355,7 +3441,7 @@
           "tagName": "zd-patient-form",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -3364,7 +3450,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3386,7 +3472,7 @@
               "default": "'patient-form'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -3417,7 +3503,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -3498,7 +3584,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3547,7 +3633,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3672,7 +3758,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -3935,7 +4021,7 @@
           "tagName": "zd-provider-card",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -3944,7 +4030,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3966,7 +4052,7 @@
               "default": "\"provider-card\"",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -3987,7 +4073,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -4021,7 +4107,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4071,7 +4157,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4145,7 +4231,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -4269,7 +4355,7 @@
           "tagName": "zd-provider-profile",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -4278,7 +4364,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4289,7 +4375,7 @@
               "default": "'provider-profile'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -4310,7 +4396,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -4336,7 +4422,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4395,7 +4481,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4552,7 +4638,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -4744,7 +4830,7 @@
           "tagName": "zd-provider-results",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -4753,7 +4839,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4804,7 +4890,7 @@
               "default": "'provider-results'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -4836,7 +4922,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -4870,7 +4956,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4948,7 +5034,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5133,7 +5219,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -5469,7 +5555,7 @@
           "tagName": "zd-provider-search",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -5478,7 +5564,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5500,7 +5586,7 @@
               "default": "'provider-search'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -5521,7 +5607,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -5593,7 +5679,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5642,7 +5728,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5774,7 +5860,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"
@@ -6018,7 +6104,7 @@
           "tagName": "zd-provider-summary",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -6027,7 +6113,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6038,7 +6124,7 @@
               "default": "'provider-summary'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -6059,7 +6145,7 @@
               "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"ltr\" | \"rtl\" | \"auto\""
@@ -6085,7 +6171,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6125,7 +6211,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6186,7 +6272,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-management/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-appointment-provider/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "any"

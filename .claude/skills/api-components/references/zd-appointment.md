@@ -22,7 +22,8 @@ one sends at most one request at a time.
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `appointment-id` | `appointmentId` | `string` | — | The appointment to load. Changing it reloads. |
-| `provider-name` | `providerName` | `string` | — | Who the appointment is with. The lookup doesn't return a name, so the host passes it. |
+| `hide-photo` | `hidePhoto` | `boolean` | — | Leaves the provider's photo out, as on `zd-provider-card`. |
+| `provider-name` | `providerName` | `string` | — | Who the appointment is with, shown until the provider lookup succeeds and kept if it fails. The component looks the provider up itself, so this is optional. |
 | — | `addEventListener` | `TypedEventTarget<ZdAppointmentEventMap>['addEventListener']` | — | — |
 | — | `removeEventListener` | `TypedEventTarget<ZdAppointmentEventMap>['removeEventListener']` | — | — |
 
@@ -60,7 +61,13 @@ one sends at most one request at a time.
 | `zd-notice` | The polite live region announcing a completed action. |
 | `zd-panel` | The container for every mode, and the focus target on each mode change. |
 | `zd-picker` | The embedded availability picker. |
-| `zd-provider` | The provider name, when `provider-name` is set. |
+| `zd-provider` | The provider row's value: the looked-up summary, or `provider-name` as a fallback. |
+| `zd-provider-detail` | The text column beside the photo. |
+| `zd-provider-location` | The address, or "Video visit". |
+| `zd-provider-name` | The provider's name and credential. |
+| `zd-provider-photo` | The provider's photo, unless `hide-photo` is set. |
+| `zd-provider-specialty` | The provider's first specialty. |
+| `zd-provider-summary` | The looked-up provider block. |
 | `zd-reason` | The cancellation reason select. |
 | `zd-reference` | The confirmation number. |
 | `zd-reschedule` | The "Change time" button. |

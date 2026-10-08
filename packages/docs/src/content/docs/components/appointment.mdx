@@ -13,20 +13,20 @@ The `<zd-appointment>` component loads a booked appointment by its ID, shows its
 ## Usage
 
 ```html preview
-<zd-appointment
-  appointment-id="d2ee5bd8-643a-42c8-8c5a-be450e903430"
-  provider-name="Dr. Avery Sandoval, MD"
-></zd-appointment>
+<zd-appointment appointment-id="d2ee5bd8-643a-42c8-8c5a-be450e903430"></zd-appointment>
 ```
 
 The example uses the sandbox's confirmed appointment ID. In the docs it runs against the mock, which doesn't store anything, so a cancelled appointment comes back confirmed when you reload.
 
 ## Attributes
 
-| Attribute        | Property        | Type     | Description                                                                                          |
-| ---------------- | --------------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| `appointment-id` | `appointmentId` | `string` | The `appointment_id` from booking. Changing it reloads                                               |
-| `provider-name`  | `providerName`  | `string` | Who the appointment is with. The lookup doesn't return a name, so pass the one you showed at booking |
+| Attribute        | Property        | Type      | Description                                                                                  |
+| ---------------- | --------------- | --------- | -------------------------------------------------------------------------------------------- |
+| `appointment-id` | `appointmentId` | `string`  | The `appointment_id` from booking. Changing it reloads                                       |
+| `provider-name`  | `providerName`  | `string`  | Optional. Shown in the Provider row until the provider lookup finishes, and kept if it fails |
+| `hide-photo`     | `hidePhoto`     | `boolean` | Leaves out the provider's photo                                                              |
+
+The component looks up the provider by the appointment's `provider_location_id` and shows their photo, name, specialty, and address. If that lookup fails, the appointment still shows: the Provider row falls back to `provider-name`, or is left out. No error appears and no `appointment-error` event fires, because the appointment itself loaded.
 
 ## What Patients Can Do
 
@@ -71,6 +71,7 @@ The embedded picker's `availability-error` and `slot-select` events also bubble 
 | Action      | Endpoint                                                                           | Scope                        |
 | ----------- | ---------------------------------------------------------------------------------- | ---------------------------- |
 | Look up     | `GET /v1/appointments/{appointment_id}`                                            | `external.appointment.read`  |
+| Provider    | `GET /v1/provider_locations/{provider_location_id}`                                | Any                          |
 | Cancel      | `POST /v1/appointments/cancel`                                                     | `external.appointment.write` |
 | Change time | `GET /v1/provider_locations/availability`, then `POST /v1/appointments/reschedule` | `external.appointment.write` |
 
@@ -87,14 +88,15 @@ See Zocdoc's [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointm
 
 ## Styling
 
-| CSS part                                              | Element                                            |
-| ----------------------------------------------------- | -------------------------------------------------- |
-| `panel`                                               | The container for every mode, and the focus target |
-| `heading`                                             | The panel heading                                  |
-| `details`                                             | The details list                                   |
-| `appointment-status`, `provider`, `when`, `reference` | The individual details                             |
-| `notice`                                              | The status message after an action                 |
-| `action-error`                                        | The alert when an action fails                     |
-| `actions`, `reschedule`, `cancel`                     | The action row and its buttons                     |
-| `cancel-form`, `reason`, `confirm-cancel`, `keep`     | The cancel confirmation                            |
-| `picker`, `confirm-reschedule`, `back`                | The new-time step                                  |
+| CSS part                                                                                                            | Element                                            |
+| ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `panel`                                                                                                             | The container for every mode, and the focus target |
+| `heading`                                                                                                           | The panel heading                                  |
+| `details`                                                                                                           | The details list                                   |
+| `appointment-status`, `provider`, `when`, `reference`                                                               | The individual details                             |
+| `notice`                                                                                                            | The status message after an action                 |
+| `action-error`                                                                                                      | The alert when an action fails                     |
+| `actions`, `reschedule`, `cancel`                                                                                   | The action row and its buttons                     |
+| `cancel-form`, `reason`, `confirm-cancel`, `keep`                                                                   | The cancel confirmation                            |
+| `picker`, `confirm-reschedule`, `back`                                                                              | The new-time step                                  |
+| `provider-summary`, `provider-photo`, `provider-detail`, `provider-name`, `provider-specialty`, `provider-location` | The looked-up provider                             |
