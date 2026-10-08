@@ -5,8 +5,4 @@ project.scope.registerComponent(ZdBooking);
 
 export { ZdBooking };
 export type { BookingStep } from './booking.js';
-export type {
-  BookingCompleteDetail,
-  BookingErrorDetail,
-  ZdBookingEventMap,
-} from './booking.js';
+export type { BookingCompleteDetail, BookingErrorDetail, ZdBookingEventMap } from './booking.js';

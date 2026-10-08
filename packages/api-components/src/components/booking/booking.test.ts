@@ -796,6 +796,36 @@ describe('zd-booking', () => {
     expect(shadow(element).querySelector('[part="confirmation"]')).toBeNull();
   });
 
+  /*
+   * The confirmation is the only place the patient sees what the booking response says about
+   * reaching the practice and joining a video visit, so the flow hands both across as-is.
+   */
+  it('passes the practice phone and waiting room to the confirmation', async () => {
+    const waitingRoom = 'https://video.example.test/waiting-room/abc123';
+    vi.mocked(appointments.createAppointment).mockResolvedValue({
+      ...bookingResponse('confirmed'),
+      visit_type: 'zocdoc_video_service',
+      location_phone_number: '5555550100',
+      location_phone_extension: '2',
+      waiting_room_path: waitingRoom,
+    });
+
+    const element = await mountFlow('visit-reason-id="vr_1"');
+    await toPatientStep(element);
+    submitPatient(element);
+    await vi.waitFor(() => expect(element.step).toBe('booked'));
+    await settled(element);
+
+    const confirmation = child(element, 'confirmation') as HTMLElement & {
+      locationPhone?: string;
+      locationPhoneExtension?: string | null;
+      waitingRoomUrl?: string | null;
+    };
+    expect(confirmation.locationPhone).toBe('5555550100');
+    expect(confirmation.locationPhoneExtension).toBe('2');
+    expect(confirmation.waitingRoomUrl).toBe(waitingRoom);
+  });
+
   /** `pending_booking` is a booking; the confirmation is what words it differently. */
   it('advances to the confirmation for a pending booking', async () => {
     vi.mocked(appointments.createAppointment).mockResolvedValue(bookingResponse('pending_booking'));

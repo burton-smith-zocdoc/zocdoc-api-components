@@ -2,15 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { waitingRoomHref } from '../waiting-room.js';
 
 /** An invented host and path — not a real waiting room, and nobody's (PHI-002). */
-const URL_ = 'https://video.example.test/waiting-room/abc123';
+const WAITING_ROOM = 'https://video.example.test/waiting-room/abc123';
 
 describe('waitingRoomHref', () => {
   it('passes an absolute https: URL through', () => {
-    expect(waitingRoomHref(URL_)).toBe(URL_);
+    expect(waitingRoomHref(WAITING_ROOM)).toBe(WAITING_ROOM);
   });
 
   it('trims surrounding whitespace', () => {
-    expect(waitingRoomHref(`  ${URL_}\n`)).toBe(URL_);
+    expect(waitingRoomHref(`  ${WAITING_ROOM}\n`)).toBe(WAITING_ROOM);
   });
 
   /*

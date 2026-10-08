@@ -778,6 +778,9 @@ export class ZdBooking extends CharmElement {
         .status=${appointment.appointment_status}
         .startTime=${this.startTime}
         .providerName=${this.providerName}
+        .locationPhone=${appointment.location_phone_number}
+        .locationPhoneExtension=${appointment.location_phone_extension}
+        .waitingRoomUrl=${appointment.waiting_room_path}
       ></scoped-booking-confirmation>
     `;
   }
