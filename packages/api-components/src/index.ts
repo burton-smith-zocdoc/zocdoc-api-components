@@ -6,6 +6,7 @@ export * from './client/appointments.js';
 export * from './client/availability.js';
 export * from './client/configure.js';
 export * from './client/errors.js';
+export * from './client/patient-auth.js';
 export * from './client/provider-locations.js';
 export * from './client/reference-data.js';
 export * from './client/types.js';
