@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BOOKINGS, DEFAULT_BOOKING, SCENARIOS } from '../../client/mock/fixtures.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
-import { mount, shadow } from '../../utils/test/mount.js';
+import { mount, part, queryPart, settled, shadow } from '../../utils/test/mount.js';
 import './index.js';
 
 /**
@@ -21,7 +21,20 @@ const PROVIDER = 'Dr. Avery Sandoval, MD';
  */
 const START_TIME = '2026-08-05T09:00:00-04:00';
 
-type Confirmation = HTMLElement & { status: string; startTime?: string };
+/**
+ * Unformatted, the shape the appointment response documents, and in the fictional
+ * `555-01xx` range (PHI-002).
+ */
+const PHONE = '5555550100';
+
+/** An invented host — not a real waiting room, and nobody's (PHI-002). */
+const WAITING_ROOM = 'https://video.example.test/waiting-room/abc123';
+
+type Confirmation = HTMLElement & {
+  status: string;
+  startTime?: string;
+  waitingRoomUrl?: string | null;
+};
 
 /**
  * Recursively collects text content from an element and all nested shadow roots.
@@ -164,7 +177,124 @@ describe('zd-booking-confirmation', () => {
     expect(text(el).trim()).toBe('');
   });
 
+  describe('the practice phone', () => {
+    it('links the number as a dialable tel: URI and groups the unformatted digits', async () => {
+      const el = await mount<Confirmation>(
+        `<zd-booking-confirmation
+           appointment-id="${CONFIRMED}"
+           location-phone="${PHONE}"
+         ></zd-booking-confirmation>`
+      );
+
+      const link = part<HTMLAnchorElement>(el, 'phone');
+      expect(link.getAttribute('href')).toBe('tel:5555550100');
+      expect(link.textContent?.trim()).toBe('(555) 555-0100');
+    });
+
+    it('keeps the extension inside the same link', async () => {
+      const el = await mount<Confirmation>(
+        `<zd-booking-confirmation
+           appointment-id="${CONFIRMED}"
+           location-phone="${PHONE}"
+           location-phone-extension="2"
+         ></zd-booking-confirmation>`
+      );
+
+      const link = part<HTMLAnchorElement>(el, 'phone');
+      expect(link.getAttribute('href')).toBe('tel:5555550100;ext=2');
+      expect(link.textContent?.trim()).toBe('(555) 555-0100 ext. 2');
+    });
+
+    it('drops the line for a number with nothing dialable in it', async () => {
+      const el = await mount<Confirmation>(
+        `<zd-booking-confirmation
+           appointment-id="${CONFIRMED}"
+           location-phone="call for details"
+         ></zd-booking-confirmation>`
+      );
+
+      expect(queryPart(el, 'contact')).toBeNull();
+    });
+
+    it('drops the line when there is no number', async () => {
+      const el = await mountConfirmed();
+
+      expect(queryPart(el, 'contact')).toBeNull();
+    });
+  });
+
+  describe('the video waiting room', () => {
+    it('links a video visit to its waiting room in a new tab', async () => {
+      const el = await mountConfirmed();
+      el.waitingRoomUrl = WAITING_ROOM;
+      await settled(el);
+
+      const link = part<HTMLAnchorElement>(el, 'waiting-room');
+      expect(link.getAttribute('href')).toBe(WAITING_ROOM);
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+      expect(link.textContent).toContain('Join your video visit');
+      expect(link.textContent).toContain('opens in a new tab');
+    });
+
+    /*
+     * The link is this patient's alone. As an attribute it would sit in the page's DOM, where
+     * a screenshot, a bug report, or a page cache picks it up (PHI-001).
+     */
+    it('never reflects the waiting room URL to an attribute', async () => {
+      const el = await mountConfirmed();
+      el.waitingRoomUrl = WAITING_ROOM;
+      await settled(el);
+
+      expect([...el.attributes].map((attribute) => attribute.value)).not.toContain(WAITING_ROOM);
+      expect(el.hasAttribute('waiting-room-url')).toBe(false);
+    });
+
+    it('ignores a waiting-room-url attribute a host page sets', async () => {
+      const el = await mount<Confirmation>(
+        `<zd-booking-confirmation
+           appointment-id="${CONFIRMED}"
+           waiting-room-url="${WAITING_ROOM}"
+         ></zd-booking-confirmation>`
+      );
+
+      expect(queryPart(el, 'waiting-room')).toBeNull();
+    });
+
+    it('drops the line for an in-person visit’s null', async () => {
+      const el = await mountConfirmed();
+      el.waitingRoomUrl = null;
+      await settled(el);
+
+      expect(queryPart(el, 'video')).toBeNull();
+    });
+
+    it('drops the line rather than linking to anything but an https: URL', async () => {
+      const el = await mountConfirmed();
+      el.waitingRoomUrl = 'javascript:alert(1)';
+      await settled(el);
+
+      expect(queryPart(el, 'video')).toBeNull();
+    });
+  });
+
   describe('accessibility', () => {
+    it('passes axe checks with the practice phone and a video waiting room', async () => {
+      const el = await mount<Confirmation>(
+        `<zd-booking-confirmation
+           appointment-id="${CONFIRMED}"
+           start-time="${START_TIME}"
+           provider-name="${PROVIDER}"
+           location-phone="${PHONE}"
+           location-phone-extension="2"
+         ></zd-booking-confirmation>`
+      );
+      el.waitingRoomUrl = WAITING_ROOM;
+      await settled(el);
+
+      await expectNoViolations(el);
+    });
+
     it('passes axe checks when confirmed', async () => {
       const el = await mount<Confirmation>(
         `<zd-booking-confirmation

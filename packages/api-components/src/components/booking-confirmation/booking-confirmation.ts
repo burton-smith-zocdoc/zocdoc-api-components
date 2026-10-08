@@ -2,7 +2,9 @@ import { CharmElement, ZdAlert } from '@zocdoc/api-primitive-components';
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { AppointmentStatus } from '../../client/types.js';
+import { displayPhone, telHref } from '../../utilities/phone.js';
 import { formatAppointmentTime } from '../../utilities/provider-time.js';
+import { waitingRoomHref } from '../../utilities/waiting-room.js';
 import styles from './booking-confirmation.styles.js';
 
 /**
@@ -50,6 +52,10 @@ const OUTCOMES: Partial<
  * @csspart provider - The line naming the provider.
  * @csspart when - The appointment's date and time.
  * @csspart reference - The line carrying the confirmation number.
+ * @csspart video - The line carrying the video waiting room link.
+ * @csspart waiting-room - The link to the video waiting room.
+ * @csspart contact - The line carrying the practice's phone number.
+ * @csspart phone - The practice's phone number, as a `tel:` link.
  */
 export class ZdBookingConfirmation extends CharmElement {
   public static override baseName = 'booking-confirmation';
@@ -83,6 +89,29 @@ export class ZdBookingConfirmation extends CharmElement {
   @property({ attribute: 'provider-name' })
   public providerName?: string;
 
+  /**
+   * The booking response's `location_phone_number`: the practice's number, which is who a
+   * patient calls to change or ask about the appointment. A practice's number is not patient
+   * data, so it is an attribute like the rest.
+   */
+  @property({ attribute: 'location-phone' })
+  public locationPhone?: string;
+
+  /** The booking response's `location_phone_extension`. `null` is what production sends. */
+  @property({ attribute: 'location-phone-extension' })
+  public locationPhoneExtension?: string | null;
+
+  /**
+   * The booking response's `waiting_room_path`: where the patient joins a Zocdoc video visit.
+   * `null` for an in-person appointment.
+   *
+   * **Property only.** The link belongs to this patient's appointment, and as an attribute it
+   * would sit in the page's DOM where a screenshot, a bug report, or a page cache picks it up
+   * (PHI-001). Only an absolute `https:` URL is linked — see `waitingRoomHref`.
+   */
+  @property({ attribute: false })
+  public waitingRoomUrl?: string | null;
+
   protected override render(): unknown {
     const outcome = this.appointmentId ? OUTCOMES[this.status] : undefined;
     if (!outcome) return nothing;
@@ -109,8 +138,42 @@ export class ZdBookingConfirmation extends CharmElement {
         ${outcome.detail ? this.html`<p part="detail">${outcome.detail}</p>` : nothing}
         ${this.providerName ? this.html`<p part="provider">With ${this.providerName}</p>` : nothing}
         ${when ? this.html`<p part="when">${when}</p>` : nothing}
+        ${this.renderWaitingRoom()}
         <p class="reference" part="reference">Confirmation number: ${this.appointmentId}</p>
+        ${this.renderContact()}
       </scoped-alert>
+    `;
+  }
+
+  /*
+   * Above the confirmation number, because for a video visit it is the one thing the patient
+   * has to act on. A new tab, so the confirmation — and its number — is still there when they
+   * come back; the link's own text says so, rather than surprising anyone (WCAG 3.2.5).
+   */
+  protected renderWaitingRoom(): unknown {
+    const href = waitingRoomHref(this.waitingRoomUrl);
+    if (!href) return nothing;
+
+    return this.html`
+      <p part="video">
+        <a part="waiting-room" href=${href} target="_blank" rel="noopener noreferrer">Join your video visit (opens in a new tab)</a>
+      </p>
+    `;
+  }
+
+  /*
+   * The link's text is the number as a patient reads it, not the sanitised URI; the extension
+   * is inside the same link so it cannot wrap away to read as a different number.
+   */
+  protected renderContact(): unknown {
+    const href = telHref(this.locationPhone, this.locationPhoneExtension);
+    if (!href || !this.locationPhone) return nothing;
+
+    return this.html`
+      <p part="contact">
+        Questions? Call the practice at
+        <a part="phone" href=${href}>${displayPhone(this.locationPhone, this.locationPhoneExtension)}</a>
+      </p>
     `;
   }
 }
