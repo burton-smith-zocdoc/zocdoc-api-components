@@ -97,9 +97,31 @@ export class ZdSignIn extends CharmElement {
 
   @state() protected signInState: SignInState = 'idle';
 
-  /** Bumped every time `auth` changes, so a late answer from an old `auth` is dropped. */
+  /** Bumped when `auth` changes or an attempt is abandoned, so a late answer from either is dropped. */
   private authToken = 0;
   private focusTarget?: FocusTarget;
+
+  public override connectedCallback(): void {
+    super.connectedCallback();
+    window.addEventListener('pageshow', this.handlePageShow);
+  }
+
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    window.removeEventListener('pageshow', this.handlePageShow);
+  }
+
+  /**
+   * The real `signIn` navigates to Zocdoc and never resolves. If the patient comes Back, the
+   * browser can restore this page from its back/forward cache exactly as it was left: loading,
+   * with the button disabled and no way out. Drop that attempt and show the form again.
+   */
+  private readonly handlePageShow = (event: PageTransitionEvent): void => {
+    if (!event.persisted || this.signInState !== 'loading') return;
+
+    this.authToken++;
+    this.signInState = 'idle';
+  };
 
   protected override willUpdate(changed: PropertyValues<this>): void {
     if (changed.has('auth')) void this.resume();

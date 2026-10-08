@@ -68,6 +68,9 @@ real flow sends the patient to Zocdoc to finish. The optional email only pre-fil
 If `auth.isSignedIn()` is already true when `auth` is set, the component starts in success
 without emitting.
 
+If the patient comes Back from Zocdoc's page and the browser restores this one from its
+back/forward cache mid-loading, the component returns to the form.
+
 ## Slots
 
 | Slot | Description |

@@ -352,6 +352,47 @@ describe('zd-sign-in', () => {
     });
   });
 
+  /**
+   * The real `signIn` navigates away and never resolves. Back from Zocdoc's page restores this
+   * one from the back/forward cache exactly as it was left — mid-`loading` — so the component
+   * has to put itself back.
+   */
+  describe('restored from the back/forward cache', () => {
+    it('returns from loading to the form', async () => {
+      const auth = stubAuth();
+      const pending = deferred();
+      auth.signIn.mockReturnValue(pending.promise);
+      const element = await mountWith(auth);
+      const events = listen(element);
+      await submit(element);
+      expect(part(element, 'status').textContent).toContain('Signing in…');
+
+      window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }));
+      await flush(element);
+
+      expect(part(element, 'status').textContent).not.toContain('Signing in…');
+      expect(part(element, 'submit').hasAttribute('disabled')).toBe(false);
+
+      // A navigation that somehow settles afterwards belongs to the abandoned attempt.
+      pending.resolve();
+      await flush(element);
+      expect(part(element, 'form')).not.toBeNull();
+      expect(events.complete).toHaveLength(0);
+    });
+
+    it('ignores an ordinary page show', async () => {
+      const auth = stubAuth();
+      auth.signIn.mockReturnValue(deferred().promise);
+      const element = await mountWith(auth);
+      await submit(element);
+
+      window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: false }));
+      await flush(element);
+
+      expect(part(element, 'status').textContent).toContain('Signing in…');
+    });
+  });
+
   describe('the email (PHI-001)', () => {
     it('never appears in an attribute or an event detail', async () => {
       const auth = stubAuth();
