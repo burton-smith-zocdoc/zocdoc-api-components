@@ -1,5 +1,6 @@
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
 import { BOOKINGS, DEFAULT_BOOKING, SCENARIOS } from '../../client/mock/fixtures.js';
 import type { ZdBookingConfirmation } from './booking-confirmation.js';
 import './index.js';
@@ -67,6 +68,25 @@ export const PendingBooking: Story = {
     appointmentId: BOOKINGS[SCENARIOS.providerLocationPending]?.appointmentId,
     status: 'pending_booking',
   },
+};
+
+/**
+ * What a booking response for a Zocdoc video visit carries: the practice's number, unformatted
+ * as the API documents it, and the waiting room the patient joins from. The URL is a `.test`
+ * host, so the link goes nowhere — and it is set as a property, never an attribute, because a
+ * real one belongs to one patient's appointment (PHI-001).
+ */
+export const VideoVisit: Story = {
+  render: () => html`
+    <zd-booking-confirmation
+      appointment-id=${DEFAULT_BOOKING.appointmentId}
+      start-time=${START_TIME}
+      provider-name=${PROVIDER}
+      location-phone="5555550100"
+      location-phone-extension="2"
+      .waitingRoomUrl=${'https://video.zocdoc-mock.test/waiting-room/mock'}
+    ></zd-booking-confirmation>
+  `,
 };
 
 /**

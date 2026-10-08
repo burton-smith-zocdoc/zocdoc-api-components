@@ -60,6 +60,7 @@ one sends at most one request at a time.
 | `zd-keep` | The button that backs out of cancelling. |
 | `zd-notice` | The polite live region announcing a completed action. |
 | `zd-panel` | The container for every mode, and the focus target on each mode change. |
+| `zd-phone` | The practice's phone number, as a `tel:` link. |
 | `zd-picker` | The embedded availability picker. |
 | `zd-provider` | The provider row's value: the looked-up summary, or `provider-name` as a fallback. |
 | `zd-provider-detail` | The text column beside the photo. |
@@ -71,6 +72,7 @@ one sends at most one request at a time.
 | `zd-reason` | The cancellation reason select. |
 | `zd-reference` | The confirmation number. |
 | `zd-reschedule` | The "Change time" button. |
+| `zd-waiting-room` | The link to a video visit's waiting room. |
 | `zd-when` | The appointment's date and time, in the provider's zone. |
 
 ## Inherited

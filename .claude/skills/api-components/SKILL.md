@@ -60,7 +60,7 @@ common wrong turn in this package.
 
 ### Internal helpers — check here before writing a utility
 
-`utilities/` is eight modules of shared logic. Reimplementing one of these
+`utilities/` is ten modules of shared logic. Reimplementing one of these
 inline is the most common avoidable duplication.
 
 | Module | Exports |
@@ -69,6 +69,8 @@ inline is the most common avoidable duplication.
 | `provider-time.ts` | `providerLocalTime`, `isValidDate`, `dayKey`, `todayDayKey`, `addDays`, `formatAppointmentTime` |
 | `availability-window.ts` | `resolveWindowStart`, `windowEndDate`, `windowSpan`, `nextWindowStart`, `getLocationSlots`, `renderAvailabilityWindow` |
 | `provider-summary.ts` | `providerHeading`, `providerAddress`, `providerLocationLine`, `providerPhotoUrl`, `renderProviderSummary` |
+| `phone.ts` | `telHref`, `displayPhone` |
+| `waiting-room.ts` | `waitingRoomHref` |
 | `error-message.ts` | `userFacingError` |
 | `provider-name.ts` | `providerDisplayName` |
 | `format.ts` | `formatCount` |
@@ -195,4 +197,5 @@ selectedId)` over `renderOptions(...)`.
 | Date or time formatting | `utilities/provider-time.ts` |
 | Window paging arithmetic | `utilities/availability-window.ts` |
 | Provider name, address, photo | `utilities/provider-summary.ts` |
+| Phone links, video waiting room links | `utilities/phone.ts`, `utilities/waiting-room.ts` |
 | A new event | the component's own `*EventMap`, plus the table in `AGENTS.md` |

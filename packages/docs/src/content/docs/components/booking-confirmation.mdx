@@ -24,12 +24,26 @@ The example uses the documented mock booking ID and a provider-only fixture name
 
 ## Attributes
 
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `appointment-id` | `string` | — | Booking ID |
-| `start-time` | `string` | — | Appointment time (ISO 8601) |
-| `status` | `'confirmed' \| 'pending_booking'` | — | Booking status |
-| `provider-name` | `string` | — | Provider display name |
+| Attribute                  | Type                               | Default | Description                                                                    |
+| -------------------------- | ---------------------------------- | ------- | ------------------------------------------------------------------------------ |
+| `appointment-id`           | `string`                           | —       | Booking ID                                                                     |
+| `start-time`               | `string`                           | —       | Appointment time (ISO 8601)                                                    |
+| `status`                   | `'confirmed' \| 'pending_booking'` | —       | Booking status                                                                 |
+| `provider-name`            | `string`                           | —       | Provider display name                                                          |
+| `location-phone`           | `string`                           | —       | The practice's phone number: `location_phone_number` from the booking response |
+| `location-phone-extension` | `string`                           | —       | `location_phone_extension` from the booking response                           |
+
+## Properties
+
+| Property         | Type             | Description                                                                     |
+| ---------------- | ---------------- | ------------------------------------------------------------------------------- |
+| `waitingRoomUrl` | `string \| null` | `waiting_room_path` from the booking response. Property only, with no attribute |
+
+`<zd-booking>` passes all three from the booking response.
+
+The phone number is shown as "Questions? Call the practice at …", linked so it dials, with the extension inside the same link. The API sends the number as 10 unformatted digits, and the component shows it as `(555) 555-0100`. A number in any other shape is shown as given.
+
+For a Zocdoc video visit, `waitingRoomUrl` adds a "Join your video visit" link, which opens in a new tab. The link belongs to one patient's appointment, so it's a property rather than an attribute: an attribute would leave it in the page's markup, where screenshots, bug reports, and page caches pick it up. The link only appears for an absolute `https:` URL. Anything else, including a bare path, shows nothing.
 
 ## Status States
 
@@ -49,7 +63,7 @@ Appointment requires provider confirmation. Shows pending message with expected 
 
 ## Styling
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-confirmation-icon-size` | `48px` | Status icon size |
-| `--zd-confirmation-max-width` | `500px` | Content width |
+| CSS Property                  | Default | Description      |
+| ----------------------------- | ------- | ---------------- |
+| `--zd-confirmation-icon-size` | `48px`  | Status icon size |
+| `--zd-confirmation-max-width` | `500px` | Content width    |
