@@ -27,7 +27,8 @@ export default css`
     gap: 0.5rem;
     margin: 0;
 
-    div {
+    /* Direct children only: a bare \`div\` would also reach the provider summary inside a \`dd\`. */
+    & > div {
       display: grid;
       gap: 0.125rem;
     }

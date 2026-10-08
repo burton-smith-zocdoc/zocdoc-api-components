@@ -197,6 +197,25 @@ describe('renderProviderSummary', () => {
     });
   });
 
+  describe('the distance', () => {
+    it('leads the location line by default', () => {
+      expect(text(summary(IN_PERSON), 'provider-location')).toMatch(/\bmi\b/);
+    });
+
+    it('is left out with hideDistance, keeping the address', () => {
+      const where = text(summary(IN_PERSON, { hideDistance: true }), 'provider-location');
+
+      expect(where).not.toMatch(/\bmi\b/);
+      expect(where).toBe(providerAddress(IN_PERSON));
+    });
+
+    it('still reads "Video visit" for a virtual provider with hideDistance', () => {
+      expect(text(summary(VIRTUAL, { hideDistance: true }), 'provider-location')).toBe(
+        providerLocationLine(VIRTUAL)
+      );
+    });
+  });
+
   describe('the network line', () => {
     /*
      * The important one. "In-network" with nothing to be in the network of is a coverage claim

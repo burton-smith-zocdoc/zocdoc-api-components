@@ -209,6 +209,22 @@ describe('zd-appointment', () => {
       expect(queryPart(element, 'provider-insurance')).toBeNull();
     });
 
+    it('lays the photo beside the name, not above it', async () => {
+      const element = await mountLoaded();
+      await vi.waitFor(() => part(element, 'provider-summary'));
+
+      expect(getComputedStyle(part(element, 'provider-summary')).display).toBe('flex');
+    });
+
+    it('shows the address without a distance, since no search ZIP is behind it', async () => {
+      expect(LOCATION.location?.distance_to_patient_mi).toBeTypeOf('number');
+      const element = await mountLoaded();
+      await vi.waitFor(() => part(element, 'provider-summary'));
+
+      expect(text(element, 'provider-location')).not.toMatch(/\bmi\b/);
+      expect(text(element, 'provider-location')).toContain('Sandbox Plaza');
+    });
+
     it('hides the photo with hide-photo', async () => {
       vi.spyOn(appointments, 'getAppointment').mockResolvedValue(details());
       const element = await mount<Manage>(

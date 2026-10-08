@@ -446,7 +446,7 @@ export class ZdAppointment extends CharmElement {
     const location = this.providerLocation;
     if (location) {
       return this
-        .html`<div><dt>Provider</dt><dd part="provider">${renderProviderSummary(location, { hidePhoto: this.hidePhoto })}</dd></div>`;
+        .html`<div><dt>Provider</dt><dd part="provider">${renderProviderSummary(location, { hidePhoto: this.hidePhoto, hideDistance: true })}</dd></div>`;
     }
     return this.providerName
       ? this.html`<div><dt>Provider</dt><dd part="provider">${this.providerName}</dd></div>`

@@ -34,6 +34,12 @@ export interface ProviderSummaryOptions {
    */
   hidePhoto?: boolean;
   /**
+   * Shows the address without `distance_to_patient_mi`. Set it wherever there is no search
+   * behind the location, as on a looked-up appointment: the distance is from a ZIP code the
+   * patient never gave there.
+   */
+  hideDistance?: boolean;
+  /**
    * The insurance plan the patient searched with, which is what gives
    * `accepts_patient_insurance` something to be accepted *by* — see
    * {@link renderProviderInsurance}.
@@ -153,7 +159,10 @@ export function renderProviderSummary(
   options: ProviderSummaryOptions = {}
 ): TemplateResult {
   const specialty = location.provider.specialties?.[0];
-  const where = providerLocationLine(location);
+  const where =
+    options.hideDistance && location.provider_location_type !== 'virtual_provider'
+      ? providerAddress(location)
+      : providerLocationLine(location);
   const photo = options.hidePhoto ? undefined : providerPhotoUrl(location);
 
   return html`
