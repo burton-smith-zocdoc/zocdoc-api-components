@@ -13,6 +13,9 @@ function componentModules(file: string): Set<string> {
 
 describe('bundle entry', () => {
   it('re-exports every component the package root does', () => {
-    expect(componentModules('./bundle.ts')).toEqual(componentModules('./index.ts'));
+    const root = componentModules('./index.ts');
+    // Two empty sets are equal, so an import-style change must fail here, not pass silently.
+    expect(root.size).toBeGreaterThan(0);
+    expect(componentModules('./bundle.ts')).toEqual(root);
   });
 });
