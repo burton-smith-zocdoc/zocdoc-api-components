@@ -250,16 +250,24 @@ describe('zd-booking-confirmation', () => {
       expect(el.hasAttribute('waiting-room-url')).toBe(false);
     });
 
-    it('ignores a waiting-room-url attribute a host page sets', async () => {
-      const el = await mount<Confirmation>(
-        `<zd-booking-confirmation
-           appointment-id="${CONFIRMED}"
-           waiting-room-url="${WAITING_ROOM}"
-         ></zd-booking-confirmation>`
-      );
+    /*
+     * Both spellings: the dashed one a host page would guess, and the lowercased property name,
+     * which is what a plain `@property()` would observe. The second is the one that fails if the
+     * property ever stops being `attribute: false`.
+     */
+    it.each(['waiting-room-url', 'waitingroomurl'])(
+      'ignores a %s attribute a host page sets',
+      async (attribute) => {
+        const el = await mount<Confirmation>(
+          `<zd-booking-confirmation
+             appointment-id="${CONFIRMED}"
+             ${attribute}="${WAITING_ROOM}"
+           ></zd-booking-confirmation>`
+        );
 
-      expect(queryPart(el, 'waiting-room')).toBeNull();
-    });
+        expect(queryPart(el, 'waiting-room')).toBeNull();
+      }
+    );
 
     it('drops the line for an in-person visit’s null', async () => {
       const el = await mountConfirmed();

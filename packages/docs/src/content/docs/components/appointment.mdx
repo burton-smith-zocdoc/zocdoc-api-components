@@ -29,7 +29,7 @@ The example uses the sandbox's confirmed appointment ID. In the docs it runs aga
 
 The component looks up the provider by the appointment's `provider_location_id` and shows their photo, name, specialty, and address. If that lookup fails, the appointment still shows: the Provider row falls back to `provider-name`, or is left out. No error appears and no `appointment-error` event fires, because the appointment itself loaded.
 
-The details also show the practice's phone number from `location_phone_number`, as a link that dials it, extension included. For a Zocdoc video visit they add a link to `waiting_room_path`, which opens in a new tab. The link only appears for an absolute `https:` URL, and not for a cancelled or failed appointment, since there's no visit left to join. Each row is left out when the appointment doesn't include its field.
+The details also show the practice's phone number from `location_phone_number`, as a link that dials it, extension included. For a Zocdoc video visit they add a link to `waiting_room_path`, which opens in a new tab. The link only appears for an absolute `https:` URL, and not for a cancelled, failed, or missed appointment, since there's no visit left to join. Each row is left out when the appointment doesn't include its field.
 
 ## What Patients Can Do
 

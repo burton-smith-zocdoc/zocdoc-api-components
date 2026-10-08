@@ -101,6 +101,7 @@ const MOVED_STATUSES: ReadonlySet<AppointmentStatus> = new Set<AppointmentStatus
 const NO_VISIT: ReadonlySet<AppointmentStatus> = new Set<AppointmentStatus>([
   'cancelled',
   'booking_failed',
+  'no_show',
 ]);
 
 /**
@@ -455,7 +456,7 @@ export class ZdAppointment extends CharmElement {
   }
 
   /*
-   * Only while there is still a visit to join: a cancelled or failed booking keeps its
+   * Only while there is still a visit to join: a cancelled, failed, or missed booking keeps its
    * `waiting_room_path`, and a link into it would read as an appointment that still stands.
    * A new tab, and saying so, so this page is still here when the patient comes back.
    */

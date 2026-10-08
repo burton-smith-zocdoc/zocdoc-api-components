@@ -630,7 +630,7 @@ describe('zd-appointment', () => {
     });
 
     /* There is no visit left to join, but the practice is still who to call about it. */
-    it.each(['cancelled', 'booking_failed'] as const)(
+    it.each(['cancelled', 'booking_failed', 'no_show'] as const)(
       'hides the waiting room but keeps the phone for a %s appointment',
       async (status) => {
         const element = await mountLoaded(
