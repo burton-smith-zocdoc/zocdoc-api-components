@@ -184,6 +184,8 @@ importers:
         specifier: ^7.1.5
         version: 7.3.6(@types/node@24.13.3)(lightningcss@1.33.0)(tsx@4.23.5)
 
+  packages/demo/sites/synergy-partners: {}
+
   packages/docs:
     dependencies:
       '@astrojs/starlight':

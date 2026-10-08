@@ -1,0 +1,52 @@
+@inject IOptions<ZocdocOptions> Zocdoc
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Corporate Wellness Synergy Partners LLC</title>
+    <link rel="icon" href="data:," />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap" />
+    <link rel="stylesheet" href="~/zocdoc/all.css" />
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <partial name="_ZocdocScript" />
+</head>
+<body>
+    <aside aria-label="Demo notice">
+        <p class="demo-ribbon">
+            @(Zocdoc.Value.IsLive ? "Live sandbox" : "Demo mode — sample data, no real appointments")
+            @if (Zocdoc.Value.LiveRequestedWithoutToken)
+            {
+                <text> · Live mode needs ZOCDOC_TOKEN — showing sample data.</text>
+            }
+        </p>
+    </aside>
+    <header class="site-header">
+        <a href="/" class="brand">
+            <img src="~/art/synergy.svg" alt="" width="40" height="40" />
+            <span>Corporate Wellness Synergy Partners <small>LLC</small></span>
+        </a>
+        <nav aria-label="Main">
+            <a href="/">Value Proposition</a>
+            <a href="/leaders">Thought Leaders</a>
+            <a href="/about">About</a>
+            <a href="/leaders" class="cta">Request a Synergy Session</a>
+        </nav>
+    </header>
+    <main id="main">
+        @RenderBody()
+    </main>
+    <footer class="site-footer">
+        <p>© Corporate Wellness Synergy Partners LLC. All synergies reserved.</p>
+        <ul>
+            <li><a href="/about#10k">Form 10-K (for your health)</a></li>
+            <li><a href="/about#investors">Investor Relations</a></li>
+            <li><a href="https://www.zocdoc.com/?referrerType=demo-site&amp;component=synergy-partners">Booking powered by Zocdoc</a></li>
+        </ul>
+    </footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

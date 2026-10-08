@@ -1,0 +1,13 @@
+@inject IOptions<ZocdocOptions> Zocdoc
+@{
+    var options = Zocdoc.Value;
+}
+@* The bundle configures itself from these attributes (see packages/api-components/src/bundle.ts). *@
+@if (options.IsLive)
+{
+    <script src="~/zocdoc/zocdoc.js" zd-token="@options.Token" zd-base-url="@options.BaseUrl"></script>
+}
+else
+{
+    <script src="~/zocdoc/zocdoc.js" zd-mock></script>
+}

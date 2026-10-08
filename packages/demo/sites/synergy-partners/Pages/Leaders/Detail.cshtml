@@ -1,0 +1,32 @@
+@page "/leaders/{id}"
+@model SynergyPartners.Pages.Leaders.DetailModel
+@{ ViewData["Title"] = "Thought Leader"; }
+<p class="breadcrumb"><a href="/leaders">← All Thought Leaders</a></p>
+<h1 id="leader-title">Thought Leader Profile</h1>
+<section id="leader" class="leader" aria-labelledby="leader-title"
+         data-provider-location-id="@Model.ProviderLocationId"
+         data-zip-code="@Model.Roster.ZipCode"
+         data-specialty-id="@Model.Roster.SpecialtyId"
+         data-insurance-plan-id="@Model.Roster.InsurancePlanId">
+    <p class="leader-status" role="status" aria-live="polite">Synergizing…</p>
+    <div class="leader-booking" hidden>
+        <div class="leader-booking-band">
+            <div>
+                <h2>Request a Synergy Session</h2>
+                <p>Block time on this leader's calendar. No pre-read required.</p>
+            </div>
+            <button type="button" class="button-link leader-book">Choose a time</button>
+        </div>
+        @* Modal mode keeps its own search on the page under the dialog. This page already knows
+           the provider, so that search is hidden in site.css and the dialog is all that shows. *@
+        <zd-booking modal></zd-booking>
+    </div>
+    <zd-provider-profile hidden></zd-provider-profile>
+    <div class="leader-missing" hidden>
+        <h2>This leader has pivoted to new opportunities.</h2>
+        <p><a href="/leaders">Explore our other Thought Leaders</a></p>
+    </div>
+</section>
+@section Scripts {
+    <script src="~/js/leader.js" asp-append-version="true"></script>
+}

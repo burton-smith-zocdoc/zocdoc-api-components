@@ -1,0 +1,331 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+  margin: 0;
+  background-color: var(--zd-body-bg-color);
+  color: var(--zd-body-fg-color);
+  font-family: var(--zd-font-family-base);
+  line-height: 1.6;
+}
+
+/*
+ * Focus rings need 3:1 against whatever they sit on. Navy on the light page and the white
+ * cards; amber on the navy header and footer; near-black on the amber ribbon.
+ */
+:focus-visible {
+  outline: 3px solid var(--zd-color-brand-500);
+  outline-offset: 2px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--zd-font-family-accent);
+  line-height: 1.2;
+  color: var(--zd-color-brand-700);
+}
+
+a {
+  color: var(--zd-color-brand-600);
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.demo-ribbon {
+  margin: 0;
+  padding-block: 0.375rem;
+  padding-inline: 1rem;
+  background: #e0a800;
+  color: #1b2333;
+  font-size: 0.875rem;
+  text-align: center;
+
+  & :focus-visible {
+    outline-color: #1b2333;
+  }
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 1rem;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+  background: var(--zd-color-brand-800);
+  color: #ffffff;
+
+  & :focus-visible {
+    outline-color: #e0a800;
+  }
+
+  & a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  & .brand {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    font-weight: 600;
+
+    & small {
+      font-weight: 400;
+      opacity: 0.8;
+    }
+  }
+
+  & nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+
+    & a:not(.cta):hover {
+      text-decoration: underline;
+      text-underline-offset: 0.3em;
+    }
+
+    & .cta {
+      padding-block: 0.5rem;
+      padding-inline: 1rem;
+      border-radius: 4px;
+      background: #ffffff;
+      color: var(--zd-color-brand-800);
+      font-weight: 600;
+    }
+  }
+}
+
+main {
+  flex: 1;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 76rem;
+  margin-inline: auto;
+  padding-block: 2.5rem 4rem;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+  gap: 2.5rem;
+  align-items: center;
+
+  & h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-block-start: 0;
+  }
+
+  & p {
+    font-size: 1.125rem;
+  }
+
+  & img {
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: 6px;
+    box-shadow: 0 20px 40px rgb(16 33 62 / 0.2);
+  }
+}
+
+.button-link {
+  display: inline-block;
+  margin-block-start: 0.5rem;
+  padding-block: 0.75rem;
+  padding-inline: 1.5rem;
+  border-radius: 4px;
+  background: var(--zd-color-brand-600);
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--zd-color-brand-700);
+  }
+}
+
+.pillars {
+  margin-block-start: 4rem;
+
+  & h2 {
+    margin-block-end: 1.5rem;
+  }
+}
+
+.pillars ul,
+.roster-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.pillars li {
+  padding: 1.5rem;
+  border-radius: 0 0 6px 6px;
+  border-block-start: 4px solid var(--zd-color-brand-500);
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgb(16 33 62 / 0.12);
+
+  & h3 {
+    margin-block-start: 0;
+  }
+
+  & p {
+    margin-block-end: 0;
+  }
+}
+
+.roster-list {
+  grid-template-columns: repeat(auto-fill, minmax(min(22rem, 100%), 1fr));
+
+  /* The card brings its own border and surface, so the item only stacks it over the link. */
+  & li {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 0.75rem;
+  }
+
+  & zd-provider-card {
+    block-size: 100%;
+  }
+}
+
+.roster-status {
+  margin-block: 1.5rem 0;
+  color: var(--zd-color-brand-700);
+  font-weight: 500;
+}
+
+.roster-link {
+  justify-self: start;
+  padding-inline-start: 0.25rem;
+  font-weight: 600;
+}
+
+.lede,
+.prose {
+  max-inline-size: 44rem;
+}
+
+.lede {
+  margin-block-start: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.breadcrumb {
+  margin-block: 0 0.5rem;
+}
+
+.leader {
+  display: grid;
+  gap: 2rem;
+
+  & zd-provider-profile,
+  & .leader-booking,
+  & .leader-missing {
+    padding: clamp(1rem, 3vw, 2rem);
+    border-block-start: 4px solid var(--zd-color-brand-500);
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgb(16 33 62 / 0.12);
+  }
+
+  & [hidden] {
+    display: none;
+  }
+
+  & .leader-booking {
+    background: var(--zd-color-brand-50);
+
+    & h2 {
+      margin-block: 0 0.25rem;
+    }
+
+    & p {
+      margin: 0;
+    }
+
+    & .leader-booking-band {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* The page already names the provider; the booking's own search would only repeat it. */
+    & zd-booking::part(step) {
+      display: none;
+    }
+  }
+
+  & .leader-missing {
+    & h2 {
+      margin-block: 0 0.75rem;
+    }
+
+    & p {
+      margin: 0;
+    }
+  }
+}
+
+.leader-book {
+  border: 0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.leader-status {
+  margin: 0;
+  font-weight: 500;
+
+  /* Collapsed rather than hidden, so the live region stays in the accessibility tree. */
+  &:empty {
+    block-size: 0;
+    margin-block-end: -2rem;
+  }
+}
+
+.site-footer {
+  padding-block: 2rem;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+  background: var(--zd-color-brand-900);
+  color: #d6e0f0;
+  font-size: 0.875rem;
+
+  & :focus-visible {
+    outline-color: #e0a800;
+  }
+
+  & p {
+    margin-block: 0 0.75rem;
+  }
+
+  & ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  & a {
+    color: #ffffff;
+  }
+}

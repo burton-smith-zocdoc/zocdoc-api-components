@@ -1,0 +1,20 @@
+@page
+@inject IOptions<ZocdocOptions> Zocdoc
+@{
+    ViewData["Title"] = "Our Thought Leaders";
+    var roster = Zocdoc.Value.Roster;
+}
+<h1>Our Thought Leaders</h1>
+<p class="lede">Hand-picked physicians with deep expertise in moving the needle on your vitals.</p>
+@* The search parameters are the server's: C# owns the roster the way a CMS would. *@
+<section id="roster" class="roster" aria-labelledby="roster-title"
+         data-zip-code="@roster.ZipCode"
+         data-specialty-id="@roster.SpecialtyId"
+         data-insurance-plan-id="@roster.InsurancePlanId">
+    <h2 id="roster-title" class="visually-hidden">Physicians</h2>
+    <p class="roster-status" role="status" aria-live="polite">Aligning stakeholders…</p>
+    <ul class="roster-list"></ul>
+</section>
+@section Scripts {
+    <script src="~/js/roster.js" asp-append-version="true"></script>
+}
