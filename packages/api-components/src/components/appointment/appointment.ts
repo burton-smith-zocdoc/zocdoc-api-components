@@ -9,12 +9,16 @@ import {
   rescheduleAppointment,
 } from '../../client/appointments.js';
 import { ZocdocError, ZocdocNotFoundError } from '../../client/errors.js';
+import { getProviderLocation } from '../../client/provider-locations.js';
 import type {
   AppointmentDetails,
   AppointmentStatus,
   CancellationReasonType,
+  ProviderLocation,
 } from '../../client/types.js';
 import { userFacingError } from '../../utilities/error-message.js';
+import { renderProviderSummary } from '../../utilities/provider-summary.js';
+import summaryStyles from '../../utilities/provider-summary.styles.js';
 import { formatAppointmentTime } from '../../utilities/provider-time.js';
 import {
   renderRequestState,
@@ -111,7 +115,13 @@ const MOVED_STATUSES: ReadonlySet<AppointmentStatus> = new Set<AppointmentStatus
  * @csspart heading - The panel heading.
  * @csspart details - The list of appointment details.
  * @csspart appointment-status - The status, in patient words.
- * @csspart provider - The provider name, when `provider-name` is set.
+ * @csspart provider - The provider row's value: the looked-up summary, or `provider-name` as a fallback.
+ * @csspart provider-summary - The looked-up provider block.
+ * @csspart provider-photo - The provider's photo, unless `hide-photo` is set.
+ * @csspart provider-detail - The text column beside the photo.
+ * @csspart provider-name - The provider's name and credential.
+ * @csspart provider-specialty - The provider's first specialty.
+ * @csspart provider-location - The address, or "Video visit".
  * @csspart when - The appointment's date and time, in the provider's zone.
  * @csspart reference - The confirmation number.
  * @csspart notice - The polite live region announcing a completed action.
@@ -134,7 +144,11 @@ export class ZdAppointment extends CharmElement {
   declare public removeEventListener: TypedEventTarget<ZdAppointmentEventMap>['removeEventListener'];
   declare protected emit: TypedEmit<ZdAppointmentEventMap>;
 
-  public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
+  public static override styles = [
+    ...super.styles,
+    summaryStyles,
+    styles,
+  ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [...requestStateDependencies, ZdAlert, ZdButton, ZdSelect, ZdAvailabilityPicker];
@@ -144,9 +158,16 @@ export class ZdAppointment extends CharmElement {
   @property({ attribute: 'appointment-id' })
   public appointmentId?: string;
 
-  /** Who the appointment is with. The lookup doesn't return a name, so the host passes it. */
+  /**
+   * Who the appointment is with, shown until the provider lookup succeeds and kept if it fails.
+   * The component looks the provider up itself, so this is optional.
+   */
   @property({ attribute: 'provider-name' })
   public providerName?: string;
+
+  /** Leaves the provider's photo out, as on `zd-provider-card`. */
+  @property({ type: Boolean, attribute: 'hide-photo' })
+  public hidePhoto = false;
 
   @state() protected requestState: RequestState = 'idle';
   @state() protected errorMessage?: string;
@@ -157,6 +178,7 @@ export class ZdAppointment extends CharmElement {
   @state() protected actionError?: string;
   @state() protected reasonType?: CancellationReasonType;
   @state() protected newStartTime?: string;
+  @state() protected providerLocation?: ProviderLocation;
 
   /** Bumped by every load, so a late answer for an older ID is dropped. */
   private loadToken = 0;
@@ -189,6 +211,7 @@ export class ZdAppointment extends CharmElement {
     this.actionError = undefined;
     this.reasonType = undefined;
     this.newStartTime = undefined;
+    this.providerLocation = undefined;
 
     if (!id) {
       this.appointment = undefined;
@@ -205,6 +228,7 @@ export class ZdAppointment extends CharmElement {
 
       this.appointment = appointment;
       this.requestState = 'success';
+      void this.loadProvider(token, appointment.provider_location_id);
     } catch (error: unknown) {
       if (token !== this.loadToken) return;
 
@@ -292,8 +316,28 @@ export class ZdAppointment extends CharmElement {
       this.appointment = appointment;
       this.mode = 'view';
       this.reasonType = undefined;
+      if (appointment.provider_location_id !== this.providerLocation?.provider_location_id) {
+        void this.loadProvider(token, appointment.provider_location_id);
+      }
     } catch {
       // Keep the current appointment.
+    }
+  }
+
+  /**
+   * Fills in the provider row. Secondary to the appointment, so it is quiet: a failure keeps the
+   * `provider-name` fallback and emits nothing. A host acting on `appointment-error` would show a
+   * failure while the appointment is on screen and correct.
+   */
+  private async loadProvider(token: number, providerLocationId: string | undefined): Promise<void> {
+    if (!providerLocationId) return;
+
+    try {
+      const location = await getProviderLocation(providerLocationId);
+      if (token !== this.loadToken) return;
+      this.providerLocation = location;
+    } catch {
+      // Keep the fallback.
     }
   }
 
@@ -391,11 +435,22 @@ export class ZdAppointment extends CharmElement {
     return this.html`
       <dl class="details" part="details">
         <div><dt>Status</dt><dd part="appointment-status">${status}</dd></div>
-        ${this.providerName ? this.html`<div><dt>Provider</dt><dd part="provider">${this.providerName}</dd></div>` : nothing}
+        ${this.renderProvider()}
         ${when ? this.html`<div><dt>When</dt><dd part="when">${when}</dd></div>` : nothing}
         <div><dt>Confirmation number</dt><dd part="reference">${appointment.appointment_id}</dd></div>
       </dl>
     `;
+  }
+
+  protected renderProvider(): unknown {
+    const location = this.providerLocation;
+    if (location) {
+      return this
+        .html`<div><dt>Provider</dt><dd part="provider">${renderProviderSummary(location, { hidePhoto: this.hidePhoto })}</dd></div>`;
+    }
+    return this.providerName
+      ? this.html`<div><dt>Provider</dt><dd part="provider">${this.providerName}</dd></div>`
+      : nothing;
   }
 
   protected renderActions(appointment: AppointmentDetails): unknown {

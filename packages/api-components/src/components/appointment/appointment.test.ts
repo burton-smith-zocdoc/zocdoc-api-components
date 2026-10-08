@@ -2,8 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as appointments from '../../client/appointments.js';
 import * as availability from '../../client/availability.js';
 import { ZocdocError, ZocdocNotFoundError } from '../../client/errors.js';
-import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
-import type { AppointmentDetails, AppointmentResponseData } from '../../client/types.js';
+import { buildTimeslots, PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
+import * as providerLocations from '../../client/provider-locations.js';
+import type {
+  AppointmentDetails,
+  AppointmentResponseData,
+  ProviderLocation,
+} from '../../client/types.js';
 import { dayFromToday } from '../../utils/test/dates.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
 import { mount, part, queryPart, settled, shadow } from '../../utils/test/mount.js';
@@ -12,6 +17,7 @@ import './index.js';
 /** `{ spy: true }` so `vi.spyOn` can redefine the exports in browser mode (TEST-002). */
 vi.mock('../../client/appointments.js', { spy: true });
 vi.mock('../../client/availability.js', { spy: true });
+vi.mock('../../client/provider-locations.js', { spy: true });
 
 const ID = SCENARIOS.appointmentConfirmed;
 /** 9 AM at a practice on `-04:00`. The runner is UTC, so the offset is what's under test. */
@@ -21,6 +27,12 @@ const NEW_DAY = dayFromToday(1);
 const NEW_TIME = `${NEW_DAY}T14:00:00-04:00`;
 /** A provider name from the fixture directory, not a patient's (PHI-002). */
 const PROVIDER = 'Dr. Avery Sandoval, MD';
+/** The fixture provider under the appointment's own location id, as the mock answers it. */
+const LOCATION: ProviderLocation = {
+  ...PROVIDER_LOCATIONS[0]!,
+  provider_location_id: SCENARIOS.providerLocationConfirmed,
+  provider: { ...PROVIDER_LOCATIONS[0]!.provider, provider_photo_url: '//images.test/photo.jpg' },
+};
 
 type Manage = HTMLElement & {
   appointmentId?: string;
@@ -102,6 +114,7 @@ describe('zd-appointment', () => {
       appointment_status: 'cancelled',
     });
     vi.spyOn(appointments, 'rescheduleAppointment').mockResolvedValue(rescheduled('rescheduled'));
+    vi.spyOn(providerLocations, 'getProviderLocation').mockResolvedValue(LOCATION);
     vi.spyOn(availability, 'getAvailability').mockResolvedValue([
       {
         provider_location_id: SCENARIOS.providerLocationConfirmed,
@@ -121,7 +134,7 @@ describe('zd-appointment', () => {
 
       expect(appointments.getAppointment).toHaveBeenCalledWith(ID);
       expect(text(element, 'appointment-status')).toBe('Confirmed');
-      expect(text(element, 'provider')).toBe(PROVIDER);
+      expect(text(element, 'provider')).toContain('Avery Sandoval, MD');
       expect(text(element, 'when')).toContain('9:00');
       expect(text(element, 'reference')).toBe(ID);
     });
@@ -178,6 +191,141 @@ describe('zd-appointment', () => {
       expect(text(manage, 'error')).toContain('could not find this appointment');
       expect(seen[0]?.detail).toEqual({ error, action: 'load' });
       element.remove();
+    });
+  });
+
+  describe('provider', () => {
+    it('looks up the provider by the appointment location and shows the summary', async () => {
+      const element = await mountLoaded();
+      await vi.waitFor(() => part(element, 'provider-summary'));
+
+      expect(providerLocations.getProviderLocation).toHaveBeenCalledWith(
+        SCENARIOS.providerLocationConfirmed
+      );
+      expect(text(element, 'provider-name')).toBe('Avery Sandoval, MD');
+      expect(part<HTMLImageElement>(element, 'provider-photo').src).toBe(
+        'https://images.test/photo.jpg'
+      );
+      expect(queryPart(element, 'provider-insurance')).toBeNull();
+    });
+
+    it('hides the photo with hide-photo', async () => {
+      vi.spyOn(appointments, 'getAppointment').mockResolvedValue(details());
+      const element = await mount<Manage>(
+        `<zd-appointment appointment-id="${ID}" hide-photo></zd-appointment>`
+      );
+      await vi.waitFor(() => part(element, 'provider-summary'));
+
+      expect(queryPart(element, 'provider-photo')).toBeNull();
+    });
+
+    it('shows provider-name while the provider lookup is pending', async () => {
+      const pending = deferred<ProviderLocation>();
+      vi.mocked(providerLocations.getProviderLocation).mockReturnValueOnce(pending.promise);
+      const element = await mountLoaded();
+
+      expect(text(element, 'provider')).toBe(PROVIDER);
+      expect(queryPart(element, 'provider-summary')).toBeNull();
+
+      pending.resolve(LOCATION);
+      await vi.waitFor(() => part(element, 'provider-summary'));
+    });
+
+    it('a failed provider lookup is quiet and falls back to provider-name', async () => {
+      vi.mocked(providerLocations.getProviderLocation).mockRejectedValue(new ZocdocNotFoundError());
+      const host = document.createElement('div');
+      const seen = record(host, 'appointment-error');
+      vi.spyOn(appointments, 'getAppointment').mockResolvedValue(details());
+      host.innerHTML = `<zd-appointment appointment-id="${ID}" provider-name="${PROVIDER}"></zd-appointment>`;
+      document.body.append(host);
+      const element = host.firstElementChild as Manage;
+      await vi.waitFor(() => part(element, 'panel'));
+      await settled(element);
+
+      expect(text(element, 'provider')).toBe(PROVIDER);
+      expect(queryPart(element, 'provider-summary')).toBeNull();
+      expect(queryPart(element, 'error')).toBeNull();
+      expect(queryPart(element, 'action-error')).toBeNull();
+      expect(queryPart(element, 'actions')).not.toBeNull();
+      expect(seen).toHaveLength(0);
+      host.remove();
+    });
+
+    it('shows no provider row when the lookup fails and no provider-name is set', async () => {
+      vi.mocked(providerLocations.getProviderLocation).mockRejectedValue(new Error('offline'));
+      vi.spyOn(appointments, 'getAppointment').mockResolvedValue(details());
+      const element = await mount<Manage>(
+        `<zd-appointment appointment-id="${ID}"></zd-appointment>`
+      );
+      await vi.waitFor(() => part(element, 'panel'));
+      await settled(element);
+
+      expect(queryPart(element, 'provider')).toBeNull();
+      expect(text(element, 'appointment-status')).toBe('Confirmed');
+    });
+
+    it('ignores a provider lookup that finishes after the id changed', async () => {
+      const stale = deferred<ProviderLocation>();
+      const otherLocation = {
+        ...LOCATION,
+        provider_location_id: SCENARIOS.providerLocationPending,
+      };
+      vi.mocked(providerLocations.getProviderLocation)
+        .mockReturnValueOnce(stale.promise)
+        .mockReturnValueOnce(new Promise(() => {}));
+      vi.spyOn(appointments, 'getAppointment')
+        .mockResolvedValueOnce(details())
+        .mockResolvedValueOnce(
+          details({
+            appointment_id: SCENARIOS.appointmentPending,
+            provider_location_id: SCENARIOS.providerLocationPending,
+          })
+        );
+      const element = await mount<Manage>(
+        `<zd-appointment appointment-id="${ID}"></zd-appointment>`
+      );
+      await vi.waitFor(() =>
+        expect(providerLocations.getProviderLocation).toHaveBeenCalledTimes(1)
+      );
+
+      element.appointmentId = SCENARIOS.appointmentPending;
+      await vi.waitFor(() => expect(text(element, 'reference')).toBe(SCENARIOS.appointmentPending));
+      stale.resolve(otherLocation);
+      await stale.promise;
+      await settled(element);
+
+      expect(queryPart(element, 'provider-summary')).toBeNull();
+    });
+
+    it('keeps the provider through a 409 refresh and a reschedule', async () => {
+      const element = await mountLoaded();
+      await vi.waitFor(() => part(element, 'provider-summary'));
+      vi.mocked(appointments.cancelAppointment).mockRejectedValueOnce(
+        new ZocdocError('Zocdoc API request failed with 409.', 409)
+      );
+      vi.mocked(appointments.getAppointment).mockResolvedValueOnce(details());
+
+      await element.cancel();
+      await settled(element);
+      await element.reschedule(NEW_TIME);
+      await settled(element);
+
+      expect(providerLocations.getProviderLocation).toHaveBeenCalledTimes(1);
+      expect(queryPart(element, 'provider-summary')).not.toBeNull();
+    });
+
+    it('drops the old provider as soon as a new id starts loading', async () => {
+      const element = await mountLoaded();
+      await vi.waitFor(() => part(element, 'provider-summary'));
+      vi.mocked(appointments.getAppointment).mockResolvedValueOnce(
+        details({ appointment_id: SCENARIOS.appointmentPending })
+      );
+      vi.mocked(providerLocations.getProviderLocation).mockReturnValueOnce(new Promise(() => {}));
+
+      element.appointmentId = SCENARIOS.appointmentPending;
+      await vi.waitFor(() => expect(text(element, 'reference')).toBe(SCENARIOS.appointmentPending));
+
+      expect(queryPart(element, 'provider-summary')).toBeNull();
     });
   });
 
@@ -433,6 +581,13 @@ describe('zd-appointment', () => {
       await click(element, 'keep');
       await click(element, 'reschedule');
       await vi.waitFor(() => part(part(element, 'picker'), 'slot'));
+      await expectNoViolations(element);
+    });
+
+    it('has no violations with the provider summary shown', async () => {
+      const element = await mountLoaded();
+      await vi.waitFor(() => part(element, 'provider-summary'));
+
       await expectNoViolations(element);
     });
 
