@@ -1,0 +1,27 @@
+/* Toe Truck: hazard-yellow brand behind black text, black accent. Light scheme only. */
+:root {
+  color-scheme: light;
+  --zd-color-brand-50: #fffbe6;
+  --zd-color-brand-100: #fff3b3;
+  --zd-color-brand-200: #ffe980;
+  --zd-color-brand-300: #ffdf4d;
+  --zd-color-brand-400: #ffd21a;
+  --zd-color-brand-500: #f5c400;
+  --zd-color-brand-600: #d6aa00;
+  --zd-color-brand-700: #a88500;
+  --zd-color-brand-800: #7a6100;
+  --zd-color-brand-900: #4d3d00;
+  --zd-color-brand-950: #2b2200;
+  --zd-color-on-brand-400: #111111;
+  --zd-color-on-brand-500: #111111;
+  --zd-color-on-brand-600: #111111;
+  --zd-color-on-brand-700: #111111;
+  /* The warm off-white page background drops the default #737373 secondary text below 4.5:1. */
+  --zd-color-neutral-700: #5a5a56;
+  --zd-font-family-base: 'Work Sans', system-ui, sans-serif;
+  --zd-font-family-accent: 'Anton', Impact, sans-serif;
+  --zd-body-bg-color: #f2f2ef;
+  --zd-body-fg-color: #111111;
+  --zd-border-radius-md: 0;
+  --zd-border-radius-lg: 0;
+}
