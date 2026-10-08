@@ -24,6 +24,20 @@ export class ZdInput extends CoreInput {
    */
   @property({ reflect: true })
   public size?: ZdControlSize;
+
+  /**
+   * Charm reflects `value` to an attribute, which would put whatever a patient types into the
+   * page's markup (PHI-001). Redeclared without `reflect`: a `value` attribute in the markup is
+   * still read in, but typing never writes one back out.
+   */
+  @property()
+  public override get value(): string {
+    return super.value;
+  }
+
+  public override set value(value: string) {
+    super.value = value;
+  }
 }
 
 project.scope.registerComponent(ZdInput);

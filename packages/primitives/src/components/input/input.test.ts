@@ -1,4 +1,4 @@
-import { it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { describeA11y, expectNoViolations, getContainer } from '../../utils/test/a11y.js';
 import type { ZdInput } from './input.js';
 
@@ -54,5 +54,37 @@ describeA11y('zd-input', () => {
     getContainer().appendChild(input);
 
     await expectNoViolations();
+  });
+});
+
+/**
+ * Charm's form control reflects `value`, which would put whatever a patient types — an email,
+ * a name, a date of birth — into the page's markup, where a screenshot, a bug report or a page
+ * cache picks it up (PHI-001).
+ */
+describe('zd-input value', () => {
+  it('stays out of the DOM when set', async () => {
+    const input = document.createElement('zd-input') as ZdInput;
+    input.label = 'Email address';
+    document.body.appendChild(input);
+
+    input.value = 'patient@example.com';
+    await input.updateComplete;
+
+    expect(input.hasAttribute('value')).toBe(false);
+    expect(input.value).toBe('patient@example.com');
+    input.remove();
+  });
+
+  it('still reads an initial value attribute', async () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<zd-input label="Email address" value="seed"></zd-input>'
+    );
+    const input = document.body.lastElementChild as ZdInput;
+    await input.updateComplete;
+
+    expect(input.value).toBe('seed');
+    input.remove();
   });
 });
