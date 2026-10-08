@@ -186,6 +186,8 @@ importers:
 
   packages/demo/sites/synergy-partners: {}
 
+  packages/demo/sites/toe-truck: {}
+
   packages/docs:
     dependencies:
       '@astrojs/starlight':

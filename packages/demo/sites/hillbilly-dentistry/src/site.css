@@ -46,6 +46,10 @@ h3 {
   & a {
     color: inherit;
     text-decoration: none;
+
+    &:focus-visible {
+      outline-color: #e7c06a;
+    }
   }
 
   & .brand {
@@ -88,10 +92,10 @@ main {
 .hero {
   padding: clamp(2rem, 6vw, 4rem);
   border: 4px solid #6b4423;
-  /* Red gingham. */
+  /* Faded red gingham: large, low-alpha checks so it stays behind the text. */
   background:
-    linear-gradient(90deg, rgb(181 72 43 / 0.18) 50%, transparent 50%) 0 0 / 32px 32px,
-    linear-gradient(rgb(181 72 43 / 0.18) 50%, transparent 50%) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgb(181 72 43 / 0.06) 50%, transparent 50%) 0 0 / 56px 56px,
+    linear-gradient(rgb(181 72 43 / 0.06) 50%, transparent 50%) 0 0 / 56px 56px,
     #fffaf0;
   text-align: center;
 
@@ -155,5 +159,9 @@ main {
 
   & a {
     color: #e7c06a;
+
+    &:focus-visible {
+      outline-color: #e7c06a;
+    }
   }
 }

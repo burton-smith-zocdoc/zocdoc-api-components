@@ -126,6 +126,12 @@ main {
     color: #f4f1ff;
     text-shadow: none;
   }
+
+  & .intro {
+    max-inline-size: 60ch;
+    margin-inline: auto;
+    margin-block: 0 1.5rem;
+  }
 }
 
 .eye-chart {

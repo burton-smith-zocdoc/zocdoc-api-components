@@ -12,7 +12,11 @@ export function Home() {
     <>
       <section className="hero" aria-labelledby="hero-title">
         <h1 id="hero-title">We'll fix what the moonshine took.</h1>
-        <p>Family dentistry for families, cousins, and folks who are both.</p>
+        <p>
+          Family dentistry for families, cousins, and folks who are both. This here site is a React
+          19 app built with Vite, and booking runs on the Zocdoc <code>ZdBooking</code> React
+          wrapper.
+        </p>
         <Link to="/book" className="button-link">
           Book a cleanin'
         </Link>

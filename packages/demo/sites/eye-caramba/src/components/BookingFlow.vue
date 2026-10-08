@@ -141,6 +141,7 @@ function onPage(event: CustomEvent<PageChangeDetail>): void {
 function onSlot(event: CustomEvent<SlotSelectDetail>): void {
   log('slot-select');
   startTime.value = event.detail.startTime;
+  bookingError.value = false;
   void focusStep('patient');
 }
 
@@ -183,6 +184,7 @@ async function onSubmit(event: CustomEvent<PatientSubmitDetail>): Promise<void> 
 }
 
 function back(): void {
+  bookingError.value = false;
   if (step.value === 'patient') startTime.value = undefined;
   else if (step.value === 'time') selected.value = undefined;
   void focusStep(step.value);
@@ -210,7 +212,7 @@ function startOver(): void {
       tabindex="-1"
       aria-labelledby="step-search"
     >
-      <h2 id="step-search">1. Find an optometrist</h2>
+      <h2 id="step-search">1. Find your eye doc</h2>
       <zd-provider-search
         :zip-code="props.zipCode"
         :specialty-id="props.specialtyId"
@@ -222,6 +224,7 @@ function startOver(): void {
         :total-count="totalCount"
         :page="page"
         :page-size="pageSize"
+        :selected-id="selected?.provider_location_id"
         :insurance-name="insuranceName"
         :availability="availability"
         :availability-start="availabilityStart"

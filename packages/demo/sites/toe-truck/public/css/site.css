@@ -16,7 +16,8 @@ h1 {
   margin-block-end: 1rem;
 }
 
-h1, h2 {
+h1,
+h2 {
   font-family: var(--zd-font-family-accent);
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -28,7 +29,7 @@ a {
   color: #111111;
 }
 
-aside[aria-label="Demo notice"] {
+aside[aria-label='Demo notice'] {
   background: #111111;
 
   & :focus-visible {
@@ -123,6 +124,10 @@ aside[aria-label="Demo notice"] {
   @media (width < 52rem) {
     grid-template-columns: 1fr;
   }
+}
+
+.intro {
+  margin-block: 0 2rem;
 }
 
 .post-summary,

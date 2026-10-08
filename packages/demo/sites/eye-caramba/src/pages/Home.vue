@@ -9,6 +9,10 @@
       <li>IF YOU CAN READ THIS</li>
       <li>you probably don't need us, but come anyway</li>
     </ol>
+    <p class="intro">
+      Totally rad eye care, beamed straight to your screen. This site is a Vue 3 app built with
+      Vite, and its booking flow wires individual Zocdoc components together with Vue events.
+    </p>
     <RouterLink to="/book" class="button-link">Book an eye exam</RouterLink>
   </section>
   <section aria-labelledby="why-title" class="features">

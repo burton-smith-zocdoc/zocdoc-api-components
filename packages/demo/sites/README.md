@@ -19,7 +19,7 @@ Four fictional practices, four stacks, one component library. Built for partner 
 
 ```sh
 pnpm build && pnpm --filter @zocdoc/api-components build:bundle   # once, and after library changes
-pnpm demo:sites                                                    # all four
+pnpm demo:sites                                                    # all four; prints the URLs once each is up
 pnpm --filter demo-site-toe-truck dev                              # or one
 pnpm demo:sites:smoke                                              # with the sites running
 ```
@@ -53,3 +53,4 @@ Things these sites needed that the library couldn't do. They're worked around in
 - **Framework type shims resolve from the library package.** The `/react` and `types/vue` declarations import `react` / `vue` from the library's own `node_modules`, so a workspace consumer needs a `tsconfig` `paths` entry pointing them at its own copy.
 - **Vue event types lack `detail`.** The Vue declarations type component events as a plain `Event`, so templates cast to `CustomEvent<…>` to read `detail`.
 - **Secondary text contrast.** Charm's default secondary text is below AA on off-white pages (4.22:1 on `#f2f2ef`) and on dark-scheme cards (`neutral-800`, 3.98:1). Toe Truck and Eye Caramba override neutral tokens to pass.
+- **Provider cards don't fill a stretched grid row.** `zd-provider-card` doesn't take the full height of its host, so cards in a roster grid end up different heights.

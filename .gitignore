@@ -29,3 +29,6 @@ packages/demo/sites/toe-truck/public/zocdoc/
 packages/demo/sites/toe-truck/public/images/
 packages/demo/sites/synergy-partners/bin/
 packages/demo/sites/synergy-partners/obj/
+packages/demo/sites/synergy-partners/appsettings.Development.json
+packages/demo/sites/synergy-partners/.vs/
+packages/demo/sites/synergy-partners/*.user
