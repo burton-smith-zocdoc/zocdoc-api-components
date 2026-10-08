@@ -396,6 +396,7 @@ describe('createMockTransport', () => {
         });
         // Offset kept, as the API sends it.
         expect(appointment.start_time).toMatch(/T09:00:00-04:00$/);
+        expect(appointment.location_phone_number).toMatch(/^\d{10}$/);
       }
     });
 
@@ -508,6 +509,28 @@ describe('createMockTransport', () => {
       );
 
       expect(result.visit_type).toBe('zocdoc_video_service');
+    });
+
+    /* Unformatted ten digits, the shape the response documents — not the location's own. */
+    it('returns the practice phone, unformatted', async () => {
+      const result = await createAppointment(
+        booking('pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890')
+      );
+
+      expect(result.location_phone_number).toMatch(/^\d{10}$/);
+      expect(result.location_phone_extension).toBeNull();
+    });
+
+    it('returns an https: waiting room for a video visit and null in person', async () => {
+      const video = await createAppointment(
+        booking('pr_ghi123-jkl456_mnop7890|lo_ghi123-jkl456_mnop7890')
+      );
+      const inPerson = await createAppointment(
+        booking('pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890')
+      );
+
+      expect(new URL(video.waiting_room_path!).protocol).toBe('https:');
+      expect(inPerson.waiting_room_path).toBeNull();
     });
 
     it('rejects a booking that omits the fields the location requires', async () => {

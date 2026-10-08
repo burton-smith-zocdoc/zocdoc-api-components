@@ -15,6 +15,7 @@ import { configureZocdoc, type ZocdocTransport } from '../configure.js';
 import { CANCELLABLE_STATUSES, RESCHEDULABLE_STATUSES } from '../appointments.js';
 import type { Patient, ProviderLocation, ZocdocErrorResponse } from '../types.js';
 import {
+  appointmentContact,
   APPOINTMENTS,
   BOOKINGS,
   DEFAULT_BOOKING,
@@ -311,6 +312,7 @@ function handleCreateAppointment(rawBody: unknown): Response {
         location?.provider_location_type === 'virtual_provider'
           ? 'zocdoc_video_service'
           : 'in_person',
+      ...appointmentContact(location?.provider_location_id),
       ...(data?.patient?.developer_patient_id === undefined
         ? {}
         : { developer_patient_id: data.patient.developer_patient_id }),

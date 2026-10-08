@@ -520,6 +520,38 @@ export const APPOINTMENTS: Record<string, MockAppointment> = {
 };
 
 /**
+ * The appointment fields that come from the location rather than the booking: the practice
+ * phone and, for a video visit, the waiting room.
+ *
+ * The phone is the location's own number reduced to digits, because the appointment response
+ * documents an "unformatted 10 digit phone number" where the location's is punctuated — and
+ * the mock should make components cope with both shapes. A location without one falls back to
+ * the first fixture's, still in the fictional `555-01xx` block (PHI-002).
+ *
+ * The waiting room is an invented `.test` host, which can never resolve, so a story's link
+ * goes nowhere real. In person it is `null`, as production sends.
+ */
+export function appointmentContact(providerLocationId: string | undefined): {
+  location_phone_number: string;
+  location_phone_extension: null;
+  waiting_room_path: string | null;
+} {
+  const location = PROVIDER_LOCATIONS.find(
+    (candidate) => candidate.provider_location_id === providerLocationId
+  );
+  const phone = location?.location?.phone_number ?? PROVIDER_LOCATIONS[0]!.location!.phone_number!;
+
+  return {
+    location_phone_number: phone.replace(/\D/g, ''),
+    location_phone_extension: null,
+    waiting_room_path:
+      location?.provider_location_type === 'virtual_provider'
+        ? 'https://video.zocdoc-mock.test/waiting-room/mock'
+        : null,
+  };
+}
+
+/**
  * One lookup response. The time is a week after `today`, so it never drifts into the past.
  * The free-text fields are `null` because that's what production sends.
  */
@@ -537,6 +569,7 @@ export function buildAppointment(id: string, today: string): AppointmentDetails 
     provider_location_id: fixture.providerLocationId,
     visit_reason_id: fixture.visitReasonId,
     patient_type: fixture.patientType,
+    ...appointmentContact(fixture.providerLocationId),
     notes: null,
     cancellation_reason: null,
     source: null,
