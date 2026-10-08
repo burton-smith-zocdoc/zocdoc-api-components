@@ -2,6 +2,7 @@ import { CharmElement, ZdAvatar, ZdIcon } from '@zocdoc/api-primitive-components
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { ProviderLocation } from '../../client/types.js';
+import { telHref } from '../../utilities/phone.js';
 import {
   providerAddress,
   providerHeading,
@@ -17,27 +18,6 @@ import styles from './provider-profile.styles.js';
  * page cannot collide however many of them there are.
  */
 const NAME_ID = 'provider-name';
-
-/**
- * An RFC 3966 `tel:` URI for a number the API returned in whatever shape the practice
- * typed it — `(555) 555-0100`, `555.555.0100`, `+1 555 555 0100`.
- *
- * Everything but digits and a leading `+` is stripped, because a dialler handed the
- * punctuation may refuse the whole URI. The extension goes in `;ext=` rather than into the
- * number: appended to the digits it would be dialled as part of the number and reach nobody.
- *
- * Returns `undefined` when nothing dialable survives, so a number of "call for details" does
- * not become a link that dials the empty string.
- */
-function telHref(number: string | undefined, extension?: string | null): string | undefined {
-  if (!number) return undefined;
-
-  const digits = number.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
-  if (!/\d/.test(digits)) return undefined;
-
-  const ext = extension?.replace(/\D/g, '');
-  return ext ? `tel:${digits};ext=${ext}` : `tel:${digits}`;
-}
 
 /**
  * The whole of one provider location, as a page rather than a card. Presentational only — it
@@ -265,7 +245,11 @@ export class ZdProviderProfile extends CharmElement {
     const statement = provider.provider.statement?.trim();
     if (!statement) return nothing;
 
-    return this.renderSection('about', 'About', this.html`<p class="statement" part="statement">${statement}</p>`);
+    return this.renderSection(
+      'about',
+      'About',
+      this.html`<p class="statement" part="statement">${statement}</p>`
+    );
   }
 
   /**
