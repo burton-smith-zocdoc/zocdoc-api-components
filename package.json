@@ -20,6 +20,9 @@
     "storybook": "pnpm run build:types && pnpm run cem && storybook dev -p 6006",
     "storybook:build": "pnpm run build:types && pnpm run cem && storybook build",
     "demo": "pnpm --filter demo dev",
+    "sites:sync": "oxnode packages/demo/sites/sync-assets.ts",
+    "demo:sites": "pnpm run sites:sync && (oxnode packages/demo/sites/announce-urls.ts &) && pnpm --filter \"./packages/demo/sites/*\" --parallel dev",
+    "demo:sites:smoke": "oxnode packages/demo/sites/smoke.ts",
     "dev:docs": "pnpm --filter docs dev"
   },
   "devDependencies": {

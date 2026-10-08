@@ -1,0 +1,24 @@
+/* Synergy Partners: navy brand, slate accent, Plex type. Light scheme only. */
+:root {
+  color-scheme: light;
+  --zd-color-brand-50: #eef2f9;
+  --zd-color-brand-100: #d6e0f0;
+  --zd-color-brand-200: #adc0e0;
+  --zd-color-brand-300: #7f9bcb;
+  --zd-color-brand-400: #4f73b0;
+  --zd-color-brand-500: #2c5394;
+  --zd-color-brand-600: #1f3f76;
+  --zd-color-brand-700: #172f59;
+  --zd-color-brand-800: #10213e;
+  --zd-color-brand-900: #0a1527;
+  --zd-color-brand-950: #050b15;
+  --zd-color-on-brand-500: #ffffff;
+  --zd-color-on-brand-600: #ffffff;
+  --zd-color-on-brand-700: #ffffff;
+  --zd-font-family-base: 'IBM Plex Sans', system-ui, sans-serif;
+  --zd-font-family-accent: 'IBM Plex Serif', Georgia, serif;
+  --zd-body-bg-color: #f5f7fa;
+  --zd-body-fg-color: #1b2333;
+  --zd-border-radius-md: 4px;
+  --zd-border-radius-lg: 6px;
+}

@@ -1,0 +1,32 @@
+/*
+ * Hillbilly Dentistry brand. Only palette and type primitives are overridden; every semantic
+ * token (buttons, surfaces, focus) resolves through these, so the components follow along.
+ * Brand = mason-jar green, accent = barn red. 600+ steps carry white text at AA.
+ */
+:root {
+  color-scheme: light;
+  --zd-color-brand-50: #eef6ec;
+  --zd-color-brand-100: #d5e9cf;
+  --zd-color-brand-200: #b0d4a6;
+  --zd-color-brand-300: #86ba79;
+  --zd-color-brand-400: #5f9d52;
+  --zd-color-brand-500: #3f7f35;
+  --zd-color-brand-600: #2f6628;
+  --zd-color-brand-700: #234d1e;
+  --zd-color-brand-800: #183515;
+  --zd-color-brand-900: #0f220d;
+  --zd-color-brand-950: #081307;
+  --zd-color-on-brand-400: #ffffff;
+  --zd-color-on-brand-500: #ffffff;
+  --zd-color-on-brand-600: #ffffff;
+  --zd-color-on-brand-700: #ffffff;
+  --zd-color-accent-500: #b5482b;
+  --zd-color-accent-600: #933720;
+  --zd-color-accent-700: #702917;
+  --zd-font-family-base: 'Zilla Slab', Georgia, serif;
+  --zd-font-family-accent: 'Rye', 'Zilla Slab', Georgia, serif;
+  --zd-body-bg-color: #fbf5e6;
+  --zd-body-fg-color: #2b1d10;
+  --zd-border-radius-md: 2px;
+  --zd-border-radius-lg: 4px;
+}

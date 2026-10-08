@@ -1,0 +1,39 @@
+/*
+ * Eye Caramba brand: neon magenta brand, teal accent, on a near-black page. Dark scheme, so
+ * the light-dark() tokens take their dark branch. Brand 400/500 carry near-black text at AA;
+ * check any new pair with a contrast tool before using it.
+ */
+:root {
+  color-scheme: dark;
+  --zd-color-brand-50: #ffe6f4;
+  --zd-color-brand-100: #ffc2e3;
+  --zd-color-brand-200: #ff94cd;
+  --zd-color-brand-300: #ff66b8;
+  --zd-color-brand-400: #ff3ea5;
+  --zd-color-brand-500: #e41d8a;
+  --zd-color-brand-600: #b8106d;
+  --zd-color-brand-700: #8a0a51;
+  --zd-color-brand-800: #5c0636;
+  --zd-color-brand-900: #33031e;
+  --zd-color-brand-950: #1c0110;
+  --zd-color-on-brand-400: #0b0b1a;
+  --zd-color-on-brand-500: #0b0b1a;
+  --zd-color-on-brand-600: #ffffff;
+  /*
+   * The dark branch builds its surfaces from neutral 700–950. Charm's greys put cards and the
+   * search bar on #575656, where the secondary text (neutral-400) falls to 3.98:1. Tinted toward
+   * the page's indigo-black instead, neutral-400 sits near 9:1 and on-neutral stays white.
+   */
+  --zd-color-neutral-700: #34345c;
+  --zd-color-neutral-800: #1d1d3a;
+  --zd-color-neutral-900: #15152b;
+  --zd-color-neutral-950: #10101f;
+  --zd-color-accent-400: #00d1c1;
+  --zd-color-accent-500: #00a89b;
+  --zd-font-family-base: 'Space Grotesk', system-ui, sans-serif;
+  --zd-font-family-accent: 'Monoton', 'Space Grotesk', system-ui, sans-serif;
+  --zd-body-bg-color: #0b0b1a;
+  --zd-body-fg-color: #f4f1ff;
+  --zd-border-radius-md: 0;
+  --zd-border-radius-lg: 0;
+}

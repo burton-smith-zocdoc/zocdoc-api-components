@@ -22,3 +22,13 @@ __fixtures__
 # pnpm project-local store
 .pnpm-store/
 */.astro
+# Demo sites: copied library assets and .NET build output
+packages/demo/sites/synergy-partners/wwwroot/zocdoc/
+packages/demo/sites/synergy-partners/wwwroot/images/
+packages/demo/sites/toe-truck/public/zocdoc/
+packages/demo/sites/toe-truck/public/images/
+packages/demo/sites/synergy-partners/bin/
+packages/demo/sites/synergy-partners/obj/
+packages/demo/sites/synergy-partners/appsettings.Development.json
+packages/demo/sites/synergy-partners/.vs/
+packages/demo/sites/synergy-partners/*.user

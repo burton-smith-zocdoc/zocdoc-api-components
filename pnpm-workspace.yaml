@@ -1,5 +1,6 @@
 packages:
   - './packages/*'
+  - './packages/demo/sites/*'
 overrides:
   '@lit/reactive-element': 2.1.2
 allowBuilds:

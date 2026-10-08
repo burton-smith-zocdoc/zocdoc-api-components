@@ -1,0 +1,9 @@
+{
+  "name": "demo-site-synergy-partners",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "oxnode ../sync-assets.ts && dotnet watch run --launch-profile http --non-interactive",
+    "build": "dotnet build"
+  }
+}

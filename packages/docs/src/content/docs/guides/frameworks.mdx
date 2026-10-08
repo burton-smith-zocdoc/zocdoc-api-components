@@ -164,3 +164,29 @@ Import the Svelte types, or reference them from a `.d.ts` file. Templates then g
 The [layout elements](/zocdoc-api-components/primitive-components/layout-elements/) (`zd-flex`, `zd-grid`, `zd-column`) are CSS-only. They're never registered as custom elements, but all four outputs still type their attributes. For example, `direction` on `zd-flex` only accepts its documented values. Their element type is a plain `HTMLElement`: `ZdFlex` in the React wrappers, and an `HTMLElement` ref for the custom element itself.
 
 Because they're styled entirely by CSS, they need `theme/all.css` or `theme/layout-elements.css` loaded. Importing the wrapper doesn't load styles.
+
+## Plain HTML, PHP, ASP.NET, and other server-rendered sites
+
+No bundler is needed. Load the prebuilt bundle and the theme, and the bundle configures itself from its own `<script>` tag:
+
+```html
+<link rel="stylesheet" href="/zocdoc/all.css" />
+<script src="/zocdoc/zocdoc.js" zd-token="TOKEN_FROM_YOUR_BACKEND"></script>
+
+<zd-booking zip-code="11201"></zd-booking>
+```
+
+`zocdoc.js` is `@zocdoc/api-components/bundle/iife`, and `all.css` is `@zocdoc/api-primitive-components/theme/all.css`. Use `zd-mock` instead of `zd-token` to serve sample data with no network calls, and `zd-base-url` to point at another environment. Everything the package exports is also on the `Zocdoc` global. For example, `Zocdoc.searchProviderLocations()` loads providers for `zd-provider-card`, which takes a `provider` object.
+
+## See it in other stacks
+
+The repo's `packages/demo/sites` folder has four themed demo sites, each using a different integration pattern:
+
+| Site                                    | Stack        | Pattern                                                               |
+| --------------------------------------- | ------------ | --------------------------------------------------------------------- |
+| Hillbilly Dentistry                     | React        | `ZdBooking` in modal mode via the React wrappers                      |
+| Eye Caramba Optometry                   | Vue          | Composed components wired with Vue events, booking through the client |
+| Corporate Wellness Synergy Partners LLC | ASP.NET Core | Script-tag bundle, server-rendered roster and profile pages           |
+| Toe Truck Podiatry                      | PHP          | One script tag and one `zd-booking` tag                               |
+
+Run them with `pnpm demo:sites`. See the folder's README for prerequisites.
