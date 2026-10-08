@@ -6,8 +6,10 @@ export default css`
     --zd-avatar-size: 96px;
   }
 
+  /* Fill the host so a stretched card (e.g. in a grid row) matches its neighbours. */
   .wrapper-card {
     display: block;
+    block-size: 100%;
     cursor: default;
   }
 
