@@ -126,6 +126,31 @@ From Zocdoc's [FAQs](https://api-docs.zocdoc.com/guides/faqs), check that:
 - The token's environment matches `baseUrl` (sandbox token → sandbox host).
 - The token has the scopes the operation needs. For example, booking requires `external.appointment.write`.
 
+## Signed-in Patients
+
+<Aside type="caution" title="Experimental">
+  Zocdoc user authentication isn't available yet. `createMockPatientAuth()` stands in for it
+  today. A real `createPatientAuth({ clientId, redirectUri, environment })` will run the
+  authorization code + PKCE flow, and is the only change your page will need.
+</Aside>
+
+To book and manage appointments as the patient rather than as your integration, give
+[`<zd-sign-in>`](/zocdoc-api-components/components/sign-in/) a `PatientAuth` and pass its
+`getToken` to the client:
+
+```js
+import { configureZocdoc, createMockPatientAuth } from '@zocdoc/api-components';
+
+const auth = createMockPatientAuth();
+configureZocdoc({ baseUrl, getToken: () => auth.getToken() });
+
+const signIn = document.querySelector('zd-sign-in');
+signIn.auth = auth;
+signIn.addEventListener('sign-in-complete', () => showBooking());
+```
+
+`auth.getToken()` rejects with `ZocdocAuthError` until the patient has signed in.
+
 ## Security Considerations
 
 - **Keep secrets on the server.** Zocdoc: "Avoid distributing secrets to frontend apps such as browsers or mobile applications."

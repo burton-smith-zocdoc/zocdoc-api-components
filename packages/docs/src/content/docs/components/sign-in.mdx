@@ -1,0 +1,85 @@
+---
+title: Sign In
+description: Let a patient sign in with their Zocdoc account (experimental)
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="Experimental">
+  This is a placeholder until Zocdoc user authentication ships. Today it runs against
+  `createMockPatientAuth()`, which signs in instantly with no network call. When the real
+  `createPatientAuth({ clientId, redirectUri, environment })` arrives, swapping the factory is
+  the only change your page needs.
+</Aside>
+
+The `<zd-sign-in>` component lets a patient sign in with their Zocdoc account. Once they have,
+`<zd-booking>` and `<zd-appointment>` run under the patient's token instead of your
+integration's. Zocdoc then makes sure only that patient can read or change what they booked.
+
+## Usage
+
+```html
+<zd-sign-in></zd-sign-in>
+```
+
+```js
+import { configureZocdoc, createMockPatientAuth } from '@zocdoc/api-components';
+
+const auth = createMockPatientAuth(); // later: createPatientAuth({ clientId, redirectUri, environment: 'sandbox' })
+configureZocdoc({ baseUrl, getToken: () => auth.getToken() });
+
+const signIn = document.querySelector('zd-sign-in');
+signIn.auth = auth;
+signIn.addEventListener('sign-in-complete', () => showBooking());
+```
+
+The component doesn't configure the client and doesn't talk to the other components. Your page
+passes `auth.getToken` to `configureZocdoc` and decides what to show once the patient is signed in.
+
+## Why there's no password field
+
+Zocdoc's login page, including Google and Apple sign-in, is hosted by Zocdoc and only works on
+Zocdoc's domain. A Zocdoc-branded password form on your site would also train patients to type
+their Zocdoc password into pages that look like Zocdoc's, which is what phishing relies on. So the
+real flow sends the patient to Zocdoc to finish. The optional email only pre-fills that page.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+|---|---|---|---|---|
+| `auth` | — | `PatientAuth` | — | What signs the patient in. Without it the button is disabled. Setting a new one starts over. |
+| `email` | — | `string` | `''` | The email field's value, sent as Zocdoc's `login_hint`. Property-only, so it never lands in the DOM. |
+| `hideEmail` | `hide-email` | `boolean` | `false` | Leaves out the optional email field. |
+
+## Events
+
+| Event | Detail | When |
+|---|---|---|
+| `sign-in-complete` | `{}` | The patient is signed in. Read the token through `auth.getToken()`; it's never on an event. |
+| `sign-in-error` | `{ error }` | Signing in, or finishing a sign-in that returned to the page, failed. `error` is developer-facing, so don't render or log it. |
+
+## States
+
+- **Idle:** the form.
+- **Loading:** the button is disabled and shows a spinner, and "Signing in…" is announced.
+- **Success:** "You're signed in." is announced, and the form is hidden.
+- **Error:** an alert says "We couldn't sign you in. Please try again." "Try again" returns to the form.
+
+If `auth.isSignedIn()` is already true when `auth` is set, the component starts in success
+without emitting.
+
+## Slots
+
+| Slot | Description |
+|---|---|
+| `heading` | Replaces "Sign in to manage your appointments". Slot an empty element to drop it, for example inside a dialog with its own heading. |
+
+## Accessibility
+
+- The email field has a visible label, and every string is a DOM text node, so browser translation reaches it.
+- Loading and success are announced through a polite live region. Errors use `role="alert"`.
+- Focus moves to "Try again" after an error, back to the button after a retry, and to the panel after success.
+
+## CSS Parts
+
+`panel`, `heading`, `status`, `error`, `retry`, `form`, `email`, `help`, `submit`.
