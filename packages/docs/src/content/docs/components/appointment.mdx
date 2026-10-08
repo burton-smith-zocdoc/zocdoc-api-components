@@ -74,7 +74,7 @@ The embedded picker's `availability-error` and `slot-select` events also bubble 
 | Cancel      | `POST /v1/appointments/cancel`                                                     | `external.appointment.write` |
 | Change time | `GET /v1/provider_locations/availability`, then `POST /v1/appointments/reschedule` | `external.appointment.write` |
 
-An appointment booked with a user credential can only be viewed or changed by that user. Machine-to-machine credentials can reach any appointment booked by the developer's machine-to-machine credentials. If cancel returns `409` because the appointment changed elsewhere, the component reloads it and says it can no longer be cancelled.
+An appointment booked with a user credential can only be viewed or changed by that user. Machine-to-machine credentials can reach any appointment booked by the developer's machine-to-machine credentials. If cancel returns `409` because the appointment changed elsewhere, the component fetches its current status without leaving the details view, and says it can no longer be cancelled.
 
 See Zocdoc's [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointments) and [Reschedule](https://api-docs.zocdoc.com/guides/patient/reschedule-appointments) guides.
 
