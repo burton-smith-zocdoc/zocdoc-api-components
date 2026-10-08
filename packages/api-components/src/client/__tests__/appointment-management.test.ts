@@ -192,21 +192,21 @@ describe('rescheduleAppointment', () => {
 
 describe('eligible statuses', () => {
   it('match the spec for cancel', () => {
-    expect([...CANCELLABLE_STATUSES].toSorted()).toEqual(
-      [
+    expect(new Set(CANCELLABLE_STATUSES)).toEqual(
+      new Set([
         'booking_failed',
         'confirmed',
         'pending_booking',
         'pending_reschedule',
         'reschedule_failed',
         'rescheduled',
-      ].toSorted()
+      ])
     );
   });
 
   it('match the spec for reschedule', () => {
-    expect([...RESCHEDULABLE_STATUSES].toSorted()).toEqual(
-      ['confirmed', 'pending_booking', 'pending_reschedule', 'rescheduled'].toSorted()
+    expect(new Set(RESCHEDULABLE_STATUSES)).toEqual(
+      new Set(['confirmed', 'pending_booking', 'pending_reschedule', 'rescheduled'])
     );
   });
 });
