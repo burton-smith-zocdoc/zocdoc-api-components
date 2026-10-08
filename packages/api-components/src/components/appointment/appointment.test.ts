@@ -586,6 +586,79 @@ describe('zd-appointment', () => {
     });
   });
 
+  describe('contact and video', () => {
+    const WAITING_ROOM = 'https://video.example.test/waiting-room/abc123';
+
+    it('shows the practice phone as a dialable link', async () => {
+      const element = await mountLoaded(
+        details({ location_phone_number: '5555550100', location_phone_extension: '2' })
+      );
+
+      const link = part<HTMLAnchorElement>(element, 'phone');
+      expect(link.getAttribute('href')).toBe('tel:5555550100;ext=2');
+      expect(link.textContent?.trim()).toBe('(555) 555-0100 ext. 2');
+    });
+
+    it('drops the phone row when there is no number', async () => {
+      const element = await mountLoaded();
+
+      expect(queryPart(element, 'phone')).toBeNull();
+    });
+
+    it('links a video visit to its waiting room in a new tab', async () => {
+      const element = await mountLoaded(
+        details({ visit_type: 'zocdoc_video_service', waiting_room_path: WAITING_ROOM })
+      );
+
+      const link = part<HTMLAnchorElement>(element, 'waiting-room');
+      expect(link.getAttribute('href')).toBe(WAITING_ROOM);
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+      expect(link.textContent).toContain('opens in a new tab');
+    });
+
+    it('drops the video row for an in-person visit’s null', async () => {
+      const element = await mountLoaded(details({ waiting_room_path: null }));
+
+      expect(queryPart(element, 'waiting-room')).toBeNull();
+    });
+
+    it('drops the video row rather than linking to anything but an https: URL', async () => {
+      const element = await mountLoaded(details({ waiting_room_path: '/waiting-room/abc123' }));
+
+      expect(queryPart(element, 'waiting-room')).toBeNull();
+    });
+
+    /* There is no visit left to join, but the practice is still who to call about it. */
+    it.each(['cancelled', 'booking_failed'] as const)(
+      'hides the waiting room but keeps the phone for a %s appointment',
+      async (status) => {
+        const element = await mountLoaded(
+          details({
+            appointment_status: status,
+            waiting_room_path: WAITING_ROOM,
+            location_phone_number: '5555550100',
+          })
+        );
+
+        expect(queryPart(element, 'waiting-room')).toBeNull();
+        expect(queryPart(element, 'phone')).not.toBeNull();
+      }
+    );
+
+    it('has no violations with the phone and waiting room rows', async () => {
+      const element = await mountLoaded(
+        details({
+          visit_type: 'zocdoc_video_service',
+          waiting_room_path: WAITING_ROOM,
+          location_phone_number: '5555550100',
+        })
+      );
+
+      await expectNoViolations(element);
+    });
+  });
+
   describe('accessibility', () => {
     it('has no violations in view, cancel and reschedule modes', async () => {
       const element = await mountLoaded();

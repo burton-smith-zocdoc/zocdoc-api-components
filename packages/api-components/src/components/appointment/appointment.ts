@@ -19,7 +19,9 @@ import type {
 import { userFacingError } from '../../utilities/error-message.js';
 import { renderProviderSummary } from '../../utilities/provider-summary.js';
 import summaryStyles from '../../utilities/provider-summary.styles.js';
+import { displayPhone, telHref } from '../../utilities/phone.js';
 import { formatAppointmentTime } from '../../utilities/provider-time.js';
+import { waitingRoomHref } from '../../utilities/waiting-room.js';
 import {
   renderRequestState,
   requestStateDependencies,
@@ -95,6 +97,12 @@ const MOVED_STATUSES: ReadonlySet<AppointmentStatus> = new Set<AppointmentStatus
   'confirmed',
 ]);
 
+/** Statuses with no visit left to join, so no waiting room to link to. */
+const NO_VISIT: ReadonlySet<AppointmentStatus> = new Set<AppointmentStatus>([
+  'cancelled',
+  'booking_failed',
+]);
+
 /**
  * Looks up a booked appointment by ID and lets the patient cancel it or move it to a new
  * time.
@@ -124,6 +132,8 @@ const MOVED_STATUSES: ReadonlySet<AppointmentStatus> = new Set<AppointmentStatus
  * @csspart provider-location - The address, or "Video visit".
  * @csspart when - The appointment's date and time, in the provider's zone.
  * @csspart reference - The confirmation number.
+ * @csspart waiting-room - The link to a video visit's waiting room.
+ * @csspart phone - The practice's phone number, as a `tel:` link.
  * @csspart notice - The polite live region announcing a completed action.
  * @csspart action-error - The alert shown when an action fails.
  * @csspart actions - The row of action buttons.
@@ -437,9 +447,39 @@ export class ZdAppointment extends CharmElement {
         <div><dt>Status</dt><dd part="appointment-status">${status}</dd></div>
         ${this.renderProvider()}
         ${when ? this.html`<div><dt>When</dt><dd part="when">${when}</dd></div>` : nothing}
+        ${this.renderWaitingRoom(appointment)}
         <div><dt>Confirmation number</dt><dd part="reference">${appointment.appointment_id}</dd></div>
+        ${this.renderPhone(appointment)}
       </dl>
     `;
+  }
+
+  /*
+   * Only while there is still a visit to join: a cancelled or failed booking keeps its
+   * `waiting_room_path`, and a link into it would read as an appointment that still stands.
+   * A new tab, and saying so, so this page is still here when the patient comes back.
+   */
+  protected renderWaitingRoom(appointment: AppointmentDetails): unknown {
+    if (NO_VISIT.has(appointment.appointment_status)) return nothing;
+
+    const href = waitingRoomHref(appointment.waiting_room_path);
+    if (!href) return nothing;
+
+    return this
+      .html`<div><dt>Video visit</dt><dd><a part="waiting-room" href=${href} target="_blank" rel="noopener noreferrer">Join your video visit (opens in a new tab)</a></dd></div>`;
+  }
+
+  /*
+   * Kept whatever the status, because the practice is who a patient calls about a cancelled
+   * or failed booking too.
+   */
+  protected renderPhone(appointment: AppointmentDetails): unknown {
+    const number = appointment.location_phone_number;
+    const href = telHref(number, appointment.location_phone_extension);
+    if (!href || !number) return nothing;
+
+    return this
+      .html`<div><dt>Practice phone</dt><dd><a part="phone" href=${href}>${displayPhone(number, appointment.location_phone_extension)}</a></dd></div>`;
   }
 
   protected renderProvider(): unknown {
