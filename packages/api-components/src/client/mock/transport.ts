@@ -129,6 +129,28 @@ function withAssetBase(location: ProviderLocation, assetBaseUrl: string): Provid
   };
 }
 
+/**
+ * Serves `GET /v1/provider_locations/{provider_location_id}`.
+ *
+ * The sandbox's booking and appointment scenario locations (`pr_confirmed|lo_confirmed` and
+ * so on) have no fixture of their own. They answer with the in-person fixture under the
+ * requested id, so every mock appointment has a provider to show without the appointments
+ * leaving their documented ids.
+ */
+function handleProviderLocation(id: string, assetBaseUrl: string): Response {
+  if (id === SCENARIOS.providerLocationError) {
+    return json(errorBody('Simulated server error.', 'api_error'), 500);
+  }
+
+  const fixture = PROVIDER_LOCATIONS.find((location) => location.provider_location_id === id);
+  const location =
+    fixture ?? (BOOKINGS[id] ? { ...PROVIDER_LOCATIONS[0]!, provider_location_id: id } : undefined);
+  if (!location) {
+    return json(errorBody('Provider location not found.', 'invalid_request'), 404);
+  }
+  return json({ request_id: 'req_mock', data: withAssetBase(location, assetBaseUrl) });
+}
+
 function handleProviderLocations(url: URL, assetBaseUrl: string): Response {
   const zip = url.searchParams.get('zip_code');
   const specialtyId = url.searchParams.get('specialty_id');
@@ -396,6 +418,9 @@ function jsonBody(init: RequestInit): unknown {
 
 const APPOINTMENT_PATH = /^\/v1\/appointments\/([^/]+)$/;
 
+/** One segment only, so `/{id}/insurance_mappings` stays unrouted rather than matching here. */
+const PROVIDER_LOCATION_PATH = /^\/v1\/provider_locations\/([^/]+)$/;
+
 /**
  * Creates the transport. Routing is a chain of explicit path checks rather than a table
  * keyed by path, because the interesting endpoints decide on more than the path — the
@@ -451,6 +476,11 @@ export function createMockTransport(options: MockTransportOptions = {}): ZocdocT
 
     if (path === '/v1/provider_locations/availability') {
       return handleAvailability(url, availabilityStartDate);
+    }
+
+    const providerLocationPath = PROVIDER_LOCATION_PATH.exec(path);
+    if (providerLocationPath && (init.method ?? 'GET') === 'GET') {
+      return handleProviderLocation(decodeURIComponent(providerLocationPath[1]!), assetBaseUrl);
     }
 
     // An unrouted path is a bug in the mock, not a 404 the component should render, so

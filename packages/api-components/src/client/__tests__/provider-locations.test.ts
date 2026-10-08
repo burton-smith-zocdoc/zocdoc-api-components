@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { configureZocdoc, resetZocdocConfig } from '../configure.js';
-import { DEFAULT_PAGE_SIZE, searchProviderLocations } from '../provider-locations.js';
+import { ZocdocError, ZocdocNotFoundError } from '../errors.js';
+import {
+  DEFAULT_PAGE_SIZE,
+  getProviderLocation,
+  searchProviderLocations,
+} from '../provider-locations.js';
 import type { ProviderLocation } from '../types.js';
 
 /**
@@ -157,5 +162,61 @@ describe('searchProviderLocations', () => {
     );
 
     await expect(searchProviderLocations({ zipCode: '10112' })).rejects.toBeTruthy();
+  });
+});
+
+describe('getProviderLocation', () => {
+  const ID = 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890';
+
+  beforeEach(() => {
+    configureZocdoc({ baseUrl: 'https://example.test', getToken: 'tok' });
+  });
+
+  afterEach(() => {
+    resetZocdocConfig();
+    vi.unstubAllGlobals();
+  });
+
+  it('requests the location by its encoded id and returns data', async () => {
+    mockSearch(JSON.stringify({ request_id: 'req_test', data: LOCATION }));
+
+    const location = await getProviderLocation(ID);
+
+    const raw = String(vi.mocked(fetch).mock.calls[0]?.[0]);
+    expect(raw).toContain(
+      '/v1/provider_locations/pr_abc123-def456_wxyz7890%7Clo_abc123-def456_wxyz7890'
+    );
+    expect(firstUrl().searchParams.has('insurance_plan_id')).toBe(false);
+    expect(location).toEqual(LOCATION);
+  });
+
+  it('sends insurance_plan_id only when given', async () => {
+    mockSearch(JSON.stringify({ request_id: 'req_test', data: LOCATION }));
+
+    await getProviderLocation(ID, { insurancePlanId: 'ip_9111' });
+
+    expect(firstUrl().searchParams.get('insurance_plan_id')).toBe('ip_9111');
+  });
+
+  it('throws ZocdocNotFoundError on 404', async () => {
+    mockSearch(
+      JSON.stringify({ request_id: 'req_test', error_type: 'invalid_request', errors: [] }),
+      404
+    );
+
+    await expect(getProviderLocation(ID)).rejects.toBeInstanceOf(ZocdocNotFoundError);
+  });
+
+  it('throws on a 200 that carries no location', async () => {
+    mockSearch(JSON.stringify({ request_id: 'req_test' }));
+
+    await expect(getProviderLocation(ID)).rejects.toBeInstanceOf(ZocdocError);
+  });
+
+  it('rejects a blank id without a request', async () => {
+    mockSearch(JSON.stringify({ request_id: 'req_test', data: LOCATION }));
+
+    await expect(getProviderLocation('  ')).rejects.toThrow('providerLocationId is required.');
+    expect(fetch).not.toHaveBeenCalled();
   });
 });

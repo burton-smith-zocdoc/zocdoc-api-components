@@ -1,9 +1,11 @@
+import { ZocdocError } from './errors.js';
 import { request } from './http.js';
 import type {
   ProviderLocation,
   ProviderLocationsData,
   VisitType,
   ZocdocPagedResponse,
+  ZocdocResponse,
 } from './types.js';
 
 export interface ProviderSearchParams {
@@ -78,4 +80,35 @@ export async function searchProviderLocations(
     pageSize: response.page_size ?? DEFAULT_PAGE_SIZE,
     searchParameters: response.data?.search_parameters,
   };
+}
+
+export interface ProviderLocationParams {
+  /** Answers `accepts_patient_insurance` for this plan, as on search. */
+  insurancePlanId?: string;
+}
+
+/**
+ * One provider location by id — `GET /v1/provider_locations/{provider_location_id}`.
+ *
+ * Not cached: CLIENT-004 is for reference data, and this is per-appointment. The id carries a
+ * literal `|`, which `encodeURIComponent` sends as `%7C`; the API accepts either.
+ */
+export async function getProviderLocation(
+  providerLocationId: string,
+  params: ProviderLocationParams = {}
+): Promise<ProviderLocation> {
+  const id = providerLocationId.trim();
+  if (!id) throw new Error('providerLocationId is required.');
+
+  const response = await request<Partial<ZocdocResponse<ProviderLocation>> | undefined>(
+    `/v1/provider_locations/${encodeURIComponent(id)}`,
+    { query: { insurance_plan_id: params.insurancePlanId } }
+  );
+
+  // A 200 with nothing in it is a malformed response, not an empty state: there is no
+  // "no provider" answer for an id the API just accepted.
+  if (!response?.data) {
+    throw new ZocdocError('Zocdoc API returned no provider location.', 200, undefined, response);
+  }
+  return response.data;
 }

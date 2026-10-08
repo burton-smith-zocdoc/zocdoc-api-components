@@ -22,7 +22,7 @@ import {
   SPECIALTIES,
 } from '../mock/fixtures.js';
 import { createMockTransport } from '../mock/transport.js';
-import { searchProviderLocations } from '../provider-locations.js';
+import { getProviderLocation, searchProviderLocations } from '../provider-locations.js';
 import type { Patient } from '../types.js';
 
 const START_DATE = '2026-08-10';
@@ -317,6 +317,66 @@ describe('createMockTransport', () => {
     });
   });
 
+  describe('provider location by id', () => {
+    it('returns a fixture location by its id', async () => {
+      const fixture = PROVIDER_LOCATIONS[0]!;
+
+      const location = await getProviderLocation(fixture.provider_location_id);
+
+      expect(location).toEqual(fixture);
+    });
+
+    it('rebases the photo onto assetBaseUrl, as search does', async () => {
+      configureZocdoc({
+        baseUrl: 'https://mock.test',
+        getToken: 'tok',
+        transport: createMockTransport({ latencyMs: 0, assetBaseUrl: '/docs/' }),
+      });
+
+      const location = await getProviderLocation(PROVIDER_LOCATIONS[0]!.provider_location_id);
+
+      expect(location.provider.provider_photo_url).toBe('/docs/images/michael-scott.png');
+    });
+
+    it('answers every documented appointment location with a provider carrying that id', async () => {
+      for (const { providerLocationId } of Object.values(APPOINTMENTS)) {
+        const location = await getProviderLocation(providerLocationId);
+        expect(location.provider_location_id).toBe(providerLocationId);
+        expect(location.provider.last_name).toBeTruthy();
+      }
+    });
+
+    it('returns 500 for the documented error location', async () => {
+      await expect(getProviderLocation(SCENARIOS.providerLocationError)).rejects.toMatchObject({
+        status: 500,
+      });
+    });
+
+    it('returns 404 for an unknown id', async () => {
+      await expect(getProviderLocation('pr_unknown|lo_unknown')).rejects.toBeInstanceOf(
+        ZocdocNotFoundError
+      );
+    });
+
+    it('leaves availability and deeper paths on their own routes', async () => {
+      const transport = createMockTransport({ latencyMs: 0, availabilityStartDate: START_DATE });
+      const id = encodeURIComponent(PROVIDER_LOCATIONS[0]!.provider_location_id);
+
+      const availability = await getAvailability({
+        providerLocationIds: [PROVIDER_LOCATIONS[0]!.provider_location_id],
+        visitReasonId: 'pc_FRO-18leckytNKtruw5dLR',
+        patientType: 'new',
+      });
+      const mappings = await transport(
+        `https://mock.test/v1/provider_locations/${id}/insurance_mappings`,
+        {}
+      );
+
+      expect(availability).toHaveLength(1);
+      expect(mappings.status).toBe(501);
+    });
+  });
+
   describe('appointment management', () => {
     async function statusOf(error: Promise<unknown>): Promise<number | undefined> {
       const caught = await error.catch((e: unknown) => e);
@@ -354,7 +414,9 @@ describe('createMockTransport', () => {
       expect(await statusOf(getAppointment(id))).toBe(500);
       expect(await statusOf(cancelAppointment({ appointmentId: id }))).toBe(500);
       expect(
-        await statusOf(rescheduleAppointment({ appointmentId: id, startTime: '2026-08-06T14:00:00-04:00' }))
+        await statusOf(
+          rescheduleAppointment({ appointmentId: id, startTime: '2026-08-06T14:00:00-04:00' })
+        )
       ).toBe(500);
     });
 
@@ -371,8 +433,12 @@ describe('createMockTransport', () => {
     });
 
     it('returns 409 for an appointment that is already cancelled or a no-show', async () => {
-      expect(await statusOf(cancelAppointment({ appointmentId: SCENARIOS.appointmentCancelled }))).toBe(409);
-      expect(await statusOf(cancelAppointment({ appointmentId: SCENARIOS.appointmentNoShow }))).toBe(409);
+      expect(
+        await statusOf(cancelAppointment({ appointmentId: SCENARIOS.appointmentCancelled }))
+      ).toBe(409);
+      expect(
+        await statusOf(cancelAppointment({ appointmentId: SCENARIOS.appointmentNoShow }))
+      ).toBe(409);
     });
 
     it('reschedules a confirmed appointment', async () => {
@@ -391,10 +457,14 @@ describe('createMockTransport', () => {
       const startTime = '2026-08-06T14:00:00-04:00';
 
       expect(
-        await statusOf(rescheduleAppointment({ appointmentId: SCENARIOS.appointmentBookingFailed, startTime }))
+        await statusOf(
+          rescheduleAppointment({ appointmentId: SCENARIOS.appointmentBookingFailed, startTime })
+        )
       ).toBe(400);
       expect(
-        await statusOf(rescheduleAppointment({ appointmentId: SCENARIOS.appointmentCancelled, startTime }))
+        await statusOf(
+          rescheduleAppointment({ appointmentId: SCENARIOS.appointmentCancelled, startTime })
+        )
       ).toBe(400);
     });
 

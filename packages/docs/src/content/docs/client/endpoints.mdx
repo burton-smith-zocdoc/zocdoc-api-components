@@ -45,6 +45,24 @@ A search that matches nothing resolves with an empty `providerLocations` array. 
 
 Some provider locations include `booking_requirements`, such as insurance member and plan IDs that are required to book. Check these before collecting patient details.
 
+### getProviderLocation
+
+`GET /v1/provider_locations/{provider_location_id}`: one provider location by its ID.
+
+```typescript
+import { getProviderLocation } from '@zocdoc/api-components';
+
+const location = await getProviderLocation('pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890');
+// location: ProviderLocation, the same shape search returns
+```
+
+| Name                 | Type     | Required | Description                                                               |
+| -------------------- | -------- | -------- | ------------------------------------------------------------------------- |
+| `providerLocationId` | `string` | Yes      | The `provider_location_id`, for example from an appointment               |
+| `insurancePlanId`    | `string` | No       | In the second argument. Answers `accepts_patient_insurance` for this plan |
+
+An unknown ID throws `ZocdocNotFoundError`. Results aren't cached.
+
 ## Availability
 
 ### getAvailability

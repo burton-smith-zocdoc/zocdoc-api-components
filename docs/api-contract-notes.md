@@ -232,6 +232,19 @@ ignored in production** rather than silently dropped — we cannot enumerate wha
 arrive, and a requirement we skip becomes a booking that fails after the patient has filled
 in the form.
 
+### `GET /v1/provider_locations/{provider_location_id}`
+
+In the published OpenAPI spec (v1.177, "Get provider location by id"); not yet probed live.
+
+| Param | In | Notes |
+|---|---|---|
+| `provider_location_id` | path | **required**; contains a literal `\|`, sent as `%7C` |
+| `insurance_plan_id` | query | optional; answers `accepts_patient_insurance` for that plan |
+
+200 is `{ request_id, data: ProviderLocation }`: the unpaged envelope, with `data` the same
+provider-location object search returns. 404 is "Provider location not found". No special
+scope.
+
 ### `GET /v1/provider_locations/availability`
 
 | Param | Type | Notes |
