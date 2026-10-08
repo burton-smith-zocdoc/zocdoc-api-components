@@ -2,8 +2,9 @@
 
 Generated from the Custom Elements Manifest. Do not edit by hand.
 
-11 components. Read this file first, then open the one page you need.
+12 components. Read this file first, then open the one page you need.
 
+- [`zd-appointment`](zd-appointment.md) — Looks up a booked appointment by ID and lets the patient cancel it or move it to a new time.
 - [`zd-availability-grid`](zd-availability-grid.md) — A window of days with the number of appointments open on each — the shape a patient scans to find a day worth opening, b…
 - [`zd-availability-picker`](zd-availability-picker.md) — Fetches bookable timeslots for one provider location and renders them for the patient to choose from.
 - [`zd-availability-window`](zd-availability-window.md) — The range on show with a control on each side — the shared window pager for availability components.

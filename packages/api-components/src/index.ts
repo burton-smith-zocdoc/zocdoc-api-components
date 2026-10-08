@@ -32,6 +32,13 @@ export type { AvailabilityWindowDetail, DetailOf, ErrorDetail } from './componen
 // Component exports. Each subpath's `index.ts` registers the component as a side effect, so
 // importing it is what defines the tag.
 export {
+  ZdAppointment,
+  type AppointmentCancelDetail,
+  type AppointmentErrorDetail,
+  type AppointmentRescheduleDetail,
+  type ZdAppointmentEventMap,
+} from './components/appointment/index.js';
+export {
   ZdAvailabilityGrid,
   type DaySelectDetail,
   type ZdAvailabilityGridEventMap,

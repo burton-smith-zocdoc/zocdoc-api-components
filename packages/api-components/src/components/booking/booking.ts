@@ -848,7 +848,7 @@ export class ZdBooking extends CharmElement {
    * wrapper that does nothing.
    *
    * There is no Back button on the confirmation. A booked appointment is not a step to
-   * reconsider — cancelling one is a different request this library does not make.
+   * reconsider — cancelling or moving one is `<zd-appointment>`'s job, on its own page.
    *
    * The heading is hidden inside the dialog rather than dropped, because the dialog already shows
    * "Book an appointment" and two stacked headings read as a mistake — but the container still
