@@ -6489,6 +6489,412 @@
           }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "source": "src/components/sign-in/sign-in.ts",
+      "path": "dist/components/sign-in/sign-in.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "customElement": true,
+          "name": "ZdSignIn",
+          "description": "Lets a patient sign in with their Zocdoc account, so the booking and appointment components\nrun under the patient's own token.\n\n**Experimental.** Zocdoc's user authentication isn't available yet, so today this runs\nagainst `createMockPatientAuth()`. The real flow will be a drop-in `PatientAuth`.\n\nThere's no password field on purpose. Zocdoc's login page is hosted by Zocdoc, and its\nGoogle and Apple sign-in only work on Zocdoc's domain. A look-alike credential form on a\npartner site would also train patients to type their Zocdoc password where phishing pages ask\nfor it. The optional email only pre-fills Zocdoc's page as `login_hint`.\n\nThe component doesn't configure the client. The host passes `auth.getToken` to\n`configureZocdoc` itself (COMP-002, COMP-004).",
+          "tagName": "zd-sign-in",
+          "superclass": {
+            "name": "CharmElement",
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-confirmation-contact/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+          },
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-confirmation-contact/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "addEventListener",
+              "privacy": "public",
+              "type": {
+                "text": "TypedEventTarget<ZdSignInEventMap>['addEventListener']"
+              },
+              "parsedType": {
+                "text": "{ <K extends \"sign-in-complete\" | \"sign-in-error\">(type: K, listener: (event: ZdSignInEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "auth",
+              "description": "What signs the patient in. Required: without it the button is disabled. Setting a new one\nstarts over from idle and completes any sign-in that returned to this page.",
+              "privacy": "public",
+              "type": {
+                "text": "PatientAuth"
+              },
+              "parsedType": {
+                "text": "{ signIn: (options?: SignInOptions | undefined) => Promise<void>; completeSignIn: () => Promise<boolean>; getToken: () => Promise<string>; isSignedIn: () => boolean } | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "authToken",
+              "description": "Bumped every time `auth` changes, so a late answer from an old `auth` is dropped.",
+              "privacy": "private",
+              "default": "0",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "privacy": "public",
+              "static": true,
+              "default": "'sign-in'",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-confirmation-contact/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              },
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "beginSignIn",
+              "description": "Starts a sign-in. Does nothing without `auth`, or unless idle, so there's never a second call.",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "privacy": "public",
+              "static": true,
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-confirmation-contact/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              },
+              "type": {
+                "text": "\"ltr\" | \"rtl\" | \"auto\""
+              }
+            },
+            {
+              "kind": "field",
+              "name": "email",
+              "description": "The email field's value, sent to Zocdoc as `login_hint`. Property-only so it never lands in\nthe DOM, where it would end up in a screenshot or a page cache (PHI-001). It's still sent\nwhen `hide-email` is set, so a host that already knows it can pre-fill Zocdoc's page.",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "emit",
+              "privacy": "protected",
+              "type": {
+                "text": "TypedEmit<ZdSignInEventMap>"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "focusPart",
+              "description": "The retry and submit buttons are Charm elements created by the render that just finished,\nand they delegate focus to a control in their own shadow root that doesn't exist until\nthey've rendered too. So wait for the part's own update before focusing it.",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "target",
+                  "type": {
+                    "text": "FocusTarget"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "focusTarget",
+              "privacy": "private",
+              "type": {
+                "text": "FocusTarget"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-confirmation-contact/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hideEmail",
+              "description": "Leaves out the optional email field.",
+              "privacy": "public",
+              "attribute": "hide-email",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  },
+                  "rest": true
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-confirmation-contact/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "removeEventListener",
+              "privacy": "public",
+              "type": {
+                "text": "TypedEventTarget<ZdSignInEventMap>['removeEventListener']"
+              },
+              "parsedType": {
+                "text": "{ <K extends \"sign-in-complete\" | \"sign-in-error\">(type: K, listener: (event: ZdSignInEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderError",
+              "description": "Mounts with its text, and its alert role announces on insertion (A11Y-002).",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderForm",
+              "description": "Not `novalidate`: the browser's own `type=\"email\"` check is the only validation, and it's\nwanted. The field isn't required.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "busy",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "resume",
+              "description": "Picks up wherever the current `auth` is: already signed in, back from Zocdoc with a sign-in\nto finish, or neither. Stays idle while completing, because the common answer is \"nothing\nto complete\" and a loading flash on every page load would announce a sign-in that isn't\nhappening.",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "retry",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/.claude/worktrees/feat-confirmation-contact/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              },
+              "type": {
+                "text": "any"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signInState",
+              "privacy": "protected",
+              "internal": true,
+              "type": {
+                "text": "SignInState"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "dir",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "hide-email",
+              "description": "Leaves out the optional email field.",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "hideEmail"
+            }
+          ],
+          "events": [
+            {
+              "name": "ready",
+              "description": "Emitted when the component is ready.",
+              "type": {
+                "text": "Event"
+              },
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "sign-in-complete",
+              "description": "Emitted with `{}` once the patient is signed in. Read the token through `auth.getToken`.",
+              "type": {
+                "text": "Event"
+              }
+            },
+            {
+              "name": "sign-in-error",
+              "description": "Emitted with `{ error }` when signing in, or completing a returned sign-in, fails.",
+              "type": {
+                "text": "Event"
+              }
+            }
+          ],
+          "slots": [
+            {
+              "name": "heading",
+              "description": "Replaces the default \"Sign in to manage your appointments\" heading. Slot an empty element to drop it, for example inside a dialog that has its own."
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "zd-email",
+              "description": "The optional email field."
+            },
+            {
+              "name": "zd-error",
+              "description": "The alert shown when sign-in fails."
+            },
+            {
+              "name": "zd-form",
+              "description": "The sign-in form."
+            },
+            {
+              "name": "zd-heading",
+              "description": "The heading wrapper."
+            },
+            {
+              "name": "zd-help",
+              "description": "The line saying sign-in finishes on Zocdoc."
+            },
+            {
+              "name": "zd-panel",
+              "description": "The container, and the focus target after a successful sign-in."
+            },
+            {
+              "name": "zd-retry",
+              "description": "The button in the alert that returns to the form."
+            },
+            {
+              "name": "zd-status",
+              "description": "The polite live region announcing loading and success."
+            },
+            {
+              "name": "zd-submit",
+              "description": "The \"Continue with Zocdoc\" button."
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "zd-sign-in",
+          "declaration": {
+            "name": "ZdSignIn",
+            "module": "dist/components/sign-in/sign-in.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "ZdSignIn",
+          "declaration": {
+            "name": "ZdSignIn",
+            "module": "dist/components/sign-in/sign-in.js"
+          }
+        }
+      ]
     }
   ]
 }

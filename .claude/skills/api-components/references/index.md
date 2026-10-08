@@ -2,7 +2,7 @@
 
 Generated from the Custom Elements Manifest. Do not edit by hand.
 
-12 components. Read this file first, then open the one page you need.
+13 components. Read this file first, then open the one page you need.
 
 - [`zd-appointment`](zd-appointment.md) — Looks up a booked appointment by ID and lets the patient cancel it or move it to a new time.
 - [`zd-availability-grid`](zd-availability-grid.md) — A window of days with the number of appointments open on each — the shape a patient scans to find a day worth opening, b…
@@ -16,3 +16,4 @@ Generated from the Custom Elements Manifest. Do not edit by hand.
 - [`zd-provider-results`](zd-provider-results.md) — Renders a list of provider locations and emits the one the user picks.
 - [`zd-provider-search`](zd-provider-search.md) — Collects search criteria and queries `GET /v1/provider_locations`.
 - [`zd-provider-summary`](zd-provider-summary.md) — Displays a provider's photo, name, specialty, location, and insurance status in a compact summary layout.
+- [`zd-sign-in`](zd-sign-in.md) — Lets a patient sign in with their Zocdoc account, so the booking and appointment components run under the patient's own …

@@ -12546,6 +12546,8 @@
             {
               "kind": "field",
               "name": "value",
+              "description": "Charm reflects `value` to an attribute, which would put whatever a patient types into the\npage's markup (PHI-001). Redeclared without `reflect`: a `value` attribute in the markup is\nstill read in, but typing never writes one back out.",
+              "privacy": "public",
               "inheritedFrom": {
                 "name": "CoreInput",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20260901162808_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/components/input/input.d.ts"

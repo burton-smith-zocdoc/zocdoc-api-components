@@ -132,6 +132,8 @@ drifting from what it emits. See `components/events.ts`.
 | `zd-booking` | `booking-complete` | `BookingCompleteDetail` — `{ appointmentId: string, status: AppointmentStatus }` |
 | `zd-booking` | `booking-error` | `BookingErrorDetail` — `{ error: unknown, status?: AppointmentStatus }` |
 | `zd-booking` | `availability-error` | `ErrorDetail` — nothing is rendered for it |
+| `zd-sign-in` | `sign-in-complete` | `SignInCompleteDetail` — `{}`. The token is never on an event; read it through `auth.getToken`. |
+| `zd-sign-in` | `sign-in-error` | `ErrorDetail` |
 
 `day-select` and `window-change` are each emitted by two components with different payloads, which
 is why these live in per-component event maps rather than a global `HTMLElementEventMap`

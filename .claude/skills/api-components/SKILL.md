@@ -5,7 +5,7 @@ description: Map of @zocdoc/api-components - which file to read for what, the sh
 
 # API Components Reference
 
-Booking components for the Zocdoc public API. Ten public components over a
+Booking components for the Zocdoc public API. Thirteen public components over a
 client layer, sharing one state machine and a folder of internal helpers.
 
 For the layers around this one: `client` (endpoints, errors, caching), `testing`
@@ -47,12 +47,12 @@ the manifest does not currently merge that base class in — see "Names `CharmEl
 owns" below for what it brings.
 
 These pages also don't distinguish fetching from presentational — that's on you to track. **Five
-of the twelve components fetch on their own:** `availability-grid` and `availability-picker` via
+of the thirteen components fetch on their own:** `availability-grid` and `availability-picker` via
 `load()`, `provider-search` via `search()` (which also loads reference data — specialties,
 insurance plans), `booking` via `book()` (which also calls `createAppointment` and
 `getAvailability` directly), and `appointment` via `load()`, `cancel()` and `reschedule()` (which
 call `getAppointment`, `getProviderLocation`, `cancelAppointment` and `rescheduleAppointment`). The
-other seven only import client *types*, never client functions —
+other eight only import client *types*, never client functions —
 most notably `provider-results`, whose `goToPage()` and `shiftWindow()` methods look
 state-changing on the reference page but only reshuffle data the caller already fetched.
 Assuming a component fetches because it has a method that changes what's on screen is the most

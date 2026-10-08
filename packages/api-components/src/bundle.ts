@@ -102,6 +102,11 @@ export {
   type ProviderResultsDetail,
   type ZdProviderSearchEventMap,
 } from './components/provider-search/index.js';
+export {
+  ZdSignIn,
+  type SignInCompleteDetail,
+  type ZdSignInEventMap,
+} from './components/sign-in/index.js';
 
 // Re-export utilities
 export { providerHeading } from './utilities/provider-summary.js';
