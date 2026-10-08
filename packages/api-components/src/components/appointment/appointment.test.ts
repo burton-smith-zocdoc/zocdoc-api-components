@@ -126,6 +126,12 @@ describe('zd-appointment', () => {
       expect(text(element, 'reference')).toBe(ID);
     });
 
+    it('keeps the outcome notice region visible before any action', async () => {
+      const element = await mountLoaded();
+
+      expect(getComputedStyle(part(element, 'notice')).display).not.toBe('none');
+    });
+
     it('stays idle without an id', async () => {
       const spy = vi.spyOn(appointments, 'getAppointment');
       const element = await mount<Manage>('<zd-appointment appointment-id="  "></zd-appointment>');
@@ -266,6 +272,57 @@ describe('zd-appointment', () => {
       expect(text(element, 'action-error')).toContain('can no longer be cancelled');
       expect(queryPart(element, 'actions')).toBeNull();
       expect(seen[0]?.detail.action).toBe('cancel');
+    });
+
+    it('on 409 from the cancel form, keeps the panel mounted and focused', async () => {
+      const element = await mountLoaded();
+      await click(element, 'cancel');
+      vi.mocked(appointments.cancelAppointment).mockRejectedValueOnce(
+        new ZocdocError('Zocdoc API request failed with 409.', 409)
+      );
+      vi.mocked(appointments.getAppointment).mockResolvedValueOnce(
+        details({ appointment_status: 'no_show' })
+      );
+      let sawLoading = false;
+      const observer = new MutationObserver(() => {
+        if (queryPart(element, 'loading')) sawLoading = true;
+      });
+      observer.observe(shadow(element), { childList: true, subtree: true });
+
+      part<HTMLFormElement>(element, 'cancel-form').requestSubmit();
+      await vi.waitFor(() => expect(text(element, 'appointment-status')).toBe('Missed'));
+      await settled(element);
+      observer.disconnect();
+
+      expect(sawLoading).toBe(false);
+      expect(shadow(element).activeElement).toBe(part(element, 'panel'));
+      expect(text(element, 'action-error')).toContain('can no longer be cancelled');
+    });
+
+    it('drops a late cancel failure after the id changed', async () => {
+      const element = await mountLoaded();
+      let fail!: (reason: unknown) => void;
+      const pending = new Promise<never>((_, reject) => {
+        fail = reject;
+      });
+      vi.mocked(appointments.cancelAppointment).mockReturnValueOnce(pending);
+      const inFlight = element.cancel();
+
+      vi.mocked(appointments.getAppointment).mockResolvedValueOnce(
+        details({
+          appointment_id: SCENARIOS.appointmentPending,
+          appointment_status: 'pending_booking',
+        })
+      );
+      element.appointmentId = SCENARIOS.appointmentPending;
+      await vi.waitFor(() => expect(text(element, 'reference')).toBe(SCENARIOS.appointmentPending));
+
+      fail(new ZocdocError('Zocdoc API request failed with 500.', 500));
+      await inFlight;
+      await settled(element);
+
+      expect(queryPart(element, 'action-error')).toBeNull();
+      expect(text(element, 'reference')).toBe(SCENARIOS.appointmentPending);
     });
 
     it('shows generic copy, never the error message, on other failures', async () => {

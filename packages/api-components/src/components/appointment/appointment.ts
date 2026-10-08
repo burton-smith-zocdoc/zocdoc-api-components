@@ -184,6 +184,7 @@ export class ZdAppointment extends CharmElement {
     const id = this.appointmentId?.trim();
 
     this.mode = 'view';
+    this.busy = false;
     this.notice = undefined;
     this.actionError = undefined;
     this.reasonType = undefined;
@@ -236,7 +237,6 @@ export class ZdAppointment extends CharmElement {
       });
 
       if (result.appointment_status !== 'cancelled') {
-        this.actionError = 'This appointment could not be cancelled. Please contact the practice.';
         this.emit('appointment-error', {
           detail: {
             error: new Error(`Appointment status: ${result.appointment_status}`),
@@ -244,6 +244,9 @@ export class ZdAppointment extends CharmElement {
             status: result.appointment_status,
           },
         });
+        if (token !== this.loadToken) return;
+
+        this.actionError = 'This appointment could not be cancelled. Please contact the practice.';
         return;
       }
 
@@ -258,17 +261,39 @@ export class ZdAppointment extends CharmElement {
       this.notice = 'Your appointment is cancelled.';
     } catch (error: unknown) {
       this.emit('appointment-error', { detail: { error, action: 'cancel' } });
+      if (token !== this.loadToken) return;
 
       if (error instanceof ZocdocError && error.status === 409) {
         // Its status changed elsewhere. Show the real one rather than the stale one.
-        await this.load();
+        await this.refresh(token);
+        if (token !== this.loadToken) return;
         this.actionError =
           'This appointment can no longer be cancelled. Its current status is shown.';
       } else {
         this.actionError = userFacingError(error);
       }
     } finally {
-      this.busy = false;
+      if (token === this.loadToken) this.busy = false;
+    }
+  }
+
+  /**
+   * Refetches without leaving `success`, so the panel stays mounted and keeps focus (A11Y-003).
+   * A failed refetch keeps what is shown and emits nothing: the caller already reported the error.
+   */
+  private async refresh(token: number): Promise<void> {
+    const id = this.appointment?.appointment_id;
+    if (!id) return;
+
+    try {
+      const appointment = await getAppointment(id);
+      if (token !== this.loadToken) return;
+
+      this.appointment = appointment;
+      this.mode = 'view';
+      this.reasonType = undefined;
+    } catch {
+      // Keep the current appointment.
     }
   }
 
@@ -292,8 +317,6 @@ export class ZdAppointment extends CharmElement {
       });
 
       if (!MOVED_STATUSES.has(result.appointment_status)) {
-        // Stays on the picker: the likeliest fix is another time.
-        this.actionError = 'The new time could not be booked. Try choosing another time.';
         this.emit('appointment-error', {
           detail: {
             error: new Error(`Appointment status: ${result.appointment_status}`),
@@ -301,6 +324,10 @@ export class ZdAppointment extends CharmElement {
             status: result.appointment_status,
           },
         });
+        if (token !== this.loadToken) return;
+
+        // Stays on the picker: the likeliest fix is another time.
+        this.actionError = 'The new time could not be booked. Try choosing another time.';
         return;
       }
 
@@ -325,10 +352,12 @@ export class ZdAppointment extends CharmElement {
           ? 'Your change was sent. The practice still has to accept the new time.'
           : 'Your appointment has a new time.';
     } catch (error: unknown) {
-      this.actionError = userFacingError(error);
       this.emit('appointment-error', { detail: { error, action: 'reschedule' } });
+      if (token !== this.loadToken) return;
+
+      this.actionError = userFacingError(error);
     } finally {
-      this.busy = false;
+      if (token === this.loadToken) this.busy = false;
     }
   }
 

@@ -41,8 +41,9 @@ export default css`
     }
   }
 
-  .notice:empty {
-    display: none;
+  /* Never display:none or visibility:hidden: that drops the live region from the accessibility tree. */
+  .notice {
+    margin: 0;
   }
 
   .cancel-form {
