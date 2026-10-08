@@ -1,0 +1,100 @@
+---
+title: Appointment
+description: Look up, cancel, or reschedule a booked appointment
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+
+<PreviewRuntime />
+
+The `<zd-appointment>` component loads a booked appointment by its ID, shows its status and time, and lets the patient cancel it or move it to a new time.
+
+## Usage
+
+```html preview
+<zd-appointment
+  appointment-id="d2ee5bd8-643a-42c8-8c5a-be450e903430"
+  provider-name="Dr. Avery Sandoval, MD"
+></zd-appointment>
+```
+
+The example uses the sandbox's confirmed appointment ID. In the docs it runs against the mock, which doesn't store anything, so a cancelled appointment comes back confirmed when you reload.
+
+## Attributes
+
+| Attribute        | Property        | Type     | Description                                                                                          |
+| ---------------- | --------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `appointment-id` | `appointmentId` | `string` | The `appointment_id` from booking. Changing it reloads                                               |
+| `provider-name`  | `providerName`  | `string` | Who the appointment is with. The lookup doesn't return a name, so pass the one you showed at booking |
+
+## What Patients Can Do
+
+The appointment's status decides which actions appear:
+
+| Status                                                              | Change time | Cancel |
+| ------------------------------------------------------------------- | ----------- | ------ |
+| `confirmed`, `pending_booking`, `pending_reschedule`, `rescheduled` | Yes         | Yes    |
+| `reschedule_failed`                                                 | No          | Yes    |
+| `booking_failed`, `cancelled`, `no_show`                            | No          | No     |
+
+"Change time" also requires the lookup to return `patient_type`. A reschedule keeps the original location, visit reason, and patient type, so the component shows times only for those. Without the patient type it can't tell which times the API will accept.
+
+Cancelling asks for confirmation first, with an optional reason.
+
+## Methods
+
+| Method                  | Description                                                                                           |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- |
+| `load()`                | Fetches the appointment again                                                                         |
+| `cancel(reasonType?)`   | Cancels without the confirmation step. `reasonType` is a `CancellationReasonType`                     |
+| `reschedule(startTime)` | Moves the appointment to `startTime`, a timeslot for its own location, visit reason, and patient type |
+
+While one action is in flight, a second call does nothing. Neither action retries by itself.
+
+## Events
+
+| Event                    | Detail                                 | Description                                                                                                                                                                     |
+| ------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `appointment-cancel`     | `{ appointmentId, status }`            | The appointment was cancelled                                                                                                                                                   |
+| `appointment-reschedule` | `{ appointmentId, status, startTime }` | The appointment moved. `status` may be `pending_reschedule` while the practice reviews it                                                                                       |
+| `appointment-error`      | `{ error, action, status? }`           | A lookup, cancel, or reschedule failed. `action` is `load`, `cancel`, or `reschedule`. `status` is set when the API returned `200` with an outcome that isn't the one asked for |
+
+The embedded picker's `availability-error` and `slot-select` events also bubble out.
+
+<Aside type="danger">
+  `detail.error` is for your error handling, not your UI. Never render or log `error.body`.
+</Aside>
+
+## Zocdoc API
+
+| Action      | Endpoint                                                                           | Scope                        |
+| ----------- | ---------------------------------------------------------------------------------- | ---------------------------- |
+| Look up     | `GET /v1/appointments/{appointment_id}`                                            | `external.appointment.read`  |
+| Cancel      | `POST /v1/appointments/cancel`                                                     | `external.appointment.write` |
+| Change time | `GET /v1/provider_locations/availability`, then `POST /v1/appointments/reschedule` | `external.appointment.write` |
+
+An appointment booked with a user credential can only be viewed or changed by that user. Machine-to-machine credentials can reach any appointment booked by the developer's machine-to-machine credentials. If cancel returns `409` because the appointment changed elsewhere, the component reloads it and says it can no longer be cancelled.
+
+See Zocdoc's [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointments) and [Reschedule](https://api-docs.zocdoc.com/guides/patient/reschedule-appointments) guides.
+
+## Accessibility
+
+- Loading and errors use the same live regions as the other components
+- A completed action is announced through a polite status region
+- A failed action is announced as an alert
+- Focus moves to the panel on each change between viewing, cancelling, and choosing a time
+
+## Styling
+
+| CSS part                                              | Element                                            |
+| ----------------------------------------------------- | -------------------------------------------------- |
+| `panel`                                               | The container for every mode, and the focus target |
+| `heading`                                             | The panel heading                                  |
+| `details`                                             | The details list                                   |
+| `appointment-status`, `provider`, `when`, `reference` | The individual details                             |
+| `notice`                                              | The status message after an action                 |
+| `action-error`                                        | The alert when an action fails                     |
+| `actions`, `reschedule`, `cancel`                     | The action row and its buttons                     |
+| `cancel-form`, `reason`, `confirm-cancel`, `keep`     | The cancel confirmation                            |
+| `picker`, `confirm-reschedule`, `back`                | The new-time step                                  |

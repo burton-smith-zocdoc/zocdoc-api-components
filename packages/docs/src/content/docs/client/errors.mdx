@@ -13,11 +13,11 @@ Any non-2xx response is thrown as a typed error:
 import { ZocdocError, ZocdocAuthError, ZocdocNotFoundError } from '@zocdoc/api-components';
 ```
 
-| Class | Status | `code` | Typical cause |
-|---|---|---|---|
-| `ZocdocAuthError` | `401` | `AUTH_ERROR` | Expired token (access tokens last 60 minutes), or a token from the wrong environment |
-| `ZocdocNotFoundError` | `404` | `NOT_FOUND` | A resource ID that doesn't exist |
-| `ZocdocError` | Anything else | `undefined` | `400` validation errors, `403` missing scope, `429` rate limit, `5xx` server errors |
+| Class                 | Status        | `code`       | Typical cause                                                                                                                             |
+| --------------------- | ------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `ZocdocAuthError`     | `401`         | `AUTH_ERROR` | Expired token (access tokens last 60 minutes), or a token from the wrong environment                                                      |
+| `ZocdocNotFoundError` | `404`         | `NOT_FOUND`  | A resource ID that doesn't exist                                                                                                          |
+| `ZocdocError`         | Anything else | `undefined`  | `400` validation errors, `403` missing scope, `409` an appointment that can no longer be cancelled, `429` rate limit, `5xx` server errors |
 
 All three extend `ZocdocError`, which has these properties:
 
@@ -30,7 +30,8 @@ An empty search isn't an error. A search that matches nothing resolves with an e
 Network failures, such as being offline or blocked by CORS, aren't wrapped. They surface as the `TypeError` that `fetch` throws.
 
 <Aside type="danger">
-  Never render or log `error.body`. A `400` from the booking endpoint can echo submitted patient field values, which are PHI.
+  Never render or log `error.body`. A `400` from the booking endpoint can echo submitted patient
+  field values, which are PHI.
 </Aside>
 
 ### ZocdocAuthError
@@ -55,11 +56,12 @@ Thrown for a `404`. It's kept distinct from `ZocdocError` so a missing resource 
 
 Components catch errors, render an accessible error state, and emit an error event with the original error in `detail.error`:
 
-| Event | Emitted by |
-|---|---|
-| `provider-search-error` | `<zd-provider-search>` |
-| `availability-error` | `<zd-availability-picker>`, `<zd-availability-grid>`, `<zd-booking>` |
-| `booking-error` | `<zd-booking>`. When the API returned `200` with a status that isn't a booking (such as `booking_failed`), `detail.status` holds that status |
+| Event                   | Emitted by                                                                                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `provider-search-error` | `<zd-provider-search>`                                                                                                                                          |
+| `availability-error`    | `<zd-availability-picker>`, `<zd-availability-grid>`, `<zd-booking>`                                                                                            |
+| `booking-error`         | `<zd-booking>`. When the API returned `200` with a status that isn't a booking (such as `booking_failed`), `detail.status` holds that status                    |
+| `appointment-error`     | `<zd-appointment>`. `detail.action` says which call failed, and `detail.status` is set when the API returned `200` with an outcome that isn't the one asked for |
 
 ```javascript
 import { ZocdocAuthError } from '@zocdoc/api-components';
@@ -137,4 +139,4 @@ async function withBackoff(fn, maxRetries = 3) {
 const results = await withBackoff(() => searchProviderLocations({ zipCode: '11201' }));
 ```
 
-Don't retry other failures. A `400` will fail again, and a `401` or `403` needs a new or different token. Don't automatically retry `createAppointment` after a `5xx`, either. The API doesn't document idempotency, so a retry could double-book.
+Don't retry other failures. A `400` will fail again, and a `401` or `403` needs a new or different token. Don't automatically retry `createAppointment` after a `5xx`, either. The API doesn't document idempotency, so a retry could double-book. The same goes for `cancelAppointment` and `rescheduleAppointment`.

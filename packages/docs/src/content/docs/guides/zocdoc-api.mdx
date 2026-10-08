@@ -11,13 +11,14 @@ These components are a UI layer over the [Zocdoc public API](https://api-docs.zo
 
 Zocdoc's [Find Provider Availability and Book Appointments](https://api-docs.zocdoc.com/guides/patient/book-appointments) guide describes a sequence of calls. Each step maps to a client function and the components involved:
 
-| Step | API endpoint | Client function | Fetched by | Rendered by |
-|---|---|---|---|---|
-| Load search options | `GET /v1/specialties`, `GET /v1/visit_reasons`, `GET /v1/insurance_plans` | `getSpecialties`, `getVisitReasons`, `getInsurancePlans` | `<zd-provider-search>` | `<zd-provider-search>` |
-| Find providers | `GET /v1/provider_locations` | `searchProviderLocations` | `<zd-provider-search>` | `<zd-provider-results>`, `<zd-provider-card>` |
-| Show open times | `GET /v1/provider_locations/availability` | `getAvailability` | `<zd-availability-picker>` and `<zd-availability-grid>` (one location each); `<zd-booking>` (batched day counts for a results page) | `<zd-availability-picker>`, `<zd-availability-grid>`, `<zd-provider-results>` |
-| Book | `POST /v1/appointments` | `createAppointment` | `<zd-booking>` | `<zd-patient-form>` |
-| Confirm | (booking response) | — | — | `<zd-booking-confirmation>` |
+| Step                | API endpoint                                                                                    | Client function                                                | Fetched by                                                                                                                          | Rendered by                                                                   |
+| ------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Load search options | `GET /v1/specialties`, `GET /v1/visit_reasons`, `GET /v1/insurance_plans`                       | `getSpecialties`, `getVisitReasons`, `getInsurancePlans`       | `<zd-provider-search>`                                                                                                              | `<zd-provider-search>`                                                        |
+| Find providers      | `GET /v1/provider_locations`                                                                    | `searchProviderLocations`                                      | `<zd-provider-search>`                                                                                                              | `<zd-provider-results>`, `<zd-provider-card>`                                 |
+| Show open times     | `GET /v1/provider_locations/availability`                                                       | `getAvailability`                                              | `<zd-availability-picker>` and `<zd-availability-grid>` (one location each); `<zd-booking>` (batched day counts for a results page) | `<zd-availability-picker>`, `<zd-availability-grid>`, `<zd-provider-results>` |
+| Book                | `POST /v1/appointments`                                                                         | `createAppointment`                                            | `<zd-booking>`                                                                                                                      | `<zd-patient-form>`                                                           |
+| Confirm             | (booking response)                                                                              | —                                                              | —                                                                                                                                   | `<zd-booking-confirmation>`                                                   |
+| Manage              | `GET /v1/appointments/{id}`, `POST /v1/appointments/cancel`, `POST /v1/appointments/reschedule` | `getAppointment`, `cancelAppointment`, `rescheduleAppointment` | `<zd-appointment>`                                                                                                                  | `<zd-appointment>`                                                            |
 
 `<zd-booking>` runs every step in order. If you compose the components yourself, the picker still fetches its own times, but your code passes data between the components and makes the booking call. See [Composed vs Single Element](/zocdoc-api-components/guides/composed-vs-single/).
 
@@ -45,10 +46,12 @@ The components already follow these rules. You'll need them if you call the clie
 - **A successful response doesn't mean a confirmed appointment.** Check `appointment_status`. It may be `confirmed`, `pending_booking` (waiting on the practice), or `booking_failed`, which is a failure that arrives with a `200` status.
 - Some provider locations have booking requirements. For example, insurance member and plan IDs may be required, self-pay may not be accepted, or the location may be in-network only. Violating a requirement returns `400`. `<zd-patient-form>` requires the insurance fields a location lists. See [Insurance](/zocdoc-api-components/components/patient-form/#insurance).
 - `notes` is limited to 100 characters.
-- To reschedule or cancel an appointment, use the returned `appointment_id`. See Zocdoc's [Reschedule](https://api-docs.zocdoc.com/guides/patient/reschedule-appointments) and [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointments) guides. The components don't cover these flows yet.
+- To reschedule or cancel an appointment, use the returned `appointment_id` with [`<zd-appointment>`](/zocdoc-api-components/components/appointment/) or the client functions. A reschedule keeps the location, visit reason, and patient type, and only moves the time. See Zocdoc's [Reschedule](https://api-docs.zocdoc.com/guides/patient/reschedule-appointments) and [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointments) guides.
 
 <Aside type="note">
-  Instead of booking through the API, you can send the patient to the `booking_url` on a timeslot to complete booking on zocdoc.com. Zocdoc notes this only suits certain use cases and partnerships. See the [FAQs](https://api-docs.zocdoc.com/guides/faqs).
+  Instead of booking through the API, you can send the patient to the `booking_url` on a timeslot to
+  complete booking on zocdoc.com. Zocdoc notes this only suits certain use cases and partnerships.
+  See the [FAQs](https://api-docs.zocdoc.com/guides/faqs).
 </Aside>
 
 ## Reference Data

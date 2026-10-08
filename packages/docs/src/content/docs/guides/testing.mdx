@@ -22,11 +22,11 @@ configureZocdocMock();
 
 This replaces the network call with a transport that serves fixture data. Components work exactly as they do live. Nothing is stored: submitted patient details are checked and then discarded.
 
-| Option | Default | Description |
-|---|---|---|
-| `latencyMs` | `300` | Delay per request, so loading states are visible |
+| Option                  | Default                   | Description                                                               |
+| ----------------------- | ------------------------- | ------------------------------------------------------------------------- |
+| `latencyMs`             | `300`                     | Delay per request, so loading states are visible                          |
 | `availabilityStartDate` | Requested start, or today | Pins the first day of generated availability. Use it for stable snapshots |
-| `assetBaseUrl` | Origin root | Prefix for fixture photo paths when the host is served under a sub-path |
+| `assetBaseUrl`          | Origin root               | Prefix for fixture photo paths when the host is served under a sub-path   |
 
 To build your own `configureZocdoc` call around the mock (for example, alongside a different `baseUrl`), use `createMockTransport(options)` as the `transport` option.
 
@@ -40,44 +40,65 @@ import { configureZocdocMock, SCENARIOS } from '@zocdoc/api-components/mock';
 
 ### Provider search (`GET /v1/provider_locations`)
 
-| Input | `SCENARIOS` key | Result |
-|---|---|---|
-| `zip_code=11201` | `zipWithResults` | Provider locations, some with booking requirements |
-| `zip_code=99734` | `zipEmpty` | No provider locations (empty state) |
-| `zip_code=10112` | `zipError` | `500` error |
-| `insurance_plan_id=ip_0` | `insurancePlanMissing` | `400` invalid plan |
+| Input                    | `SCENARIOS` key        | Result                                             |
+| ------------------------ | ---------------------- | -------------------------------------------------- |
+| `zip_code=11201`         | `zipWithResults`       | Provider locations, some with booking requirements |
+| `zip_code=99734`         | `zipEmpty`             | No provider locations (empty state)                |
+| `zip_code=10112`         | `zipError`             | `500` error                                        |
+| `insurance_plan_id=ip_0` | `insurancePlanMissing` | `400` invalid plan                                 |
 
 ### Availability (`GET /v1/provider_locations/availability`)
 
-| Provider location ID | `SCENARIOS` key | Result |
-|---|---|---|
+| Provider location ID                   | `SCENARIOS` key                  | Result            |
+| -------------------------------------- | -------------------------------- | ----------------- |
 | `pr_no_availbility\|lo_no_availbility` | `providerLocationNoAvailability` | No open timeslots |
-| `pr_error\|lo_error` | `providerLocationError` | `500` error |
+| `pr_error\|lo_error`                   | `providerLocationError`          | `500` error       |
 
 <Aside type="note">
-  `no_availbility` is misspelled in Zocdoc's guide, and the sandbox matches the misspelled value. Use it as written.
+  `no_availbility` is misspelled in Zocdoc's guide, and the sandbox matches the misspelled value.
+  Use it as written.
 </Aside>
 
 ### Booking (`POST /v1/appointments`)
 
 The `provider_location_id` you book determines the returned `appointment_status`:
 
-| Provider location ID | `SCENARIOS` key | Result |
-|---|---|---|
-| `pr_confirmed\|lo_confirmed` | `providerLocationConfirmed` | `confirmed` |
-| `pr_pending\|lo_pending` | `providerLocationPending` | `pending_booking` |
-| `pr_bookingfailed\|lo_bookingfailed` | `providerLocationBookingFailed` | `booking_failed` |
-| `pr_cancelled\|lo_cancelled` | `providerLocationCancelled` | `cancelled` |
-| `pr_noshow\|lo_noshow` | `providerLocationNoShow` | `no_show` |
-| `pr_pendingreschedule\|lo_pendingreschedule` | `providerLocationPendingReschedule` | `pending_reschedule` |
-| `pr_rescheduled\|lo_rescheduled` | `providerLocationRescheduled` | `rescheduled` |
-| `pr_reschedulefailed\|lo_reschedulefailed` | `providerLocationRescheduleFailed` | `reschedule_failed` |
-| `pr_insuranceIdIsRequired\|lo_insuranceIdIsRequired` | `providerLocationInsuranceRequired` | `400` unless insurance plan and member IDs are sent |
-| `pr_selfPayNotAccepted\|lo_selfPayNotAccepted` | `providerLocationSelfPayNotAccepted` | `400` when `is_self_pay` is `true` |
-| `pr_acceptsInNetworkOnly\|lo_acceptsInNetworkOnly` | `providerLocationInNetworkOnly` | `400` when an insurance plan is supplied |
-| `pr_error\|lo_error` | `providerLocationError` | `500` error |
+| Provider location ID                                 | `SCENARIOS` key                      | Result                                              |
+| ---------------------------------------------------- | ------------------------------------ | --------------------------------------------------- |
+| `pr_confirmed\|lo_confirmed`                         | `providerLocationConfirmed`          | `confirmed`                                         |
+| `pr_pending\|lo_pending`                             | `providerLocationPending`            | `pending_booking`                                   |
+| `pr_bookingfailed\|lo_bookingfailed`                 | `providerLocationBookingFailed`      | `booking_failed`                                    |
+| `pr_cancelled\|lo_cancelled`                         | `providerLocationCancelled`          | `cancelled`                                         |
+| `pr_noshow\|lo_noshow`                               | `providerLocationNoShow`             | `no_show`                                           |
+| `pr_pendingreschedule\|lo_pendingreschedule`         | `providerLocationPendingReschedule`  | `pending_reschedule`                                |
+| `pr_rescheduled\|lo_rescheduled`                     | `providerLocationRescheduled`        | `rescheduled`                                       |
+| `pr_reschedulefailed\|lo_reschedulefailed`           | `providerLocationRescheduleFailed`   | `reschedule_failed`                                 |
+| `pr_insuranceIdIsRequired\|lo_insuranceIdIsRequired` | `providerLocationInsuranceRequired`  | `400` unless insurance plan and member IDs are sent |
+| `pr_selfPayNotAccepted\|lo_selfPayNotAccepted`       | `providerLocationSelfPayNotAccepted` | `400` when `is_self_pay` is `true`                  |
+| `pr_acceptsInNetworkOnly\|lo_acceptsInNetworkOnly`   | `providerLocationInNetworkOnly`      | `400` when an insurance plan is supplied            |
+| `pr_error\|lo_error`                                 | `providerLocationError`              | `500` error                                         |
 
-In the mock, any other location confirms. Zocdoc's guide also documents sandbox scenarios for endpoints these components don't call yet, including `/v1/providers` by NPI, facilities, insurance mappings, cancel, and reschedule.
+In the mock, any other location confirms. Zocdoc's guide also documents sandbox scenarios for endpoints these components don't call yet, including `/v1/providers` by NPI, facilities, and insurance mappings.
+
+### Appointments (`GET /v1/appointments/{id}`, cancel, reschedule)
+
+These are the IDs booking returns, so a test can book and then manage the same appointment:
+
+| Appointment ID                         | `SCENARIOS` key                | Status                         |
+| -------------------------------------- | ------------------------------ | ------------------------------ |
+| `2b29f79b-6d7f-472a-9603-d0c378bc9531` | `appointmentPending`           | `pending_booking`              |
+| `d2ee5bd8-643a-42c8-8c5a-be450e903430` | `appointmentConfirmed`         | `confirmed` (new patient)      |
+| `423e6a11-8dac-4873-b933-d8d02f9a370f` | `appointmentConfirmedExisting` | `confirmed` (existing patient) |
+| `34e4ead3-ca69-4448-9438-58702dd1048f` | `appointmentBookingFailed`     | `booking_failed`               |
+| `21990114-ea71-4d7d-9d1e-00c43ae44bcd` | `appointmentCancelled`         | `cancelled`                    |
+| `a0a7770d-e667-416c-9f06-9c3b40a7bb84` | `appointmentNoShow`            | `no_show`                      |
+| `63f995c2-49c4-40c8-a93a-140fb32e913b` | `appointmentPendingReschedule` | `pending_reschedule`           |
+| `8507d05f-cbe5-4732-b72a-22add9c80120` | `appointmentRescheduled`       | `rescheduled`                  |
+| `84d04f67-b2cf-4afd-ab64-193072498ed5` | `appointmentRescheduleFailed`  | `reschedule_failed`            |
+| `83f5cf14-3eb1-4034-be1f-e7c3058aad21` | `appointmentNotFound`          | `404` on all three calls       |
+| `dc69a428-8a73-461b-bd7b-df755910a3fb` | `appointmentError`             | `500` on all three calls       |
+
+In the mock, cancel returns `cancelled`, or `409` for `cancelled` and `no_show`. Reschedule returns `rescheduled`, or `400` for a status that can't move. The mock is stateless, so a cancelled appointment looks up with its original status again. The mock doesn't check that a reschedule time was offered. The real API does.
 
 ### Insurance plans
 
@@ -121,13 +142,13 @@ describe('provider search', () => {
 
 Patient details are PHI in production. In tests, use obviously fake values. Never use real-looking names, phone numbers, or addresses:
 
-| Field | Test Value |
-|-------|------------|
-| `first_name` | `Test` |
-| `last_name` | `Patient` |
-| `date_of_birth` | `1990-01-15` |
-| `phone_number` | `2125550001` (10 digits; the 1st and 4th digits can't be 0 or 1) |
-| `email_address` | `test@example.com` |
+| Field           | Test Value                                                       |
+| --------------- | ---------------------------------------------------------------- |
+| `first_name`    | `Test`                                                           |
+| `last_name`     | `Patient`                                                        |
+| `date_of_birth` | `1990-01-15`                                                     |
+| `phone_number`  | `2125550001` (10 digits; the 1st and 4th digits can't be 0 or 1) |
+| `email_address` | `test@example.com`                                               |
 
 ## Component Testing
 
