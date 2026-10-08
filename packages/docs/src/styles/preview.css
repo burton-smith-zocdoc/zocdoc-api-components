@@ -8,6 +8,17 @@
   --code-bubble-button-fg-color: var(--sl-color-text);
   --code-bubble-copy-button-fg-color: var(--sl-color-text);
 
+  /* code-bubble's hover and active defaults are fixed light grays, so they stay bright in dark mode. */
+  --code-bubble-button-hover-bg-color: var(--sl-color-gray-5);
+  --code-bubble-button-hover-border-color: var(--sl-color-gray-4);
+  --code-bubble-button-hover-fg-color: var(--sl-color-white);
+  --code-bubble-button-active-border-color: var(--sl-color-gray-4);
+  --code-bubble-copy-button-hover-bg-color: var(--sl-color-gray-5);
+  --code-bubble-copy-button-hover-border-color: var(--sl-color-gray-4);
+  --code-bubble-copy-button-hover-fg-color: var(--sl-color-white);
+  --code-bubble-copy-button-active-border-color: var(--sl-color-gray-4);
+  --code-bubble-outline: solid 2px var(--sl-color-accent);
+
   /* Shiki `css-variables` theme tokens, mapped to Starlight's palette so they follow light/dark mode. */
   --astro-code-foreground: var(--sl-color-text);
   --astro-code-background: var(--code-bubble-bg-color);
