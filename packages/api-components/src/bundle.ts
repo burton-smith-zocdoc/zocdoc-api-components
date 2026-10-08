@@ -45,6 +45,13 @@ export * from './client/types.js';
 
 // Re-export components
 export {
+  ZdAppointment,
+  type AppointmentCancelDetail,
+  type AppointmentErrorDetail,
+  type AppointmentRescheduleDetail,
+  type ZdAppointmentEventMap,
+} from './components/appointment/index.js';
+export {
   ZdAvailabilityGrid,
   type DaySelectDetail,
   type ZdAvailabilityGridEventMap,

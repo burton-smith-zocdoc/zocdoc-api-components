@@ -180,20 +180,26 @@ An appointment whose status doesn't allow cancelling (`cancelled` or `no_show`) 
 ```typescript
 import { getAvailability, rescheduleAppointment } from '@zocdoc/api-components';
 
+// Availability depends on patient type, so don't guess it.
+if (!appointment.patient_type) throw new Error('Cannot reschedule without a patient type');
+
 const [entry] = await getAvailability({
   providerLocationIds: [appointment.provider_location_id],
   visitReasonId: appointment.visit_reason_id,
   patientType: appointment.patient_type,
 });
 
-const result = await rescheduleAppointment({
-  appointmentId: appointment.appointment_id,
-  startTime: entry.timeslots[0].start_time, // Exactly as returned
-});
-// result.appointment_status: 'rescheduled' | 'pending_reschedule' | ...
+const slot = entry?.timeslots?.[0];
+if (slot) {
+  const result = await rescheduleAppointment({
+    appointmentId: appointment.appointment_id,
+    startTime: slot.start_time, // Exactly as returned
+  });
+  // result.appointment_status: 'rescheduled' | 'pending_reschedule' | ...
+}
 ```
 
-Only `pending_booking`, `confirmed`, `pending_reschedule`, and `rescheduled` appointments can move. `RESCHEDULABLE_STATUSES` holds that list. As with booking, check `appointment_status` on the result.
+`patient_type` is optional on a lookup. Without it, availability can't be searched for the right patient, so `<zd-appointment>` hides "Change time" in that case. Only `pending_booking`, `confirmed`, `pending_reschedule`, and `rescheduled` appointments can move. `RESCHEDULABLE_STATUSES` holds that list. As with booking, check `appointment_status` on the result.
 
 <Aside type="caution">
   Don't retry `cancelAppointment` or `rescheduleAppointment` automatically. The API doesn't document
