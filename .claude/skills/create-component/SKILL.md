@@ -15,6 +15,7 @@ packages/api-components/src/components/<name>/
   <name>.ts             # Component class
   <name>.styles.ts      # CSS styles
   <name>.test.ts        # Tests
+  <name>.performance.ts # Report-only benchmark (TEST-004)
   <name>.stories.ts     # Storybook
 ```
 
@@ -253,6 +254,7 @@ export const Default: Story = {};
 - [ ] Class **and detail types** exported from package index
 - [ ] Tests cover success, empty, error states
 - [ ] Axe accessibility tests for each state
+- [ ] `<name>.performance.ts` benchmark (TEST-004); ran `pnpm test:performance` on it
 - [ ] Row added to the Component Events table in `AGENTS.md`
 - [ ] Ran `pnpm run docs:check` (or `pnpm run cem && pnpm -r run cem`) and committed the
       regenerated `references/<tag>.md` page plus the updated

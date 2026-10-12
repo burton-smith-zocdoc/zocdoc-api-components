@@ -90,6 +90,7 @@ These rules activate when working on matching files. See `.claude/rules/` for th
 | [TEST-001](.agents/rules/testing/TEST-001.md) | **Two Vitest projects.** `client` in node (mock fetch), `components` in browser (mock client layer). |
 | [TEST-002](.agents/rules/testing/TEST-002.md) | **Mock client layer, not network.** Component tests mock endpoint functions, not `fetch`. |
 | [TEST-003](.agents/rules/testing/TEST-003.md) | **Documented test scenarios.** Use ZIP codes and patient data from Zocdoc testing guide. |
+| [TEST-004](.agents/rules/testing/TEST-004.md) | **Report-only perf benchmarks.** One `*.performance.ts` per component; `pnpm test:performance`, local only, never asserts on timings. |
 
 ## Reference
 

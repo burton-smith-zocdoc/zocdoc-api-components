@@ -13,6 +13,7 @@ Two Vitest projects run in different environments.
 |---------|-------------|-------|--------------|
 | `client` | Node | `packages/*/src/**/*.test.ts` (except components) | `fetch` via `vi.stubGlobal` |
 | `components` | Browser (Playwright) | `packages/*/src/components/**/*.test.ts` | Client layer via `vi.mock` |
+| `performance` | Browser (Chromium only) | `packages/*/src/components/**/*.performance.ts` via `vitest.performance.config.ts` | Client layer via `vi.mock` |
 
 Run all: `pnpm test`
 Run one: `pnpm test --project=components`
