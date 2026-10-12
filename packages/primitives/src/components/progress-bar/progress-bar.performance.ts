@@ -11,7 +11,7 @@ describe('zd-progress-bar performance', () => {
         element.setAttribute('value', '0');
         return element;
       },
-      update: (element, i) => element.setAttribute('value', String((i * 10) % 100)),
+      update: (element, i) => element.setAttribute('value', String(10 + ((i * 10) % 90))),
     });
   });
 });

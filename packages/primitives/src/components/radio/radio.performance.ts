@@ -11,7 +11,7 @@ describe('zd-radio performance', () => {
         element.setAttribute('value', 'new');
         return element;
       },
-      update: (element, i) => element.toggleAttribute('checked', i % 2 === 0),
+      update: (element) => element.toggleAttribute('checked'),
     });
   });
 });

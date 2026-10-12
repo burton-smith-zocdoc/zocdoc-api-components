@@ -14,7 +14,7 @@ describe('zd-icon performance', () => {
         element.setAttribute('name', 'calendar');
         return element;
       },
-      update: (element, i) => element.setAttribute('name', i % 2 ? 'calendar' : 'search'),
+      update: (element) => element.setAttribute('name', 'search'),
     });
   });
 });

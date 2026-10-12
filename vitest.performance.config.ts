@@ -25,6 +25,14 @@ const recordPerformanceCommand: BrowserCommand<
   recordPerformance(join(RESULTS_DIR, `${pkg}.json`), name, report);
 
 export default defineConfig({
+  // Cross-origin isolation lifts Chrome's 0.1ms clamp on performance.now(); most samples are
+  // under a millisecond. The harness refuses to record without it.
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
   optimizeDeps: {
     include: ['culori', 'axe-core'],
   },

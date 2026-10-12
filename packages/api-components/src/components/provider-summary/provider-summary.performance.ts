@@ -20,7 +20,7 @@ describe('zd-provider-summary performance', () => {
           return element;
         },
         update: (element, i) =>
-          (element.provider = PROVIDER_LOCATIONS[i % PROVIDER_LOCATIONS.length]),
+          (element.provider = PROVIDER_LOCATIONS[1 + (i % (PROVIDER_LOCATIONS.length - 1))]),
       },
       OPTIONS
     );

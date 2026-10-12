@@ -35,7 +35,7 @@ describe('zd-appointment performance', () => {
           element.setAttribute('appointment-id', ID);
           return element;
         },
-        update: (element, i) => element.toggleAttribute('hide-photo', i % 2 === 0),
+        update: (element) => element.toggleAttribute('hide-photo'),
         ready: untilPart('panel'),
       },
       { ...COMPOSED_OPTIONS, record: 'api-components' }

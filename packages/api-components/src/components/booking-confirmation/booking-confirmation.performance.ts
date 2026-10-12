@@ -23,7 +23,7 @@ describe('zd-booking-confirmation performance', () => {
           element.setAttribute('provider-name', 'Dr. Avery Sandoval, MD');
           return element;
         },
-        update: (element, i) => (element.status = i % 2 ? 'confirmed' : 'pending_booking'),
+        update: (element) => (element.status = 'pending_booking'),
       },
       OPTIONS
     );

@@ -14,7 +14,7 @@ describe('zd-tabs performance', () => {
             '<zd-tab-panel slot="tabpanel">Panel two</zd-tab-panel>';
           return element;
         },
-        update: (element, i) => element.setAttribute('active-id', i % 2 ? 'tab-one' : 'tab-two'),
+        update: (element) => element.setAttribute('active-id', 'tab-two'),
       },
       COMPOSED_OPTIONS
     );

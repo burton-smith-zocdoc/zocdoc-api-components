@@ -15,7 +15,7 @@ describe('zd-button-group performance', () => {
           element.innerHTML = repeat(5, (n) => `<zd-button>Action ${n}</zd-button>`);
           return element;
         },
-        update: (element, i) => element.toggleAttribute('vertical', i % 2 === 0),
+        update: (element) => element.toggleAttribute('vertical'),
       },
       COMPOSED_OPTIONS
     );

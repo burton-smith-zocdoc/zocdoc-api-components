@@ -24,7 +24,7 @@ describe('zd-patient-form performance', () => {
       {
         name: 'patient-form',
         create: () => document.createElement('zd-patient-form') as ZdPatientForm,
-        update: (element, i) => (element.values = i % 2 ? {} : { ...TEST_PATIENT_VALUES }),
+        update: (element) => (element.values = { ...TEST_PATIENT_VALUES }),
       },
       OPTIONS
     );

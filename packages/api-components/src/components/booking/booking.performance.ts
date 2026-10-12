@@ -44,7 +44,7 @@ describe('zd-booking performance', () => {
           element.providers = PROVIDER_LOCATIONS;
           return element;
         },
-        update: (element, i) => element.toggleAttribute('hide-photos', i % 2 === 0),
+        update: (element) => element.toggleAttribute('hide-photos'),
         ready: untilPart('results'),
       },
       { ...COMPOSED_OPTIONS, record: 'api-components' }

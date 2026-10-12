@@ -10,7 +10,7 @@ describe('zd-switch performance', () => {
         element.textContent = 'Video visits only';
         return element;
       },
-      update: (element, i) => element.toggleAttribute('checked', i % 2 === 0),
+      update: (element) => element.toggleAttribute('checked'),
     });
   });
 });

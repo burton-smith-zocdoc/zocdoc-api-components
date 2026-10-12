@@ -98,6 +98,33 @@ describe('benchmarkComponent', () => {
     expect(renderedWhenReady.every(Boolean)).toBe(true);
   });
 
+  it('rejects a rerender whose update changes nothing', async () => {
+    await expect(
+      benchmarkComponent(
+        {
+          name: 'probe-noop',
+          create: () => {
+            const element = document.createElement('perf-probe') as PerfProbe;
+            element.label = 'same';
+            return element;
+          },
+          update: (element) => (element.label = 'same'),
+        },
+        FAST
+      )
+    ).rejects.toThrow('probe-noop: update() at iteration 0 scheduled no render');
+    expect(document.body.children).toHaveLength(0);
+  });
+
+  it('refuses to record when the page is not cross-origin isolated', async () => {
+    // The components project serves no COOP/COEP headers, so timers here are clamped to 0.1ms.
+    expect(globalThis.crossOriginIsolated).toBe(false);
+    await expect(
+      benchmarkTag('probe-coarse', 'perf-probe', { ...FAST, record: 'unused' })
+    ).rejects.toThrow('not cross-origin isolated');
+    expect(document.body.children).toHaveLength(0);
+  });
+
   it('untilPart rejects instead of hanging when the part never renders', async () => {
     const element = document.createElement('perf-probe');
     document.body.append(element);

@@ -16,7 +16,7 @@ describe('zd-select performance', () => {
           return element;
         },
         update: (element, i) =>
-          ((element as HTMLElement & { value: string }).value = `sp_${(i % 20) + 1}`),
+          ((element as HTMLElement & { value: string }).value = `sp_${(i % 19) + 2}`),
       },
       COMPOSED_OPTIONS
     );

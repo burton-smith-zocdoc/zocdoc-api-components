@@ -11,6 +11,7 @@
  * `Promise.all`, skewing every sample), and a `ready` hook lets async components be timed to
  * their success render rather than their first Lit update.
  */
+import type { ReactiveElement } from 'lit';
 import { commands } from 'vitest/browser';
 
 declare module 'vitest/browser' {
@@ -172,6 +173,12 @@ export async function benchmarkComponent<T extends HTMLElement>(
   const bulkCounts = options.bulkCounts ?? [10, 50, 100];
   const record = options.record ?? 'primitives';
   const ready = component.ready ?? updated;
+  if (record !== false && !globalThis.crossOriginIsolated) {
+    // Without isolation Chrome clamps performance.now() to 0.1ms, coarser than most samples.
+    throw new Error(
+      `${component.name}: the page is not cross-origin isolated, so timings would be clamped to 0.1ms — run through vitest.performance.config.ts`
+    );
+  }
 
   const mount = async () => {
     const host = attachHost();
@@ -191,9 +198,16 @@ export async function benchmarkComponent<T extends HTMLElement>(
     await ready(element);
     const start = performance.now();
     component.update(element, iteration);
+    // A no-op update times an already-resolved `updateComplete`, so it would report 0ms.
+    const scheduled = (element as Partial<ReactiveElement>).isUpdatePending !== false;
     await ready(element);
     const duration = performance.now() - start;
     await settleAndRemove(host);
+    if (!scheduled) {
+      throw new Error(
+        `${component.name}: update() at iteration ${iteration} scheduled no render — change state away from what create() set`
+      );
+    }
     return duration;
   };
 

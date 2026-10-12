@@ -18,7 +18,7 @@ describe('zd-accordion performance', () => {
           );
           return element;
         },
-        update: (element, i) => element.toggleAttribute('open-single', i % 2 === 0),
+        update: (element) => element.toggleAttribute('open-single'),
       },
       COMPOSED_OPTIONS
     );

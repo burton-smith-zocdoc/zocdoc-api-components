@@ -10,7 +10,7 @@ describe('zd-button performance', () => {
         element.textContent = 'Continue';
         return element;
       },
-      update: (element, i) => element.toggleAttribute('loading', i % 2 === 0),
+      update: (element) => element.toggleAttribute('loading'),
     });
   });
 });

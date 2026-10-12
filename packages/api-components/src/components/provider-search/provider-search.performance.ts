@@ -54,7 +54,7 @@ describe('zd-provider-search performance', () => {
           return element;
         },
         update: (element, i) =>
-          element.setAttribute('specialty-id', SPECIALTIES[i % SPECIALTIES.length].id),
+          element.setAttribute('specialty-id', SPECIALTIES[1 + (i % (SPECIALTIES.length - 1))].id),
         ready: referenceDataLoaded,
       },
       OPTIONS

@@ -32,7 +32,7 @@ describe('zd-availability-grid performance', () => {
           element.timeslots = WEEK_A;
           return element;
         },
-        update: (element, i) => (element.timeslots = i % 2 ? WEEK_A : WEEK_B),
+        update: (element) => (element.timeslots = WEEK_B),
       },
       OPTIONS
     );

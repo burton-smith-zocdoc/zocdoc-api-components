@@ -10,7 +10,7 @@ describe('zd-checkbox performance', () => {
         element.textContent = 'Remember me';
         return element;
       },
-      update: (element, i) => element.toggleAttribute('checked', i % 2 === 0),
+      update: (element) => element.toggleAttribute('checked'),
     });
   });
 });
