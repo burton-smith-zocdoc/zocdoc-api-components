@@ -1,0 +1,11 @@
+{
+  // Same as tools/cem-css-prefix: vitest.performance.config.ts imports this source directly,
+  // so there is no build step and the `./foo.ts` specifiers need `allowImportingTsExtensions`.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"]
+}

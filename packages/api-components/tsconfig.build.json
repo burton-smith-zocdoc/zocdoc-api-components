@@ -16,6 +16,6 @@
   // it has to exist in `dist`. It stays out of the main entry point and out of anything the
   // components import, which is what keeps fixtures out of a consumer's bundle — importing `.`
   // pulls in none of it.
-  "exclude": ["**/*.test.ts", "**/*.stories.ts", "**/test/**"],
+  "exclude": ["**/*.test.ts", "**/*.performance.ts", "**/*.stories.ts", "**/test/**"],
   "references": [{ "path": "../primitives/tsconfig.build.json" }]
 }

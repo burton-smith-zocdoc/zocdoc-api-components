@@ -26,7 +26,7 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/__tests__/**", "**/test/**"],
+      "files": ["**/*.test.ts", "**/*.performance.ts", "**/__tests__/**", "**/test/**"],
       "plugins": ["vitest"],
       "rules": {
         "no-console": "off",
@@ -38,7 +38,9 @@
               "expectTypeOf",
               "assert",
               "assertType",
-              "expectNoViolations"
+              "expectNoViolations",
+              "benchmarkComponent",
+              "benchmarkTag"
             ]
           }
         ]

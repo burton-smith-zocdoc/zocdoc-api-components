@@ -6,7 +6,7 @@ import { svelteTypesGeneratorPlugin } from '@wc-toolkit/svelte-types';
 import { vuejsTypesGeneratorPlugin } from '@wc-toolkit/vuejs-types';
 import { cssPrefixPlugin } from './tools/cem-css-prefix/src/index.ts';
 
-export const EXCLUDE = ['**/*.stories.ts', '**/*.test.ts', '**/*.styles.ts'];
+export const EXCLUDE = ['**/*.stories.ts', '**/*.test.ts', '**/*.performance.ts', '**/*.styles.ts'];
 
 /**
  * `litPlugin()` with its file pre-filter widened to run on every source file.
