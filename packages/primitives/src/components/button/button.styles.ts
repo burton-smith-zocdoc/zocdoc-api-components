@@ -126,6 +126,47 @@ export default css`
     width: 100%;
   }
 
+  /*
+   * The spinner takes the start slot's place and size, and draws in the label's
+   * color so it reads on every variant: the theme's accent indicator on a
+   * neutral track would vanish against \`primary\`'s brand fill.
+   */
+  :host([loading]) {
+    cursor: progress;
+
+    .control {
+      cursor: progress;
+    }
+
+    /*
+     * Hidden visually rather than with \`display: none\`: an icon-only button
+     * takes its accessible name from the slotted icon's \`label\`, and removing
+     * the slot from the tree would leave the busy button unnamed.
+     */
+    .start {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  .spinner {
+    --zd-spinner-ring-size: var(--zd-button-icon-size);
+    --zd-spinner-indicator-fg-color: currentColor;
+    --zd-spinner-track-color: var(--zd-color-transparent);
+
+    display: inline-flex;
+    margin-inline-end: var(--zd-button-content-gap);
+
+    :host([icon-only]) &,
+    .is-icon-button & {
+      margin-inline-end: 0;
+    }
+  }
+
   :host([size="small"]) {
     --zd-button-font-size: var(--zd-button-small-font-size);
     --zd-button-height: var(--zd-button-small-height);

@@ -15,7 +15,7 @@ A horizontal or vertical rule separating content, with an optional inline label.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `align-content` | `alignContent` | `'center' \| 'start' \| 'end'` | — | Determines the alignment of the content within the divider. | `CoreDivider` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `inset` | `inset` | `boolean` | — | Adds padding to the beginning and end of the divider. | `CoreDivider` |
 | `orientation` | `orientation` | `'horizontal' \| 'vertical'` | — | The divider's orientation. | `CoreDivider` |
 | `presentation` | `presentation` | `boolean` | — | Renders the divider as a presentational element instead of a content separator when set to true. | `CoreDivider` |

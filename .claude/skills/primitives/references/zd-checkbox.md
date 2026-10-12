@@ -22,7 +22,7 @@ A labelled checkbox for boolean and multi-select choices, with indeterminate sup
 | --- | --- | --- | --- | --- | --- |
 | `autofocus` | `autofocus` | `unknown` | `false` | Focus on the input on page load. | `CharmFocusableElement` |
 | `checked` | `checked` | `boolean` | — | Draws the checkbox in a checked state. | `CoreCheckbox` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
 | `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
 | `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |

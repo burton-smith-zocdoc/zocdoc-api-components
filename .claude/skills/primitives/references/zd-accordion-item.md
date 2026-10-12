@@ -14,7 +14,7 @@ A single collapsible section of an accordion: a heading that expands to reveal i
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the emitted click event. | `CoreAccordionItem` |
 | `expand-icon-position` | `expandIconPosition` | `'start' \| 'end'` | — | Determines whether the expand icon position: 'start' or 'end'. | `CoreAccordionItem` |
 | `heading` | `heading` | `string` | — | The content of the toggle element. Can be used in lieu of the slot if only a string is needed. | `CoreAccordionItem` |

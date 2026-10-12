@@ -134,6 +134,29 @@ Use the `toggle` attribute to enable toggle behavior. The button emits a `change
 
 </code-bubble>
 
+## Loading
+
+Set `loading` while the work the button started is in progress. The button shows a spinner in place
+of its `start` slot and ignores clicks, so a submit button can't send its form twice. It keeps its
+variant colors and label, so its width and accessible name don't change.
+
+<code-bubble>
+
+```html
+<zd-button variant="primary" loading>Booking</zd-button>
+<zd-button variant="secondary" loading>Saving</zd-button>
+```
+
+</code-bubble>
+
+The inner control gets `aria-busy` and `aria-disabled`, but the button doesn't announce anything.
+Put the status text in an `aria-live` region next to it, where it can say what is happening:
+
+```html
+<zd-button variant="primary" type="submit" loading>Book appointment</zd-button>
+<div role="status" aria-live="polite">Booking your appointment…</div>
+```
+
 ## Disabled
 
 Use the `disabled` attribute to disable the button.

@@ -16,6 +16,8 @@
     "test:client": "pnpm run build:types && vitest run --project client",
     "test:components": "pnpm run build:types && vitest run --project components",
     "test:performance": "pnpm run build:types && vitest run --config vitest.performance.config.ts",
+    "test:performance:primitives": "pnpm run build:types && vitest run --config vitest.performance.config.ts packages/primitives",
+    "test:performance:api": "pnpm run build:types && vitest run --config vitest.performance.config.ts packages/api-components",
     "cem": "pnpm run build:theme && cem generate && pnpm -r run cem",
     "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .claude/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
     "storybook": "pnpm run build:types && pnpm run cem && storybook dev -p 6006",
@@ -27,7 +29,7 @@
     "dev:docs": "pnpm --filter docs dev"
   },
   "devDependencies": {
-    "@charm-ux/theming": "0.0.0-beta-20260901162808",
+    "@charm-ux/theming": "0.0.0-beta-20261012145959",
     "@oxc-node/cli": "^0.1.0",
     "@storybook/addon-docs": "^10.5.6",
     "@storybook/web-components": "^10.5.5",

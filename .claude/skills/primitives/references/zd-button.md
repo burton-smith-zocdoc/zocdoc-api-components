@@ -13,8 +13,15 @@ An interactive button, with a variant per visual treatment and two densities.
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `fluid` | `fluid` | `boolean` | — | Stretch the button to the width of its container. Charm's button is `display: inline-block` with a full-width `.control`, so this only has to widen the host. |
+| `loading` | `loading` | `boolean` | — | Show a spinner in place of the `start` slot and ignore activation until the work the button started has finished. Unlike `disabled`, the button keeps its variant colors, so it doesn't look like the action became unavailable, and it keeps its label, so its width and accessible name don't change. The inner control gets `aria-busy` and `aria-disabled`. The button doesn't announce anything itself: the component doing the work owns the `aria-live` region that says what is happening (A11Y-002). |
 | `size` | `size` | `'small' \| 'default' \| undefined` | — | The button's density. `small` swaps in the theme's `button.small.*` metrics; `default` and an omitted value both use the base metrics. |
 | `variant` | `variant` | `'inverse' \| 'primary' \| 'secondary' \| 'ghost' \| 'destructive' \| 'link' \| undefined` | — | The button's visual treatment. Omit it to use the base `button.*` tokens, which is what an unstyled Charm button renders. |
+
+## CSS Parts
+
+| Part | Description |
+| --- | --- |
+| `zd-spinner` | — |
 
 ## Inherited
 
@@ -25,7 +32,7 @@ An interactive button, with a variant per visual treatment and two densities.
 | `allow-wrap` | `allowWrap` | `boolean \| undefined` | `false` | An optional toggle that allows text to wrap. Helper for longer text scenarios. | `CoreButton` |
 | `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
 | `current` | `current` | `'page' \| 'step' \| 'location' \| 'date' \| 'time' \| 'true' \| 'false' \| null` | — | Sets "aria-current" on the internal button or link. | `CoreButton` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the component on page load. | `CoreButton` |
 | `download` | `download` | `string` | — | Downloads the linked file as the filename. Only used when `href` is set. | `CoreButton` |
 | `expanded` | `expanded` | `boolean` | — | Sets "aria-expanded" on the internal button or link. | `CoreButton` |

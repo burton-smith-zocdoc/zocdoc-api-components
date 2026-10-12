@@ -141,6 +141,20 @@ export const Toggle: Story = {
   `,
 };
 
+export const Loading: Story = {
+  render: () => html`
+    <zd-flex wrap align="center" gap="8">
+      <zd-button variant="primary" loading>Booking</zd-button>
+      <zd-button variant="secondary" loading>Saving</zd-button>
+      <zd-button variant="ghost" loading>Loading</zd-button>
+      <zd-button variant="primary" size="small" loading>Booking</zd-button>
+      <zd-button variant="secondary" icon-only loading>
+        <zd-icon slot="start" name="dismiss" label="Close"></zd-icon>
+      </zd-button>
+    </zd-flex>
+  `,
+};
+
 export const Disabled: Story = {
   args: { disabled: true },
   render: (args) => template(args, html`Disabled`),

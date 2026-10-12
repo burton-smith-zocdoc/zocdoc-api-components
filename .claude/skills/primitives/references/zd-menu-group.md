@@ -14,7 +14,7 @@ Groups related menu items under a heading.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `heading` | `heading` | `string` | — | The heading text for the menu group. | `CoreMenuGroup` |
 | `select` | `select` | `'single' \| 'multiple'` | — | Determines if the elements inside the group are selectable as "single" (only one selected at a time) or "multiple" (checkbox behavior). | `CoreMenuGroup` |
 

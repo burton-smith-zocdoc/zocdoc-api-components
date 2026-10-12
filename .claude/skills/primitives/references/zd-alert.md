@@ -33,7 +33,7 @@ Displays contextual feedback messages, with a variant per severity.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `closeLabel` | `closeLabel` | `string` | `'Close'` | The label for the close button. | `CoreAlert` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `dismissible` | `dismissible` | `boolean` | `false` | Shows the close button. | `CoreAlert` |
 | `heading` | `heading` | `string` | — | The heading of the alert. | `CoreAlert` |
 | `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |

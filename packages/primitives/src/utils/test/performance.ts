@@ -161,7 +161,7 @@ function table(name: string, report: PerformanceReport): string {
       ms(s.max),
     ].join(' | ')
   );
-  return `[component-performance] ${name}\n${header}\n${'-'.repeat(header.length)}\n${rows.join('\n')}`;
+  return `\n[component-performance] ${name}\n\n${header}\n${'-'.repeat(header.length)}\n${rows.join('\n')}\n`;
 }
 
 export async function benchmarkComponent<T extends HTMLElement>(

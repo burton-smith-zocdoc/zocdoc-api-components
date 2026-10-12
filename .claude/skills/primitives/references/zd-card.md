@@ -29,7 +29,7 @@ A container for grouping related content.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `heading` | `heading` | `string` | — | Provides a heading for the card. | `CoreCard` |
 | `media-position` | `mediaPosition` | `'top' \| 'bottom' \| 'start' \| 'end'` | — | A flag used to change visual positioning of any media (default 'top'). | `CoreCard` |
 | `subheading` | `subheading` | `string` | — | Provides a subheading for the card. | `CoreCard` |

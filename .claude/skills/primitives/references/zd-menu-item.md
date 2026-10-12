@@ -16,7 +16,7 @@ A single selectable action inside a menu.
 | --- | --- | --- | --- | --- | --- |
 | `checked` | `checked` | `boolean` | — | Indicates whether the menu item is checked. | `CoreMenuItem` |
 | `current` | `current` | `'page' \| 'step' \| 'location' \| 'date' \| 'time' \| 'true' \| 'false' \| null` | — | Sets `aria-current` on the internal link. | `CoreMenuItem` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the emitted click event. | `CoreMenuItem` |
 | `expanded` | `expanded` | `boolean` | — | Expands the menu item to reveal a submenu. | `CoreMenuItem` |
 | `href` | `href` | `string` | — | When set, the underlying menu item will be rendered as an `<a>` with this `href` instead of a `<span>`. | `CoreMenuItem` |

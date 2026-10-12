@@ -14,7 +14,7 @@ A button group that moves buttons into a menu when space runs out.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `fixed-placement` | `fixedPlacement` | `unknown` | `false` | Enable this option to prevent the overflow menu from being clipped when the component is placed inside a container with `overflow: auto\|hidden\|scroll`. | `CoreOverflow` |
 | `label` | `label` | `unknown` | `'More options'` | Label for the icon button in the overflow menu. | `CoreOverflow` |
 | `menu-position` | `menuPosition` | `unknown` | `'end'` | Location of overflow menu. Default is end. | `CoreOverflow` |

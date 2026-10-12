@@ -16,7 +16,7 @@ A single link in a breadcrumb trail.
 | --- | --- | --- | --- | --- | --- |
 | `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
 | `current` | `current` | `'page' \| 'step'` | — | Sets `aria-current` on the div. | `CoreBreadcrumbItem` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `href` | `href` | `string` | — | When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`. | `CoreBreadcrumbItem` |
 | `referrerpolicy` | `referrerPolicy` | `'no-referrer' \| 'no-referrer-when-downgrade' \| 'origin' \| 'origin-when-cross-origin' \| 'same-origin' \| 'strict-origin' \| 'strict-origin-when-cross-origin' \| 'unsafe-url' \| (string & {})` | `'strict-origin-when-cross-origin'` | Defining which referrer is sent when fetching the resource. Only applies to links. | `CoreBreadcrumbItem` |
 | `separator` | `separator` | `boolean` | `true` | When true, will render the separator content. | `CoreBreadcrumbItem` |

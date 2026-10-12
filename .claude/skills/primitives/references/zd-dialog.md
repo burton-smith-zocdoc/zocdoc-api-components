@@ -16,7 +16,7 @@ A modal dialog for focused tasks and confirmations, with heading, body, and foot
 | --- | --- | --- | --- | --- | --- |
 | `alert` | `alert` | `boolean` | — | Indicates whether the dialog can only be closed programmatically or by clicking the close button. | `CoreDialog` |
 | `close-button-label` | `closeButtonLabel` | `string` | `'close'` | The label for the close button. | `CoreDialog` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `heading` | `heading` | `string` | — | The optional header of the dialog. | `CoreDialog` |
 | `hide-close-button` | `hideCloseButton` | `boolean` | — | Hides the close button when it is not focused. | `CoreDialog` |
 | `no-header` | `noHeader` | `boolean` | — | Removes the header. This will also remove the default close button. If using prevent default on dialog-request-close please provide a way for the user to close the dialog. | `CoreDialog` |
