@@ -75,10 +75,7 @@ async function updated(element: HTMLElement): Promise<void> {
  * for "success", since a part only the success template renders cannot be mistaken for the
  * loading render. Rejects after `timeout` so a broken mock fails loudly instead of hanging.
  */
-export function untilPart(
-  part: string,
-  timeout = 5_000
-): (element: HTMLElement) => Promise<void> {
+export function untilPart(part: string, timeout = 5_000): (element: HTMLElement) => Promise<void> {
   return async (element) => {
     const deadline = performance.now() + timeout;
     while (!element.shadowRoot?.querySelector(`[part~="${part}"]`)) {
@@ -154,7 +151,14 @@ function ms(value: number): string {
 function table(name: string, report: PerformanceReport): string {
   const header = `${'Scenario'.padEnd(10)} | Samples |     Median |        P95 |        Min |        Max`;
   const rows = Object.entries(report).map(([scenario, s]) =>
-    [scenario.padEnd(10), String(s.count).padStart(7), ms(s.median), ms(s.p95), ms(s.min), ms(s.max)].join(' | ')
+    [
+      scenario.padEnd(10),
+      String(s.count).padStart(7),
+      ms(s.median),
+      ms(s.p95),
+      ms(s.min),
+      ms(s.max),
+    ].join(' | ')
   );
   return `[component-performance] ${name}\n${header}\n${'-'.repeat(header.length)}\n${rows.join('\n')}`;
 }

@@ -30,9 +30,7 @@ export async function recordPerformance(
   }
 
   results[name] = report;
-  const sorted = Object.fromEntries(
-    Object.entries(results).sort(([a], [b]) => a.localeCompare(b))
-  );
+  const sorted = Object.fromEntries(Object.entries(results).sort(([a], [b]) => a.localeCompare(b)));
 
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, `${JSON.stringify(sorted, null, 2)}\n`);
