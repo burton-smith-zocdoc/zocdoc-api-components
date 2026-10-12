@@ -1,0 +1,28 @@
+import { describe, it } from 'vitest';
+import {
+  benchmarkComponent,
+  type PerformanceOptions,
+} from '../../../../primitives/src/utils/test/performance.js';
+import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
+import type { ZdProviderCard } from './index.js';
+import './index.js';
+
+const OPTIONS: PerformanceOptions = { record: 'api-components' };
+
+describe('zd-provider-card performance', () => {
+  it('reports mount, rerender, and bulk mount timings', async () => {
+    await benchmarkComponent<ZdProviderCard>(
+      {
+        name: 'provider-card',
+        create: () => {
+          const element = document.createElement('zd-provider-card') as ZdProviderCard;
+          element.provider = PROVIDER_LOCATIONS[0];
+          return element;
+        },
+        update: (element, i) =>
+          (element.provider = PROVIDER_LOCATIONS[i % PROVIDER_LOCATIONS.length]),
+      },
+      OPTIONS
+    );
+  });
+});
