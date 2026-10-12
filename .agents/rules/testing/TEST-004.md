@@ -67,4 +67,10 @@ await benchmarkComponent(
   every `zd-*` tag, and a second definition throws.
 - Rerender an async component by changing an id it fetches on — the old success markup is
   still on screen, so `ready` resolves before the new render.
+- Alternate `update` on the iteration (`i % 2 ? a : b`). Every sample builds a fresh element, so
+  half the samples would restore what `create()` set and time nothing — the harness rejects an
+  update that schedules no render. Move away from the created state every time.
+- Run benchmarks outside `vitest.performance.config.ts`. Its COOP/COEP headers make the page
+  cross-origin isolated, which lifts Chrome's 0.1ms clamp on `performance.now()`; the harness
+  refuses to record without it.
 - Mock `fetch`.
