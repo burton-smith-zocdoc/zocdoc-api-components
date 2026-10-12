@@ -1,7 +1,7 @@
 # Component Performance Tests — Design
 
 **Date:** 2026-10-12
-**Status:** Approved design, pending spec review
+**Status:** Approved
 
 ## Goal
 
@@ -84,6 +84,7 @@ interface PerformanceOptions {
   iterations?: number;   // default 20
   warmups?: number;      // default 3
   bulkCounts?: number[]; // default [10, 50, 100]
+  record?: string | false; // results file name; default 'primitives', false to skip writing
 }
 
 benchmarkComponent(case, options?): Promise<PerformanceReport>
@@ -116,12 +117,13 @@ Output:
 - Console: the same table as charm, prefixed `[component-performance] <name>`, with columns
   Scenario | Samples | Median | P95 | Min | Max.
 - File: each run of a package's benchmarks merges `{ [name]: { [scenario]: summary } }` into
-  `performance-results/<package>.json` at the repo root via Vitest browser mode's
-  `commands.writeFile`/`readFile`. Two runs compare with `diff`. Writing happens per component
+  `performance-results/<package>.json` at the repo root via a custom browser command,
+  `recordPerformance`, registered in the perf config (the built-in `commands.writeFile`
+  resolves paths relative to the calling test file, so a shared harness cannot use it). Two runs compare with `diff`. Writing happens per component
   so a partial run still records what finished.
 
 Benchmarks fail only on real errors (a component throws, `ready` never resolves within the
-test timeout). Each benchmark `it()` gets an explicit generous timeout (60s).
+test timeout). The performance config sets a generous `testTimeout` (60s).
 
 ### 3. Per-component files
 
@@ -160,15 +162,23 @@ via `vi.mock(path, { spy: true })` + `vi.spyOn(...).mockResolvedValue(...)`:
 |---|---|---|
 | provider-card, provider-summary, provider-profile | `provider` property from `PROVIDER_LOCATIONS` | swap to another fixture provider |
 | availability-grid, availability-window | `timeslots` from `buildTimeslots` | new timeslot set |
-| availability-picker | mocked `getAvailability` | change provider-location id |
-| provider-search, provider-results | mocked `searchProviderLocations` (ZIP `10011`) | change query input |
-| appointment, booking-confirmation | mocked lookups / fixture appointment | swap fixture |
-| patient-form | fixture-free empty form | set one field value |
-| booking, sign-in | mocked client calls, first step only | change one input on that step |
+| availability-picker | mocked `getAvailability` | change `selected-start-time` |
+| provider-search | mocked reference data (`getSpecialties`, `getInsurancePlans`), `SCENARIOS.zipWithResults` | change `specialty-id` |
+| provider-results | `providers` + supplied `availability` from fixtures | change `selected-id` |
+| appointment | mocked `getAppointment` / `getProviderLocation` | toggle `hide-photo` |
+| booking-confirmation | fixture appointment attributes | change `status` |
+| patient-form | empty form | set `values` |
+| booking, sign-in | mocked client calls / stub `auth`, first step only | toggle `hide-photos` / change `email` |
 
-Async components pass a `ready` that waits for the component's `success` state. The exact
-signal (state property, rendered part, or emitted event) is chosen per component during
-implementation by reading its source.
+Async components pass a `ready` that waits until a rendered part proves the `success` state
+(e.g. `[part~="days"]` for the picker, `[part~="panel"]` for appointment). Their rerender
+deliberately changes an input that does **not** refetch: a refetching update leaves the old
+success markup on screen until the loading render lands, so a part-based `ready` cannot
+tell the two renders apart. Mount already times the full fetch-to-success path.
+
+Primitive benchmarks do not import component modules: the setup file registers every `zd-*`
+tag from the primitives build, and a second registration from source would throw. API
+component benchmarks import `./index.js`, as their tests do.
 
 ### 4. Docs
 
