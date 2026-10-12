@@ -36,6 +36,9 @@ export default defineConfig({
     clearMocks: true,
     fileParallelism: false,
     testTimeout: 60_000,
+    // The table is the output. Vitest's agent reporter (picked automatically in AI-agent
+    // shells) drops console output from passing tests, which would leave only the JSON.
+    reporters: ['default'],
     browser: {
       enabled: true,
       headless: true,
