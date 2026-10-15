@@ -216,11 +216,11 @@ importers:
   packages/primitives:
     dependencies:
       '@charm-ux/core':
-        specifier: 0.0.0-beta-20261009143853
-        version: 0.0.0-beta-20261009143853(@floating-ui/utils@0.2.12)
+        specifier: 0.0.0-beta-20261012145959
+        version: 0.0.0-beta-20261012145959(@floating-ui/utils@0.2.12)
       '@charm-ux/theming':
-        specifier: 0.0.0-beta-20261009143853
-        version: 0.0.0-beta-20261009143853(lit@3.3.3)
+        specifier: 0.0.0-beta-20261012145959
+        version: 0.0.0-beta-20261012145959(lit@3.3.3)
       lit:
         specifier: ^3.2.1
         version: 3.3.3
@@ -541,16 +541,8 @@ packages:
     resolution: {integrity: sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ==}
     engines: {node: '>=18'}
 
-  '@charm-ux/core@0.0.0-beta-20261009143853':
-    resolution: {integrity: sha512-QFAZp8MhzlAVMvVJWwhCpdZUkEKo+0DGcGT4vCeKqOcO7rCzZCTkOug38JRay4Kd4t5HyguYfH5/ZIVRrd4joQ==}
-
-  '@charm-ux/theming@0.0.0-beta-20261009143853':
-    resolution: {integrity: sha512-q+OmLVTP9tgQ4d2/vhuWGIXS/LxEB/N7uHMCLhqbNu91b3UapNiXrchrKUUXTiDe3rc4gFvE3Pb9haUCP1s13A==}
-    peerDependencies:
-      lit: ^3.0.0
-    peerDependenciesMeta:
-      lit:
-        optional: true
+  '@charm-ux/core@0.0.0-beta-20261012145959':
+    resolution: {integrity: sha512-agQg2juajzVIyNNGlICV558wIcfE5zFOXbIjZSBom/4li+Rbq7xSEWT43kGPl/BGmgeOLte8RxD88iHVb7hM5g==}
 
   '@charm-ux/theming@0.0.0-beta-20261012145959':
     resolution: {integrity: sha512-5E0dmwZLBeE5GEtHrqOHfeKTEF9NkcidmoYd3CkKzD+fJ0YUIatKTTeH0Ynji4Q3mbKj5VnBTIPWAplAW/2AzA==}
@@ -4700,20 +4692,14 @@ snapshots:
     dependencies:
       fontkitten: 1.0.3
 
-  '@charm-ux/core@0.0.0-beta-20261009143853(@floating-ui/utils@0.2.12)':
+  '@charm-ux/core@0.0.0-beta-20261012145959(@floating-ui/utils@0.2.12)':
     dependencies:
-      '@charm-ux/theming': 0.0.0-beta-20261009143853(lit@3.3.3)
+      '@charm-ux/theming': 0.0.0-beta-20261012145959(lit@3.3.3)
       '@floating-ui/dom': 1.8.0
       composed-offset-position: 0.0.6(@floating-ui/utils@0.2.12)
       lit: 3.3.3
     transitivePeerDependencies:
       - '@floating-ui/utils'
-
-  '@charm-ux/theming@0.0.0-beta-20261009143853(lit@3.3.3)':
-    dependencies:
-      culori: 4.0.2
-    optionalDependencies:
-      lit: 3.3.3
 
   '@charm-ux/theming@0.0.0-beta-20261012145959(lit@3.3.3)':
     dependencies:

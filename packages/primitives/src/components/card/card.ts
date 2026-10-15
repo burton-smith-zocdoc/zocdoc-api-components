@@ -12,8 +12,8 @@ export class ZdCard extends CoreCard {
   static override styles = [...super.styles, styles] as typeof CoreCard.styles;
 
   protected override headerTemplate() {
-    const hasHeading = this.hasSlotController.hasNamedSlot('heading') || !!this.heading;
-    const hasSubheading = this.hasSlotController.hasNamedSlot('subheading') || !!this.subheading;
+    const hasHeading = this.hasNamedSlot('heading') || !!this.heading;
+    const hasSubheading = this.hasNamedSlot('subheading') || !!this.subheading;
 
     return html`
       <header class="header" part="card-header" ?hidden=${!hasHeading && !hasSubheading}>

@@ -68,7 +68,7 @@ export class ZdAlert extends CoreAlert {
    */
   protected override iconTemplate() {
     const name = this.variant ? VARIANT_ICONS[this.variant] : undefined;
-    const empty = !name && !this.hasSlotController.hasNamedSlot('icon');
+    const empty = !name && !this.hasNamedSlot('icon');
 
     return this.html` <div part="alert-icon" class="alert-icon" ?hidden=${empty}>
       <slot name="icon">${name ? this.html`<scoped-icon name=${name}></scoped-icon>` : nothing}</slot>

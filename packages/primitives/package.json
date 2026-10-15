@@ -35,8 +35,8 @@
     "cem": "pnpm --dir ../.. run build:theme && cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @zocdoc/api-primitive-components --out ../../.claude/skills/primitives/references"
   },
   "dependencies": {
-    "@charm-ux/core": "0.0.0-beta-20261009143853",
-    "@charm-ux/theming": "0.0.0-beta-20261009143853",
+    "@charm-ux/core": "0.0.0-beta-20261012145959",
+    "@charm-ux/theming": "0.0.0-beta-20261012145959",
     "lit": "^3.2.1"
   },
   "peerDependencies": {
