@@ -24,6 +24,7 @@ Renders a named icon from the configured icon set, at a token-driven size.
 | `flip` | `flip` | `'x' \| 'y' \| 'both'` | — | Sets the flip direction of the icon. | `CoreIcon` |
 | `label` | `label` | `string` | — | Label of the icon for assertive technologies. This is required for accessibility. | `CoreIcon` |
 | `name` | `name` | `string` | — | The name of the icon to draw. | `CoreIcon` |
+| `render` | `renderMode` | `'mask' \| 'svg'` | `'mask'` | Selects the rendering strategy. Named icons use a CSS mask by default; use `svg` as an escape hatch. | `CoreIcon` |
 | `rotate` | `rotate` | `number` | `0` | Sets the rotation degree of the icon. | `CoreIcon` |
 | `url` | `url` | `string` | — | A string that points to an external SVG. | `CoreIcon` |
 

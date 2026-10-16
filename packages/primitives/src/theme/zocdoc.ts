@@ -114,15 +114,111 @@ const zocdocTokensBase = charmTokens
       // notation - the dark value uses trailing alpha (#RRGGBBAA).
       overlay: { light: '#66000000', dark: '#FFFFFFE6' },
 
-      /** Explicit palettes from design spec - each expands to steps 50-950 */
-      brand: '#FEED5A',
-      accent: '#349C9C',
-      warning: '#FF8A56',
-      neutral: '#b0afaf',
-      success: '#039854',
-      danger: '#F84141',
-      caution: '#FEED5A',
-      info: '#4E93F3',
+      /** Explicit palettes from Zinc - steps 50-950, not auto-expanded */
+      brand: {
+        50: '#fdfaee',
+        100: '#fff0bb',
+        200: '#feed5a',
+        300: '#fdd832',
+        400: '#f8cc30',
+        500: '#e4ae00',
+        600: '#c88f00',
+        700: '#a97000',
+        800: '#875100',
+        900: '#623606',
+        950: '#3e1d04',
+      },
+      accent: {
+        50: '#e7faff',
+        100: '#d3f5ff',
+        200: '#a9e8f8',
+        300: '#84d9ef',
+        400: '#59cae7',
+        500: '#45b1cd',
+        600: '#3098b3',
+        700: '#19809a',
+        800: '#006176',
+        900: '#004556',
+        950: '#002c38',
+      },
+      warning: {
+        50: '#fff4e9',
+        100: '#ffe3c9',
+        200: '#ffc794',
+        300: '#ffaa72',
+        400: '#ff8a56',
+        500: '#fd6c37',
+        600: '#d45626',
+        700: '#b3451a',
+        800: '#93330a',
+        900: '#6d2000',
+        950: '#481200',
+      },
+      neutral: {
+        50: '#f9f8f7',
+        100: '#f5f5f4',
+        200: '#ebeae9',
+        300: '#d5d4d2',
+        400: '#adadad',
+        500: '#9a9a9a',
+        600: '#878787',
+        700: '#747474',
+        800: '#525252',
+        900: '#333333',
+        950: '#272727',
+      },
+      success: {
+        50: '#ecf9f3',
+        100: '#def3e9',
+        200: '#cbeddd',
+        300: '#98dabc',
+        400: '#5fc69b',
+        500: '#3aaf78',
+        600: '#039854',
+        700: '#117f47',
+        800: '#15663a',
+        900: '#004b26',
+        950: '#003016',
+      },
+      danger: {
+        50: '#fff2f4',
+        100: '#ffe4e9',
+        200: '#ffd0d8',
+        300: '#ffbbc7',
+        400: '#ff848e',
+        500: '#f84141',
+        600: '#df3735',
+        700: '#c62d2a',
+        800: '#a01719',
+        900: '#790007',
+        950: '#500003',
+      },
+      info: {
+        50: '#f0f6ff',
+        100: '#dce9fd',
+        200: '#b9d4fc',
+        300: '#97bffa',
+        400: '#73a9f7',
+        500: '#4e93f3',
+        600: '#3b7ce6',
+        700: '#2c64d8',
+        800: '#2755b6',
+        900: '#0f3589',
+        950: '#011d65',
+      },
+      caution: {
+        50: '#fefce8',
+        100: '#fef9c2',
+        200: '#fff085',
+        300: '#ffe030',
+        400: '#f7c900',
+        500: '#eab300',
+        600: '#ca8a00',
+        700: '#a26200',
+        800: '#874c00',
+        900: '#733e0a',
+        950: '#432004',
+      },
     },
     spacing: zocdocSpacingTokens,
     borderRadius: {
@@ -313,10 +409,7 @@ const zocdocTokensBase = charmTokens
         onDarkBg: primitive('color', 'white'),
       },
       body: {
-        bgColor: {
-          light: primitive('color', 'white'),
-          dark: primitive('color', 'neutral', 950),
-        },
+        bgColor: semantic('surface', 'default', 'bgColor'),
         fgColor: {
           light: primitive('color', 'neutral', 900),
           dark: primitive('color', 'neutral', 50),
@@ -344,10 +437,15 @@ const zocdocTokensBase = charmTokens
           light: primitive('color', 'neutral', 900),
           dark: primitive('color', 'neutral', 50),
         },
+        fontWeight: primitive('fontWeight', 'semibold'),
         decoration: 'underline',
         hover: {
+          /**
+           * Light mode uses info 700 rather than 600: link text sits on the
+           * default surface, and info 600 only reaches 4.03:1 against white.
+           */
           fgColor: {
-            light: primitive('color', 'info', 600),
+            light: primitive('color', 'info', 700),
             dark: primitive('color', 'info', 100),
           },
           decoration: 'underline',
@@ -361,8 +459,8 @@ const zocdocTokensBase = charmTokens
         },
         visited: {
           fgColor: {
-            light: primitive('color', 'info', 700),
-            dark: primitive('color', 'info', 200),
+            light: primitive('color', 'neutral', 900),
+            dark: primitive('color', 'neutral', 50),
           },
           decoration: 'underline',
         },
@@ -377,11 +475,14 @@ const zocdocTokensBase = charmTokens
       defaultButton: {
         bgColor: primitive('color', 'transparent'),
         fgColor: semantic('body', 'fgColor'),
-        borderColor: primitive('color', 'transparent'),
+        borderColor: {
+          light: primitive('color', 'neutral', 600),
+          dark: primitive('color', 'neutral', 400),
+        },
         borderWidth: semantic('defaultBorder', 'width'),
         borderStyle: semantic('defaultBorder', 'style'),
         borderRadius: primitive('borderRadius', 'sm'),
-        fontWeight: primitive('fontWeight', 'medium'),
+        fontWeight: primitive('fontWeight', 'semibold'),
         fontSize: primitive('fontSize', '16'),
         iconSize: primitive('fontSize', '20'),
         height: '44px',
@@ -402,23 +503,18 @@ const zocdocTokensBase = charmTokens
         },
         shadow: 'none',
         hover: {
-          bgColor: {
-            light: primitive('color', 'neutral', 100),
-            dark: primitive('color', 'neutral', 800),
-          },
+          bgColor: semantic('surface', 'default', 'hover', 'bgColor'),
           borderColor: {
-            light: primitive('color', 'neutral', 100),
-            dark: primitive('color', 'neutral', 800),
+            light: primitive('color', 'neutral', 600),
+            dark: primitive('color', 'neutral', 400),
           },
         },
         active: {
-          bgColor: {
-            light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 700),
-          },
+          bgColor: semantic('surface', 'default', 'active', 'bgColor'),
+          fgColor: semantic('surface', 'default', 'active', 'fgColor'),
           borderColor: {
-            light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 700),
+            light: primitive('color', 'neutral', 600),
+            dark: primitive('color', 'neutral', 400),
           },
         },
         focus: {
@@ -426,8 +522,15 @@ const zocdocTokensBase = charmTokens
           borderColor: primitive('color', 'info', 500),
         },
         disabled: {
-          fgColor: primitive('color', 'neutral', 400),
-          borderColor: primitive('color', 'transparent'),
+          bgColor: primitive('color', 'transparent'),
+          fgColor: {
+            light: primitive('color', 'neutral', 400),
+            dark: primitive('color', 'neutral', 600),
+          },
+          borderColor: {
+            light: primitive('color', 'neutral', 300),
+            dark: primitive('color', 'neutral', 700),
+          },
         },
       },
       /** Not defined in Figma */
@@ -453,7 +556,7 @@ const zocdocTokensBase = charmTokens
           light: primitive('color', 'neutral', 300),
           dark: primitive('color', 'neutral', 600),
         },
-        borderRadius: primitive('borderRadius', 'md'),
+        borderRadius: primitive('borderRadius', 'sm'),
         fontSize: primitive('fontSize', '16'),
         paddingX: primitive('spacing', 12),
         paddingY: primitive('spacing', 14),
@@ -500,28 +603,29 @@ const zocdocTokensBase = charmTokens
         },
         disabled: {
           bgColor: {
-            light: primitive('color', 'neutral', 100),
+            light: primitive('color', 'neutral', 200),
             dark: primitive('color', 'neutral', 700),
           },
-          fgColor: {
-            light: primitive('color', 'neutral', 400),
-            dark: primitive('color', 'neutral', 500),
-          },
+          fgColor: semantic('surface', 'default', 'disabled', 'fgColor'),
           borderColor: {
-            light: primitive('color', 'neutral', 200),
+            light: primitive('color', 'neutral', 400),
             dark: primitive('color', 'neutral', 600),
           },
           opacity: '0.6',
         },
         invalid: {
-          borderColor: primitive('color', 'danger', 500),
+          borderColor: {
+            light: primitive('color', 'danger', 700),
+            dark: primitive('color', 'danger', 400),
+          },
           /** Zinc's `formControl.invalidMessage` */
           message: {
             color: {
-              light: primitive('color', 'danger', 600),
+              light: primitive('color', 'danger', 700),
               dark: primitive('color', 'danger', 400),
             },
             fontSize: semantic('typography', 'body', 'sm', 'fontSize'),
+            fontWeight: primitive('fontWeight', 'semibold'),
             lineHeight: semantic('typography', 'body', 'sm', 'lineHeight'),
           },
         },
@@ -557,24 +661,22 @@ const zocdocTokensBase = charmTokens
       /** Zinc's `border.default` - Charm's default border group */
       defaultBorder: {
         color: {
-          light: primitive('color', 'neutral', 200),
-          dark: primitive('color', 'neutral', 900),
+          light: primitive('color', 'neutral', 300),
+          dark: primitive('color', 'neutral', 500),
         },
         width: primitive('borderWidth', 'sm'),
         style: 'solid',
       },
       /**
-       * Zinc's `border.light`/`border.strong`. Charm's `border.*` leaves are
-       * scalar colors, so these stay colors; widths and styles live on
-       * `defaultBorder` (every Zinc border variant used the same 1px solid).
+       * Zinc's `border.muted`/`border.strong` (`light` is Zinc's `muted`).
+       * Charm's `border.*` leaves are scalar colors, so these stay colors;
+       * widths and styles live on `defaultBorder` (every Zinc border variant
+       * uses the same 1px solid).
        */
       border: {
-        primary: {
-          light: primitive('color', 'neutral', 200),
-          dark: primitive('color', 'neutral', 900),
-        },
+        primary: semantic('defaultBorder', 'color'),
         light: {
-          light: primitive('color', 'neutral', 100),
+          light: primitive('color', 'neutral', 200),
           dark: primitive('color', 'neutral', 700),
         },
         strong: {
@@ -618,7 +720,7 @@ const zocdocTokensBase = charmTokens
         raised: {
           bgColor: {
             light: primitive('color', 'white'),
-            dark: primitive('color', 'neutral', 800),
+            dark: primitive('color', 'neutral', 900),
           },
           fgColor: {
             light: primitive('color', 'neutral', 900),
@@ -626,7 +728,7 @@ const zocdocTokensBase = charmTokens
           },
           borderColor: {
             light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 700),
+            dark: primitive('color', 'neutral', 800),
           },
           borderWidth: primitive('borderWidth', 'sm'),
           shadow: primitive('shadow', 'raised'),
@@ -634,7 +736,7 @@ const zocdocTokensBase = charmTokens
         overlay: {
           bgColor: {
             light: primitive('color', 'white'),
-            dark: primitive('color', 'neutral', 800),
+            dark: primitive('color', 'neutral', 900),
           },
           fgColor: {
             light: primitive('color', 'neutral', 900),
@@ -642,7 +744,7 @@ const zocdocTokensBase = charmTokens
           },
           borderColor: {
             light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 700),
+            dark: primitive('color', 'neutral', 800),
           },
           borderWidth: primitive('borderWidth', 'sm'),
           shadow: primitive('shadow', 'overlay'),
@@ -650,15 +752,15 @@ const zocdocTokensBase = charmTokens
         modal: {
           bgColor: {
             light: primitive('color', 'white'),
-            dark: primitive('color', 'neutral', 800),
+            dark: primitive('color', 'neutral', 900),
           },
           fgColor: {
             light: primitive('color', 'neutral', 900),
             dark: primitive('color', 'neutral', 50),
           },
           borderColor: {
-            light: primitive('color', 'neutral', 100),
-            dark: primitive('color', 'neutral', 700),
+            light: primitive('color', 'neutral', 200),
+            dark: primitive('color', 'neutral', 800),
           },
           borderWidth: '0',
           shadow: primitive('shadow', 'modal'),
@@ -730,10 +832,7 @@ const zocdocTokensBase = charmTokens
               light: primitive('color', 'neutral', 100),
               dark: primitive('color', 'neutral', 800),
             },
-            fgColor: {
-              light: semantic('color', 'on', 'neutral', 100),
-              dark: semantic('color', 'on', 'neutral', 800),
-            },
+            fgColor: primitive('color', 'neutral', 500),
             borderColor: {
               light: primitive('color', 'neutral', 200),
               dark: primitive('color', 'neutral', 700),
@@ -742,57 +841,57 @@ const zocdocTokensBase = charmTokens
         },
         brand: {
           bgColor: {
-            light: primitive('color', 'brand', 500),
-            dark: primitive('color', 'brand', 400),
+            light: primitive('color', 'brand', 200),
+            dark: primitive('color', 'brand', 200),
           },
           fgColor: {
-            light: semantic('color', 'on', 'brand', 500),
-            dark: semantic('color', 'on', 'brand', 400),
+            light: semantic('color', 'on', 'brand', 200),
+            dark: semantic('color', 'on', 'brand', 200),
           },
           secondaryFgColor: {
             light: primitive('color', 'brand', 100),
             dark: primitive('color', 'brand', 900),
           },
           borderColor: {
-            light: primitive('color', 'brand', 500),
-            dark: primitive('color', 'brand', 400),
+            light: primitive('color', 'brand', 200),
+            dark: primitive('color', 'brand', 200),
           },
           hover: {
             bgColor: {
-              light: primitive('color', 'brand', 600),
-              dark: primitive('color', 'brand', 500),
+              light: primitive('color', 'brand', 300),
+              dark: primitive('color', 'brand', 300),
             },
             fgColor: {
-              light: semantic('color', 'on', 'brand', 600),
-              dark: semantic('color', 'on', 'brand', 500),
+              light: semantic('color', 'on', 'brand', 300),
+              dark: semantic('color', 'on', 'brand', 300),
             },
             borderColor: {
-              light: primitive('color', 'brand', 600),
-              dark: primitive('color', 'brand', 500),
+              light: primitive('color', 'brand', 300),
+              dark: primitive('color', 'brand', 300),
             },
           },
           active: {
             bgColor: {
-              light: primitive('color', 'brand', 700),
-              dark: primitive('color', 'brand', 600),
+              light: primitive('color', 'brand', 400),
+              dark: primitive('color', 'brand', 400),
             },
             fgColor: {
-              light: semantic('color', 'on', 'brand', 700),
-              dark: semantic('color', 'on', 'brand', 600),
+              light: semantic('color', 'on', 'brand', 400),
+              dark: semantic('color', 'on', 'brand', 400),
             },
             borderColor: {
-              light: primitive('color', 'brand', 700),
-              dark: primitive('color', 'brand', 600),
+              light: primitive('color', 'brand', 400),
+              dark: primitive('color', 'brand', 400),
             },
           },
           focus: {
             bgColor: {
-              light: primitive('color', 'brand', 500),
-              dark: primitive('color', 'brand', 400),
+              light: primitive('color', 'brand', 200),
+              dark: primitive('color', 'brand', 200),
             },
             fgColor: {
-              light: semantic('color', 'on', 'brand', 500),
-              dark: semantic('color', 'on', 'brand', 400),
+              light: semantic('color', 'on', 'brand', 200),
+              dark: semantic('color', 'on', 'brand', 200),
             },
             borderColor: {
               light: primitive('color', 'brand', 700),
@@ -805,7 +904,7 @@ const zocdocTokensBase = charmTokens
               dark: primitive('color', 'neutral', 700),
             },
             fgColor: {
-              light: primitive('color', 'neutral', 400),
+              light: primitive('color', 'neutral', 500),
               dark: primitive('color', 'neutral', 500),
             },
             borderColor: {
@@ -890,11 +989,11 @@ const zocdocTokensBase = charmTokens
         },
         neutral: {
           bgColor: {
-            light: primitive('color', 'neutral', 500),
+            light: primitive('color', 'neutral', 400),
             dark: primitive('color', 'neutral', 400),
           },
           fgColor: {
-            light: semantic('color', 'on', 'neutral', 500),
+            light: semantic('color', 'on', 'neutral', 400),
             dark: semantic('color', 'on', 'neutral', 400),
           },
           secondaryFgColor: {
@@ -902,44 +1001,44 @@ const zocdocTokensBase = charmTokens
             dark: primitive('color', 'neutral', 900),
           },
           borderColor: {
-            light: primitive('color', 'neutral', 500),
+            light: primitive('color', 'neutral', 400),
             dark: primitive('color', 'neutral', 400),
           },
           hover: {
             bgColor: {
-              light: primitive('color', 'neutral', 600),
-              dark: primitive('color', 'neutral', 500),
+              light: primitive('color', 'neutral', 700),
+              dark: primitive('color', 'neutral', 700),
             },
             fgColor: {
-              light: semantic('color', 'on', 'neutral', 600),
-              dark: semantic('color', 'on', 'neutral', 500),
+              light: semantic('color', 'on', 'neutral', 700),
+              dark: semantic('color', 'on', 'neutral', 700),
             },
             borderColor: {
-              light: primitive('color', 'neutral', 600),
-              dark: primitive('color', 'neutral', 500),
+              light: primitive('color', 'neutral', 700),
+              dark: primitive('color', 'neutral', 700),
             },
           },
           active: {
             bgColor: {
-              light: primitive('color', 'neutral', 700),
-              dark: primitive('color', 'neutral', 600),
+              light: primitive('color', 'neutral', 800),
+              dark: primitive('color', 'neutral', 800),
             },
             fgColor: {
-              light: semantic('color', 'on', 'neutral', 700),
-              dark: semantic('color', 'on', 'neutral', 600),
+              light: semantic('color', 'on', 'neutral', 800),
+              dark: semantic('color', 'on', 'neutral', 800),
             },
             borderColor: {
-              light: primitive('color', 'neutral', 700),
-              dark: primitive('color', 'neutral', 600),
+              light: primitive('color', 'neutral', 800),
+              dark: primitive('color', 'neutral', 800),
             },
           },
           focus: {
             bgColor: {
-              light: primitive('color', 'neutral', 500),
+              light: primitive('color', 'neutral', 400),
               dark: primitive('color', 'neutral', 400),
             },
             fgColor: {
-              light: semantic('color', 'on', 'neutral', 500),
+              light: semantic('color', 'on', 'neutral', 400),
               dark: semantic('color', 'on', 'neutral', 400),
             },
             borderColor: {
@@ -1050,8 +1149,8 @@ const zocdocTokensBase = charmTokens
             dark: primitive('color', 'neutral', 500),
           },
           borderColor: {
-            light: primitive('color', 'neutral', 800),
-            dark: primitive('color', 'neutral', 800),
+            light: primitive('color', 'neutral', 900),
+            dark: primitive('color', 'neutral', 950),
           },
           colorScheme: 'dark',
           hover: {
@@ -1111,13 +1210,86 @@ const zocdocTokensBase = charmTokens
             },
           },
         },
+        /** Zinc's `neutralMuted` - badge neutral */
+        neutralMuted: {
+          bgColor: {
+            light: primitive('color', 'neutral', 100),
+            dark: primitive('color', 'neutral', 800),
+          },
+          fgColor: {
+            light: semantic('color', 'on', 'neutral', 100),
+            dark: semantic('color', 'on', 'neutral', 800),
+          },
+        },
+        /**
+         * Zinc's `surface.inverse` - dark in the light theme, light in the dark
+         * theme. Renamed because Charm already declares `surface.inverse` as a
+         * single color, which swallows a nested group. Zinc also flips
+         * `colorScheme` here; content inside keeps the page scheme.
+         */
+        inverted: {
+          bgColor: {
+            light: primitive('color', 'neutral', 900),
+            dark: primitive('color', 'neutral', 50),
+          },
+          fgColor: {
+            light: semantic('color', 'on', 'neutral', 900),
+            dark: semantic('color', 'on', 'neutral', 50),
+          },
+          borderColor: {
+            light: primitive('color', 'neutral', 900),
+            dark: primitive('color', 'neutral', 50),
+          },
+          hover: {
+            bgColor: {
+              light: primitive('color', 'neutral', 900),
+              dark: primitive('color', 'neutral', 200),
+            },
+            fgColor: {
+              light: semantic('color', 'on', 'neutral', 900),
+              dark: semantic('color', 'on', 'neutral', 200),
+            },
+            borderColor: {
+              light: primitive('color', 'neutral', 900),
+              dark: primitive('color', 'neutral', 200),
+            },
+          },
+          active: {
+            bgColor: {
+              light: primitive('color', 'neutral', 800),
+              dark: primitive('color', 'neutral', 400),
+            },
+            fgColor: {
+              light: semantic('color', 'on', 'neutral', 800),
+              dark: semantic('color', 'on', 'neutral', 400),
+            },
+            borderColor: {
+              light: primitive('color', 'neutral', 800),
+              dark: primitive('color', 'neutral', 400),
+            },
+          },
+          disabled: {
+            bgColor: {
+              light: primitive('color', 'neutral', 200),
+              dark: primitive('color', 'neutral', 300),
+            },
+            fgColor: {
+              light: primitive('color', 'neutral', 400),
+              dark: primitive('color', 'neutral', 500),
+            },
+            borderColor: {
+              light: primitive('color', 'neutral', 200),
+              dark: primitive('color', 'neutral', 300),
+            },
+          },
+        },
         info: {
           bgColor: {
-            light: primitive('color', 'info', 500),
+            light: primitive('color', 'info', 400),
             dark: primitive('color', 'info', 400),
           },
           fgColor: {
-            light: semantic('color', 'on', 'info', 500),
+            light: semantic('color', 'on', 'info', 400),
             dark: semantic('color', 'on', 'info', 400),
           },
           secondaryFgColor: {
@@ -1125,44 +1297,44 @@ const zocdocTokensBase = charmTokens
             dark: primitive('color', 'info', 900),
           },
           borderColor: {
-            light: primitive('color', 'info', 500),
+            light: primitive('color', 'info', 400),
             dark: primitive('color', 'info', 400),
           },
           hover: {
             bgColor: {
-              light: primitive('color', 'info', 600),
-              dark: primitive('color', 'info', 500),
+              light: primitive('color', 'info', 700),
+              dark: primitive('color', 'info', 700),
             },
             fgColor: {
-              light: semantic('color', 'on', 'info', 600),
-              dark: semantic('color', 'on', 'info', 500),
+              light: semantic('color', 'on', 'info', 700),
+              dark: semantic('color', 'on', 'info', 700),
             },
             borderColor: {
-              light: primitive('color', 'info', 600),
-              dark: primitive('color', 'info', 500),
+              light: primitive('color', 'info', 700),
+              dark: primitive('color', 'info', 700),
             },
           },
           active: {
             bgColor: {
-              light: primitive('color', 'info', 700),
-              dark: primitive('color', 'info', 600),
+              light: primitive('color', 'info', 800),
+              dark: primitive('color', 'info', 800),
             },
             fgColor: {
-              light: semantic('color', 'on', 'info', 700),
-              dark: semantic('color', 'on', 'info', 600),
+              light: semantic('color', 'on', 'info', 800),
+              dark: semantic('color', 'on', 'info', 800),
             },
             borderColor: {
-              light: primitive('color', 'info', 700),
-              dark: primitive('color', 'info', 600),
+              light: primitive('color', 'info', 800),
+              dark: primitive('color', 'info', 800),
             },
           },
           focus: {
             bgColor: {
-              light: primitive('color', 'info', 500),
+              light: primitive('color', 'info', 400),
               dark: primitive('color', 'info', 400),
             },
             fgColor: {
-              light: semantic('color', 'on', 'info', 500),
+              light: semantic('color', 'on', 'info', 400),
               dark: semantic('color', 'on', 'info', 400),
             },
             borderColor: {
@@ -1204,30 +1376,30 @@ const zocdocTokensBase = charmTokens
           },
           hover: {
             bgColor: {
-              light: primitive('color', 'success', 600),
-              dark: primitive('color', 'success', 500),
+              light: primitive('color', 'success', 700),
+              dark: primitive('color', 'success', 700),
             },
             fgColor: {
-              light: semantic('color', 'on', 'success', 600),
-              dark: semantic('color', 'on', 'success', 500),
+              light: semantic('color', 'on', 'success', 700),
+              dark: semantic('color', 'on', 'success', 700),
             },
             borderColor: {
-              light: primitive('color', 'success', 600),
-              dark: primitive('color', 'success', 500),
+              light: primitive('color', 'success', 700),
+              dark: primitive('color', 'success', 700),
             },
           },
           active: {
             bgColor: {
-              light: primitive('color', 'success', 700),
-              dark: primitive('color', 'success', 600),
+              light: primitive('color', 'success', 800),
+              dark: primitive('color', 'success', 800),
             },
             fgColor: {
-              light: semantic('color', 'on', 'success', 700),
-              dark: semantic('color', 'on', 'success', 600),
+              light: semantic('color', 'on', 'success', 800),
+              dark: semantic('color', 'on', 'success', 800),
             },
             borderColor: {
-              light: primitive('color', 'success', 700),
-              dark: primitive('color', 'success', 600),
+              light: primitive('color', 'success', 800),
+              dark: primitive('color', 'success', 800),
             },
           },
           focus: {
@@ -1261,11 +1433,11 @@ const zocdocTokensBase = charmTokens
         },
         warning: {
           bgColor: {
-            light: primitive('color', 'warning', 500),
+            light: primitive('color', 'warning', 400),
             dark: primitive('color', 'warning', 400),
           },
           fgColor: {
-            light: semantic('color', 'on', 'warning', 500),
+            light: semantic('color', 'on', 'warning', 400),
             dark: semantic('color', 'on', 'warning', 400),
           },
           secondaryFgColor: {
@@ -1273,44 +1445,44 @@ const zocdocTokensBase = charmTokens
             dark: primitive('color', 'warning', 900),
           },
           borderColor: {
-            light: primitive('color', 'warning', 500),
+            light: primitive('color', 'warning', 400),
             dark: primitive('color', 'warning', 400),
           },
           hover: {
             bgColor: {
-              light: primitive('color', 'warning', 600),
-              dark: primitive('color', 'warning', 500),
+              light: primitive('color', 'warning', 700),
+              dark: primitive('color', 'warning', 700),
             },
             fgColor: {
-              light: semantic('color', 'on', 'warning', 600),
-              dark: semantic('color', 'on', 'warning', 500),
+              light: semantic('color', 'on', 'warning', 700),
+              dark: semantic('color', 'on', 'warning', 700),
             },
             borderColor: {
-              light: primitive('color', 'warning', 600),
-              dark: primitive('color', 'warning', 500),
+              light: primitive('color', 'warning', 700),
+              dark: primitive('color', 'warning', 700),
             },
           },
           active: {
             bgColor: {
-              light: primitive('color', 'warning', 700),
-              dark: primitive('color', 'warning', 600),
+              light: primitive('color', 'warning', 800),
+              dark: primitive('color', 'warning', 800),
             },
             fgColor: {
-              light: semantic('color', 'on', 'warning', 700),
-              dark: semantic('color', 'on', 'warning', 600),
+              light: semantic('color', 'on', 'warning', 800),
+              dark: semantic('color', 'on', 'warning', 800),
             },
             borderColor: {
-              light: primitive('color', 'warning', 700),
-              dark: primitive('color', 'warning', 600),
+              light: primitive('color', 'warning', 800),
+              dark: primitive('color', 'warning', 800),
             },
           },
           focus: {
             bgColor: {
-              light: primitive('color', 'warning', 500),
+              light: primitive('color', 'warning', 400),
               dark: primitive('color', 'warning', 400),
             },
             fgColor: {
-              light: semantic('color', 'on', 'warning', 500),
+              light: semantic('color', 'on', 'warning', 400),
               dark: semantic('color', 'on', 'warning', 400),
             },
             borderColor: {
@@ -1335,11 +1507,11 @@ const zocdocTokensBase = charmTokens
         },
         danger: {
           bgColor: {
-            light: primitive('color', 'danger', 500),
+            light: primitive('color', 'danger', 700),
             dark: primitive('color', 'danger', 400),
           },
           fgColor: {
-            light: semantic('color', 'on', 'danger', 500),
+            light: semantic('color', 'on', 'danger', 700),
             dark: semantic('color', 'on', 'danger', 400),
           },
           secondaryFgColor: {
@@ -1347,49 +1519,56 @@ const zocdocTokensBase = charmTokens
             dark: primitive('color', 'danger', 900),
           },
           borderColor: {
-            light: primitive('color', 'danger', 500),
+            light: primitive('color', 'danger', 700),
             dark: primitive('color', 'danger', 400),
           },
+          /**
+           * Steps 500 and 600 of the danger palette are a contrast dead zone:
+           * neither white nor the dark text color clears 4.5:1 against them,
+           * so text-bearing danger surfaces stay at 700 or darker in light
+           * mode and 400 or lighter in dark mode. Light mode darkens on
+           * interaction; dark mode lightens, which keeps the foreground stable.
+           */
           hover: {
             bgColor: {
-              light: primitive('color', 'danger', 600),
-              dark: primitive('color', 'danger', 500),
+              light: primitive('color', 'danger', 800),
+              dark: primitive('color', 'danger', 300),
             },
             fgColor: {
-              light: semantic('color', 'on', 'danger', 600),
-              dark: semantic('color', 'on', 'danger', 500),
+              light: semantic('color', 'on', 'danger', 800),
+              dark: semantic('color', 'on', 'danger', 300),
             },
             borderColor: {
-              light: primitive('color', 'danger', 600),
-              dark: primitive('color', 'danger', 500),
+              light: primitive('color', 'danger', 800),
+              dark: primitive('color', 'danger', 300),
             },
           },
           active: {
             bgColor: {
-              light: primitive('color', 'danger', 700),
-              dark: primitive('color', 'danger', 600),
+              light: primitive('color', 'danger', 900),
+              dark: primitive('color', 'danger', 200),
             },
             fgColor: {
-              light: semantic('color', 'on', 'danger', 700),
-              dark: semantic('color', 'on', 'danger', 600),
+              light: semantic('color', 'on', 'danger', 900),
+              dark: semantic('color', 'on', 'danger', 200),
             },
             borderColor: {
-              light: primitive('color', 'danger', 700),
-              dark: primitive('color', 'danger', 600),
+              light: primitive('color', 'danger', 900),
+              dark: primitive('color', 'danger', 200),
             },
           },
           focus: {
             bgColor: {
-              light: primitive('color', 'danger', 500),
+              light: primitive('color', 'danger', 700),
               dark: primitive('color', 'danger', 400),
             },
             fgColor: {
-              light: semantic('color', 'on', 'danger', 500),
+              light: semantic('color', 'on', 'danger', 700),
               dark: semantic('color', 'on', 'danger', 400),
             },
             borderColor: {
-              light: primitive('color', 'danger', 700),
-              dark: primitive('color', 'danger', 300),
+              light: primitive('color', 'danger', 900),
+              dark: primitive('color', 'danger', 200),
             },
           },
           disabled: {
@@ -1426,30 +1605,30 @@ const zocdocTokensBase = charmTokens
           },
           hover: {
             bgColor: {
-              light: primitive('color', 'caution', 600),
-              dark: primitive('color', 'caution', 500),
+              light: primitive('color', 'caution', 400),
+              dark: primitive('color', 'caution', 300),
             },
             fgColor: {
-              light: semantic('color', 'on', 'caution', 600),
-              dark: semantic('color', 'on', 'caution', 500),
+              light: semantic('color', 'on', 'caution', 400),
+              dark: semantic('color', 'on', 'caution', 300),
             },
             borderColor: {
-              light: primitive('color', 'caution', 600),
-              dark: primitive('color', 'caution', 500),
+              light: primitive('color', 'caution', 400),
+              dark: primitive('color', 'caution', 300),
             },
           },
           active: {
             bgColor: {
-              light: primitive('color', 'caution', 700),
-              dark: primitive('color', 'caution', 600),
+              light: primitive('color', 'caution', 300),
+              dark: primitive('color', 'caution', 200),
             },
             fgColor: {
-              light: semantic('color', 'on', 'caution', 700),
-              dark: semantic('color', 'on', 'caution', 600),
+              light: semantic('color', 'on', 'caution', 300),
+              dark: semantic('color', 'on', 'caution', 200),
             },
             borderColor: {
-              light: primitive('color', 'caution', 700),
-              dark: primitive('color', 'caution', 600),
+              light: primitive('color', 'caution', 300),
+              dark: primitive('color', 'caution', 200),
             },
           },
           focus: {
@@ -1800,107 +1979,46 @@ const zocdocTokensBase = charmTokens
             borderColor: semantic('surface', 'brand', 'disabled', 'borderColor'),
           },
         },
+        /** Zinc points secondary at `defaultButton` */
         secondary: {
-          bgColor: 'transparent',
-          fgColor: semantic('body', 'fgColor'),
-          borderColor: {
-            light: primitive('color', 'neutral', 600),
-            dark: primitive('color', 'neutral', 400),
-          },
+          bgColor: semantic('defaultButton', 'bgColor'),
+          fgColor: semantic('defaultButton', 'fgColor'),
+          borderColor: semantic('defaultButton', 'borderColor'),
           hover: {
-            bgColor: {
-              light: primitive('color', 'neutral', 100),
-              dark: primitive('color', 'neutral', 800),
-            },
-            fgColor: {
-              light: semantic('color', 'on', 'neutral', 100),
-              dark: semantic('color', 'on', 'neutral', 800),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 600),
-              dark: primitive('color', 'neutral', 400),
-            },
+            bgColor: semantic('defaultButton', 'hover', 'bgColor'),
+            /** Not in Zinc; `ZdButton` reads it, so it follows the hover surface */
+            fgColor: semantic('surface', 'default', 'hover', 'fgColor'),
+            borderColor: semantic('defaultButton', 'hover', 'borderColor'),
           },
           active: {
-            bgColor: {
-              light: primitive('color', 'neutral', 200),
-              dark: primitive('color', 'neutral', 700),
-            },
-            fgColor: {
-              light: semantic('color', 'on', 'neutral', 200),
-              dark: semantic('color', 'on', 'neutral', 700),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 600),
-              dark: primitive('color', 'neutral', 400),
-            },
+            bgColor: semantic('defaultButton', 'active', 'bgColor'),
+            fgColor: semantic('defaultButton', 'active', 'fgColor'),
+            borderColor: semantic('defaultButton', 'active', 'borderColor'),
           },
           disabled: {
-            bgColor: {
-              light: primitive('color', 'neutral', 200),
-              dark: primitive('color', 'neutral', 600),
-            },
-            fgColor: {
-              light: primitive('color', 'neutral', 400),
-              dark: primitive('color', 'neutral', 800),
-            },
-            borderColor: primitive('color', 'neutral', 400),
+            bgColor: semantic('defaultButton', 'disabled', 'bgColor'),
+            fgColor: semantic('defaultButton', 'disabled', 'fgColor'),
+            borderColor: semantic('defaultButton', 'disabled', 'borderColor'),
           },
         },
         inverse: {
-          bgColor: {
-            light: primitive('color', 'neutral', 800),
-            dark: primitive('color', 'neutral', 50),
-          },
-          fgColor: {
-            light: semantic('color', 'on', 'neutral', 800),
-            dark: semantic('color', 'on', 'neutral', 50),
-          },
-          borderColor: {
-            light: primitive('color', 'neutral', 800),
-            dark: primitive('color', 'neutral', 50),
-          },
+          bgColor: semantic('surface', 'inverted', 'bgColor'),
+          fgColor: semantic('surface', 'inverted', 'fgColor'),
+          borderColor: semantic('surface', 'inverted', 'borderColor'),
           hover: {
-            bgColor: {
-              light: primitive('color', 'neutral', 700),
-              dark: primitive('color', 'neutral', 200),
-            },
-            fgColor: {
-              light: semantic('color', 'on', 'neutral', 700),
-              dark: semantic('color', 'on', 'neutral', 200),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 700),
-              dark: primitive('color', 'neutral', 200),
-            },
+            bgColor: semantic('surface', 'inverted', 'hover', 'bgColor'),
+            fgColor: semantic('surface', 'inverted', 'hover', 'fgColor'),
+            borderColor: semantic('surface', 'inverted', 'hover', 'borderColor'),
           },
           active: {
-            bgColor: {
-              light: primitive('color', 'neutral', 600),
-              dark: primitive('color', 'neutral', 400),
-            },
-            fgColor: {
-              light: semantic('color', 'on', 'neutral', 600),
-              dark: semantic('color', 'on', 'neutral', 400),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 600),
-              dark: primitive('color', 'neutral', 400),
-            },
+            bgColor: semantic('surface', 'inverted', 'active', 'bgColor'),
+            fgColor: semantic('surface', 'inverted', 'active', 'fgColor'),
+            borderColor: semantic('surface', 'inverted', 'active', 'borderColor'),
           },
           disabled: {
-            bgColor: {
-              light: primitive('color', 'neutral', 700),
-              dark: primitive('color', 'neutral', 300),
-            },
-            fgColor: {
-              light: primitive('color', 'neutral', 500),
-              dark: primitive('color', 'neutral', 500),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 700),
-              dark: primitive('color', 'neutral', 300),
-            },
+            bgColor: semantic('surface', 'inverted', 'disabled', 'bgColor'),
+            fgColor: semantic('surface', 'inverted', 'disabled', 'fgColor'),
+            borderColor: semantic('surface', 'inverted', 'disabled', 'borderColor'),
           },
         },
         ghost: {
@@ -1908,57 +2026,37 @@ const zocdocTokensBase = charmTokens
           fgColor: semantic('body', 'fgColor'),
           borderColor: primitive('color', 'transparent'),
           hover: {
-            bgColor: {
-              light: primitive('color', 'neutral', 100),
-              dark: primitive('color', 'neutral', 800),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 100),
-              dark: primitive('color', 'neutral', 800),
-            },
+            bgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+            borderColor: primitive('color', 'transparent'),
           },
           active: {
-            bgColor: {
-              light: primitive('color', 'neutral', 200),
-              dark: primitive('color', 'neutral', 700),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 200),
-              dark: primitive('color', 'neutral', 700),
-            },
+            bgColor: semantic('surface', 'default', 'active', 'bgColor'),
+            fgColor: semantic('surface', 'default', 'active', 'fgColor'),
+            borderColor: primitive('color', 'transparent'),
           },
           disabled: {
-            fgColor: primitive('color', 'neutral', 400),
+            fgColor: primitive('color', 'neutral', 500),
             borderColor: primitive('color', 'transparent'),
           },
         },
         destructive: {
-          bgColor: primitive('color', 'danger', 600),
-          fgColor: semantic('color', 'on', 'danger', 600),
-          borderColor: primitive('color', 'danger', 600),
+          bgColor: semantic('surface', 'danger', 'bgColor'),
+          fgColor: semantic('surface', 'danger', 'fgColor'),
+          borderColor: semantic('surface', 'danger', 'borderColor'),
           hover: {
-            bgColor: primitive('color', 'danger', 700),
-            fgColor: semantic('color', 'on', 'danger', 700),
-            borderColor: primitive('color', 'danger', 700),
+            bgColor: semantic('surface', 'danger', 'hover', 'bgColor'),
+            fgColor: semantic('surface', 'danger', 'hover', 'fgColor'),
+            borderColor: semantic('surface', 'danger', 'hover', 'borderColor'),
           },
           active: {
-            bgColor: primitive('color', 'danger', 700),
-            fgColor: semantic('color', 'on', 'danger', 700),
-            borderColor: primitive('color', 'danger', 700),
+            bgColor: semantic('surface', 'danger', 'active', 'bgColor'),
+            fgColor: semantic('surface', 'danger', 'active', 'fgColor'),
+            borderColor: semantic('surface', 'danger', 'active', 'borderColor'),
           },
           disabled: {
-            bgColor: {
-              light: primitive('color', 'neutral', 200),
-              dark: primitive('color', 'neutral', 600),
-            },
-            fgColor: {
-              light: primitive('color', 'neutral', 400),
-              dark: primitive('color', 'neutral', 800),
-            },
-            borderColor: {
-              light: primitive('color', 'neutral', 200),
-              dark: primitive('color', 'neutral', 600),
-            },
+            bgColor: semantic('surface', 'danger', 'disabled', 'bgColor'),
+            fgColor: semantic('surface', 'danger', 'disabled', 'fgColor'),
+            borderColor: semantic('surface', 'danger', 'disabled', 'borderColor'),
           },
         },
         link: {
@@ -1982,10 +2080,7 @@ const zocdocTokensBase = charmTokens
         },
       },
       checkbox: {
-        borderColor: {
-          light: primitive('color', 'neutral', 800),
-          dark: primitive('color', 'neutral', 400),
-        },
+        borderColor: semantic('formControl', 'borderColor'),
         borderWidth: primitive('borderWidth', 'sm'),
         borderRadius: primitive('borderRadius', 'xs'),
         bgColor: semantic('surface', 'default', 'bgColor'),
@@ -2012,40 +2107,22 @@ const zocdocTokensBase = charmTokens
           },
         },
         hover: {
-          bgColor: {
-            light: primitive('color', 'neutral', 50),
-            dark: primitive('color', 'neutral', 800),
-          },
+          bgColor: semantic('formControl', 'hover', 'bgColor'),
         },
         focus: {
-          borderColor: {
-            light: primitive('color', 'neutral', 900),
-            dark: primitive('color', 'white'),
-          },
+          borderColor: semantic('formControl', 'focus', 'borderColor'),
         },
         invalid: {
-          bgColor: {
-            light: primitive('color', 'danger', 50),
-            dark: primitive('color', 'danger', 900),
-          },
+          bgColor: semantic('surface', 'default', 'bgColor'),
         },
         disabled: {
-          borderColor: {
-            light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 700),
-          },
-          bgColor: {
-            light: primitive('color', 'neutral', 100),
-            dark: primitive('color', 'neutral', 800),
-          },
+          borderColor: semantic('formControl', 'disabled', 'borderColor'),
+          bgColor: semantic('formControl', 'disabled', 'bgColor'),
           opacity: '0.5',
         },
       },
       radio: {
-        borderColor: {
-          light: primitive('color', 'neutral', 800),
-          dark: primitive('color', 'neutral', 400),
-        },
+        borderColor: semantic('formControl', 'borderColor'),
         borderWidth: primitive('borderWidth', 'sm'),
         bgColor: semantic('surface', 'default', 'bgColor'),
         label: {
@@ -2073,38 +2150,21 @@ const zocdocTokensBase = charmTokens
             light: primitive('color', 'neutral', 900),
             dark: primitive('color', 'white'),
           },
-          borderColor: {
-            light: primitive('color', 'neutral', 900),
-            dark: primitive('color', 'white'),
-          },
+          borderColor: semantic('formControl', 'borderColor'),
         },
         hover: {
-          bgColor: {
-            light: primitive('color', 'neutral', 50),
-            dark: primitive('color', 'neutral', 800),
-          },
+          bgColor: semantic('formControl', 'hover', 'bgColor'),
         },
         focus: {
-          borderColor: {
-            light: primitive('color', 'neutral', 900),
-            dark: primitive('color', 'white'),
-          },
+          borderColor: semantic('formControl', 'focus', 'borderColor'),
         },
         invalid: {
-          bgColor: {
-            light: primitive('color', 'danger', 50),
-            dark: primitive('color', 'danger', 900),
-          },
+          bgColor: semantic('body', 'bgColor'),
+          borderColor: semantic('formControl', 'invalid', 'borderColor'),
         },
         disabled: {
-          borderColor: {
-            light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 700),
-          },
-          bgColor: {
-            light: primitive('color', 'neutral', 100),
-            dark: primitive('color', 'neutral', 800),
-          },
+          borderColor: semantic('formControl', 'disabled', 'borderColor'),
+          bgColor: semantic('formControl', 'disabled', 'bgColor'),
           opacity: '0.5',
         },
       },
@@ -2145,23 +2205,11 @@ const zocdocTokensBase = charmTokens
             },
           },
           checked: {
-            bgColor: {
-              light: primitive('color', 'accent', 500),
-              dark: primitive('color', 'accent', 400),
-            },
-            borderColor: {
-              light: primitive('color', 'accent', 500),
-              dark: primitive('color', 'accent', 400),
-            },
+            bgColor: semantic('surface', 'success', 'bgColor'),
+            borderColor: semantic('surface', 'success', 'borderColor'),
             hover: {
-              bgColor: {
-                light: primitive('color', 'accent', 600),
-                dark: primitive('color', 'accent', 300),
-              },
-              borderColor: {
-                light: primitive('color', 'accent', 600),
-                dark: primitive('color', 'accent', 300),
-              },
+              bgColor: semantic('surface', 'success', 'hover', 'bgColor'),
+              borderColor: semantic('surface', 'success', 'hover', 'borderColor'),
             },
             invalid: {
               bgColor: {
@@ -2175,7 +2223,7 @@ const zocdocTokensBase = charmTokens
           size: '24px',
           bgColor: primitive('color', 'white'),
           borderRadius: primitive('borderRadius', 'full'),
-          shadow: '0 1px 3px rgb(0 0 0 / 20%)',
+          shadow: primitive('shadow', 'raised'),
           transition: `transform ${primitive('duration', 200)} ${primitive('timingFunction', 'overshoot')}`,
           /**
            * How far the thumb slides each way from the center of the track,
@@ -2201,16 +2249,24 @@ const zocdocTokensBase = charmTokens
         paddingX: primitive('spacing', 32),
         paddingY: primitive('spacing', 32),
         headerGap: primitive('spacing', 20),
-        titleFontSize: primitive('fontSize', 20),
+        titleFontSize: semantic('typography', 'heading', 'md', 'fontSize'),
+        titleFontWeight: semantic('typography', 'heading', 'md', 'fontWeight'),
+        titleLineHeight: semantic('typography', 'heading', 'md', 'lineHeight'),
         subtitleFontSize: semantic('body', 'fontSize'),
         titleGroupGap: primitive('spacing', 4),
         footerButtonGap: primitive('spacing', 12),
         borderRadius: primitive('borderRadius', 'lg'),
-        bgColor: semantic('surface', 'default', 'bgColor'),
+        /** Zinc's `modal.width` - Charm caps the panel with `maxWidth` */
+        maxWidth: '35rem',
+        borderWidth: semantic('elevation', 'modal', 'borderWidth'),
+        bgColor: semantic('elevation', 'modal', 'bgColor'),
         fgColor: semantic('surface', 'default', 'fgColor'),
-        shadow: primitive('shadow', 'modal'),
-        dividerColor: primitive('color', 'neutral', 200),
-        backdropColor: 'rgba(0, 0, 0, 0.5)',
+        shadow: semantic('elevation', 'modal', 'shadow'),
+        dividerColor: semantic('defaultBorder', 'color'),
+        backdropColor: {
+          light: 'rgb(0 0 0 / 40%)',
+          dark: 'rgb(0 0 0 / 20%)',
+        },
         animationDuration: primitive('duration', 200),
         transition: `opacity ${primitive('duration', 200)} ${primitive('timingFunction', 'easeOut')}, transform ${primitive('duration', 200)} ${primitive('timingFunction', 'easeOut')}`,
         /**
@@ -2233,10 +2289,7 @@ const zocdocTokensBase = charmTokens
         gap: '0',
         tablistGap: '0',
         tablistBorderWidth: primitive('borderWidth', 'sm'),
-        tablistBorderColor: {
-          light: primitive('color', 'neutral', 200),
-          dark: primitive('color', 'neutral', 700),
-        },
+        tablistBorderColor: semantic('defaultBorder', 'color'),
         tablistScrollbarThumbColor: {
           light: primitive('color', 'neutral', 300),
           dark: primitive('color', 'neutral', 600),
@@ -2245,35 +2298,41 @@ const zocdocTokensBase = charmTokens
       },
       tab: {
         bgColor: primitive('color', 'transparent'),
-        fgColor: {
-          light: primitive('color', 'neutral', 700),
-          dark: primitive('color', 'neutral', 300),
-        },
+        fgColor: semantic('surface', 'default', 'fgColor'),
         borderColor: primitive('color', 'transparent'),
         borderWidth: primitive('borderWidth', 'md'),
         borderRadius: '0',
         paddingX: primitive('spacing', 16),
         paddingY: primitive('spacing', 12),
-        fontWeight: primitive('fontWeight', 'semibold'),
+        fontWeight: primitive('fontWeight', 'medium'),
         hover: {
           bgColor: primitive('color', 'transparent'),
-          fgColor: semantic('body', 'fgColor'),
+          fgColor: {
+            light: primitive('color', 'neutral', 950),
+            dark: primitive('color', 'neutral', 50),
+          },
           borderColor: {
             light: primitive('color', 'neutral', 300),
             dark: primitive('color', 'neutral', 600),
           },
-          fontWeight: primitive('fontWeight', 'semibold'),
+          fontWeight: primitive('fontWeight', 'medium'),
         },
         focus: {
           bgColor: primitive('color', 'transparent'),
-          fgColor: semantic('body', 'fgColor'),
+          fgColor: {
+            light: primitive('color', 'neutral', 950),
+            dark: primitive('color', 'neutral', 50),
+          },
           borderColor: primitive('color', 'transparent'),
         },
         active: {
           bgColor: primitive('color', 'transparent'),
-          fgColor: semantic('body', 'fgColor'),
+          fgColor: {
+            light: primitive('color', 'neutral', 950),
+            dark: primitive('color', 'neutral', 50),
+          },
           borderColor: semantic('body', 'fgColor'),
-          fontWeight: primitive('fontWeight', 'semibold'),
+          fontWeight: primitive('fontWeight', 'medium'),
         },
         disabled: {
           bgColor: primitive('color', 'transparent'),
@@ -2295,11 +2354,9 @@ const zocdocTokensBase = charmTokens
         paddingY: primitive('spacing', 16),
         minHeight: primitive('spacing', 48),
       },
+      /** Zinc's `accordion` - a top rule on the group, a bottom rule per item */
       accordion: {
-        topBorderColor: {
-          light: primitive('color', 'neutral', 200),
-          dark: primitive('color', 'neutral', 700),
-        },
+        topBorderColor: semantic('defaultBorder', 'color'),
       },
       /**
        * Zinc's `accordion.trigger` is Charm's `accordionItem` (the trigger row);
@@ -2309,10 +2366,7 @@ const zocdocTokensBase = charmTokens
       accordionItem: {
         bgColor: primitive('color', 'transparent'),
         fgColor: semantic('body', 'fgColor'),
-        borderColor: {
-          light: primitive('color', 'neutral', 200),
-          dark: primitive('color', 'neutral', 700),
-        },
+        borderColor: semantic('defaultBorder', 'color'),
         borderWidth: primitive('borderWidth', 'sm'),
         borderRadius: primitive('borderRadius', 'none'),
         fontFamily: semantic('body', 'fontFamily'),
@@ -2322,22 +2376,17 @@ const zocdocTokensBase = charmTokens
         paddingX: primitive('spacing', 16),
         paddingY: primitive('spacing', 12),
         hover: {
-          bgColor: {
-            light: primitive('color', 'neutral', 50),
-            dark: primitive('color', 'neutral', 800),
-          },
+          bgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+          fgColor: semantic('body', 'fgColor'),
+          borderColor: semantic('defaultBorder', 'color'),
         },
         active: {
-          bgColor: {
-            light: primitive('color', 'neutral', 100),
-            dark: primitive('color', 'neutral', 900),
-          },
+          bgColor: semantic('surface', 'default', 'active', 'bgColor'),
         },
         disabled: {
-          fgColor: {
-            light: primitive('color', 'neutral', 400),
-            dark: primitive('color', 'neutral', 600),
-          },
+          bgColor: primitive('color', 'transparent'),
+          fgColor: semantic('surface', 'default', 'disabled', 'fgColor'),
+          borderColor: semantic('defaultBorder', 'color'),
         },
         panel: {
           bgColor: primitive('color', 'transparent'),
@@ -2349,18 +2398,17 @@ const zocdocTokensBase = charmTokens
           duration: primitive('duration', 200),
           timingFunction: primitive('timingFunction', 'easeInOut'),
         },
+        icon: {
+          transition: `transform ${primitive('duration', 200)} ${primitive('timingFunction', 'easeInOut')}`,
+        },
       },
       tooltip: {
-        bgColor: {
-          light: primitive('color', 'neutral', 800),
-          dark: primitive('color', 'neutral', 200),
-        },
-        fgColor: {
-          light: semantic('color', 'on', 'neutral', 800),
-          dark: semantic('color', 'on', 'neutral', 200),
-        },
-        padding: primitive('spacing', 12),
+        bgColor: semantic('surface', 'inverted', 'bgColor'),
+        fgColor: semantic('surface', 'inverted', 'fgColor'),
+        /** Zinc's `paddingY`/`paddingX` - Charm's tooltip takes one shorthand */
+        padding: `${primitive('spacing', 8)} ${primitive('spacing', 12)}`,
         fontSize: primitive('fontSize', 14),
+        fontWeight: primitive('fontWeight', 'medium'),
         lineHeight: primitive('lineHeight', 'tight'),
         borderRadius: primitive('borderRadius', 'sm'),
         maxWidth: '20rem',
@@ -2370,31 +2418,19 @@ const zocdocTokensBase = charmTokens
       },
       badge: {
         fontSize: semantic('typography', 'label', 'md', 'fontSize'),
-        fontWeight: primitive('fontWeight', 'medium'),
+        fontWeight: primitive('fontWeight', 'semibold'),
         borderRadius: primitive('borderRadius', 'sm'),
         padding: `${primitive('spacing', 4)} ${primitive('spacing', 4)}`,
         paddingX: primitive('spacing', 4),
         paddingY: primitive('spacing', 4),
         iconSize: primitive('fontSize', '16'),
         neutral: {
-          bgColor: {
-            light: primitive('color', 'neutral', 200),
-            dark: primitive('color', 'neutral', 800),
-          },
-          fgColor: {
-            light: semantic('color', 'on', 'neutral', 200),
-            dark: semantic('color', 'on', 'neutral', 800),
-          },
+          bgColor: semantic('surface', 'neutralMuted', 'bgColor'),
+          fgColor: semantic('surface', 'neutralMuted', 'fgColor'),
         },
         inverse: {
-          bgColor: {
-            light: primitive('color', 'neutral', 800),
-            dark: primitive('color', 'neutral', 200),
-          },
-          fgColor: {
-            light: semantic('color', 'on', 'neutral', 800),
-            dark: semantic('color', 'on', 'neutral', 200),
-          },
+          bgColor: semantic('surface', 'inverted', 'bgColor'),
+          fgColor: semantic('surface', 'inverted', 'fgColor'),
         },
         info: {
           bgColor: {
@@ -2448,12 +2484,12 @@ const zocdocTokensBase = charmTokens
         },
         brand: {
           bgColor: {
-            light: primitive('color', 'brand', 500),
-            dark: primitive('color', 'brand', 300),
+            light: primitive('color', 'brand', 400),
+            dark: primitive('color', 'brand', 400),
           },
           fgColor: {
-            light: semantic('color', 'on', 'brand', 500),
-            dark: semantic('color', 'on', 'brand', 300),
+            light: semantic('color', 'on', 'brand', 400),
+            dark: semantic('color', 'on', 'brand', 400),
           },
         },
       },
@@ -2550,19 +2586,23 @@ const zocdocTokensBase = charmTokens
       card: {
         borderRadius: primitive('borderRadius', 'lg'),
         borderWidth: semantic('elevation', 'raised', 'borderWidth'),
-        borderColor: {
-          light: primitive('color', 'neutral', 300),
-          dark: primitive('color', 'neutral', 600),
-        },
+        borderColor: semantic('defaultBorder', 'color'),
         borderStyle: semantic('defaultBorder', 'style'),
         bgColor: semantic('elevation', 'raised', 'bgColor'),
         fgColor: semantic('elevation', 'raised', 'fgColor'),
         padding: primitive('spacing', 16),
-        shadow: semantic('elevation', 'raised', 'shadow'),
+        shadow: primitive('shadow', 'flat'),
         headingPaddingX: primitive('spacing', 0),
         headingPaddingY: primitive('spacing', 0),
         bodyPaddingX: primitive('spacing', 0),
         bodyPaddingY: primitive('spacing', 0),
+      },
+      skeleton: {
+        bgColor: {
+          light: primitive('color', 'neutral', 300),
+          dark: primitive('color', 'neutral', 700),
+        },
+        borderRadius: primitive('borderRadius', 'sm'),
       },
       /**
        * Zinc's `popover` values. Charm registers no `popover` component - it
@@ -2573,6 +2613,7 @@ const zocdocTokensBase = charmTokens
        * up the card tokens instead.
        */
       popup: {
+        bgColor: semantic('surface', 'default', 'bgColor'),
         arrowColor: semantic('surface', 'default', 'bgColor'),
         arrowSize: '8px',
         /**
@@ -2597,19 +2638,50 @@ const zocdocTokensBase = charmTokens
       menu: {
         bgColor: semantic('surface', 'default', 'bgColor'),
         borderRadius: primitive('borderRadius', 'lg'),
-        borderColor: {
-          light: primitive('color', 'neutral', 200),
-          dark: primitive('color', 'neutral', 700),
-        },
+        borderColor: semantic('surface', 'default', 'borderColor'),
         borderStyle: semantic('defaultBorder', 'style'),
         borderWidth: semantic('defaultBorder', 'width'),
-        shadow: primitive('shadow', 'overlay'),
+        /** Zinc's popover sits at `elevation.modal` */
+        shadow: semantic('elevation', 'modal', 'shadow'),
+        minWidth: '10rem',
         /**
          * Zinc's popover padding is 16px, which is the inset around a block of
          * prose. A menu's padding is the gutter around its items, so it stays
          * tight and the items carry their own padding.
          */
         popupPadding: primitive('spacing', 4),
+        /**
+         * Zinc's group label is `typography.label.lg`, padded like an item.
+         * Charm has no heading color token, so it keeps the item foreground
+         * rather than Zinc's muted neutral 700.
+         */
+        groupHeadingSize: semantic('typography', 'label', 'lg', 'fontSize'),
+        groupHeadingWeight: semantic('typography', 'label', 'lg', 'fontWeight'),
+        groupHeadingLineHeight: primitive('lineHeight', 'tight'),
+        groupHeadingPaddingX: primitive('spacing', 12),
+        groupHeadingPaddingY: primitive('spacing', 4),
+        item: {
+          fgColor: semantic('surface', 'default', 'fgColor'),
+          borderRadius: primitive('borderRadius', 'sm'),
+          paddingX: primitive('spacing', 12),
+          paddingY: primitive('spacing', 8),
+          marginX: '0',
+          hover: {
+            bgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+            fgColor: semantic('surface', 'default', 'hover', 'fgColor'),
+          },
+          active: {
+            bgColor: semantic('surface', 'default', 'active', 'bgColor'),
+            fgColor: semantic('surface', 'default', 'active', 'fgColor'),
+          },
+          disabled: {
+            fgColor: primitive('color', 'neutral', 500),
+          },
+          focus: {
+            /** Draws the focus ring inside the item, as Zinc does */
+            outlineOffset: `calc(-1 * ${semantic('focus', 'outlineWidth')})`,
+          },
+        },
       },
     };
   })
@@ -2655,6 +2727,9 @@ export const zocdocThemeCss: string = zocdocTheme.css ?? '';
 export const zocdocResetCss: string = zocdocTheme.cssReset ?? '';
 export const zocdocUtilitiesCss: string = zocdocTheme.cssUtilities ?? '';
 
-export const zocdocAllCss: string = [zocdocThemeCss, zocdocResetCss, zocdocUtilitiesCss, layoutElementsCss].join(
-  '\n',
-);
+export const zocdocAllCss: string = [
+  zocdocThemeCss,
+  zocdocResetCss,
+  zocdocUtilitiesCss,
+  layoutElementsCss,
+].join('\n');

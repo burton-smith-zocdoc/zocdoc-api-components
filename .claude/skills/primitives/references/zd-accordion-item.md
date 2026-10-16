@@ -16,7 +16,7 @@ A single collapsible section of an accordion: a heading that expands to reveal i
 | --- | --- | --- | --- | --- | --- |
 | `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the emitted click event. | `CoreAccordionItem` |
-| `expand-icon-position` | `expandIconPosition` | `'start' \| 'end'` | — | Determines whether the expand icon position: 'start' or 'end'. | `CoreAccordionItem` |
+| `expand-icon-position` | `expandIconPosition` | `'start' \| 'end'` | — | Where the expand chevron sits. Charm defaults to the start of the row; Zinc's accordion trails it after the heading. | `CoreAccordionItem` |
 | `heading` | `heading` | `string` | — | The content of the toggle element. Can be used in lieu of the slot if only a string is needed. | `CoreAccordionItem` |
 | `heading-level` | `headingLevel` | `number \| undefined` | — | The header level value (1-6) for summary, when summary is rendered as a header. | `CoreAccordionItem` |
 | `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
