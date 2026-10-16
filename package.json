@@ -18,6 +18,8 @@
     "test:performance": "pnpm run build:types && vitest run --config vitest.performance.config.ts",
     "test:performance:primitives": "pnpm run build:types && vitest run --config vitest.performance.config.ts packages/primitives",
     "test:performance:api": "pnpm run build:types && vitest run --config vitest.performance.config.ts packages/api-components",
+    "test:performance:production": "pnpm run build:types && PERF_BUILD=production vitest run --config vitest.performance.config.ts",
+    "test:profile": "pnpm run build:types && PERF_BUILD=production PERF_PROFILE=1 vitest run --config vitest.performance.config.ts",
     "cem": "pnpm run build:theme && cem generate && pnpm -r run cem",
     "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .claude/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
     "storybook": "pnpm run build:types && pnpm run cem && storybook dev -p 6006",
