@@ -1,9 +1,10 @@
 /**
  * Auto-configuring bundle entry point.
  *
- * Reads configuration from script tag attributes when loaded via:
+ * Reads configuration from script tag attributes when loaded via either build:
  *
  *   <script src="zocdoc.js" zd-token="..."></script>
+ *   <script type="module" src="zocdoc.esm.js" zd-token="..."></script>
  *   <zd-booking zip-code="10001"></zd-booking>
  *
  * Supported attributes:
@@ -33,6 +34,7 @@ import '@zocdoc/api-primitive-components/configure-only';
 // Client configuration
 import { configureZocdoc } from './client/configure.js';
 import { configureZocdocMock } from './client/mock/index.js';
+import { findBundleScript, readBundleScriptConfig } from './bundle-script.js';
 
 // Re-export client API
 export * from './client/appointments.js';
@@ -115,18 +117,10 @@ export type { AvailabilityWindowDetail, DetailOf, ErrorDetail } from './componen
 // Re-export mock utilities for zd-mock mode
 export { configureZocdocMock, createMockTransport, SCENARIOS } from './client/mock/index.js';
 
-const SANDBOX_BASE_URL = 'https://api-developer-sandbox.zocdoc.com';
+const config = readBundleScriptConfig(findBundleScript(import.meta.url));
 
-const script = document.currentScript as HTMLScriptElement | null;
-
-if (script) {
-  const token = script.getAttribute('zd-token');
-  const baseUrl = script.getAttribute('zd-base-url') ?? SANDBOX_BASE_URL;
-  const wantsMock = script.hasAttribute('zd-mock');
-
-  if (token) {
-    configureZocdoc({ baseUrl, getToken: token });
-  } else if (wantsMock) {
-    configureZocdocMock();
-  }
+if (config.mode === 'live') {
+  configureZocdoc({ baseUrl: config.baseUrl, getToken: config.token });
+} else if (config.mode === 'mock') {
+  configureZocdocMock();
 }

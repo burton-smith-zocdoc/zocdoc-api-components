@@ -176,7 +176,13 @@ No bundler is needed. Load the prebuilt bundle and the theme, and the bundle con
 <zd-booking zip-code="11201"></zd-booking>
 ```
 
-`zocdoc.js` is `@zocdoc/api-components/bundle/iife`, and `all.css` is `@zocdoc/api-primitive-components/theme/all.css`. Use `zd-mock` instead of `zd-token` to serve sample data with no network calls, and `zd-base-url` to point at another environment. Everything the package exports is also on the `Zocdoc` global. For example, `Zocdoc.searchProviderLocations()` loads providers for `zd-provider-card`, which takes a `provider` object.
+`zocdoc.js` is `@zocdoc/api-components/bundle/iife`, and `all.css` is `@zocdoc/api-primitive-components/theme/all.css`. Use `zd-mock` instead of `zd-token` to serve sample data with no network calls, and `zd-base-url` to point at another environment. With the IIFE bundle, everything the package exports is also on the `Zocdoc` global. For example, `Zocdoc.searchProviderLocations()` loads providers for `zd-provider-card`, which takes a `provider` object.
+
+To load the components as a module instead, use the ESM bundle, `@zocdoc/api-components/bundle` (`zocdoc.esm.js`). It reads the same attributes from a `<script type="module">` tag, and it exports the API rather than setting the `Zocdoc` global:
+
+```html
+<script type="module" src="/zocdoc/zocdoc.esm.js" zd-token="TOKEN_FROM_YOUR_BACKEND"></script>
+```
 
 ## See it in other stacks
 

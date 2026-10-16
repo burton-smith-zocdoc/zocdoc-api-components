@@ -39,13 +39,38 @@ This stylesheet includes the design tokens, reset, and utility classes used by t
 
 ## Script Tag Alternative
 
-For pages without a build step, use the IIFE bundle:
+For pages without a build step, load one of the prebuilt bundles. Use the IIFE bundle as a classic script:
 
 ```html
-<script src="https://unpkg.com/@zocdoc/api-components/bundle/iife"></script>
+<script
+  src="https://unpkg.com/@zocdoc/api-components/bundle/iife"
+  zd-token="TOKEN_FROM_YOUR_BACKEND"
+></script>
 ```
 
-This registers all components globally, but it does not include theme CSS. Load `@zocdoc/api-primitive-components/theme/all.css` separately as described above.
+Or use the ESM bundle as a module script:
+
+```html
+<script
+  type="module"
+  src="https://unpkg.com/@zocdoc/api-components/bundle"
+  zd-token="TOKEN_FROM_YOUR_BACKEND"
+></script>
+```
+
+Either one registers all components and configures the client from its own `<script>` tag:
+
+| Attribute     | Effect                                                                            |
+| ------------- | --------------------------------------------------------------------------------- |
+| `zd-token`    | API token for live requests. Takes precedence over `zd-mock`.                     |
+| `zd-base-url` | API environment. Defaults to `https://api-developer-sandbox.zocdoc.com`.          |
+| `zd-mock`     | Serves sample data with no network calls. Only applies when `zd-token` is absent. |
+
+The attributes are read once, when the bundle runs. A token that expires needs `configureZocdoc({ baseUrl, getToken })` with a function instead. The IIFE bundle exposes it as `Zocdoc.configureZocdoc`, and the ESM bundle exports it.
+
+The ESM bundle finds its tag by matching the tag's `src` to its own URL. If a CDN redirects that URL, it falls back to the only module script with a `zd-*` attribute. With more than one such script on the page, it configures nothing, so call `configureZocdoc()` yourself. A bundle loaded with `import` rather than a `<script>` tag never reads attributes.
+
+Neither bundle includes theme CSS. Load `@zocdoc/api-primitive-components/theme/all.css` separately as described above.
 
 ## TypeScript
 
