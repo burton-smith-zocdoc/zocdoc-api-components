@@ -35,6 +35,95 @@ Group only controls that belong together. Use `vertical` when the actions read m
 
 The group provides structure and styling; buttons retain their own labels, states, and behavior.
 
+### Split button
+
+```html preview
+<zd-button-group label="Booking options" split>
+  <zd-button variant="primary">Book</zd-button>
+  <zd-menu placement="bottom-end" style="--zd-popup-z-index: 1;">
+    <zd-button slot="trigger" variant="primary" icon-only>
+      <zd-icon name="chevron-down" label="More booking options"></zd-icon>
+    </zd-button>
+    <zd-menu-item>Book for someone else</zd-menu-item>
+    <zd-menu-item>Join the waitlist</zd-menu-item>
+  </zd-menu>
+</zd-button-group>
+```
+
+Use `split` to present a primary action with related alternatives as one control. A `zd-menu` can sit in any button group as long as its trigger is a `zd-button`.
+
+### Single selection
+
+```html preview
+<zd-button-group label="Time of day" select="single" split>
+  <zd-button pressed>Any time</zd-button>
+  <zd-button>Morning</zd-button>
+  <zd-button>Afternoon</zd-button>
+  <zd-button>Evening</zd-button>
+</zd-button-group>
+```
+
+Set `select="single"` when exactly one option should be active, like a segmented control. Pressing a button clears the others. Add `pressed` to a button to set the initial choice.
+
+### Multiple selection
+
+```html preview
+<zd-button-group label="Visit type" select="multiple">
+  <zd-button pressed>In person</zd-button>
+  <zd-button pressed>Video visit</zd-button>
+</zd-button-group>
+```
+
+Set `select="multiple"` when any combination of options can be active, like a set of filters.
+
+### Listen for changes
+
+```html preview
+<zd-button-group id="day-filter" label="Days" select="multiple">
+  <zd-button>Weekdays</zd-button>
+  <zd-button>Weekends</zd-button>
+</zd-button-group>
+<p id="day-filter-output" aria-live="polite">Selected: none</p>
+<script>
+  const dayFilter = document.querySelector('#day-filter');
+  const dayFilterOutput = document.querySelector('#day-filter-output');
+  dayFilter.addEventListener('change', () => {
+    const selected = [...dayFilter.querySelectorAll('zd-button[pressed]')].map((button) => button.textContent.trim());
+    dayFilterOutput.textContent = `Selected: ${selected.join(', ') || 'none'}`;
+  });
+</script>
+```
+
+The group emits a `change` event when a child button's pressed state changes. Read the `pressed` attribute on the buttons to get the current selection.
+
+### Toolbar
+
+```html preview
+<zd-button-group label="Text formatting" toolbar>
+  <zd-button variant="secondary">Bold</zd-button>
+  <zd-button variant="secondary">Italic</zd-button>
+  <zd-button variant="secondary">Underline</zd-button>
+</zd-button-group>
+```
+
+Use `toolbar` when the group is a set of controls rather than choices. It applies `role="toolbar"` and makes the whole group a single tab stop: press Tab to enter, then use the arrow keys to move between buttons.
+
+### Custom styling
+
+```html preview
+<zd-button-group
+  label="Sort results"
+  select="single"
+  style="--zd-charm-button-group-gap: var(--zd-spacing-8); --zd-charm-button-pressed-bg-color: var(--zd-color-accent-100);"
+>
+  <zd-button pressed>Soonest</zd-button>
+  <zd-button>Nearest</zd-button>
+  <zd-button>Top rated</zd-button>
+</zd-button-group>
+```
+
+Use the CSS custom properties below to change the spacing, borders, dividers, and pressed colors without overriding internal styles.
+
 ## API Reference
 
 **Class** `ZdButtonGroup` — **Package** `@zocdoc/api-primitive-components`

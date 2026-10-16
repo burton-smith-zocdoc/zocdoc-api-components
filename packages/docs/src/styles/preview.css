@@ -3,7 +3,7 @@
   --code-bubble-border-color: var(--sl-color-gray-5);
   --code-bubble-border-radius: 0.5rem;
   --code-bubble-bg-color: var(--sl-color-gray-7);
-  --code-bubble-preview-bg-color: var(--sl-color-gray-6);
+  --code-bubble-preview-bg-color: var(--sl-color-bg);
   --code-bubble-button-bg-color: var(--sl-color-gray-6);
   --code-bubble-button-fg-color: var(--sl-color-text);
   --code-bubble-copy-button-fg-color: var(--sl-color-text);
