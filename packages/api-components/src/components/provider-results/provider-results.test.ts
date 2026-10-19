@@ -68,6 +68,7 @@ type Results = HTMLElement & {
   totalCount?: number;
   page: number;
   pageSize: number;
+  loading: boolean;
   availability?: ProviderLocationAvailability[];
   availabilityStart?: string;
   availabilityDays: number;
@@ -98,6 +99,11 @@ async function mountWithAvailability(entries = batch()): Promise<Results> {
   await settled(element);
   await settleGrids(element);
   return element;
+}
+
+/** The placeholder cards the list renders while `loading` is set. */
+function skeletons(element: Results): HTMLElement[] {
+  return [...shadow(element).querySelectorAll<HTMLElement>('[part="skeleton"]')];
 }
 
 function grids(element: Results): Grid[] {
@@ -586,6 +592,74 @@ describe('zd-provider-results', () => {
     });
   });
 
+  describe('loading', () => {
+    it('shows a page of skeleton cards in place of providers', async () => {
+      const element = await mountResults(PROVIDERS);
+      element.pageSize = 4;
+      element.loading = true;
+      await settled(element);
+
+      expect(skeletons(element)).toHaveLength(4);
+      expect(skeletons(element).every((card) => card.hasAttribute('loading'))).toBe(true);
+      expect(shadow(element).querySelector('[part="provider"]')).toBeNull();
+    });
+
+    /* "No providers match" for a search that has not answered yet would be a wrong answer. */
+    it('does not show the empty state while loading', async () => {
+      const element = await mountResults([]);
+      element.loading = true;
+      await settled(element);
+
+      expect(shadow(element).querySelector('[part="empty"]')).toBeNull();
+      expect(skeletons(element)).toHaveLength(10);
+    });
+
+    it('announces one status for the whole list', async () => {
+      const element = await mountResults([]);
+      element.loading = true;
+      await settled(element);
+
+      expect(part(element, 'loading').textContent?.trim()).toBe('Loading providers');
+      expect(part(element, 'list').getAttribute('aria-hidden')).toBe('true');
+    });
+
+    /* The count and dates belong to the answer still in flight, so they are placeholders too. */
+    it('shows skeletons for the count and window control in place of the header', async () => {
+      const element = await mountResults(PROVIDERS);
+      element.totalCount = 3;
+      element.loading = true;
+      await settled(element);
+
+      const header = part(element, 'header-skeleton');
+      expect(header.getAttribute('aria-hidden')).toBe('true');
+      expect(header.querySelectorAll('zd-skeleton')).toHaveLength(2);
+      expect(shadow(element).querySelector('[part="summary"]')).toBeNull();
+      expect(shadow(element).querySelector('zd-availability-window')).toBeNull();
+    });
+
+    /* A second press while the page is in flight would ask for a page past the one coming. */
+    it('keeps the pager in place but disabled', async () => {
+      const element = await mountPaged(1);
+      element.loading = true;
+      await settled(element);
+
+      expect(isDisabled(element, 'previous')).toBe(true);
+      expect(isDisabled(element, 'next')).toBe(true);
+    });
+
+    it('renders the providers once loading clears', async () => {
+      const element = await mountResults(PROVIDERS);
+      element.loading = true;
+      await settled(element);
+
+      element.loading = false;
+      await settled(element);
+
+      expect(skeletons(element)).toHaveLength(0);
+      expect(cards(element)).toHaveLength(2);
+    });
+  });
+
   describe('accessibility', () => {
     it('passes axe checks with providers', async () => {
       const element = await mountResults(PROVIDERS);
@@ -617,6 +691,15 @@ describe('zd-provider-results', () => {
      * The count line and the pager are markup no other state renders, and the pager's middle
      * page is the only one where neither button is disabled (A11Y-005).
      */
+    /* Skeleton cards and a disabled pager are markup no other state renders (A11Y-005). */
+    it('passes axe checks while loading', async () => {
+      const element = await mountPaged(1);
+      element.loading = true;
+      await settled(element);
+
+      await expectNoViolations(element);
+    });
+
     it('passes axe checks with the count line and pager', async () => {
       const element = await mountPaged(1);
 

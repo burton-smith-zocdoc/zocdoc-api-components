@@ -118,6 +118,15 @@ export const Paged: Story = {
   args: { totalCount: 334, page: 3, pageSize: 10 },
 };
 
+/**
+ * A page in flight. Whoever ran the search sets `loading` and clears it when the next
+ * `providers` arrive; the list holds a page of skeleton cards and the pager stays put but
+ * disabled so a second press can't race the first.
+ */
+export const Loading: Story = {
+  args: { loading: true, totalCount: 334, page: 3, pageSize: 10 },
+};
+
 /** A total that fits on one page gets the count and no pager — one page is nothing to page. */
 export const SinglePage: Story = {
   args: { totalCount: PROVIDER_LOCATIONS.length },

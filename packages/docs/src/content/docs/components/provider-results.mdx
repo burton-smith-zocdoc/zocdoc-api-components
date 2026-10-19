@@ -43,6 +43,14 @@ Pass provider data as JavaScript properties; HTML attributes cannot carry object
 </script>
 ```
 
+### Loading
+
+```html preview
+<zd-provider-results loading page-size="3"></zd-provider-results>
+```
+
+The list never fetches, so set `loading` while the search or the next page is in flight and clear it when the new `providers` arrive. It shows one skeleton card per `page-size` slot instead of the "no providers" message, keeps the pager in place but disabled, and announces "Loading providers" once for the whole list.
+
 ## Attributes
 
 | Attribute | Type | Default | Description |
@@ -53,6 +61,7 @@ Pass provider data as JavaScript properties; HTML attributes cannot carry object
 | `page` | `number` | `1` | Current page number |
 | `hide-photos` | `boolean` | `false` | Hide provider photos |
 | `insurance-name` | `string` | — | Insurance to show on cards |
+| `loading` | `boolean` | `false` | Show skeleton cards instead of providers |
 
 ## Events
 

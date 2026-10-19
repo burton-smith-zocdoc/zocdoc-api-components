@@ -86,3 +86,11 @@ export const WithBadges: Story = {
 export const NarrowContainer: Story = {
   decorators: [(story) => html`<div style="max-inline-size: 20rem">${story()}</div>`],
 };
+
+/**
+ * Skeletons hold the card's shape while the parent's request is in flight. The card never
+ * fetches, so the parent sets `loading` and clears it when data arrives.
+ */
+export const Loading: Story = {
+  args: { loading: true },
+};

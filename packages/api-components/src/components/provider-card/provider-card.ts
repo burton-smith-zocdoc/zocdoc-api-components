@@ -4,6 +4,7 @@ import {
   ZdButton,
   ZdCard,
   ZdIcon,
+  ZdSkeleton,
 } from "@zocdoc/api-primitive-components";
 import { nothing } from "lit";
 import { property } from "lit/decorators.js";
@@ -38,6 +39,7 @@ export interface ZdProviderCardEventMap {
  * @csspart specialty - The specialty line.
  * @csspart location - The distance and address line.
  * @csspart insurance - The network status line.
+ * @csspart skeleton - Each placeholder shown while `loading` is set.
  */
 export class ZdProviderCard extends CharmElement {
   public static override baseName = "provider-card";
@@ -52,8 +54,16 @@ export class ZdProviderCard extends CharmElement {
   ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdCard, ZdAvatar, ZdButton, ZdIcon];
+    return [ZdCard, ZdAvatar, ZdButton, ZdIcon, ZdSkeleton];
   }
+
+  /**
+   * Shows skeleton placeholders in the card's layout instead of `provider`. The card never
+   * fetches, so the parent sets this while its own request is in flight and clears it when
+   * the data arrives.
+   */
+  @property({ type: Boolean, reflect: true })
+  public loading = false;
 
   /** The provider location data to render. */
   @property({ attribute: false })
@@ -120,7 +130,37 @@ export class ZdProviderCard extends CharmElement {
     this.emit("profile-request", { detail: { provider: this.provider } });
   }
 
+  /**
+   * Placeholders shaped like the photo, name, specialty, and location lines. No insurance line: it
+   * renders only when a plan was chosen and the API knows the network status, so most cards lack it. The skeletons are
+   * hidden from assistive technology; the status text in the DOM is what gets announced
+   * (A11Y-002, I18N-001). The availability slot stays so a parent can show its own loading grid.
+   */
+  protected renderSkeleton(): unknown {
+    return this.html`
+      <scoped-card class="wrapper-card" aria-busy="true">
+        <span class="visually-hidden" role="status">Loading provider</span>
+        <div class="provider-card">
+          <div class="provider-info" aria-hidden="true">
+            <div class="provider-profile">
+              <scoped-skeleton class="skeleton photo" part="skeleton" shape="circle" animation="wave"></scoped-skeleton>
+              <div class="details">
+                <scoped-skeleton class="skeleton name" part="skeleton" animation="wave"></scoped-skeleton>
+                <scoped-skeleton class="skeleton line" part="skeleton" animation="wave"></scoped-skeleton>
+              </div>
+            </div>
+            <div class="details">
+              <scoped-skeleton class="skeleton line wide" part="skeleton" animation="wave"></scoped-skeleton>
+            </div>
+          </div>
+          <slot name="availability"></slot>
+        </div>
+      </scoped-card>
+    `;
+  }
+
   protected override render(): unknown {
+    if (this.loading) return this.renderSkeleton();
     if (!this.provider) return nothing;
 
     const heading = providerHeading(this.provider);

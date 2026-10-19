@@ -95,6 +95,48 @@ export default css`
     }
   }
 
+  .visually-hidden {
+    block-size: 1px;
+    clip: rect(0, 0, 0, 0);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  /* Sized to the text and avatar they stand in for, so the card doesn't jump when data lands. */
+  .skeleton {
+    display: block;
+    --zd-skeleton-width: 100%;
+
+    &.photo {
+      --zd-skeleton-min-height: var(--zd-avatar-size);
+      inline-size: var(--zd-avatar-size);
+      block-size: var(--zd-avatar-size);
+    }
+
+    /* The name is a button inside the heading, which makes its line taller than the font size. */
+    &.name {
+      --zd-skeleton-min-height: 1.75rem;
+      inline-size: 200px;
+    }
+
+    &.line {
+      --zd-skeleton-min-height: var(--zd-font-size-sm, 0.875rem);
+      inline-size: 7rem;
+
+      &.wide {
+        inline-size: 13rem;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton::part(skeleton-base) {
+      animation: none;
+    }
+  }
+
   ::slotted([slot='availability']) {
     flex: 1 1 300px;
   }

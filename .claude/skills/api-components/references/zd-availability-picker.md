@@ -63,8 +63,10 @@ with a host page that owns its own booking step (COMP-002).
 | `zd-day-groups` | The list of day groups. `stacked` layout only. |
 | `zd-day-heading` | The line naming a group's day or span. `stacked` layout only. |
 | `zd-days` | The strip of days with availability. `strip` layout only. |
+| `zd-loading-days` | The placeholder days shown while availability loads. |
 | `zd-patient-type` | The New/Existing patient control. |
 | `zd-patient-type-option` | One option of that control. |
+| `zd-skeleton` | One placeholder heading or time inside them. |
 | `zd-slot` | One timeslot button. |
 | `zd-slots` | A list of times. |
 

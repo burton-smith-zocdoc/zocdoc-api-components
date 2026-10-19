@@ -35,13 +35,26 @@ The component bundle does not include the Zocdoc theme stylesheet. Import it sep
 import '@zocdoc/api-primitive-components/theme/all.css';
 ```
 
-This stylesheet includes the design tokens, reset, and utility classes used by the components. If you need to preserve existing global styles, import `theme/tokens.css` and `theme/utilities.css` separately and apply the reset only where appropriate.
+Or load it from the CDN with a `<link>` tag in the document `<head>`:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@zocdoc/api-primitive-components/dist/theme/all.css"
+/>
+```
+
+This stylesheet includes the design tokens, reset, and utility classes used by the components. If you need to preserve existing global styles, load `theme/tokens.css` and `theme/utilities.css` separately and apply the reset only where appropriate. Each is also available from the CDN under `dist/theme/`.
 
 ## Script Tag Alternative
 
 For pages without a build step, load one of the prebuilt bundles. Use the IIFE bundle as a classic script:
 
 ```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@zocdoc/api-primitive-components/dist/theme/all.css"
+/>
 <script
   src="https://unpkg.com/@zocdoc/api-components/bundle/iife"
   zd-token="TOKEN_FROM_YOUR_BACKEND"
@@ -51,6 +64,10 @@ For pages without a build step, load one of the prebuilt bundles. Use the IIFE b
 Or use the ESM bundle as a module script:
 
 ```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@zocdoc/api-primitive-components/dist/theme/all.css"
+/>
 <script
   type="module"
   src="https://unpkg.com/@zocdoc/api-components/bundle"
@@ -70,7 +87,7 @@ The attributes are read once, when the bundle runs. A token that expires needs `
 
 The ESM bundle finds its tag by matching the tag's `src` to its own URL. If a CDN redirects that URL, it falls back to the only module script with a `zd-*` attribute. With more than one such script on the page, it configures nothing, so call `configureZocdoc()` yourself. A bundle loaded with `import` rather than a `<script>` tag never reads attributes.
 
-Neither bundle includes theme CSS. Load `@zocdoc/api-primitive-components/theme/all.css` separately as described above.
+Neither bundle includes theme CSS, so keep the `<link>` tag shown in both examples.
 
 ## TypeScript
 

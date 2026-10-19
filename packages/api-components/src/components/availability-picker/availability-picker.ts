@@ -1,4 +1,10 @@
-import { CharmElement, ZdButton, ZdButtonGroup, ZdIcon } from '@zocdoc/api-primitive-components';
+import {
+  CharmElement,
+  ZdButton,
+  ZdButtonGroup,
+  ZdIcon,
+  ZdSkeleton,
+} from '@zocdoc/api-primitive-components';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { AvailabilitySlot, PatientType } from '../../client/types.js';
@@ -17,6 +23,12 @@ import {
   type RequestState,
 } from '../../utilities/request-state.js';
 import styles from './availability-picker.styles.js';
+
+/** How many placeholder days stand in for the window while it loads. */
+const SKELETON_DAYS = 2;
+
+/** How many placeholder times each of those days shows. */
+const SKELETON_SLOTS = 6;
 
 /** No year: a picker only ever shows the next few weeks. */
 const dayLabel = new Intl.DateTimeFormat(undefined, {
@@ -123,6 +135,8 @@ function groupHeading(group: DayGroup): string {
  * @csspart day-empty - The line shown for a span with nothing open. `stacked` layout only.
  * @csspart slots - A list of times.
  * @csspart slot - One timeslot button.
+ * @csspart loading-days - The placeholder days shown while availability loads.
+ * @csspart skeleton - One placeholder heading or time inside them.
  */
 export class ZdAvailabilityPicker extends CharmElement {
   public static override baseName = 'availability-picker';
@@ -143,7 +157,7 @@ export class ZdAvailabilityPicker extends CharmElement {
    * not need to be listed separately — they register via `ZdButtonGroup.dependencies`.
    */
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdButton, ZdButtonGroup, ZdIcon, ...requestStateDependencies];
+    return [ZdButton, ZdButtonGroup, ZdIcon, ZdSkeleton, ...requestStateDependencies];
   }
 
   /** The `pr_…|lo_…` pair to fetch availability for. Nothing is fetched without it. */
@@ -420,6 +434,42 @@ export class ZdAvailabilityPicker extends CharmElement {
   }
 
   /**
+   * Placeholder day groups while the window loads, shaped like the stacked layout's heading and
+   * times so the space they hold is roughly what arrives.
+   *
+   * Hidden from assistive technology: the status region from `renderRequestState` already says
+   * "Loading appointment times…", and that is the one announcement (A11Y-002). The heading
+   * placeholder holds a blank line in the heading's own class, so it is as tall as the real one.
+   */
+  protected renderLoadingDays(): unknown {
+    return this.html`
+      <ol class="day-groups" part="loading-days" aria-hidden="true">
+        ${Array.from(
+          { length: SKELETON_DAYS },
+          () => this.html`
+            <li>
+              <p class="day-heading heading-placeholder">
+                <scoped-skeleton class="skeleton heading" part="skeleton" animation="wave"></scoped-skeleton>
+                &nbsp;
+              </p>
+              <ul class="slots">
+                ${Array.from(
+                  { length: SKELETON_SLOTS },
+                  () => this.html`
+                    <li>
+                      <scoped-skeleton class="skeleton slot" part="skeleton" animation="wave"></scoped-skeleton>
+                    </li>
+                  `
+                )}
+              </ul>
+            </li>
+          `
+        )}
+      </ol>
+    `;
+  }
+
+  /**
    * The New/Existing control, as a radio group: two mutually exclusive answers that filter what
    * is shown is what radios are for, and the primitive brings the roving tabindex and the arrow
    * keys with it. Grouped and labelled rather than left as two bare controls (A11Y-004).
@@ -484,6 +534,7 @@ export class ZdAvailabilityPicker extends CharmElement {
             ? this.renderDayGroups()
             : this.html`${this.renderDays()} ${this.renderSlots()}`,
       })}
+      ${this.requestState === 'loading' ? this.renderLoadingDays() : nothing}
     `;
   }
 }

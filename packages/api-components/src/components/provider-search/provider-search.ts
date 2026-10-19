@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton, ZdIcon } from '@zocdoc/api-primitive-components';
+import { CharmElement, ZdButton, ZdIcon, ZdSkeleton } from '@zocdoc/api-primitive-components';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import {
@@ -20,7 +20,12 @@ import {
   requestStateDependencies,
   type RequestState,
 } from '../../utilities/request-state.js';
+import { ZdAvailabilityGrid } from '../availability-grid/availability-grid.js';
+import { ZdProviderCard } from '../provider-card/provider-card.js';
 import styles from './provider-search.styles.js';
+
+/** How many placeholder cards stand in for results while a search is in flight. */
+const SKELETON_CARDS = 2;
 
 /** The API takes a 5-digit ZIP and 400s on anything else, including a 4-digit one. */
 const ZIP_PATTERN = /^\d{5}$/;
@@ -87,6 +92,7 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  * @csspart zip - The ZIP code field.
  * @csspart insurance - The insurance plan select.
  * @csspart submit - The submit button.
+ * @csspart loading-results - The placeholder cards shown while a search is in flight.
  */
 export class ZdProviderSearch extends CharmElement {
   public static override baseName = 'provider-search';
@@ -98,7 +104,7 @@ export class ZdProviderSearch extends CharmElement {
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdButton, ZdIcon, ...requestStateDependencies];
+    return [ZdButton, ZdIcon, ZdSkeleton, ZdProviderCard, ZdAvailabilityGrid, ...requestStateDependencies];
   }
 
   /** The ZIP code to search. Required by the API — there is no search-everywhere mode. */
@@ -341,6 +347,33 @@ export class ZdProviderSearch extends CharmElement {
     return carrier ? `${carrier.name} – ${item.name}` : item.name;
   }
 
+  /**
+   * Skeleton provider cards, each with a loading availability grid, in place of a spinner.
+   *
+   * Hidden from assistive technology as a whole: every card and grid carries its own loading
+   * status, and two cards' worth would announce four times for one search. The request-state
+   * region above stays the single announcement — "Searching…" — and was mounted before loading
+   * began, so a screen reader is already watching it (A11Y-002).
+   */
+  protected renderLoadingResults(): unknown {
+    return this.html`
+      <div class="loading-results" part="loading-results" aria-hidden="true">
+        <div class="loading-header">
+          <scoped-skeleton class="skeleton summary" animation="wave"></scoped-skeleton>
+          <scoped-skeleton class="skeleton window" animation="wave"></scoped-skeleton>
+        </div>
+        ${Array.from(
+          { length: SKELETON_CARDS },
+          () => this.html`
+            <scoped-provider-card loading>
+              <scoped-availability-grid class="provider-availability" slot="availability" loading hide-window></scoped-availability-grid>
+            </scoped-provider-card>
+          `
+        )}
+      </div>
+    `;
+  }
+
   protected override render(): unknown {
     const loading = this.requestState === 'loading';
     const errorMessage = this.fieldErrors.specialty || this.fieldErrors.zip;
@@ -415,6 +448,7 @@ export class ZdProviderSearch extends CharmElement {
         // zd-provider-results owns display.
         children: () => nothing,
       })}
+      ${loading ? this.renderLoadingResults() : nothing}
     `;
   }
 }

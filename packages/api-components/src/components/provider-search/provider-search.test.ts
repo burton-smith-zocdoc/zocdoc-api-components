@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ZocdocError } from '../../client/errors.js';
+import * as availability from '../../client/availability.js';
 import * as providerLocations from '../../client/provider-locations.js';
 import * as referenceData from '../../client/reference-data.js';
 import { DEFAULT_PAGE_SIZE, type ProviderSearchResult } from '../../client/provider-locations.js';
@@ -16,6 +17,7 @@ import './index.js';
  */
 vi.mock('../../client/provider-locations.js', { spy: true });
 vi.mock('../../client/reference-data.js', { spy: true });
+vi.mock('../../client/availability.js', { spy: true });
 
 /** The documented fixture specialty every test searches within (TEST-003). */
 const SPECIALTY = SPECIALTIES[0]!;
@@ -66,6 +68,13 @@ function getErrorMessage(element: Search): string {
  * Mounts with a specialty as well as a ZIP, because those are the two things the endpoint
  * requires — a ZIP-only element is the case the validation tests are about, not the baseline.
  */
+/** The skeleton cards that stand in for results while a search is in flight. */
+function placeholderCards(element: Search): HTMLElement[] {
+  return [
+    ...shadow(element).querySelectorAll<HTMLElement>('[part="loading-results"] zd-provider-card'),
+  ];
+}
+
 function mountSearch(zipCode: string = SCENARIOS.zipWithResults): Promise<Search> {
   return mount<Search>(
     `<zd-provider-search zip-code="${zipCode}" specialty-id="${SPECIALTY.id}"></zd-provider-search>`
@@ -472,6 +481,95 @@ describe('zd-provider-search', () => {
 
   // I18N-001. Every label has to be real text in the DOM so browser translation can reach
   // them; a placeholder-only field would leave them untranslatable.
+  describe('while a search is in flight', () => {
+    /** Holds the request open so the loading state is still on screen when assertions run. */
+    async function mountInFlight(): Promise<{ element: Search; finish: () => Promise<void> }> {
+      let resolveSearch!: (result: ProviderSearchResult) => void;
+      vi.mocked(providerLocations.searchProviderLocations).mockReturnValue(
+        new Promise<ProviderSearchResult>((resolve) => {
+          resolveSearch = resolve;
+        })
+      );
+
+      const element = await mountSearch();
+      const pending = element.search();
+      await settled(element);
+
+      return {
+        element,
+        finish: async () => {
+          resolveSearch(searchResult([]));
+          await pending;
+          await settled(element);
+        },
+      };
+    }
+
+    it('shows two loading provider cards, each with a loading availability grid', async () => {
+      const { element, finish } = await mountInFlight();
+
+      const cards = placeholderCards(element);
+      expect(cards).toHaveLength(2);
+      for (const card of cards) {
+        expect(card.hasAttribute('loading')).toBe(true);
+        const grid = card.querySelector('zd-availability-grid[slot="availability"]');
+        expect(grid?.hasAttribute('loading')).toBe(true);
+        expect(grid?.hasAttribute('hide-window')).toBe(true);
+      }
+
+      await finish();
+    });
+
+    it('shows skeletons for the results count and window control', async () => {
+      const { element, finish } = await mountInFlight();
+
+      expect(
+        shadow(element).querySelectorAll('[part="loading-results"] .loading-header zd-skeleton')
+      ).toHaveLength(2);
+
+      await finish();
+    });
+
+    it('hides the spinner but keeps "Searching…" for screen readers', async () => {
+      const { element, finish } = await mountInFlight();
+      const root = shadow(element);
+
+      expect(getComputedStyle(root.querySelector('[part="loading"]')!).display).toBe('none');
+      expect(root.querySelector('[part="loading-message"]')?.textContent?.trim()).toBe('Searching…');
+      expect(root.querySelector('[part="status"]')?.getAttribute('aria-live')).toBe('polite');
+
+      await finish();
+    });
+
+    /* Each placeholder carries its own status; left exposed, one search would announce five times. */
+    it('hides the placeholders from assistive technology', async () => {
+      const { element, finish } = await mountInFlight();
+
+      expect(
+        shadow(element).querySelector('[part="loading-results"]')?.getAttribute('aria-hidden')
+      ).toBe('true');
+
+      await finish();
+    });
+
+    it('removes the placeholders once the search answers', async () => {
+      const { element, finish } = await mountInFlight();
+      await finish();
+
+      expect(shadow(element).querySelector('[part="loading-results"]')).toBeNull();
+    });
+
+    /* A grid inside a placeholder has no ids to fetch with, and must never try. */
+    it('makes no availability requests for the placeholders', async () => {
+      const spy = vi.spyOn(availability, 'getAvailability');
+      const { finish } = await mountInFlight();
+
+      expect(spy).not.toHaveBeenCalled();
+
+      await finish();
+    });
+  });
+
   it('renders visible labels for every field', async () => {
     const element = await mountSearch();
 

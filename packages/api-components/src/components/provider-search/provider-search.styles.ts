@@ -85,6 +85,70 @@ export default css`
     margin-block-start: var(--zd-spacing-8, 8px);
   }
 
+  /*
+   * The skeleton cards replace the spinner, so the spinner goes and the message is kept for
+   * screen readers only — it's the one announcement for the whole loading state.
+   */
+  [part~='loading'] {
+    display: none;
+  }
+
+  [part~='loading-message'] {
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  /*
+   * Laid out like zd-provider-results, which renders straight below this component, so nothing
+   * moves when the real results replace these. No margin of its own for the same reason.
+   */
+  .loading-results {
+    display: grid;
+    gap: 0.75rem;
+
+    /* The separation zd-provider-results gives each card's grid. */
+    .provider-availability {
+      display: block;
+      margin-block-start: 0.75rem;
+    }
+
+    /* Stands in for the results count and the window control above the cards. */
+    .loading-header {
+      align-items: center;
+      column-gap: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .skeleton {
+      --zd-skeleton-min-height: 1.25rem;
+      --zd-skeleton-width: 100%;
+      display: block;
+
+      &.summary {
+        inline-size: 6rem;
+      }
+
+      &.window {
+        --zd-skeleton-min-height: 2.75rem;
+        inline-size: 16rem;
+        margin-inline-start: auto;
+        max-inline-size: 100%;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        &::part(skeleton-base) {
+          animation: none;
+        }
+      }
+    }
+  }
+
   [part='submit'] {
     --zd-button-border-radius: var(--zd-form-control-border-radius);
     --zd-button-icon-padding-x: var(--zd-spacing-16, 16px);

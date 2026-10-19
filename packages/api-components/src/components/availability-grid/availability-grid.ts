@@ -475,18 +475,29 @@ export class ZdAvailabilityGrid extends CharmElement {
     `;
   }
 
-  /** Renders one non-interactive placeholder for each day while the next window is fetched. */
+  /**
+   * Renders one non-interactive placeholder for each day while the next window is fetched.
+   *
+   * Each holds three blank lines laid out like a day's weekday, date, and count, so it takes its
+   * height from the same font metrics as the cell it stands in for and the grid doesn't jump when
+   * the days land. A fixed height only matches at one font size.
+   */
   protected renderDaySkeletons(): unknown {
     return this.html`
       <div class="days" part="days" aria-hidden="true">
         ${Array.from(
           { length: windowSpan(this.days) },
           () => this.html`
-            <scoped-skeleton
-              class="day-skeleton"
-              part="day-skeleton"
-              animation="wave"
-            ></scoped-skeleton>
+            <div class="day-placeholder">
+              <scoped-skeleton
+                class="day-skeleton"
+                part="day-skeleton"
+                animation="wave"
+              ></scoped-skeleton>
+              <span class="day-weekday">&nbsp;</span>
+              <span class="day-date">&nbsp;</span>
+              <span class="day-count">&nbsp;</span>
+            </div>
           `
         )}
       </div>

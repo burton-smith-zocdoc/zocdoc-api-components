@@ -56,6 +56,7 @@ export default css`
    * reset back to a block of text.
    */
   .day,
+  .day-placeholder,
   .more {
     appearance: none;
     background: none;
@@ -77,7 +78,8 @@ export default css`
     }
   }
 
-  .day {
+  .day,
+  .day-placeholder {
     .day-weekday,
     .day-date,
     .day-count {
@@ -87,7 +89,9 @@ export default css`
     .day-count {
       font-size: 0.75rem;
     }
+  }
 
+  .day {
     /*
      * A day with appointments is the thing to press, so it gets the surface; one without is
      * quiet and already disabled, which is what stops the keyboard reaching it. Both keep the
@@ -111,11 +115,25 @@ export default css`
     }
   }
 
+  /* The blank lines give the cell its height; the skeleton covers the whole of it. */
+  .day-placeholder {
+    cursor: default;
+    position: relative;
+  }
+
   .day-skeleton {
     --zd-skeleton-border-radius: 0.25rem;
-    --zd-skeleton-min-height: 5.5rem;
+    --zd-skeleton-min-height: 100%;
     --zd-skeleton-width: 100%;
     display: block;
+    inset: 0;
+    position: absolute;
+
+    @media (prefers-reduced-motion: reduce) {
+      &::part(skeleton-base) {
+        animation: none;
+      }
+    }
   }
 
   .more {

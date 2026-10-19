@@ -38,6 +38,14 @@ The `<zd-provider-card>` component displays a single provider with photo, name, 
 </script>
 ```
 
+### Loading
+
+```html preview
+<zd-provider-card loading></zd-provider-card>
+```
+
+The card never fetches, so set `loading` while your request for provider data is in flight and clear it when the data arrives. Skeletons hold the card's layout, and screen readers hear "Loading provider". The `availability` slot stays rendered, so a slotted availability grid can show its own loading state.
+
 ## Attributes
 
 | Attribute | Type | Default | Description |
@@ -45,6 +53,7 @@ The `<zd-provider-card>` component displays a single provider with photo, name, 
 | `provider` | `ProviderLocation` | — | Provider data to display |
 | `hide-photo` | `boolean` | `false` | Hide provider photo |
 | `insurance-name` | `string` | — | Insurance to check against |
+| `loading` | `boolean` | `false` | Show skeleton placeholders instead of provider data |
 
 ## Events
 

@@ -26,6 +26,7 @@ shared window control above the list driving all of them.
 | `availability-start` | `availabilityStart` | `string` | — | The first day of the availability window, as `YYYY-MM-DD`. Defaults to today. Set by this component's own window control and read by every card, which is what keeps them showing the same dates. Whoever supplies `availability` is expected to bind this back down after a `window-change` so the counts and the dates above them cannot disagree. |
 | `hide-photos` | `hidePhotos` | `boolean` | — | Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see `ProviderSummaryOptions.hidePhoto`. |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan the search was run with. Supplying it is what allows the network line to render at all, since `accepts_patient_insurance` is only meaningful against a plan. |
+| `loading` | `loading` | `boolean` | — | Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this component never fetches, so whoever owns the search sets this while a page is in flight and clears it when the new `providers` arrive. |
 | `page` | `page` | `number` | — | The zero-indexed page `providers` holds, matching the API's own indexing. |
 | `page-size` | `pageSize` | `number` | — | The page size the search used. Defaults to the API's own, which is what it fell back to. |
 | `selected-id` | `selectedId` | `string` | — | The currently selected `provider_location_id`, if any. |
@@ -60,7 +61,9 @@ shared window control above the list driving all of them.
 | `zd-availability-empty` | A card's no-availability message. |
 | `zd-empty` | The message shown when there are no providers. |
 | `zd-header` | The count line and the window control together, present only with availability. |
+| `zd-header-skeleton` | The placeholder count and window control while `loading` is set. |
 | `zd-list` | The list wrapper. |
+| `zd-loading` | The status line announced while `loading` is set. |
 | `zd-pager` | The paging controls. |
 | `zd-pager-next` | The button going forward a page. |
 | `zd-pager-position` | The line saying which page this is. |
@@ -75,6 +78,7 @@ shared window control above the list driving all of them.
 | `zd-provider-photo` | The provider's photo, unless `hide-photos` is set. |
 | `zd-provider-specialty` | The provider's primary specialty. |
 | `zd-provider-summary` | The summary block for one provider. |
+| `zd-skeleton` | One placeholder card while `loading` is set. |
 | `zd-summary` | The line counting what the search found. |
 | `zd-window` | The shared availability window control. |
 | `zd-window-next` | The control stepping the window forward. |

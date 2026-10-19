@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
-import type { ProviderLocation } from '../../client/types.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
-import { mount, part, queryPart, shadow } from '../../utils/test/mount.js';
+import { mount, part, parts, queryPart, shadow } from '../../utils/test/mount.js';
+import type { ZdProviderCard } from './provider-card.js';
 import './index.js';
 
 /**
@@ -14,11 +14,7 @@ import './index.js';
  */
 const PROVIDER = PROVIDER_LOCATIONS[0]!;
 
-type Card = HTMLElement & {
-  provider?: ProviderLocation;
-  hidePhoto: boolean;
-  insuranceName?: string;
-};
+type Card = ZdProviderCard;
 
 describe('zd-provider-card', () => {
   it('renders without provider', async () => {
@@ -168,6 +164,52 @@ describe('zd-provider-card', () => {
       const slotted = card.querySelector('#test-badge');
       expect(slotted).not.toBeNull();
       expect(slotted?.textContent).toBe('Badge here');
+    });
+  });
+
+  describe('loading', () => {
+    it('renders skeletons instead of provider details', async () => {
+      const card = await mount<Card>('<zd-provider-card loading></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      expect(parts(card, 'skeleton')).toHaveLength(4);
+      expect(queryPart(card, 'name')).toBeNull();
+      expect(queryPart(card, 'photo')).toBeNull();
+    });
+
+    it('announces loading in DOM text', async () => {
+      const card = await mount<Card>('<zd-provider-card loading></zd-provider-card>');
+
+      const status = shadow(card).querySelector('[role="status"]');
+      expect(status?.textContent?.trim()).toBe('Loading provider');
+      expect(shadow(card).querySelector('[aria-busy="true"]')).not.toBeNull();
+    });
+
+    it('renders provider details once loading clears', async () => {
+      const card = await mount<Card>('<zd-provider-card loading></zd-provider-card>');
+      card.provider = PROVIDER;
+      await card.updateComplete;
+
+      card.loading = false;
+      await card.updateComplete;
+
+      expect(parts(card, 'skeleton')).toHaveLength(0);
+      expect(part(card, 'name').textContent).toContain(PROVIDER.provider.last_name);
+    });
+
+    it('keeps the availability slot while loading', async () => {
+      const card = await mount<Card>(
+        '<zd-provider-card loading><div slot="availability">Availability here</div></zd-provider-card>'
+      );
+
+      expect(shadow(card).querySelector('slot[name="availability"]')).not.toBeNull();
+    });
+
+    it('passes axe', async () => {
+      const card = await mount<Card>('<zd-provider-card loading></zd-provider-card>');
+
+      await expectNoViolations(card);
     });
   });
 });

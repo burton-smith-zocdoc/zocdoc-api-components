@@ -1,4 +1,4 @@
-import { CharmElement, ZdButton, ZdCard, ZdDialog } from '@zocdoc/api-primitive-components';
+import { CharmElement, ZdButton, ZdCard, ZdDialog, ZdSkeleton } from '@zocdoc/api-primitive-components';
 import { nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { DEFAULT_PAGE_SIZE } from '../../client/provider-locations.js';
@@ -111,6 +111,9 @@ export interface ZdProviderResultsEventMap {
  * @csspart pager-next - The button going forward a page.
  * @csspart pager-position - The line saying which page this is.
  * @csspart empty - The message shown when there are no providers.
+ * @csspart loading - The status line announced while `loading` is set.
+ * @csspart skeleton - One placeholder card while `loading` is set.
+ * @csspart header-skeleton - The placeholder count and window control while `loading` is set.
  */
 export class ZdProviderResults extends CharmElement {
   public static override baseName = 'provider-results';
@@ -126,7 +129,7 @@ export class ZdProviderResults extends CharmElement {
   ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdCard, ZdButton, ZdAvailabilityGrid, ZdAvailabilityWindow, ZdProviderCard, ZdDialog, ZdProviderProfile];
+    return [ZdCard, ZdButton, ZdAvailabilityGrid, ZdAvailabilityWindow, ZdProviderCard, ZdDialog, ZdProviderProfile, ZdSkeleton];
   }
 
   /** The provider locations to display. */
@@ -198,6 +201,14 @@ export class ZdProviderResults extends CharmElement {
   /** How many days of availability each card shows. Clamped to the API's 30-day maximum. */
   @property({ type: Number, attribute: 'availability-days' })
   public availabilityDays = 14;
+
+  /**
+   * Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this
+   * component never fetches, so whoever owns the search sets this while a page is in flight and
+   * clears it when the new `providers` arrive.
+   */
+  @property({ type: Boolean, reflect: true })
+  public loading = false;
 
   @state()
   private profileOpen = false;
@@ -374,7 +385,48 @@ export class ZdProviderResults extends CharmElement {
     return nothing;
   }
 
+  /**
+   * One skeleton card per slot on the page, so the list holds its height and the pager doesn't
+   * jump while a page loads.
+   *
+   * The list is hidden from assistive technology and one status line speaks for it: each card's
+   * own "Loading provider" would otherwise be announced once per card (A11Y-002). The header is a
+   * placeholder too: the count and the dates belong to the answer that has not arrived yet.
+   */
+  protected renderLoading(): unknown {
+    const count = this.pageSize > 0 ? this.pageSize : DEFAULT_PAGE_SIZE;
+
+    return this.html`
+      <p class="visually-hidden" part="loading" role="status">Loading providers</p>
+      <div class="header" part="header-skeleton" aria-hidden="true">
+        <scoped-skeleton class="skeleton summary" animation="wave"></scoped-skeleton>
+        <scoped-skeleton class="skeleton window" animation="wave"></scoped-skeleton>
+      </div>
+      <ul class="list" part="list" aria-hidden="true">
+        ${Array.from(
+          { length: count },
+          () => this.html`
+            <li>
+              <scoped-provider-card part="skeleton" loading>
+                <scoped-availability-grid
+                  class="provider-availability"
+                  slot="availability"
+                  loading
+                  hide-window
+                ></scoped-availability-grid>
+              </scoped-provider-card>
+            </li>
+          `
+        )}
+      </ul>
+    `;
+  }
+
   protected override render(): unknown {
+    if (this.loading) {
+      return this.html`${this.renderLoading()} ${this.renderPager()}`;
+    }
+
     if (this.providers.length === 0) {
       return this.renderEmpty();
     }
@@ -436,7 +488,7 @@ export class ZdProviderResults extends CharmElement {
           part="pager-previous"
           variant="secondary"
           size="small"
-          ?disabled=${this.page <= 0}
+          ?disabled=${this.loading || this.page <= 0}
           @click=${() => this.goToPage(this.page - 1)}
         >
           Previous
@@ -448,7 +500,7 @@ export class ZdProviderResults extends CharmElement {
           part="pager-next"
           variant="secondary"
           size="small"
-          ?disabled=${this.page >= lastPage}
+          ?disabled=${this.loading || this.page >= lastPage}
           @click=${() => this.goToPage(this.page + 1)}
         >
           Next

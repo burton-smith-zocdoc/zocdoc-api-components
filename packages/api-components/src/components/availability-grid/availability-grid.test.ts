@@ -521,7 +521,7 @@ describe('zd-availability-grid', () => {
       );
       expect(
         getComputedStyle(skeletons[0]!).getPropertyValue('--zd-skeleton-min-height').trim()
-      ).toBe('5.5rem');
+      ).toBe('100%');
       expect(dayCells(element)).toHaveLength(0);
       expect(getComputedStyle(part(element, 'loading')).display).toBe('none');
       expect(texts(element, 'loading-message')).toEqual(['Loading availability…']);

@@ -43,6 +43,15 @@ export default css`
    * component rendering a provider shares. Nothing to repeat here.
    */
 
+  .visually-hidden {
+    block-size: 1px;
+    clip: rect(0, 0, 0, 0);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
   /* The list's gap is the only spacing between these blocks, so their margins go. */
   .summary,
   .pager-position {
@@ -69,6 +78,36 @@ export default css`
      */
     .window {
       margin-inline-start: auto;
+    }
+  }
+
+  /*
+   * Sized to the count line and window control they stand in for. The control is as tall as its
+   * icon buttons, and that is what sets the header's height, so the placeholder has to match it.
+   */
+  [part='header-skeleton'] {
+    align-items: center;
+  }
+
+  .skeleton {
+    --zd-skeleton-min-height: 1.25rem;
+    --zd-skeleton-width: 100%;
+    display: block;
+
+    &.summary {
+      inline-size: 6rem;
+    }
+
+    &.window {
+      --zd-skeleton-min-height: 2.75rem;
+      inline-size: 16rem;
+      max-inline-size: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &::part(skeleton-base) {
+        animation: none;
+      }
     }
   }
 

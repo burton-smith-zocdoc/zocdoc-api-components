@@ -529,6 +529,52 @@ describe('zd-availability-picker', () => {
     });
   });
 
+  describe('while loading', () => {
+    async function mountLoading(markup = ''): Promise<Picker> {
+      vi.mocked(availability.getAvailability).mockReturnValue(new Promise(() => {}));
+      const element = await mountReady(markup);
+      await vi.waitFor(() =>
+        expect(shadow(element).querySelector('[part="loading-days"]')).not.toBeNull()
+      );
+      return element;
+    }
+
+    it('shows two placeholder days, each with a heading and times', async () => {
+      const element = await mountLoading();
+      const days = [...shadow(element).querySelectorAll('[part="loading-days"] > li')];
+
+      expect(days).toHaveLength(2);
+      for (const day of days) {
+        expect(day.querySelectorAll('.skeleton.heading')).toHaveLength(1);
+        expect(day.querySelectorAll('.skeleton.slot').length).toBeGreaterThan(0);
+      }
+    });
+
+    it('shows the placeholders in the strip layout too', async () => {
+      const element = await mountLoading('layout="strip"');
+
+      expect(shadow(element).querySelectorAll('[part="loading-days"] > li')).toHaveLength(2);
+    });
+
+    it('hides the spinner but keeps the message for screen readers', async () => {
+      const element = await mountLoading();
+      const root = shadow(element);
+
+      expect(getComputedStyle(root.querySelector('[part="loading"]')!).display).toBe('none');
+      expect(root.querySelector('[part="loading-message"]')?.textContent?.trim()).toBe(
+        'Loading appointment times…'
+      );
+      expect(root.querySelector('[part="loading-days"]')?.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('removes the placeholders once times arrive', async () => {
+      const element = await mountReady();
+      await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
+
+      expect(shadow(element).querySelector('[part="loading-days"]')).toBeNull();
+    });
+  });
+
   // A11Y-005 asks for more than the default state, and each of these renders different
   // markup: a nested list of buttons, a status region, and an alert with a retry.
   describe('accessibility', () => {

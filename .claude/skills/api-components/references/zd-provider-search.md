@@ -52,6 +52,7 @@ collect a visit reason; the API defaults to "any" for the chosen specialty.
 | `zd-form` | The search form. |
 | `zd-insurance` | The insurance plan select. |
 | `zd-insurance-field` | — |
+| `zd-loading-results` | The placeholder cards shown while a search is in flight. |
 | `zd-location-field` | — |
 | `zd-specialty` | The specialty select. |
 | `zd-specialty-field` | — |

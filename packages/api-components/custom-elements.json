@@ -1073,7 +1073,7 @@
             {
               "kind": "method",
               "name": "renderDaySkeletons",
-              "description": "Renders one non-interactive placeholder for each day while the next window is fetched.",
+              "description": "Renders one non-interactive placeholder for each day while the next window is fetched.\n\nEach holds three blank lines laid out like a day's weekday, date, and count, so it takes its\nheight from the same font metrics as the cell it stands in for and the grid doesn't jump when\nthe days land. A fixed height only matches at one font size.",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -1697,6 +1697,17 @@
             },
             {
               "kind": "method",
+              "name": "renderLoadingDays",
+              "description": "Placeholder day groups while the window loads, shaped like the stacked layout's heading and\ntimes so the space they hold is roughly what arrives.\n\nHidden from assistive technology: the status region from `renderRequestState` already says\n\"Loading appointment times…\", and that is the one announcement (A11Y-002). The heading\nplaceholder holds a blank line in the heading's own class, so it is as tall as the real one.",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "renderPatientType",
               "description": "The New/Existing control, as a radio group: two mutually exclusive answers that filter what\nis shown is what radios are for, and the primitive brings the roving tabindex and the arrow\nkeys with it. Grouped and labelled rather than left as two bare controls (A11Y-004).",
               "privacy": "protected",
@@ -1980,12 +1991,20 @@
               "description": "The strip of days with availability. `strip` layout only."
             },
             {
+              "name": "zd-loading-days",
+              "description": "The placeholder days shown while availability loads."
+            },
+            {
               "name": "zd-patient-type",
               "description": "The New/Existing patient control."
             },
             {
               "name": "zd-patient-type-option",
               "description": "One option of that control."
+            },
+            {
+              "name": "zd-skeleton",
+              "description": "One placeholder heading or time inside them."
             },
             {
               "name": "zd-slot",
@@ -4297,6 +4316,17 @@
             },
             {
               "kind": "field",
+              "name": "loading",
+              "description": "Shows skeleton placeholders in the card's layout instead of `provider`. The card never\nfetches, so the parent sets this while its own request is in flight and clears it when\nthe data arrives.",
+              "privacy": "public",
+              "attribute": "loading",
+              "reflects": true,
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "provider",
               "description": "The provider location data to render.",
               "privacy": "public",
@@ -4351,6 +4381,17 @@
               }
             },
             {
+              "kind": "method",
+              "name": "renderSkeleton",
+              "description": "Placeholders shaped like the photo, name, specialty, and location lines. No insurance line: it\nrenders only when a plan was chosen and the API knows the network status, so most cards lack it. The skeletons are\nhidden from assistive technology; the status text in the DOM is what gets announced\n(A11Y-002, I18N-001). The availability slot stays so a parent can show its own loading grid.",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "privacy": "protected",
@@ -4388,6 +4429,14 @@
                 "text": "string"
               },
               "fieldName": "insuranceName"
+            },
+            {
+              "name": "loading",
+              "description": "Shows skeleton placeholders in the card's layout instead of `provider`. The card never\nfetches, so the parent sets this while its own request is in flight and clears it when\nthe data arrives.",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "loading"
             }
           ],
           "events": [
@@ -4440,6 +4489,10 @@
             {
               "name": "zd-photo",
               "description": "The avatar element."
+            },
+            {
+              "name": "zd-skeleton",
+              "description": "Each placeholder shown while `loading` is set."
             },
             {
               "name": "zd-specialty",
@@ -5182,6 +5235,17 @@
               }
             },
             {
+              "kind": "field",
+              "name": "loading",
+              "description": "Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this\ncomponent never fetches, so whoever owns the search sets this while a page is in flight and\nclears it when the new `providers` arrive.",
+              "privacy": "public",
+              "attribute": "loading",
+              "reflects": true,
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
               "kind": "method",
               "name": "openProfileDialog",
               "privacy": "protected",
@@ -5309,6 +5373,17 @@
             {
               "kind": "method",
               "name": "renderHeader",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderLoading",
+              "description": "One skeleton card per slot on the page, so the list holds its height and the pager doesn't\njump while a page loads.\n\nThe list is hidden from assistive technology and one status line speaks for it: each card's\nown \"Loading provider\" would otherwise be announced once per card (A11Y-002). The header is a\nplaceholder too: the count and the dates belong to the answer that has not arrived yet.",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -5471,6 +5546,14 @@
               "fieldName": "insuranceName"
             },
             {
+              "name": "loading",
+              "description": "Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this\ncomponent never fetches, so whoever owns the search sets this while a page is in flight and\nclears it when the new `providers` arrive.",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "loading"
+            },
+            {
               "name": "page",
               "description": "The zero-indexed page `providers` holds, matching the API's own indexing.",
               "type": {
@@ -5566,8 +5649,16 @@
               "description": "The count line and the window control together, present only with availability."
             },
             {
+              "name": "zd-header-skeleton",
+              "description": "The placeholder count and window control while `loading` is set."
+            },
+            {
               "name": "zd-list",
               "description": "The list wrapper."
+            },
+            {
+              "name": "zd-loading",
+              "description": "The status line announced while `loading` is set."
             },
             {
               "name": "zd-pager",
@@ -5624,6 +5715,10 @@
             {
               "name": "zd-provider-summary",
               "description": "The summary block for one provider."
+            },
+            {
+              "name": "zd-skeleton",
+              "description": "One placeholder card while `loading` is set."
             },
             {
               "name": "zd-summary",
@@ -5971,6 +6066,17 @@
               }
             },
             {
+              "kind": "method",
+              "name": "renderLoadingResults",
+              "description": "Skeleton provider cards, each with a loading availability grid, in place of a spinner.\n\nHidden from assistive technology as a whole: every card and grid carries its own loading\nstatus, and two cards' worth would announce four times for one search. The request-state\nregion above stays the single announcement — \"Searching…\" — and was mounted before loading\nbegan, so a screen reader is already watching it (A11Y-002).",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "requestState",
               "privacy": "private",
@@ -6175,6 +6281,10 @@
             },
             {
               "name": "zd-insurance-field"
+            },
+            {
+              "name": "zd-loading-results",
+              "description": "The placeholder cards shown while a search is in flight."
             },
             {
               "name": "zd-location-field"

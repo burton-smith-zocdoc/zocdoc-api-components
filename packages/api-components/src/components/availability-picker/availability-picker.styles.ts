@@ -5,6 +5,20 @@ export default css`
     display: block;
   }
 
+  /* The skeleton days stand in for the spinner; the message stays for screen readers. */
+  [part~='loading'] {
+    display: none;
+  }
+
+  [part~='loading-message'] {
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
   /*
    * Both strips are lists so a screen reader announces how many days and how many
    * times there are before the user starts moving through them. That means undoing
@@ -91,6 +105,38 @@ export default css`
     font-size: var(--zd-font-size-md);
     font-weight: var(--zd-font-weight-semibold);
     margin: 0;
+  }
+
+  /*
+   * The heading placeholder keeps a blank line of heading text for its height, with the skeleton
+   * laid over the start of it. A time placeholder is as tall as the button it stands in for.
+   */
+  .heading-placeholder {
+    position: relative;
+  }
+
+  .skeleton {
+    --zd-skeleton-width: 100%;
+    display: block;
+
+    &.heading {
+      --zd-skeleton-min-height: 100%;
+      inline-size: 8rem;
+      inset-block: 0;
+      inset-inline-start: 0;
+      position: absolute;
+    }
+
+    &.slot {
+      --zd-skeleton-border-radius: var(--zd-button-border-radius, 0.25rem);
+      --zd-skeleton-min-height: var(--zd-button-height, 2.5rem);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &::part(skeleton-base) {
+        animation: none;
+      }
+    }
   }
 
   /*
