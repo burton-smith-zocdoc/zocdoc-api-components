@@ -525,6 +525,8 @@ describe('zd-availability-grid', () => {
       expect(dayCells(element)).toHaveLength(0);
       expect(getComputedStyle(part(element, 'loading')).display).toBe('none');
       expect(texts(element, 'loading-message')).toEqual(['Loading availability…']);
+      expect(shadow(element).querySelector('.days-region')?.getAttribute('aria-busy')).toBe('true');
+      expect(part(element, 'status').closest('[aria-busy="true"]')).toBeNull();
     });
 
     it('refetches when the visit reason changes', async () => {

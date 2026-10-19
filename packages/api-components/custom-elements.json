@@ -1697,6 +1697,16 @@
             },
             {
               "kind": "method",
+              "name": "renderDaysRegion",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "renderLoadingDays",
               "description": "Placeholder day groups while the window loads, shaped like the stacked layout's heading and\ntimes so the space they hold is roughly what arrives.\n\nHidden from assistive technology: the status region from `renderRequestState` already says\n\"Loading appointment times…\", and that is the one announcement (A11Y-002). The heading\nplaceholder holds a blank line in the heading's own class, so it is as tall as the real one.",
               "privacy": "protected",
@@ -4383,7 +4393,7 @@
             {
               "kind": "method",
               "name": "renderSkeleton",
-              "description": "Placeholders shaped like the photo, name, specialty, and location lines. No insurance line: it\nrenders only when a plan was chosen and the API knows the network status, so most cards lack it. The skeletons are\nhidden from assistive technology; the status text in the DOM is what gets announced\n(A11Y-002, I18N-001). The availability slot stays so a parent can show its own loading grid.",
+              "description": "Placeholders shaped like the photo, name, specialty, and location lines. No insurance line: it\nrenders only when a plan was chosen and the API knows the network status, so most cards lack it. The skeletons are\nhidden from assistive technology; the status text in the DOM is what gets announced\n(A11Y-002, I18N-001). The availability slot stays so a parent can show its own loading grid.\n\nNo `aria-busy` on the wrapper: the status sits inside it, and some screen readers hold back\nlive-region updates inside a busy element, which would swallow the one announcement made.",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -5404,6 +5414,26 @@
             },
             {
               "kind": "method",
+              "name": "renderProfileDialog",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderResults",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "renderSummary",
               "description": "How many the search found, which is the one number a patient reads before deciding whether\nto narrow it.\n\nA live region, because paging replaces the whole list without moving focus or changing the\npage — without it, the only feedback a screen reader user gets for pressing Next is that\nthe list they were reading is now different (A11Y-002). Counting the total rather than the\npage is the point: `providers.length` is 10 on every page of 334.",
               "privacy": "protected",
@@ -5715,6 +5745,10 @@
             {
               "name": "zd-provider-summary",
               "description": "The summary block for one provider."
+            },
+            {
+              "name": "zd-results",
+              "description": "The header and list together; `aria-busy` while `loading` is set."
             },
             {
               "name": "zd-skeleton",

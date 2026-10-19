@@ -523,17 +523,20 @@ export class ZdAvailabilityGrid extends CharmElement {
         loadingMessage: 'Loading availability…',
         onRetry: () => void this.load(),
         // The days live outside this helper because it renders children on `success` alone, and
-        // they have to survive `empty` and `idle` too.
+        // they have to survive `empty` and `idle` too. Their region is busy while they are being
+        // replaced; the status above it is not, so its announcement is never held back (A11Y-002).
         children: () => nothing,
       })}
       ${showWindow ? this.renderWindow() : nothing}
-      ${
-        requestState === 'loading'
-          ? this.renderDaySkeletons()
-          : showDays
-            ? this.renderDays()
-            : nothing
-      }
+      <div class="days-region" aria-busy=${requestState === 'loading' ? 'true' : 'false'}>
+        ${
+          requestState === 'loading'
+            ? this.renderDaySkeletons()
+            : showDays
+              ? this.renderDays()
+              : nothing
+        }
+      </div>
     `;
   }
 }

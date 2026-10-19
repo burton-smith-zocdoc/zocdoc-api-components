@@ -548,6 +548,10 @@ describe('zd-provider-search', () => {
       expect(
         shadow(element).querySelector('[part="loading-results"]')?.getAttribute('aria-hidden')
       ).toBe('true');
+      expect(
+        shadow(element).querySelector('[part="loading-results"]')?.getAttribute('aria-busy')
+      ).toBe('true');
+      expect(shadow(element).querySelector('[part="status"]')?.closest('[aria-busy="true"]')).toBeNull();
 
       await finish();
     });

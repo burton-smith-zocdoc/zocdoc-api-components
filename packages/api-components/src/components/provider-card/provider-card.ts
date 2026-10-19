@@ -135,10 +135,13 @@ export class ZdProviderCard extends CharmElement {
    * renders only when a plan was chosen and the API knows the network status, so most cards lack it. The skeletons are
    * hidden from assistive technology; the status text in the DOM is what gets announced
    * (A11Y-002, I18N-001). The availability slot stays so a parent can show its own loading grid.
+   *
+   * No `aria-busy` on the wrapper: the status sits inside it, and some screen readers hold back
+   * live-region updates inside a busy element, which would swallow the one announcement made.
    */
   protected renderSkeleton(): unknown {
     return this.html`
-      <scoped-card class="wrapper-card" aria-busy="true">
+      <scoped-card class="wrapper-card">
         <span class="visually-hidden" role="status">Loading provider</span>
         <div class="provider-card">
           <div class="provider-info" aria-hidden="true">

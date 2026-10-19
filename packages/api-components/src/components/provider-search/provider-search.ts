@@ -357,7 +357,7 @@ export class ZdProviderSearch extends CharmElement {
    */
   protected renderLoadingResults(): unknown {
     return this.html`
-      <div class="loading-results" part="loading-results" aria-hidden="true">
+      <div class="loading-results" part="loading-results" aria-hidden="true" aria-busy="true">
         <div class="loading-header">
           <scoped-skeleton class="skeleton summary" animation="wave"></scoped-skeleton>
           <scoped-skeleton class="skeleton window" animation="wave"></scoped-skeleton>

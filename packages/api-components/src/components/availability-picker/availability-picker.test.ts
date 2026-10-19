@@ -567,6 +567,21 @@ describe('zd-availability-picker', () => {
       expect(root.querySelector('[part="loading-days"]')?.getAttribute('aria-hidden')).toBe('true');
     });
 
+    it('marks the days busy without putting the status inside them', async () => {
+      const element = await mountLoading();
+      const root = shadow(element);
+
+      expect(root.querySelector('.days-region')?.getAttribute('aria-busy')).toBe('true');
+      expect(root.querySelector('[part="status"]')?.closest('[aria-busy="true"]')).toBeNull();
+    });
+
+    it('clears aria-busy once times arrive', async () => {
+      const element = await mountReady();
+      await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
+
+      expect(shadow(element).querySelector('.days-region')?.getAttribute('aria-busy')).toBe('false');
+    });
+
     it('removes the placeholders once times arrive', async () => {
       const element = await mountReady();
       await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());

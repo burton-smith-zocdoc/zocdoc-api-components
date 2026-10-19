@@ -23,4 +23,4 @@ A one-dimensional flex layout container.
 
 | Property | Syntax | Default | Description |
 | --- | --- | --- | --- |
-| `--zd-flex-gap` | — | `var(--zd-spacing-16)` | Overrides the flex gap. |
+| `--zd-flex-gap` | — | `var(--zd-spacing-16)` | Sets the gap when no gap attribute is present. Inherits, so it can be set on an ancestor. |

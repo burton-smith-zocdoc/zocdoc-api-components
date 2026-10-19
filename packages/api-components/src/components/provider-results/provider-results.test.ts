@@ -637,6 +637,27 @@ describe('zd-provider-results', () => {
       expect(shadow(element).querySelector('zd-availability-window')).toBeNull();
     });
 
+    /*
+     * The list is busy while it is replaced, and the status is outside it: a busy ancestor can hold
+     * a live region's announcement back, which would silence the one thing said.
+     */
+    it('marks the list busy without putting the status inside it', async () => {
+      const element = await mountResults(PROVIDERS);
+      const region = part(element, 'results');
+      expect(region.getAttribute('aria-busy')).toBe('false');
+
+      element.loading = true;
+      await settled(element);
+
+      expect(part(element, 'results')).toBe(region);
+      expect(region.getAttribute('aria-busy')).toBe('true');
+      expect(part(element, 'loading').closest('[aria-busy="true"]')).toBeNull();
+
+      element.loading = false;
+      await settled(element);
+      expect(region.getAttribute('aria-busy')).toBe('false');
+    });
+
     /* A second press while the page is in flight would ask for a page past the one coming. */
     it('keeps the pager in place but disabled', async () => {
       const element = await mountPaged(1);

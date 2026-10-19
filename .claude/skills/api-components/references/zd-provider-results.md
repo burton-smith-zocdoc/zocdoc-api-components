@@ -78,6 +78,7 @@ shared window control above the list driving all of them.
 | `zd-provider-photo` | The provider's photo, unless `hide-photos` is set. |
 | `zd-provider-specialty` | The provider's primary specialty. |
 | `zd-provider-summary` | The summary block for one provider. |
+| `zd-results` | The header and list together; `aria-busy` while `loading` is set. |
 | `zd-skeleton` | One placeholder card while `loading` is set. |
 | `zd-summary` | The line counting what the search found. |
 | `zd-window` | The shared availability window control. |

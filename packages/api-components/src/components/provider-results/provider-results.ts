@@ -112,6 +112,7 @@ export interface ZdProviderResultsEventMap {
  * @csspart pager-position - The line saying which page this is.
  * @csspart empty - The message shown when there are no providers.
  * @csspart loading - The status line announced while `loading` is set.
+ * @csspart results - The header and list together; `aria-busy` while `loading` is set.
  * @csspart skeleton - One placeholder card while `loading` is set.
  * @csspart header-skeleton - The placeholder count and window control while `loading` is set.
  */
@@ -397,7 +398,6 @@ export class ZdProviderResults extends CharmElement {
     const count = this.pageSize > 0 ? this.pageSize : DEFAULT_PAGE_SIZE;
 
     return this.html`
-      <p class="visually-hidden" part="loading" role="status">Loading providers</p>
       <div class="header" part="header-skeleton" aria-hidden="true">
         <scoped-skeleton class="skeleton summary" animation="wave"></scoped-skeleton>
         <scoped-skeleton class="skeleton window" animation="wave"></scoped-skeleton>
@@ -422,11 +422,24 @@ export class ZdProviderResults extends CharmElement {
     `;
   }
 
+  /**
+   * The status line lives outside the busy region and always exists, so its text changing is what
+   * a screen reader announces; the region around the list carries `aria-busy` while it is being
+   * replaced, which tells assistive technology not to read it half-built (A11Y-002). Both are the
+   * same elements in every state, so the attributes change rather than the nodes.
+   */
   protected override render(): unknown {
-    if (this.loading) {
-      return this.html`${this.renderLoading()} ${this.renderPager()}`;
-    }
+    return this.html`
+      <p class="visually-hidden" part="loading" role="status">${this.loading ? 'Loading providers' : ''}</p>
+      <div class="results" part="results" aria-busy=${this.loading ? 'true' : 'false'}>
+        ${this.loading ? this.renderLoading() : this.renderResults()}
+      </div>
+      ${this.loading || this.providers.length > 0 ? this.renderPager() : nothing}
+      ${!this.loading && this.providers.length > 0 ? this.renderProfileDialog() : nothing}
+    `;
+  }
 
+  protected renderResults(): unknown {
     if (this.providers.length === 0) {
       return this.renderEmpty();
     }
@@ -455,9 +468,11 @@ export class ZdProviderResults extends CharmElement {
           `;
         })}
       </ul>
+    `;
+  }
 
-      ${this.renderPager()}
-
+  protected renderProfileDialog(): unknown {
+    return this.html`
       <scoped-dialog
         ?open=${this.profileOpen}
         @dialog-hide=${() => this.closeProfileDialog()}

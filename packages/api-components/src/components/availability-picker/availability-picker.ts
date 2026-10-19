@@ -520,6 +520,9 @@ export class ZdAvailabilityPicker extends CharmElement {
    * The patient-type control sits outside the request state, so it survives `empty` and `error`.
    * That is the point of rendering it at all: a window with nothing bookable for a new patient
    * often has something for a returning one, and the control that finds out has to still be there.
+   *
+   * The placeholders sit in a region marked busy while times load, kept apart from the status so a
+   * screen reader still announces it (A11Y-002).
    */
   protected override render(): unknown {
     return this.html`
@@ -529,12 +532,22 @@ export class ZdAvailabilityPicker extends CharmElement {
         errorMessage: this.errorMessage,
         loadingMessage: 'Loading appointment times…',
         onRetry: () => void this.load(),
-        children: () =>
-          this.layout === 'stacked'
-            ? this.renderDayGroups()
-            : this.html`${this.renderDays()} ${this.renderSlots()}`,
+        // The days render in the busy region below rather than through the helper, so the
+        // placeholders and what replaces them share one container.
+        children: () => nothing,
       })}
-      ${this.requestState === 'loading' ? this.renderLoadingDays() : nothing}
+      <div class="days-region" aria-busy=${this.requestState === 'loading' ? 'true' : 'false'}>
+        ${this.renderDaysRegion()}
+      </div>
     `;
+  }
+
+  protected renderDaysRegion(): unknown {
+    if (this.requestState === 'loading') return this.renderLoadingDays();
+    if (this.requestState !== 'success') return nothing;
+
+    return this.layout === 'stacked'
+      ? this.renderDayGroups()
+      : this.html`${this.renderDays()} ${this.renderSlots()}`;
   }
 }

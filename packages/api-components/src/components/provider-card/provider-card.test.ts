@@ -183,7 +183,8 @@ describe('zd-provider-card', () => {
 
       const status = shadow(card).querySelector('[role="status"]');
       expect(status?.textContent?.trim()).toBe('Loading provider');
-      expect(shadow(card).querySelector('[aria-busy="true"]')).not.toBeNull();
+      // A busy ancestor can hold the announcement back, so the status must not have one.
+      expect(status?.closest('[aria-busy="true"]')).toBeNull();
     });
 
     it('renders provider details once loading clears', async () => {
