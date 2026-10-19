@@ -123,7 +123,7 @@ export const GapExample: Story = {
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 8px;">
           Gap XS (4px)
         </div>
-        <div style="display: flex; gap: var(--zd-spacing-xs);">
+        <div class="zd-flex" gap="4">
           <div
             style="width: 48px; height: 48px; background: var(--zd-color-brand-500); border-radius: 8px;"
           ></div>
@@ -139,7 +139,7 @@ export const GapExample: Story = {
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 8px;">
           Gap SM (8px)
         </div>
-        <div style="display: flex; gap: var(--zd-spacing-sm);">
+        <div class="zd-flex" gap="8">
           <div
             style="width: 48px; height: 48px; background: var(--zd-color-brand-500); border-radius: 8px;"
           ></div>
@@ -155,7 +155,7 @@ export const GapExample: Story = {
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 8px;">
           Gap MD (12px)
         </div>
-        <div style="display: flex; gap: var(--zd-spacing-md);">
+        <div class="zd-flex" gap="12">
           <div
             style="width: 48px; height: 48px; background: var(--zd-color-brand-500); border-radius: 8px;"
           ></div>
@@ -171,7 +171,7 @@ export const GapExample: Story = {
         <div style="font-size: 12px; color: var(--zd-color-neutral-500); margin-bottom: 8px;">
           Gap LG (16px)
         </div>
-        <div style="display: flex; gap: var(--zd-spacing-lg);">
+        <div class="zd-flex" gap="16">
           <div
             style="width: 48px; height: 48px; background: var(--zd-color-brand-500); border-radius: 8px;"
           ></div>

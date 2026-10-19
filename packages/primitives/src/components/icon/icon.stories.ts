@@ -45,7 +45,12 @@ const zocdocIconNames = [
 
 export const ZocdocIcons: Story = {
   render: () => html`
-    <zd-grid gap="16" style="grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));">
+    <style>
+      .icon-gallery {
+        --zd-grid-min-column-size: 120px;
+      }
+    </style>
+    <zd-grid class="icon-gallery" columns="auto-fill" gap="16">
       ${zocdocIconNames.map(
         (name) => html`
           <zd-flex direction="column" align="center" gap="8">

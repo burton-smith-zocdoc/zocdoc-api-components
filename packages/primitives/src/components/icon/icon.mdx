@@ -29,7 +29,12 @@ mark rather than an error.
 <code-bubble hidecode>
 
 ```html
-<zd-grid gap="16" style="grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));">
+<style>
+  .icon-gallery {
+    --zd-grid-min-column-size: 120px;
+  }
+</style>
+<zd-grid class="icon-gallery" columns="auto-fill" gap="16">
   <zd-flex direction="column" align="center" gap="8">
     <zd-icon name="checkmark" size="large"></zd-icon>
     <span style="font-size: 0.75rem;">checkmark</span>

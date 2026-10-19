@@ -31213,7 +31213,7 @@
           "cssProperties": [
             {
               "name": "--zd-flex-gap",
-              "description": "Overrides the flex gap.",
+              "description": "Sets the gap when no gap attribute is present. Inherits, so it can be set on an ancestor.",
               "default": "var(--zd-spacing-16)"
             }
           ]
@@ -31234,9 +31234,9 @@
             },
             {
               "name": "columns",
-              "description": "Creates equal-width column tracks.",
+              "description": "Creates equal-width column tracks, or as many as fit at the minimum column size.",
               "type": {
-                "text": "1 | 2 | 3 | 4 | 6 | 12"
+                "text": "1 | 2 | 3 | 4 | 6 | 12 | auto-fill | auto-fit"
               }
             },
             {
@@ -31264,8 +31264,13 @@
           "cssProperties": [
             {
               "name": "--zd-grid-gap",
-              "description": "Overrides the grid gap.",
+              "description": "Sets the gap when no gap attribute is present. Inherits, so it can be set on an ancestor.",
               "default": "var(--zd-spacing-16)"
+            },
+            {
+              "name": "--zd-grid-min-column-size",
+              "description": "Sets the minimum track size for auto-fill and auto-fit columns. Inherits, so it can be set on an ancestor.",
+              "default": "12rem"
             }
           ]
         }

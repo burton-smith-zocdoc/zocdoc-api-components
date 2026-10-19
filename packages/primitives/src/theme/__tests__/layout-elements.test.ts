@@ -8,12 +8,21 @@ describe('layout element CSS', () => {
   it('sets explicit low-specificity display and flex defaults', () => {
     const css = generateLayoutElementsCss(spacingTokens);
 
-    expect(css).toContain(':where(zd-flex) {');
+    expect(css).toContain(':where(zd-flex, .zd-flex) {');
     expect(css).toContain('display: flex;');
     expect(css).toContain('flex-direction: row;');
     expect(css).toContain('flex-wrap: nowrap;');
-    expect(css).toContain(':where(zd-grid) {');
+    expect(css).toContain(':where(zd-grid, .zd-grid) {');
     expect(css).toContain('display: grid;');
+  });
+
+  it('matches a same-named class so semantic elements can opt in', () => {
+    const css = generateLayoutElementsCss(spacingTokens);
+
+    for (const name of ['zd-flex', 'zd-grid', 'zd-column']) {
+      expect(css).toContain(`:where(${name}, .${name}) {`);
+      expect(css).not.toContain(`:where(${name}) {`);
+    }
   });
 
   it('generates token-backed gap selectors for both elements', () => {
@@ -27,6 +36,14 @@ describe('layout element CSS', () => {
       Object.keys(spacingTokens).length * 2
     );
     expect(css).not.toContain('&[gap=');
+  });
+
+  it('leaves gap and column-size custom properties undeclared so ancestors can set them', () => {
+    const css = generateLayoutElementsCss(spacingTokens);
+
+    expect(css).not.toMatch(/--zd-(flex|grid)-gap\s*:/);
+    expect(css).not.toMatch(/--zd-grid-min-column-size\s*:/);
+    expect(css).toContain('&:where([gap="8"]) {\n    gap: var(--zd-spacing-8, 8px);');
   });
 
   it('defaults flex direction and wrapping unless supported attributes are present', () => {
@@ -47,10 +64,8 @@ describe('layout element CSS', () => {
   it('allows custom gap overrides and does not define child reordering', () => {
     const css = generateLayoutElementsCss(spacingTokens);
 
-    expect(css).toContain('--zd-flex-gap: var(--zd-spacing-16, 16px);');
-    expect(css).toContain('gap: var(--zd-flex-gap);');
-    expect(css).toContain('--zd-grid-gap: var(--zd-spacing-16, 16px);');
-    expect(css).toContain('gap: var(--zd-grid-gap);');
+    expect(css).toContain('gap: var(--zd-flex-gap, var(--zd-spacing-16, 16px));');
+    expect(css).toContain('gap: var(--zd-grid-gap, var(--zd-spacing-16, 16px));');
     expect(css).not.toMatch(/\border\s*:/);
     expect(css).not.toContain('row-reverse');
     expect(css).not.toContain('column-reverse');
@@ -83,11 +98,16 @@ describe('layout element positioning', () => {
       );
     }
     expect(css).not.toContain('[columns="5"]');
+    for (const mode of ['auto-fill', 'auto-fit']) {
+      expect(css).toContain(
+        `&:where([columns="${mode}"]) {\n    grid-template-columns: repeat(${mode}, minmax(min(var(--zd-grid-min-column-size, 12rem), 100%), 1fr));`
+      );
+    }
     expect(css).toContain('&:where([justify="center"]) {\n    justify-items: center;');
   });
 
   it('places zd-column children with composable start and span rules', () => {
-    expect(css).toContain(':where(zd-column) {');
+    expect(css).toContain(':where(zd-column, .zd-column) {');
     expect(css).toContain('min-inline-size: 0;');
     expect(css).toContain('&:where([column="3"]) {\n    grid-column-start: 3;');
     expect(css).toContain('&:where([row="2"]) {\n    grid-row-start: 2;');

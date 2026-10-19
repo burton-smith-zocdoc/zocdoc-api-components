@@ -1,6 +1,8 @@
 type SpacingTokens = Readonly<Record<string, string>>;
 
 const gridColumnCounts = [1, 2, 3, 4, 6, 12];
+const autoColumnModes = ['auto-fill', 'auto-fit'];
+const defaultMinColumnSize = '12rem';
 const gridLines = Array.from({ length: 12 }, (_, index) => index + 1);
 
 const flexAlign = {
@@ -40,14 +42,26 @@ function mapRules(
   );
 }
 
-function gapRules(element: 'flex' | 'grid', spacingTokens: SpacingTokens): string {
+// Sets `gap` itself rather than `--zd-*-gap`, so an attribute value is not inherited by nested layouts.
+function gapRules(spacingTokens: SpacingTokens): string {
   return attrRules(
     'gap',
     Object.entries(spacingTokens)
       .filter(([key]) => /^\d+$/.test(key))
-      .map(
-        ([key, value]) => [key, `--zd-${element}-gap: var(--zd-spacing-${key}, ${value});`] as const
-      )
+      .map(([key, value]) => [key, `gap: var(--zd-spacing-${key}, ${value});`] as const)
+  );
+}
+
+function autoColumnRules(): string {
+  return attrRules(
+    'columns',
+    autoColumnModes.map(
+      (mode) =>
+        [
+          mode,
+          `grid-template-columns: repeat(${mode}, minmax(min(var(--zd-grid-min-column-size, ${defaultMinColumnSize}), 100%), 1fr));`,
+        ] as const
+    )
   );
 }
 
@@ -71,17 +85,16 @@ export function generateLayoutElementsCss(spacingTokens: SpacingTokens): string 
  * @attr {start | center | end | between | around | evenly} justify - Distributes items on the main axis.
  * @attr {boolean} wrap - Allows items to wrap onto another line.
  * @attr {boolean} inline - Renders as an inline-level flex container.
- * @cssprop [--zd-flex-gap=var(--zd-spacing-16)] - Overrides the flex gap.
+ * @cssprop [--zd-flex-gap=var(--zd-spacing-16)] - Sets the gap when no gap attribute is present. Inherits, so it can be set on an ancestor.
  */
-:where(zd-flex) {
+:where(zd-flex, .zd-flex) {
   display: flex;
   box-sizing: border-box;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: stretch;
   justify-content: flex-start;
-  --zd-flex-gap: var(--zd-spacing-16, ${spacingTokens['16']});
-  gap: var(--zd-flex-gap);
+  gap: var(--zd-flex-gap, var(--zd-spacing-16, ${spacingTokens['16']}));
 
   &:where([inline]) {
     display: inline-flex;
@@ -99,23 +112,23 @@ ${mapRules('align', 'align-items', flexAlign)}
 
 ${mapRules('justify', 'justify-content', flexJustify)}
 
-${gapRules('flex', spacingTokens)}
+${gapRules(spacingTokens)}
 }
 
 /**
  * A two-dimensional grid layout container.
- * @attr {1 | 2 | 3 | 4 | 6 | 12} columns - Creates equal-width column tracks.
+ * @attr {1 | 2 | 3 | 4 | 6 | 12 | auto-fill | auto-fit} columns - Creates equal-width column tracks, or as many as fit at the minimum column size.
  * @attr {${gapType}} gap - Sets the gap using a numeric Zocdoc spacing token.
  * @attr {start | center | end | stretch} align - Aligns items in their block-axis grid area.
  * @attr {start | center | end | stretch} justify - Aligns items in their inline-axis grid area.
  * @attr {boolean} inline - Renders as an inline-level grid container.
- * @cssprop [--zd-grid-gap=var(--zd-spacing-16)] - Overrides the grid gap.
+ * @cssprop [--zd-grid-gap=var(--zd-spacing-16)] - Sets the gap when no gap attribute is present. Inherits, so it can be set on an ancestor.
+ * @cssprop [--zd-grid-min-column-size=${defaultMinColumnSize}] - Sets the minimum track size for auto-fill and auto-fit columns. Inherits, so it can be set on an ancestor.
  */
-:where(zd-grid) {
+:where(zd-grid, .zd-grid) {
   display: grid;
   box-sizing: border-box;
-  --zd-grid-gap: var(--zd-spacing-16, ${spacingTokens['16']});
-  gap: var(--zd-grid-gap);
+  gap: var(--zd-grid-gap, var(--zd-spacing-16, ${spacingTokens['16']}));
 
   &:where([inline]) {
     display: inline-grid;
@@ -128,11 +141,13 @@ ${attrRules(
   )
 )}
 
+${autoColumnRules()}
+
 ${mapRules('align', 'align-items', gridAlign)}
 
 ${mapRules('justify', 'justify-items', gridAlign)}
 
-${gapRules('grid', spacingTokens)}
+${gapRules(spacingTokens)}
 }
 
 /**
@@ -141,7 +156,7 @@ ${gapRules('grid', spacingTokens)}
  * @attr {1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12} row - Sets the starting row line.
  * @attr {1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12} span - Sets how many columns to span.
  */
-:where(zd-column) {
+:where(zd-column, .zd-column) {
   display: block;
   min-inline-size: 0;
 
