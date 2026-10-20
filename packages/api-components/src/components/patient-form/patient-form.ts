@@ -275,8 +275,7 @@ export class ZdPatientForm extends CharmElement {
 
   /**
    * Validates every field and emits `patient-submit` when all of them pass. Public so the
-   * host page or a coordinating parent can trigger it, which is also how the flow in
-   * Task 15 drives the form from its own Continue button.
+   * host page or a coordinating parent can trigger it from its own Continue button.
    */
   public submit(): void {
     if (this.busy) return;

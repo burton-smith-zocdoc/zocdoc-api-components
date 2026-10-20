@@ -17,26 +17,24 @@ button with a visually hidden label for accessibility (I18N-001).
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `can-go-earlier` | `canGoEarlier` | `boolean` | — | Whether there is anywhere earlier to go. False at today, because the API returns nothing in the past and a window behind it comes back empty — which reads as no availability at all. |
+| `can-go-earlier` | `canGoEarlier` | `boolean` | `true` | Whether there is anywhere earlier to go. False at today, because the API returns nothing in the past and a window behind it comes back empty — which reads as no availability at all. |
 | `end-date` | `endDate` | `string` | — | The window's last day, inclusive, as `YYYY-MM-DD`. |
 | `start-date` | `startDate` | `string` | — | The window's first day, as `YYYY-MM-DD`. |
-| — | `addEventListener` | `TypedEventTarget<ZdAvailabilityWindowEventMap>['addEventListener']` | — | — |
-| — | `removeEventListener` | `TypedEventTarget<ZdAvailabilityWindowEventMap>['removeEventListener']` | — | — |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `window-shift` | `Event` | Emitted with `{ direction: -1 \| 1 }` when a navigation button is pressed. |
+| `window-shift` | `CustomEvent<WindowShiftDetail>` | Emitted with `{ direction: -1 \| 1 }` when a navigation button is pressed. |
 
 ## CSS Parts
 
 | Part | Description |
 | --- | --- |
-| `zd-window` | The container holding the range and controls. |
-| `zd-window-next` | The control moving the range forward. |
-| `zd-window-previous` | The control moving the range back. |
-| `zd-window-range` | The line naming the range on show. |
+| `window` | The container holding the range and controls. |
+| `window-next` | The control moving the range forward. |
+| `window-previous` | The control moving the range back. |
+| `window-range` | The line naming the range on show. |
 
 ## Inherited
 

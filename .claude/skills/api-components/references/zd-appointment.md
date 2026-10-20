@@ -22,18 +22,16 @@ one sends at most one request at a time.
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `appointment-id` | `appointmentId` | `string` | — | The appointment to load. Changing it reloads. |
-| `hide-photo` | `hidePhoto` | `boolean` | — | Leaves the provider's photo out, as on `zd-provider-card`. |
+| `hide-photo` | `hidePhoto` | `boolean` | `false` | Leaves the provider's photo out, as on `zd-provider-card`. |
 | `provider-name` | `providerName` | `string` | — | Who the appointment is with, shown until the provider lookup succeeds and kept if it fails. The component looks the provider up itself, so this is optional. |
-| — | `addEventListener` | `TypedEventTarget<ZdAppointmentEventMap>['addEventListener']` | — | — |
-| — | `removeEventListener` | `TypedEventTarget<ZdAppointmentEventMap>['removeEventListener']` | — | — |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `appointment-cancel` | `Event` | Emitted with `{ appointmentId, status }` once cancelled. |
-| `appointment-error` | `Event` | Emitted with `{ error, action, status? }` when a lookup, cancel or reschedule fails. |
-| `appointment-reschedule` | `Event` | Emitted with `{ appointmentId, status, startTime }` once moved. |
+| `appointment-cancel` | `CustomEvent<AppointmentCancelDetail>` | Emitted with `{ appointmentId, status }` once cancelled. |
+| `appointment-error` | `CustomEvent<AppointmentErrorDetail>` | Emitted with `{ error, action, status? }` when a lookup, cancel or reschedule fails. |
+| `appointment-reschedule` | `CustomEvent<AppointmentRescheduleDetail>` | Emitted with `{ appointmentId, status, startTime }` once moved. |
 
 ## Methods
 
@@ -47,33 +45,33 @@ one sends at most one request at a time.
 
 | Part | Description |
 | --- | --- |
-| `zd-action-error` | The alert shown when an action fails. |
-| `zd-actions` | The row of action buttons. |
-| `zd-appointment-status` | The status, in patient words. |
-| `zd-back` | The button that backs out of rescheduling. |
-| `zd-cancel` | The "Cancel appointment" button. |
-| `zd-cancel-form` | The cancel confirmation form. |
-| `zd-confirm-cancel` | The button that sends the cancel. |
-| `zd-confirm-reschedule` | The button that sends the new time. |
-| `zd-details` | The list of appointment details. |
-| `zd-heading` | The panel heading. |
-| `zd-keep` | The button that backs out of cancelling. |
-| `zd-notice` | The polite live region announcing a completed action. |
-| `zd-panel` | The container for every mode, and the focus target on each mode change. |
-| `zd-phone` | The practice's phone number, as a `tel:` link. |
-| `zd-picker` | The embedded availability picker. |
-| `zd-provider` | The provider row's value: the looked-up summary, or `provider-name` as a fallback. |
-| `zd-provider-detail` | The text column beside the photo. |
-| `zd-provider-location` | The address, or "Video visit". |
-| `zd-provider-name` | The provider's name and credential. |
-| `zd-provider-photo` | The provider's photo, unless `hide-photo` is set. |
-| `zd-provider-specialty` | The provider's first specialty. |
-| `zd-provider-summary` | The looked-up provider block. |
-| `zd-reason` | The cancellation reason select. |
-| `zd-reference` | The confirmation number. |
-| `zd-reschedule` | The "Change time" button. |
-| `zd-waiting-room` | The link to a video visit's waiting room. |
-| `zd-when` | The appointment's date and time, in the provider's zone. |
+| `action-error` | The alert shown when an action fails. |
+| `actions` | The row of action buttons. |
+| `appointment-status` | The status, in patient words. |
+| `back` | The button that backs out of rescheduling. |
+| `cancel` | The "Cancel appointment" button. |
+| `cancel-form` | The cancel confirmation form. |
+| `confirm-cancel` | The button that sends the cancel. |
+| `confirm-reschedule` | The button that sends the new time. |
+| `details` | The list of appointment details. |
+| `heading` | The panel heading. |
+| `keep` | The button that backs out of cancelling. |
+| `notice` | The polite live region announcing a completed action. |
+| `panel` | The container for every mode, and the focus target on each mode change. |
+| `phone` | The practice's phone number, as a `tel:` link. |
+| `picker` | The embedded availability picker. |
+| `provider` | The provider row's value: the looked-up summary, or `provider-name` as a fallback. |
+| `provider-detail` | The text column beside the photo. |
+| `provider-location` | The address, or "Video visit". |
+| `provider-name` | The provider's name and credential. |
+| `provider-photo` | The provider's photo, unless `hide-photo` is set. |
+| `provider-specialty` | The provider's first specialty. |
+| `provider-summary` | The looked-up provider block. |
+| `reason` | The cancellation reason select. |
+| `reference` | The confirmation number. |
+| `reschedule` | The "Change time" button. |
+| `waiting-room` | The link to a video visit's waiting room. |
+| `when` | The appointment's date and time, in the provider's zone. |
 
 ## Inherited
 

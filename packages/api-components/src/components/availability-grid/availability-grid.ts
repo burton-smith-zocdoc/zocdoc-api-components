@@ -8,6 +8,8 @@ import type {
   TypedEmit,
   TypedEventTarget,
 } from '../events.js';
+// Re-exported because the generated framework types import every event payload from this module.
+export type { AvailabilityWindowDetail, ErrorDetail } from '../events.js';
 import {
   ZdAvailabilityWindow,
   type WindowShiftDetail,
@@ -151,6 +153,7 @@ export class ZdAvailabilityGrid extends CharmElement {
   @property({ attribute: 'visit-reason-id' })
   public visitReasonId?: string;
 
+  /** Which patient the days are counted for, since a practice can open different times to each. */
   @property({ attribute: 'patient-type' })
   public patientType: PatientType = 'new';
 

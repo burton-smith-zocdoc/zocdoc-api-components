@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "files": [
+    "dist",
+    "agent-docs",
+    "custom-elements.json"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

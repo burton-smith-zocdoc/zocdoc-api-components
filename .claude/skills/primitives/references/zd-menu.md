@@ -50,9 +50,9 @@ A popup menu of actions anchored to a trigger.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-menu-popup` | The popup element that positions the menu. | `CoreMenu` |
-| `zd-menu-popup-base` | The menu panel: background, border and shadow. | `CoreMenu` |
-| `zd-menu-popup-dialog` | The popup's own positioned container. | `CoreMenu` |
+| `menu-popup` | The popup element that positions the menu. | `CoreMenu` |
+| `menu-popup-base` | The menu panel: background, border and shadow. | `CoreMenu` |
+| `menu-popup-dialog` | The popup's own positioned container. | `CoreMenu` |
 
 ### CSS Custom Properties
 

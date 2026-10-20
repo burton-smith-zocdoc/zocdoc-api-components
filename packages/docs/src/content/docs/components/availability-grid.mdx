@@ -52,35 +52,6 @@ When a parent has already fetched availability, assign its slots through the `ti
 
 `timeslots` is a JavaScript property, not an HTML attribute. An empty array means the parent supplied availability with no slots; leave it `undefined` when the grid should fetch for itself.
 
-## Attributes
-
-| Attribute              | Type      | Default | Description                                           |
-| ---------------------- | --------- | ------- | ----------------------------------------------------- |
-| `provider-location-id` | `string`  | —       | Provider location to fetch for                        |
-| `visit-reason-id`      | `string`  | —       | Visit reason required for fetching                    |
-| `patient-type`         | `string`  | `new`   | Patient type for availability                         |
-| `loading`              | `boolean` | `false` | Show placeholders while the host loads supplied slots |
-| `start-date`           | `string`  | today   | First day in the visible range                        |
-| `days`                 | `number`  | `14`    | Number of days to show (max 30)                       |
-| `selected-day`         | `string`  | —       | Selected day as `YYYY-MM-DD`                          |
-| `show-more`            | `boolean` | `false` | Show the "More" control                               |
-| `hide-window`          | `boolean` | `false` | Hide the range header and its pager                   |
-
-### JavaScript Properties
-
-| Property    | Type                          | Description                                     |
-| ----------- | ----------------------------- | ----------------------------------------------- |
-| `timeslots` | `readonly AvailabilitySlot[]` | Pre-fetched slots; setting it disables fetching |
-
-## Events
-
-| Event                | Detail                         | Description        |
-| -------------------- | ------------------------------ | ------------------ |
-| `day-select`         | `{ day, providerLocationId? }` | Day clicked        |
-| `window-change`      | `{ startDate, endDate }`       | Date range shifted |
-| `more-select`        | `{}`                           | "More" clicked     |
-| `availability-error` | `{ error }`                    | Fetch failed       |
-
 ## Accessibility
 
 - Days are buttons with date labels
@@ -90,3 +61,9 @@ When a parent has already fetched availability, assign its slots through the `ti
 ## Styling
 
 The grid uses a seven-column layout that adapts to its container. Day cells inherit the host text color and use the Zocdoc design tokens for available and unavailable states.
+
+## API Reference
+
+```api-reference
+zd-availability-grid
+```

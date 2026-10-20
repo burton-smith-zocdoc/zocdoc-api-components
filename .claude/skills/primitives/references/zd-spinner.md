@@ -28,12 +28,12 @@ An animated loading indicator.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-spinner-base` | The component's base wrapper. | `CoreSpinner` |
-| `zd-spinner-container` | The spinner's container. | `CoreSpinner` |
-| `zd-spinner-image` | The spinner's SVG element. | `CoreSpinner` |
-| `zd-spinner-indicator` | The spinner's indicator. | `CoreSpinner` |
-| `zd-spinner-label` | The spinner's label. | `CoreSpinner` |
-| `zd-spinner-track` | The spinner's track. | `CoreSpinner` |
+| `spinner-base` | The component's base wrapper. | `CoreSpinner` |
+| `spinner-container` | The spinner's container. | `CoreSpinner` |
+| `spinner-image` | The spinner's SVG element. | `CoreSpinner` |
+| `spinner-indicator` | The spinner's indicator. | `CoreSpinner` |
+| `spinner-label` | The spinner's label. | `CoreSpinner` |
+| `spinner-track` | The spinner's track. | `CoreSpinner` |
 
 ### CSS Custom Properties
 

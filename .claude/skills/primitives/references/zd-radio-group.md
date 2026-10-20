@@ -60,14 +60,14 @@ Groups radio buttons for single-selection choices.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-form-control-error-text` | The control's error text's wrapper. | `CharmFormControlElement` |
-| `zd-form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
-| `zd-form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
-| `zd-form-control-help-text` | The help text container. | `CharmFormControlElement` |
-| `zd-radio-group-base` | The component's internal wrapper. | `CoreRadioGroup` |
-| `zd-radio-group-help-text` | The help text's wrapper. | `CoreRadioGroup` |
-| `zd-radio-group-label` | The radio group's label. | `CoreRadioGroup` |
-| `zd-radio-group-radios` | Wrapper around the default slot. | `CoreRadioGroup` |
+| `form-control-error-text` | The control's error text's wrapper. | `CharmFormControlElement` |
+| `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
+| `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
+| `form-control-help-text` | The help text container. | `CharmFormControlElement` |
+| `radio-group-base` | The component's internal wrapper. | `CoreRadioGroup` |
+| `radio-group-help-text` | The help text's wrapper. | `CoreRadioGroup` |
+| `radio-group-label` | The radio group's label. | `CoreRadioGroup` |
+| `radio-group-radios` | Wrapper around the default slot. | `CoreRadioGroup` |
 
 ### CSS Custom Properties
 

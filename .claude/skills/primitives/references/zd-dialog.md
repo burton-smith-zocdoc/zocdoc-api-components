@@ -54,16 +54,16 @@ A modal dialog for focused tasks and confirmations, with heading, body, and foot
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-dialog-actions` | The component's actions slot. | `CoreDialog` |
-| `zd-dialog-base` | The component's dialog element. | `CoreDialog` |
-| `zd-dialog-body` | The component's body slot. | `CoreDialog` |
-| `zd-dialog-close-button` | The component's close X button. | `CoreDialog` |
-| `zd-dialog-close-button-icon` | The close button icon. | `CoreDialog` |
-| `zd-dialog-footer` | The component's footer slot. | `CoreDialog` |
-| `zd-dialog-header` | The component's header slot. | `CoreDialog` |
-| `zd-dialog-header-base` | The component's header base. | `CoreDialog` |
-| `zd-dialog-toolbar` | The component's toolbar which contains action slot and close button. | `CoreDialog` |
-| `zd-dialog-wrapper` | The component's base wrapper. | `CoreDialog` |
+| `dialog-actions` | The component's actions slot. | `CoreDialog` |
+| `dialog-base` | The component's dialog element. | `CoreDialog` |
+| `dialog-body` | The component's body slot. | `CoreDialog` |
+| `dialog-close-button` | The component's close X button. | `CoreDialog` |
+| `dialog-close-button-icon` | The close button icon. | `CoreDialog` |
+| `dialog-footer` | The component's footer slot. | `CoreDialog` |
+| `dialog-header` | The component's header slot. | `CoreDialog` |
+| `dialog-header-base` | The component's header base. | `CoreDialog` |
+| `dialog-toolbar` | The component's toolbar which contains action slot and close button. | `CoreDialog` |
+| `dialog-wrapper` | The component's base wrapper. | `CoreDialog` |
 
 ### CSS Custom Properties
 

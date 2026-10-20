@@ -22,22 +22,7 @@ The `<zd-booking-confirmation>` component displays the result of a booking reque
 
 The example uses the documented mock booking ID and a provider-only fixture name. It renders locally and runs in StackBlitz without patient data.
 
-## Attributes
-
-| Attribute                  | Type                               | Default | Description                                                                    |
-| -------------------------- | ---------------------------------- | ------- | ------------------------------------------------------------------------------ |
-| `appointment-id`           | `string`                           | —       | Booking ID                                                                     |
-| `start-time`               | `string`                           | —       | Appointment time (ISO 8601)                                                    |
-| `status`                   | `'confirmed' \| 'pending_booking'` | —       | Booking status                                                                 |
-| `provider-name`            | `string`                           | —       | Provider display name                                                          |
-| `location-phone`           | `string`                           | —       | The practice's phone number: `location_phone_number` from the booking response |
-| `location-phone-extension` | `string`                           | —       | `location_phone_extension` from the booking response                           |
-
-## Properties
-
-| Property         | Type             | Description                                                                     |
-| ---------------- | ---------------- | ------------------------------------------------------------------------------- |
-| `waitingRoomUrl` | `string \| null` | `waiting_room_path` from the booking response. Property only, with no attribute |
+## Contact and Video Links
 
 `<zd-booking>` passes all three from the booking response.
 
@@ -61,9 +46,8 @@ Appointment requires provider confirmation. Shows pending message with expected 
 - Appointment details in readable order
 - Add-to-calendar links properly labeled
 
-## Styling
+## API Reference
 
-| CSS Property                  | Default | Description      |
-| ----------------------------- | ------- | ---------------- |
-| `--zd-confirmation-icon-size` | `48px`  | Status icon size |
-| `--zd-confirmation-max-width` | `500px` | Content width    |
+```api-reference
+zd-booking-confirmation
+```

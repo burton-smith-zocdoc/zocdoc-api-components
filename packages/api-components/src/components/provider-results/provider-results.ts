@@ -12,6 +12,8 @@ import { ZdAvailabilityWindow, type WindowShiftDetail } from '../availability-wi
 import { ZdProviderCard } from '../provider-card/provider-card.js';
 import { ZdProviderProfile } from '../provider-profile/provider-profile.js';
 import type { AvailabilityWindowDetail, TypedEmit, TypedEventTarget } from '../events.js';
+// Re-exported because the generated framework types import every event payload from this module.
+export type { AvailabilityWindowDetail } from '../events.js';
 import {
   nextWindowStart,
   resolveWindowStart,

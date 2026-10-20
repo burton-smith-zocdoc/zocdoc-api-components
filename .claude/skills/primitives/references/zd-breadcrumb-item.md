@@ -40,12 +40,12 @@ A single link in a breadcrumb trail.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-breadcrumb-item-base` | The component's base wrapper. | `CoreBreadcrumbItem` |
-| `zd-breadcrumb-item-control` | The container for start, default, and end slot. | `CoreBreadcrumbItem` |
-| `zd-breadcrumb-item-separator` | The separator between breadcrumb items. | `CoreBreadcrumbItem` |
-| `zd-content` | The container for the default slot. | `CoreBreadcrumbItem` |
-| `zd-end` | The container for the 'end' slot. | `CoreBreadcrumbItem` |
-| `zd-start` | The container for the 'start' slot. | `CoreBreadcrumbItem` |
+| `breadcrumb-item-base` | The component's base wrapper. | `CoreBreadcrumbItem` |
+| `breadcrumb-item-control` | The container for start, default, and end slot. | `CoreBreadcrumbItem` |
+| `breadcrumb-item-separator` | The separator between breadcrumb items. | `CoreBreadcrumbItem` |
+| `content` | The container for the default slot. | `CoreBreadcrumbItem` |
+| `end` | The container for the 'end' slot. | `CoreBreadcrumbItem` |
+| `start` | The container for the 'start' slot. | `CoreBreadcrumbItem` |
 
 ### CSS Custom Properties
 

@@ -40,8 +40,8 @@ Toggles a region of content from a slotted trigger.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-disclosure-base` | The component's base wrapper. | `CoreDisclosure` |
-| `zd-disclosure-content` | Wrapper around the main slotted content. | `CoreDisclosure` |
+| `disclosure-base` | The component's base wrapper. | `CoreDisclosure` |
+| `disclosure-content` | Wrapper around the main slotted content. | `CoreDisclosure` |
 
 ### CSS Custom Properties
 

@@ -32,7 +32,7 @@ Groups related buttons together with connected styling.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-button-group-base` | The component's base wrapper. | `CoreButtonGroup` |
+| `button-group-base` | The component's base wrapper. | `CoreButtonGroup` |
 
 ### CSS Custom Properties
 

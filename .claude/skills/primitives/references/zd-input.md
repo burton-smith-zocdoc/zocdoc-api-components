@@ -89,16 +89,16 @@ A text input field with label and validation support.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-end` | Container for end slot. | `CoreInput` |
-| `zd-form-control-error-text` | The error message container. | `CharmFormControlElement` |
-| `zd-form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
-| `zd-form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
-| `zd-form-control-help-text` | The help text container. | `CharmFormControlElement` |
-| `zd-input` | The native input element. | `CoreInput` |
-| `zd-input-base` | The component's base wrapper. | `CoreInput` |
-| `zd-input-control` | The wrapper for start, input, and end. | `CoreInput` |
-| `zd-input-label` | The label. | `CoreInput` |
-| `zd-start` | Container for start slot. | `CoreInput` |
+| `end` | Container for end slot. | `CoreInput` |
+| `form-control-error-text` | The error message container. | `CharmFormControlElement` |
+| `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
+| `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
+| `form-control-help-text` | The help text container. | `CharmFormControlElement` |
+| `input` | The native input element. | `CoreInput` |
+| `input-base` | The component's base wrapper. | `CoreInput` |
+| `input-control` | The wrapper for start, input, and end. | `CoreInput` |
+| `input-label` | The label. | `CoreInput` |
+| `start` | Container for start slot. | `CoreInput` |
 
 ### CSS Custom Properties
 

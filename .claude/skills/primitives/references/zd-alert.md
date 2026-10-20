@@ -24,7 +24,7 @@ Displays contextual feedback messages, with a variant per severity.
 
 | Part | Description |
 | --- | --- |
-| `zd-alert-icon` | — |
+| `alert-icon` | — |
 
 ## Inherited
 
@@ -68,11 +68,11 @@ Displays contextual feedback messages, with a variant per severity.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-alert-actions` | The container for the action slot. | `CoreAlert` |
-| `zd-alert-base` | The component's base wrapper. | `CoreAlert` |
-| `zd-alert-content` | The content container of the alert. | `CoreAlert` |
-| `zd-alert-dismiss-button` | The dismiss button. | `CoreAlert` |
-| `zd-alert-message` | The base of the message portion of the alert. | `CoreAlert` |
+| `alert-actions` | The container for the action slot. | `CoreAlert` |
+| `alert-base` | The component's base wrapper. | `CoreAlert` |
+| `alert-content` | The content container of the alert. | `CoreAlert` |
+| `alert-dismiss-button` | The dismiss button. | `CoreAlert` |
+| `alert-message` | The base of the message portion of the alert. | `CoreAlert` |
 
 ### CSS Custom Properties
 

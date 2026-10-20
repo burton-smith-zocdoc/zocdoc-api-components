@@ -35,8 +35,8 @@ Groups related menu items under a heading.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-menu-group-base` | The base wrapper for the menu group. | `CoreMenuGroup` |
-| `zd-menu-group-heading` | The heading element for the menu group. | `CoreMenuGroup` |
+| `menu-group-base` | The base wrapper for the menu group. | `CoreMenuGroup` |
+| `menu-group-heading` | The heading element for the menu group. | `CoreMenuGroup` |
 
 ### CSS Custom Properties
 

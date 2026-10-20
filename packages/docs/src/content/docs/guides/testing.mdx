@@ -104,6 +104,12 @@ In the mock, cancel returns `cancelled`, or `409` for `cancelled` and `no_show`.
 
 The guide's insurance plan IDs work as filter values. Examples: `ip_9111` (active), `ip_2667` (inactive), `ip_5432` (national coverage), `ip_2345` (California coverage), `ip_2052` (Medicare), and `ip_8281` (Medicaid). Filtering `GET /v1/insurance_plans` by state `AK` returns an empty list.
 
+## Test Environment
+
+Run component tests in a real browser, such as [Vitest browser mode](https://vitest.dev/guide/browser/) with Playwright, or Web Test Runner. That's how this library tests itself.
+
+The components rely on browser APIs that jsdom and happy-dom are missing or only stub out, including `ResizeObserver`, `HTMLDialogElement.showModal()`, form-associated custom elements (`attachInternals`), and constructable stylesheets. In a simulated DOM, a component can fail to render, a modal can fail to open, or a layout-dependent part can render wrongly without any error. If you must use one, limit it to tests of the client layer and of your own event handling.
+
 ## Example
 
 ```javascript

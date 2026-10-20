@@ -13,6 +13,9 @@ test-results/
 packages/primitives/TOKENS.md
 /packages/primitives/src/theme/generated/layout-elements.css
 packages/api-components/assets/
+# Shipped docs for agents in consumer projects (pnpm build:agent-docs) — built from the docs site
+# MDX and each package's custom-elements.json, which are the committed sources.
+packages/*/agent-docs/
 dist
 .vitest-attachments
 __screenshots__

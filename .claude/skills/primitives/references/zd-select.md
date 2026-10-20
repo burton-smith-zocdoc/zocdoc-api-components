@@ -66,17 +66,17 @@ that need the compact treatment can set `--zd-form-control-input-height` and
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-end` | Container for the end slot content. | `CoreSelect` |
-| `zd-form-control-error-text` | The error message container. | `CharmFormControlElement` |
-| `zd-form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
-| `zd-form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
-| `zd-form-control-help-text` | The help text container. | `CharmFormControlElement` |
-| `zd-select-base` | The component's base wrapper. | `CoreSelect` |
-| `zd-select-control` | The component's select control. | `CoreSelect` |
-| `zd-select-control-wrapper` | The component's select control wrapper. | `CoreSelect` |
-| `zd-select-icon` | The component's select icon. | `CoreSelect` |
-| `zd-select-label` | The component's label. | `CoreSelect` |
-| `zd-start` | Container for the start slot content. | `CoreSelect` |
+| `end` | Container for the end slot content. | `CoreSelect` |
+| `form-control-error-text` | The error message container. | `CharmFormControlElement` |
+| `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
+| `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
+| `form-control-help-text` | The help text container. | `CharmFormControlElement` |
+| `select-base` | The component's base wrapper. | `CoreSelect` |
+| `select-control` | The component's select control. | `CoreSelect` |
+| `select-control-wrapper` | The component's select control wrapper. | `CoreSelect` |
+| `select-icon` | The component's select icon. | `CoreSelect` |
+| `select-label` | The component's label. | `CoreSelect` |
+| `start` | Container for the start slot content. | `CoreSelect` |
 
 ### CSS Custom Properties
 

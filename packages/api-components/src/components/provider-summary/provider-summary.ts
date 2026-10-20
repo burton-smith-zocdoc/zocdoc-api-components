@@ -15,6 +15,7 @@ import styles from './provider-summary.styles.js';
  *
  * @tag zd-provider-summary
  * @csspart photo - The avatar element.
+ * @csspart details - The text column beside the photo.
  * @csspart name - The provider name and credential.
  * @csspart specialty - The specialty line.
  * @csspart location - The distance and address line.
@@ -23,10 +24,7 @@ import styles from './provider-summary.styles.js';
 export class ZdProviderSummary extends CharmElement {
   public static override baseName = 'provider-summary';
 
-  public static override styles = [
-    ...super.styles,
-    styles,
-  ] as typeof CharmElement.styles;
+  public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [ZdAvatar, ZdIcon];
@@ -101,12 +99,16 @@ export class ZdProviderSummary extends CharmElement {
       <div class="details" part="details">
         <span class="name" part="name">${heading}</span>
         ${specialty ? this.html`<span class="specialty" part="specialty">${specialty}</span>` : nothing}
-        ${location ? this.html`
+        ${
+          location
+            ? this.html`
           <span class="location" part="location">
             <scoped-icon name="location-pin"></scoped-icon>
             ${location}
           </span>
-        ` : nothing}
+        `
+            : nothing
+        }
         ${this.renderInsurance()}
       </div>
     `;

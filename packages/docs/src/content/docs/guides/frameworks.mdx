@@ -24,20 +24,14 @@ The `/react` entry points export one wrapper per element. Wrappers take camelCas
 
 ```tsx
 import { useRef } from 'react';
-import { configureZocdoc, type BookingCompleteDetail } from '@zocdoc/api-components';
-import {
-  ZdBooking,
-  type ZdBookingElement,
-  type ZdBookingElementEvent,
-} from '@zocdoc/api-components/react';
+import { configureZocdoc } from '@zocdoc/api-components';
+import { ZdBooking, type ZdBookingElement } from '@zocdoc/api-components/react';
 import { ZdFlex } from '@zocdoc/api-primitive-components/react';
 
 configureZocdoc({
   baseUrl: 'https://api-developer-sandbox.zocdoc.com',
   getToken: fetchTokenFromYourBackend,
 });
-
-type BookingCompleteEvent = ZdBookingElementEvent<CustomEvent<BookingCompleteDetail>>;
 
 export function BookingPage() {
   const booking = useRef<ZdBookingElement>(null);
@@ -50,7 +44,7 @@ export function BookingPage() {
         zipCode="11201"
         insurancePlanId="ip_9111"
         onBookingComplete={(event) => {
-          const { appointmentId, status } = (event as BookingCompleteEvent).detail;
+          const { appointmentId, status } = event.detail;
           // Store appointmentId to reschedule or cancel later.
           // Don't log patient details; they're PHI.
         }}
@@ -64,7 +58,7 @@ export function BookingPage() {
 API component wrappers don't register their elements. Importing anything from `@zocdoc/api-components` (as `configureZocdoc` above does) registers them all. If you use the mock transport from `@zocdoc/api-components/mock`, also add `import '@zocdoc/api-components';`. Primitive wrappers register their own elements.
 :::
 
-Events are strongly typed: `event.target` is the element instance (`ZdBookingElement` here). The `detail` payload isn't in the generated types, so to read `event.detail`, cast with the wrapper's `<Name>ElementEvent` helper and the detail type from the package root, as above.
+Events are strongly typed: `event.target` is the element instance (`ZdBookingElement` here), and `event.detail` is the event's payload type, such as `BookingCompleteDetail`. Each event also has a named type, such as `ZdBookingBookingCompleteElementEvent`, for handlers you declare separately.
 
 ## JSX types
 

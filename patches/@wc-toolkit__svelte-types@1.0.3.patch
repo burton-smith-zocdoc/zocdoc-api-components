@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..c63e443f25e72ff52b2fdd59b78890efb296dd8a 100644
+index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..15b7e94dc76a93033efa501e9450b97afd653cc7 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
 @@ -89,7 +89,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
@@ -78,7 +78,18 @@ index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..c63e443f25e72ff52b2fdd59b78890ef
      if (!importPath) continue;
      addImport(names, importPath, component.name);
      for (const eventType of getCustomEventDetailTypes(
-@@ -712,7 +714,7 @@ function getImports(manifest2, components2, options) {
+@@ -705,6 +707,10 @@ function getImports(manifest2, components2, options) {
+     )) {
+       addImport(names, importPath, eventType);
+     }
++    for (const event of component.events || []) {
++      const detail = /^CustomEvent<([A-Z][\w$]*)>$/.exec(event.type?.text?.trim() || "")?.[1];
++      if (detail) addImport(names, importPath, detail);
++    }
+   }
+   return [...names.entries()].map(
+     ([importPath, exports2]) => `import type { ${[...exports2].join(", ")} } from "${importPath}";`
+@@ -712,7 +718,7 @@ function getImports(manifest2, components2, options) {
  }
  function getComponentPropsTemplate(component, options) {
    const typeFor = (name, source, fallback) => {
@@ -87,7 +98,7 @@ index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..c63e443f25e72ff52b2fdd59b78890ef
        return `${component.name}['${name}']`;
      }
      const configured = getConfiguredType(source, options.typesSrc);
-@@ -753,6 +755,67 @@ ${events}
+@@ -753,7 +759,71 @@ ${events}
  ${cssProperties}
  };`;
  }
@@ -153,9 +164,13 @@ index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..c63e443f25e72ff52b2fdd59b78890ef
 +  return import_path.default.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
 +}
  function addImport(imports, importPath, name) {
++  // One file imports every component, and a payload shared by several (ErrorDetail) is
++  // re-exported from each of their modules; importing the same name twice won't compile.
++  for (const names of imports.values()) if (names.has(name)) return;
    if (!imports.has(importPath)) imports.set(importPath, /* @__PURE__ */ new Set());
    imports.get(importPath).add(name);
-@@ -761,7 +824,7 @@ function getComponentElementTemplate(component, options) {
+ }
+@@ -761,7 +831,7 @@ function getComponentElementTemplate(component, options) {
    const elementType = `${component.name}Element`;
    const slots = component.slots?.map((slot) => JSON.stringify(slot.name)) ?? [];
    const slotType = slots.length ? `export type ${component.name}Slots = ${slots.join(" | ")};` : "";
@@ -164,7 +179,7 @@ index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..c63e443f25e72ff52b2fdd59b78890ef
      return `export type ${elementType} = ${component.name};
  ${slotType}`;
    }
-@@ -774,7 +837,8 @@ ${slotType}`;
+@@ -774,7 +844,8 @@ ${slotType}`;
      return `  /** ${getMemberDescription(method.description, method.deprecated)} */
    ${method.name}(${parameters}): ${method.return?.type?.text || "void"};`;
    }).join("\n");
@@ -175,7 +190,7 @@ index df34ee41888e1b6427a3a3ac5cfb9ab7a4321d94..c63e443f25e72ff52b2fdd59b78890ef
  }
  ${slotType}`;
 diff --git a/dist/index.js b/dist/index.js
-index 8f92861c67531632e22b7676185beb727cfda11e..01fa5d05e6176ac33e774677762c055cf58e63a7 100644
+index 8f92861c67531632e22b7676185beb727cfda11e..840a89f17f78caab96db1c6356a3b656a28d3b3d 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -51,7 +51,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
@@ -254,7 +269,18 @@ index 8f92861c67531632e22b7676185beb727cfda11e..01fa5d05e6176ac33e774677762c055c
      if (!importPath) continue;
      addImport(names, importPath, component.name);
      for (const eventType of getCustomEventDetailTypes(
-@@ -674,7 +676,7 @@ function getImports(manifest2, components2, options) {
+@@ -667,6 +669,10 @@ function getImports(manifest2, components2, options) {
+     )) {
+       addImport(names, importPath, eventType);
+     }
++    for (const event of component.events || []) {
++      const detail = /^CustomEvent<([A-Z][\w$]*)>$/.exec(event.type?.text?.trim() || "")?.[1];
++      if (detail) addImport(names, importPath, detail);
++    }
+   }
+   return [...names.entries()].map(
+     ([importPath, exports]) => `import type { ${[...exports].join(", ")} } from "${importPath}";`
+@@ -674,7 +680,7 @@ function getImports(manifest2, components2, options) {
  }
  function getComponentPropsTemplate(component, options) {
    const typeFor = (name, source, fallback) => {
@@ -263,7 +289,7 @@ index 8f92861c67531632e22b7676185beb727cfda11e..01fa5d05e6176ac33e774677762c055c
        return `${component.name}['${name}']`;
      }
      const configured = getConfiguredType(source, options.typesSrc);
-@@ -715,6 +717,67 @@ ${events}
+@@ -715,7 +721,71 @@ ${events}
  ${cssProperties}
  };`;
  }
@@ -329,9 +355,13 @@ index 8f92861c67531632e22b7676185beb727cfda11e..01fa5d05e6176ac33e774677762c055c
 +  return path.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
 +}
  function addImport(imports, importPath, name) {
++  // One file imports every component, and a payload shared by several (ErrorDetail) is
++  // re-exported from each of their modules; importing the same name twice won't compile.
++  for (const names of imports.values()) if (names.has(name)) return;
    if (!imports.has(importPath)) imports.set(importPath, /* @__PURE__ */ new Set());
    imports.get(importPath).add(name);
-@@ -723,7 +786,7 @@ function getComponentElementTemplate(component, options) {
+ }
+@@ -723,7 +793,7 @@ function getComponentElementTemplate(component, options) {
    const elementType = `${component.name}Element`;
    const slots = component.slots?.map((slot) => JSON.stringify(slot.name)) ?? [];
    const slotType = slots.length ? `export type ${component.name}Slots = ${slots.join(" | ")};` : "";
@@ -340,7 +370,7 @@ index 8f92861c67531632e22b7676185beb727cfda11e..01fa5d05e6176ac33e774677762c055c
      return `export type ${elementType} = ${component.name};
  ${slotType}`;
    }
-@@ -736,7 +799,8 @@ ${slotType}`;
+@@ -736,7 +806,8 @@ ${slotType}`;
      return `  /** ${getMemberDescription(method.description, method.deprecated)} */
    ${method.name}(${parameters}): ${method.return?.type?.text || "void"};`;
    }).join("\n");

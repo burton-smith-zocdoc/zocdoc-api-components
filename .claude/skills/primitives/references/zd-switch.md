@@ -62,16 +62,16 @@ A labelled on/off toggle for a single setting.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-form-control-error-text` | The error message container. | `CharmFormControlElement` |
-| `zd-form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
-| `zd-form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
-| `zd-form-control-help-text` | The help text container. | `CharmFormControlElement` |
-| `zd-switch-base` | The component's internal wrapper. | `CoreSwitch` |
-| `zd-switch-checked-message` | The message to display when the toggle is checked. | `CoreSwitch` |
-| `zd-switch-control` | The switch control. | `CoreSwitch` |
-| `zd-switch-label` | The switch label. | `CoreSwitch` |
-| `zd-switch-thumb` | The switch position indicator. | `CoreSwitch` |
-| `zd-switch-unchecked-message` | The message to display when the toggle is unchecked. | `CoreSwitch` |
+| `form-control-error-text` | The error message container. | `CharmFormControlElement` |
+| `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
+| `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
+| `form-control-help-text` | The help text container. | `CharmFormControlElement` |
+| `switch-base` | The component's internal wrapper. | `CoreSwitch` |
+| `switch-checked-message` | The message to display when the toggle is checked. | `CoreSwitch` |
+| `switch-control` | The switch control. | `CoreSwitch` |
+| `switch-label` | The switch label. | `CoreSwitch` |
+| `switch-thumb` | The switch position indicator. | `CoreSwitch` |
+| `switch-unchecked-message` | The message to display when the toggle is unchecked. | `CoreSwitch` |
 
 ### CSS Custom Properties
 

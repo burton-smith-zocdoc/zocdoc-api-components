@@ -71,8 +71,8 @@ Low-level positioning primitive: places floating content relative to an anchor e
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-popup-arrow` | The arrow's container. Avoid setting `top\|bottom\|left\|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow. | `CorePopup` |
-| `zd-popup-base` | The popup's container. Useful for setting a background color, box shadow, etc. | `CorePopup` |
+| `popup-arrow` | The arrow's container. Avoid setting `top\|bottom\|left\|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow. | `CorePopup` |
+| `popup-base` | The popup's container. Useful for setting a background color, box shadow, etc. | `CorePopup` |
 
 ### CSS Custom Properties
 

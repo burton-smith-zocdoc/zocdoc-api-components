@@ -30,8 +30,8 @@ A horizontal or vertical rule separating content, with an optional inline label.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-divider-line` | The divider's line. | `CoreDivider` |
-| `zd-divider-text` | The divider's text. | `CoreDivider` |
+| `divider-line` | The divider's line. | `CoreDivider` |
+| `divider-text` | The divider's text. | `CoreDivider` |
 
 ### CSS Custom Properties
 

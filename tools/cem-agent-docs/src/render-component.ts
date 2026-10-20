@@ -1,6 +1,6 @@
 import { cell, code, table } from './markdown.ts';
 import { stylingSections } from './render-styling.ts';
-import type { ApiGroups, Component, RenderContext } from './types.ts';
+import type { ApiGroups, Component, NormalizedApi, RenderContext } from './types.ts';
 
 function slotName(name: string): string {
   return name ? code(name) : '_(default)_';
@@ -80,12 +80,39 @@ function apiSections(groups: ApiGroups, level: string, withOrigin: boolean): str
 }
 
 /**
- * One page per component: the callable surface first, then the CSS surface, then everything
- * inherited. A component is one thing to an agent — splitting its API from its styling meant
- * every "how do I use this" question cost either a wrong guess or a second file read.
- *
- * Inherited members of both kinds share a single `## Inherited` section, so the top of the
- * page stays the part an agent actually came for.
+ * A component's API below its heading, with sections at `depth`: the meta line, the callable
+ * surface, the CSS surface, then everything inherited under one `Inherited` heading, so the top
+ * stays the part a reader came for. Shared by the generated reference pages and the docs site,
+ * which expands it under a heading of its own.
+ */
+export function renderApiBody(
+  component: Component,
+  api: NormalizedApi,
+  packageName: string,
+  depth: number
+): string[] {
+  const level = '#'.repeat(depth);
+  const meta = [`**Class** \`${component.name}\``];
+  if (component.modulePath) meta.push(`**Module** \`${component.modulePath}\``);
+  meta.push(`**Package** \`${packageName}\``);
+
+  const out = [
+    meta.join(' — '),
+    ...apiSections(api.own, level, false),
+    ...stylingSections(api.own, level, false),
+  ];
+  const inherited = [
+    ...apiSections(api.inherited, `${level}#`, true),
+    ...stylingSections(api.inherited, `${level}#`, true),
+  ];
+  if (inherited.length) out.push(`${level} Inherited`, ...inherited);
+  return out;
+}
+
+/**
+ * One page per component. A component is one thing to an agent — splitting its API from its
+ * styling meant every "how do I use this" question cost either a wrong guess or a second file
+ * read.
  */
 export function renderComponentPage(component: Component, ctx: RenderContext): string {
   const tag = component.tagName ?? component.name;
@@ -93,24 +120,8 @@ export function renderComponentPage(component: Component, ctx: RenderContext): s
 
   if (component.description) out.push(component.description.trim());
 
-  const meta = [`**Class** \`${component.name}\``];
-  if (component.modulePath) meta.push(`**Module** \`${component.modulePath}\``);
-  meta.push(`**Package** \`${ctx.config.packageName}\``);
-  out.push(meta.join(' — '));
-
-  out.push(['```html', `<${tag}></${tag}>`, '```'].join('\n'));
-
-  out.push(...apiSections(ctx.api.own, '##', false));
-  out.push(...stylingSections(ctx.api.own, '##', false));
-
-  const inherited = [
-    ...apiSections(ctx.api.inherited, '###', true),
-    ...stylingSections(ctx.api.inherited, '###', true),
-  ];
-  if (inherited.length) {
-    out.push('## Inherited');
-    out.push(...inherited);
-  }
+  const [meta, ...sections] = renderApiBody(component, ctx.api, ctx.config.packageName, 2);
+  out.push(meta, ['```html', `<${tag}></${tag}>`, '```'].join('\n'), ...sections);
 
   return `${out.join('\n\n')}\n`;
 }

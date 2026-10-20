@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index 5b31144020b3303fb21a757d9759f93f5f712aa3..b9f641604a6c208f5805d5e31cb5ea6adbc61a2c 100644
+index 5b31144020b3303fb21a757d9759f93f5f712aa3..5f83a811e3956f96990766c1a14f507737518309 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
 @@ -52,7 +52,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
@@ -96,7 +96,7 @@ index 5b31144020b3303fb21a757d9759f93f5f712aa3..b9f641604a6c208f5805d5e31cb5ea6a
            result += `  /** ${description} */
          "${prop.propName}"?: ${undefinedType};
  `;
-@@ -1045,6 +1045,61 @@ declare global {
+@@ -1045,7 +1045,65 @@ declare global {
  }
  `;
  }
@@ -156,9 +156,13 @@ index 5b31144020b3303fb21a757d9759f93f5f712aa3..b9f641604a6c208f5805d5e31cb5ea6a
 +  return import_path.default.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
 +}
  function addImport(imports, importPath, exportName) {
++  // One file imports every component, and a payload shared by several (ErrorDetail) is
++  // re-exported from each of their modules; importing the same name twice won't compile.
++  for (const names of imports.values()) if (names.has(exportName)) return;
    const existing = imports.get(importPath);
    if (existing) {
-@@ -1054,7 +1109,7 @@ function addImport(imports, importPath, exportName) {
+     existing.add(exportName);
+@@ -1054,7 +1112,7 @@ function addImport(imports, importPath, exportName) {
    imports.set(importPath, /* @__PURE__ */ new Set([exportName]));
  }
  function getComponentImportPath(componentName, tagName, modulePath, options) {
@@ -167,7 +171,7 @@ index 5b31144020b3303fb21a757d9759f93f5f712aa3..b9f641604a6c208f5805d5e31cb5ea6a
  }
  function getTypeImportPath(reference, componentModulePath, component, options) {
    if (reference.package) {
-@@ -1076,7 +1131,7 @@ function getTypeImportPath(reference, componentModulePath, component, options) {
+@@ -1076,7 +1134,7 @@ function getTypeImportPath(reference, componentModulePath, component, options) {
        );
      }
    }
@@ -177,7 +181,7 @@ index 5b31144020b3303fb21a757d9759f93f5f712aa3..b9f641604a6c208f5805d5e31cb5ea6a
  function getComponentProps(component) {
    const properties = getComponentPublicProperties(component);
 diff --git a/dist/index.js b/dist/index.js
-index 32e4b1a79de2d4510c6a7bc55a037d48fa54806d..1b25d8caaffb72f778c509dc88bfe782b7fe50e3 100644
+index 32e4b1a79de2d4510c6a7bc55a037d48fa54806d..26e1f5dc91826dedb060e609e4d1945f988d1097 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -14,7 +14,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
@@ -274,7 +278,7 @@ index 32e4b1a79de2d4510c6a7bc55a037d48fa54806d..1b25d8caaffb72f778c509dc88bfe782
            result += `  /** ${description} */
          "${prop.propName}"?: ${undefinedType};
  `;
-@@ -1007,6 +1007,61 @@ declare global {
+@@ -1007,7 +1007,65 @@ declare global {
  }
  `;
  }
@@ -334,9 +338,13 @@ index 32e4b1a79de2d4510c6a7bc55a037d48fa54806d..1b25d8caaffb72f778c509dc88bfe782
 +  return path.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
 +}
  function addImport(imports, importPath, exportName) {
++  // One file imports every component, and a payload shared by several (ErrorDetail) is
++  // re-exported from each of their modules; importing the same name twice won't compile.
++  for (const names of imports.values()) if (names.has(exportName)) return;
    const existing = imports.get(importPath);
    if (existing) {
-@@ -1016,7 +1071,7 @@ function addImport(imports, importPath, exportName) {
+     existing.add(exportName);
+@@ -1016,7 +1074,7 @@ function addImport(imports, importPath, exportName) {
    imports.set(importPath, /* @__PURE__ */ new Set([exportName]));
  }
  function getComponentImportPath(componentName, tagName, modulePath, options) {
@@ -345,7 +353,7 @@ index 32e4b1a79de2d4510c6a7bc55a037d48fa54806d..1b25d8caaffb72f778c509dc88bfe782
  }
  function getTypeImportPath(reference, componentModulePath, component, options) {
    if (reference.package) {
-@@ -1038,7 +1093,7 @@ function getTypeImportPath(reference, componentModulePath, component, options) {
+@@ -1038,7 +1096,7 @@ function getTypeImportPath(reference, componentModulePath, component, options) {
        );
      }
    }

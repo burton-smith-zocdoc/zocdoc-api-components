@@ -13,7 +13,7 @@ in a compact summary layout. Used by provider-card and booking.
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `hide-photo` | `hidePhoto` | `boolean` | — | Hides the provider's photo, which otherwise renders from Zocdoc's image CDN (see `ProviderSummaryOptions.hidePhoto`). |
+| `hide-photo` | `hidePhoto` | `boolean` | `false` | Hides the provider's photo, which otherwise renders from Zocdoc's image CDN (see `ProviderSummaryOptions.hidePhoto`). |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan name the search was run with. Enables the network status line when provided. |
 | — | `provider` | `ProviderLocation` | — | The provider location data to render. |
 
@@ -21,12 +21,12 @@ in a compact summary layout. Used by provider-card and booking.
 
 | Part | Description |
 | --- | --- |
-| `zd-details` | — |
-| `zd-insurance` | The network status line. |
-| `zd-location` | The distance and address line. |
-| `zd-name` | The provider name and credential. |
-| `zd-photo` | The avatar element. |
-| `zd-specialty` | The specialty line. |
+| `details` | The text column beside the photo. |
+| `insurance` | The network status line. |
+| `location` | The distance and address line. |
+| `name` | The provider name and credential. |
+| `photo` | The avatar element. |
+| `specialty` | The specialty line. |
 
 ## Inherited
 

@@ -15,6 +15,8 @@ import type {
 import { ZdAvailabilityPicker } from '../availability-picker/availability-picker.js';
 import { ZdBookingConfirmation } from '../booking-confirmation/booking-confirmation.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
+// Re-exported because the generated framework types import every event payload from this module.
+export type { ErrorDetail } from '../events.js';
 import { resolveWindowStart, windowEndDate } from '../../utilities/availability-window.js';
 import { userFacingError } from '../../utilities/error-message.js';
 import { providerHeading } from '../../utilities/provider-summary.js';
@@ -222,6 +224,11 @@ export class ZdBooking extends CharmElement {
   @property({ attribute: 'visit-reason-id' })
   public visitReasonId?: string;
 
+  /**
+   * The insurance plan the flow opens on. Narrows the search, is sent with the booking, and
+   * tells the patient form whether to ask for a member ID. Kept in step with what the patient
+   * searched.
+   */
   @property({ attribute: 'insurance-plan-id' })
   public insurancePlanId?: string;
 

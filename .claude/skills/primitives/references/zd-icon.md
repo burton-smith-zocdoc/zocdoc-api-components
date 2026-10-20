@@ -40,4 +40,4 @@ Renders a named icon from the configured icon set, at a token-driven size.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-icon-base` | The base of the icon. | `CoreIcon` |
+| `icon-base` | The base of the icon. | `CoreIcon` |

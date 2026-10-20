@@ -56,6 +56,17 @@ Use `<zd-booking>` for a drop-in solution, or compose the individual components 
 | `@zocdoc/api-primitive-components` | UI primitives (buttons, inputs, cards) with Zocdoc theming |
 | `@zocdoc/api-components` | Booking components that call the Zocdoc API |
 
+## Using an AI coding agent
+
+Both packages ship `agent-docs/` — the docs site and component reference as plain markdown,
+matched to the installed version. The `zocdoc-web-components` skill points an agent at them:
+
+```bash
+npx skills add burton-smith-zocdoc/zocdoc-api-components
+```
+
+The skill holds no API details itself, so it doesn't need reinstalling when the packages update.
+
 ## Status
 
 Proof of concept. Not yet published to npm.

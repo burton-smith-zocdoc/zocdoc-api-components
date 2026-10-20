@@ -66,9 +66,10 @@ For client-side apps that get tokens from your backend:
 configureZocdoc({
   baseUrl: 'https://api-developer-sandbox.zocdoc.com',
   getToken: async () => {
+    // Your backend returns Zocdoc's token response: { access_token, expires_in, ... }
     const response = await fetch('/api/zocdoc-token');
-    const { token } = await response.json();
-    return token;
+    const { access_token } = await response.json();
+    return access_token;
   },
 });
 ```

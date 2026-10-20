@@ -1,6 +1,9 @@
 ---
 name: testing
 description: Testing patterns for api-components. Use when writing or debugging tests for components or client code.
+metadata:
+  # For contributors to this repo; `npx skills add` offers only skills/ to consumers.
+  internal: true
 ---
 
 # Testing Reference

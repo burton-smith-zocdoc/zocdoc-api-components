@@ -19,9 +19,9 @@ A container for grouping related content.
 
 | Part | Description |
 | --- | --- |
-| `zd-card-header` | — |
-| `zd-card-heading` | — |
-| `zd-card-subheading` | — |
+| `card-header` | — |
+| `card-heading` | — |
+| `card-subheading` | — |
 
 ## Inherited
 
@@ -51,10 +51,10 @@ A container for grouping related content.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-card-base` | The component's base wrapper. | `CoreCard` |
-| `zd-card-content` | The card's main content. | `CoreCard` |
-| `zd-card-footer` | The card's footer. | `CoreCard` |
-| `zd-card-media` | The card's media. | `CoreCard` |
+| `card-base` | The component's base wrapper. | `CoreCard` |
+| `card-content` | The card's main content. | `CoreCard` |
+| `card-footer` | The card's footer. | `CoreCard` |
+| `card-media` | The card's media. | `CoreCard` |
 
 ### CSS Custom Properties
 

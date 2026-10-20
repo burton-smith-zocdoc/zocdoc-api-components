@@ -22,28 +22,26 @@ shared window control above the list driving all of them.
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `availability-days` | `availabilityDays` | `number` | — | How many days of availability each card shows. Clamped to the API's 30-day maximum. |
+| `availability-days` | `availabilityDays` | `number` | `14` | How many days of availability each card shows. Clamped to the API's 30-day maximum. |
 | `availability-start` | `availabilityStart` | `string` | — | The first day of the availability window, as `YYYY-MM-DD`. Defaults to today. Set by this component's own window control and read by every card, which is what keeps them showing the same dates. Whoever supplies `availability` is expected to bind this back down after a `window-change` so the counts and the dates above them cannot disagree. |
-| `hide-photos` | `hidePhotos` | `boolean` | — | Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see `ProviderSummaryOptions.hidePhoto`. |
+| `hide-photos` | `hidePhotos` | `boolean` | `false` | Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see `ProviderSummaryOptions.hidePhoto`. |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan the search was run with. Supplying it is what allows the network line to render at all, since `accepts_patient_insurance` is only meaningful against a plan. |
-| `loading` | `loading` | `boolean` | — | Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this component never fetches, so whoever owns the search sets this while a page is in flight and clears it when the new `providers` arrive. |
-| `page` | `page` | `number` | — | The zero-indexed page `providers` holds, matching the API's own indexing. |
-| `page-size` | `pageSize` | `number` | — | The page size the search used. Defaults to the API's own, which is what it fell back to. |
+| `loading` | `loading` | `boolean` | `false` | Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this component never fetches, so whoever owns the search sets this while a page is in flight and clears it when the new `providers` arrive. |
+| `page` | `page` | `number` | `0` | The zero-indexed page `providers` holds, matching the API's own indexing. |
+| `page-size` | `pageSize` | `number` | `10` | The page size the search used. Defaults to the API's own, which is what it fell back to. |
 | `selected-id` | `selectedId` | `string` | — | The currently selected `provider_location_id`, if any. |
 | `total-count` | `totalCount` | `number` | — | The **unpaged** total from `total_count`, which is what makes the count line and the pager possible: `providers` only ever holds the page in hand. Left undefined by a host page that has no total, in which case neither renders — a count of the current page presented as the count of the search would be a lie, and a pager cannot know where it ends. |
-| — | `addEventListener` | `TypedEventTarget<ZdProviderResultsEventMap>['addEventListener']` | — | — |
 | — | `availability` | `ProviderLocationAvailability[]` | — | Day counts per card, from one batched availability request for the whole page. Batched by whoever owns the search, not by the cards: the endpoint takes an array of `provider_location_ids` and answers for all of them at once, so ten cards fetching for themselves would be ten requests for one screen. Left undefined by a host page with no availability to show, in which case no card renders a grid at all — which is the standalone case, and the list still works (COMP-004). Entries the batch did not answer for get {@link NO_TIMESLOTS} rather than nothing, so a card says "no appointments" instead of quietly going and asking on its own. |
 | — | `providers` | `ProviderLocation[]` | — | The provider locations to display. |
-| — | `removeEventListener` | `TypedEventTarget<ZdProviderResultsEventMap>['removeEventListener']` | — | — |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `day-select` | `Event` | Emitted with `{ day, provider }` when a day is chosen on a card, forwarded from that card's grid with the provider attached. |
-| `page-change` | `Event` | Emitted with `{ page }` when the patient pages. Zero-indexed, matching the API. The owner of the search is expected to fetch that page and hand back new `providers`; nothing here changes until it does. |
-| `provider-select` | `Event` | Emitted with `{ provider }` when a provider is chosen. |
-| `window-change` | `Event` | Emitted with `{ startDate, endDate }` when the shared window moves. The owner of `availability` is expected to refetch that window; the dates on show move regardless. |
+| `day-select` | `CustomEvent<ProviderDaySelectDetail>` | Emitted with `{ day, provider }` when a day is chosen on a card, forwarded from that card's grid with the provider attached. |
+| `page-change` | `CustomEvent<PageChangeDetail>` | Emitted with `{ page }` when the patient pages. Zero-indexed, matching the API. The owner of the search is expected to fetch that page and hand back new `providers`; nothing here changes until it does. |
+| `provider-select` | `CustomEvent<ProviderSelectDetail>` | Emitted with `{ provider }` when a provider is chosen. |
+| `window-change` | `CustomEvent<AvailabilityWindowDetail>` | Emitted with `{ startDate, endDate }` when the shared window moves. The owner of `availability` is expected to refetch that window; the dates on show move regardless. |
 
 ## Methods
 
@@ -56,35 +54,35 @@ shared window control above the list driving all of them.
 
 | Part | Description |
 | --- | --- |
-| `zd-availability-day` | One day cell inside a card's grid. |
-| `zd-availability-days` | The day list inside a card's grid. |
-| `zd-availability-empty` | A card's no-availability message. |
-| `zd-empty` | The message shown when there are no providers. |
-| `zd-header` | The count line and the window control together, present only with availability. |
-| `zd-header-skeleton` | The placeholder count and window control while `loading` is set. |
-| `zd-list` | The list wrapper. |
-| `zd-loading` | The status line announced while `loading` is set. |
-| `zd-pager` | The paging controls. |
-| `zd-pager-next` | The button going forward a page. |
-| `zd-pager-position` | The line saying which page this is. |
-| `zd-pager-previous` | The button going back a page. |
-| `zd-provider` | The selectable control for one provider. |
-| `zd-provider-availability` | One card's availability grid. |
-| `zd-provider-badges` | The per-card slot for anything `renderBadges` adds. |
-| `zd-provider-detail` | The text column beside the photo. |
-| `zd-provider-insurance` | The network line, when `insurance-name` is set. |
-| `zd-provider-location` | The distance and address, or the video-visit line. |
-| `zd-provider-name` | The provider's display name and credential. |
-| `zd-provider-photo` | The provider's photo, unless `hide-photos` is set. |
-| `zd-provider-specialty` | The provider's primary specialty. |
-| `zd-provider-summary` | The summary block for one provider. |
-| `zd-results` | The header and list together; `aria-busy` while `loading` is set. |
-| `zd-skeleton` | One placeholder card while `loading` is set. |
-| `zd-summary` | The line counting what the search found. |
-| `zd-window` | The shared availability window control. |
-| `zd-window-next` | The control stepping the window forward. |
-| `zd-window-previous` | The control stepping the window back. |
-| `zd-window-range` | The dates the window covers. |
+| `availability-day` | One day cell inside a card's grid. |
+| `availability-days` | The day list inside a card's grid. |
+| `availability-empty` | A card's no-availability message. |
+| `empty` | The message shown when there are no providers. |
+| `header` | The count line and the window control together, present only with availability. |
+| `header-skeleton` | The placeholder count and window control while `loading` is set. |
+| `list` | The list wrapper. |
+| `loading` | The status line announced while `loading` is set. |
+| `pager` | The paging controls. |
+| `pager-next` | The button going forward a page. |
+| `pager-position` | The line saying which page this is. |
+| `pager-previous` | The button going back a page. |
+| `provider` | The selectable control for one provider. |
+| `provider-availability` | One card's availability grid. |
+| `provider-badges` | The per-card slot for anything `renderBadges` adds. |
+| `provider-detail` | The text column beside the photo. |
+| `provider-insurance` | The network line, when `insurance-name` is set. |
+| `provider-location` | The distance and address, or the video-visit line. |
+| `provider-name` | The provider's display name and credential. |
+| `provider-photo` | The provider's photo, unless `hide-photos` is set. |
+| `provider-specialty` | The provider's primary specialty. |
+| `provider-summary` | The summary block for one provider. |
+| `results` | The header and list together; `aria-busy` while `loading` is set. |
+| `skeleton` | One placeholder card while `loading` is set. |
+| `summary` | The line counting what the search found. |
+| `window` | The shared availability window control. |
+| `window-next` | The control stepping the window forward. |
+| `window-previous` | The control stepping the window back. |
+| `window-range` | The dates the window covers. |
 
 ## Inherited
 

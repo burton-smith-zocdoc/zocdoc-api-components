@@ -1,6 +1,9 @@
 ---
 name: api-components
 description: Map of @zocdoc/api-components - which file to read for what, the shared shape every component follows, and the invariants that look cosmetic but aren't. Use when reading, modifying, or debugging anything in packages/api-components/src/components/.
+metadata:
+  # For contributors to this repo; `npx skills add` offers only skills/ to consumers.
+  internal: true
 ---
 
 # API Components Reference

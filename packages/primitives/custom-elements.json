@@ -173,6 +173,7 @@
               "name": "expandIconPosition",
               "description": "Where the expand chevron sits. Charm defaults to the start of the row;\nZinc's accordion trails it after the heading.",
               "privacy": "public",
+              "default": "'end'",
               "attribute": "expand-icon-position",
               "reflects": true,
               "inheritedFrom": {
@@ -546,6 +547,7 @@
               "type": {
                 "text": "'start' | 'end'"
               },
+              "default": "'end'",
               "fieldName": "expandIconPosition"
             },
             {
@@ -815,7 +817,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-accordion-item-base",
+              "name": "accordion-item-base",
               "description": "The wrapper element.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem",
@@ -823,7 +825,7 @@
               }
             },
             {
-              "name": "zd-accordion-item-chevron",
+              "name": "accordion-item-chevron",
               "description": "The expand/collapse icon.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem",
@@ -831,7 +833,7 @@
               }
             },
             {
-              "name": "zd-accordion-item-end",
+              "name": "accordion-item-end",
               "description": "The end slot container.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem",
@@ -839,7 +841,7 @@
               }
             },
             {
-              "name": "zd-accordion-item-heading",
+              "name": "accordion-item-heading",
               "description": "The heading element.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem",
@@ -847,7 +849,7 @@
               }
             },
             {
-              "name": "zd-accordion-item-icon",
+              "name": "accordion-item-icon",
               "description": "The wrapper element for the expand/collapse icon.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem",
@@ -855,7 +857,7 @@
               }
             },
             {
-              "name": "zd-accordion-item-start",
+              "name": "accordion-item-start",
               "description": "The start slot container.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem",
@@ -863,7 +865,7 @@
               }
             },
             {
-              "name": "zd-accordion-item-summary",
+              "name": "accordion-item-summary",
               "description": "The summary element.",
               "inheritedFrom": {
                 "name": "CoreAccordionItem",
@@ -1984,7 +1986,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-alert-actions",
+              "name": "alert-actions",
               "description": "The container for the action slot.",
               "inheritedFrom": {
                 "name": "CoreAlert",
@@ -1992,7 +1994,7 @@
               }
             },
             {
-              "name": "zd-alert-base",
+              "name": "alert-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreAlert",
@@ -2000,7 +2002,7 @@
               }
             },
             {
-              "name": "zd-alert-content",
+              "name": "alert-content",
               "description": "The content container of the alert.",
               "inheritedFrom": {
                 "name": "CoreAlert",
@@ -2008,7 +2010,7 @@
               }
             },
             {
-              "name": "zd-alert-dismiss-button",
+              "name": "alert-dismiss-button",
               "description": "The dismiss button.",
               "inheritedFrom": {
                 "name": "CoreAlert",
@@ -2016,10 +2018,10 @@
               }
             },
             {
-              "name": "zd-alert-icon"
+              "name": "alert-icon"
             },
             {
-              "name": "zd-alert-message",
+              "name": "alert-message",
               "description": "The base of the message portion of the alert.",
               "inheritedFrom": {
                 "name": "CoreAlert",
@@ -2529,7 +2531,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-avatar-background",
+              "name": "avatar-background",
               "description": "A wrapper around the default slot and image.",
               "inheritedFrom": {
                 "name": "CoreAvatar",
@@ -2537,7 +2539,7 @@
               }
             },
             {
-              "name": "zd-avatar-base",
+              "name": "avatar-base",
               "description": "A wrapper for the entire avatar.",
               "inheritedFrom": {
                 "name": "CoreAvatar",
@@ -2545,7 +2547,7 @@
               }
             },
             {
-              "name": "zd-avatar-icon",
+              "name": "avatar-icon",
               "description": "A wrapper for the default slot fallback when no image or initials are present.",
               "inheritedFrom": {
                 "name": "CoreAvatar",
@@ -2553,7 +2555,7 @@
               }
             },
             {
-              "name": "zd-avatar-image",
+              "name": "avatar-image",
               "description": "The image tag for the avatar.",
               "inheritedFrom": {
                 "name": "CoreAvatar",
@@ -2561,7 +2563,7 @@
               }
             },
             {
-              "name": "zd-avatar-initials",
+              "name": "avatar-initials",
               "description": "A wrapper for the user initials.",
               "inheritedFrom": {
                 "name": "CoreAvatar",
@@ -2569,7 +2571,7 @@
               }
             },
             {
-              "name": "zd-avatar-status-container",
+              "name": "avatar-status-container",
               "description": "A wrapper for the status indicator.",
               "inheritedFrom": {
                 "name": "CoreAvatar",
@@ -2848,7 +2850,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-badge-base",
+              "name": "badge-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreBadge",
@@ -2856,7 +2858,7 @@
               }
             },
             {
-              "name": "zd-badge-end",
+              "name": "badge-end",
               "description": "The end slot container.",
               "inheritedFrom": {
                 "name": "CoreBadge",
@@ -2864,7 +2866,7 @@
               }
             },
             {
-              "name": "zd-badge-start",
+              "name": "badge-start",
               "description": "The start slot container.",
               "inheritedFrom": {
                 "name": "CoreBadge",
@@ -3471,7 +3473,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-breadcrumb-item-base",
+              "name": "breadcrumb-item-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumbItem",
@@ -3479,7 +3481,7 @@
               }
             },
             {
-              "name": "zd-breadcrumb-item-control",
+              "name": "breadcrumb-item-control",
               "description": "The container for start, default, and end slot.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumbItem",
@@ -3487,7 +3489,7 @@
               }
             },
             {
-              "name": "zd-breadcrumb-item-separator",
+              "name": "breadcrumb-item-separator",
               "description": "The separator between breadcrumb items.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumbItem",
@@ -3495,7 +3497,7 @@
               }
             },
             {
-              "name": "zd-content",
+              "name": "content",
               "description": "The container for the default slot.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumbItem",
@@ -3503,7 +3505,7 @@
               }
             },
             {
-              "name": "zd-end",
+              "name": "end",
               "description": "The container for the 'end' slot.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumbItem",
@@ -3511,7 +3513,7 @@
               }
             },
             {
-              "name": "zd-start",
+              "name": "start",
               "description": "The container for the 'start' slot.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumbItem",
@@ -3864,7 +3866,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-breadcrumb-base",
+              "name": "breadcrumb-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumb",
@@ -3872,7 +3874,7 @@
               }
             },
             {
-              "name": "zd-breadcrumb-list",
+              "name": "breadcrumb-list",
               "description": "Default slot's wrapper.",
               "inheritedFrom": {
                 "name": "CoreBreadcrumb",
@@ -4573,7 +4575,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-overflow-base",
+              "name": "overflow-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -4581,7 +4583,7 @@
               }
             },
             {
-              "name": "zd-overflow-content",
+              "name": "overflow-content",
               "description": "The container for the default slot.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -4589,7 +4591,7 @@
               }
             },
             {
-              "name": "zd-overflow-end",
+              "name": "overflow-end",
               "description": "The end slot.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -4597,7 +4599,7 @@
               }
             },
             {
-              "name": "zd-overflow-menu",
+              "name": "overflow-menu",
               "description": "The menu for overflowed items.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -4605,7 +4607,7 @@
               }
             },
             {
-              "name": "zd-overflow-menu-item",
+              "name": "overflow-menu-item",
               "description": "The menu item for overflowed items.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -4613,7 +4615,7 @@
               }
             },
             {
-              "name": "zd-overflow-start",
+              "name": "overflow-start",
               "description": "The start slot.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -4621,7 +4623,7 @@
               }
             },
             {
-              "name": "zd-overflow-trigger",
+              "name": "overflow-trigger",
               "description": "The trigger button for the overflow menu.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -5216,7 +5218,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-button-group-base",
+              "name": "button-group-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreButtonGroup",
@@ -5891,6 +5893,7 @@
               "name": "variant",
               "description": "The button's visual treatment. Omit it to use the base `button.*` tokens,\nwhich is what an unstyled Charm button renders.",
               "privacy": "public",
+              "default": "'secondary'",
               "attribute": "variant",
               "reflects": true,
               "type": {
@@ -6114,6 +6117,7 @@
               "parsedType": {
                 "text": "'inverse' | 'primary' | 'secondary' | 'ghost' | 'destructive' | 'link' | undefined"
               },
+              "default": "'secondary'",
               "fieldName": "variant"
             }
           ],
@@ -6465,7 +6469,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-button-control",
+              "name": "button-control",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreButton",
@@ -6473,7 +6477,7 @@
               }
             },
             {
-              "name": "zd-content",
+              "name": "content",
               "description": "The button's label.",
               "inheritedFrom": {
                 "name": "CoreButton",
@@ -6481,7 +6485,7 @@
               }
             },
             {
-              "name": "zd-end",
+              "name": "end",
               "description": "The container that wraps the suffix.",
               "inheritedFrom": {
                 "name": "CoreButton",
@@ -6489,10 +6493,10 @@
               }
             },
             {
-              "name": "zd-spinner"
+              "name": "spinner"
             },
             {
-              "name": "zd-start",
+              "name": "start",
               "description": "The container that wraps the prefix.",
               "inheritedFrom": {
                 "name": "CoreButton",
@@ -6974,7 +6978,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-card-base",
+              "name": "card-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreCard",
@@ -6982,7 +6986,7 @@
               }
             },
             {
-              "name": "zd-card-content",
+              "name": "card-content",
               "description": "The card's main content.",
               "inheritedFrom": {
                 "name": "CoreCard",
@@ -6990,7 +6994,7 @@
               }
             },
             {
-              "name": "zd-card-footer",
+              "name": "card-footer",
               "description": "The card's footer.",
               "inheritedFrom": {
                 "name": "CoreCard",
@@ -6998,13 +7002,13 @@
               }
             },
             {
-              "name": "zd-card-header"
+              "name": "card-header"
             },
             {
-              "name": "zd-card-heading"
+              "name": "card-heading"
             },
             {
-              "name": "zd-card-media",
+              "name": "card-media",
               "description": "The card's media.",
               "inheritedFrom": {
                 "name": "CoreCard",
@@ -7012,7 +7016,7 @@
               }
             },
             {
-              "name": "zd-card-subheading"
+              "name": "card-subheading"
             }
           ]
         }
@@ -8460,7 +8464,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-checkbox",
+              "name": "checkbox",
               "description": "HTML label element, whose purpose is to aid with styling.",
               "inheritedFrom": {
                 "name": "CoreCheckbox",
@@ -8468,7 +8472,7 @@
               }
             },
             {
-              "name": "zd-checkbox-base",
+              "name": "checkbox-base",
               "description": "The checkbox's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreCheckbox",
@@ -8476,7 +8480,7 @@
               }
             },
             {
-              "name": "zd-checkbox-control",
+              "name": "checkbox-control",
               "description": "Checkbox visual representation as a span.",
               "inheritedFrom": {
                 "name": "CoreCheckbox",
@@ -8484,7 +8488,7 @@
               }
             },
             {
-              "name": "zd-checkbox-label",
+              "name": "checkbox-label",
               "description": "The checkbox's label.",
               "inheritedFrom": {
                 "name": "CoreCheckbox",
@@ -8492,7 +8496,7 @@
               }
             },
             {
-              "name": "zd-checkbox-visual-base",
+              "name": "checkbox-visual-base",
               "description": "Part who parent's the rendered checkbox as a span and its label.",
               "inheritedFrom": {
                 "name": "CoreCheckbox",
@@ -8500,7 +8504,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text",
+              "name": "form-control-error-text",
               "description": "The error message container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -8508,7 +8512,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-icon",
+              "name": "form-control-error-text-icon",
               "description": "The error message icon.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -8516,7 +8520,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-message",
+              "name": "form-control-error-text-message",
               "description": "The error message text.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -8524,7 +8528,7 @@
               }
             },
             {
-              "name": "zd-form-control-help-text",
+              "name": "form-control-help-text",
               "description": "The help text container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -9789,7 +9793,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-dialog-actions",
+              "name": "dialog-actions",
               "description": "The component's actions slot.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9797,7 +9801,7 @@
               }
             },
             {
-              "name": "zd-dialog-base",
+              "name": "dialog-base",
               "description": "The component's dialog element.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9805,7 +9809,7 @@
               }
             },
             {
-              "name": "zd-dialog-body",
+              "name": "dialog-body",
               "description": "The component's body slot.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9813,7 +9817,7 @@
               }
             },
             {
-              "name": "zd-dialog-close-button",
+              "name": "dialog-close-button",
               "description": "The component's close X button.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9821,7 +9825,7 @@
               }
             },
             {
-              "name": "zd-dialog-close-button-icon",
+              "name": "dialog-close-button-icon",
               "description": "The close button icon.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9829,7 +9833,7 @@
               }
             },
             {
-              "name": "zd-dialog-footer",
+              "name": "dialog-footer",
               "description": "The component's footer slot.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9837,7 +9841,7 @@
               }
             },
             {
-              "name": "zd-dialog-header",
+              "name": "dialog-header",
               "description": "The component's header slot.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9845,7 +9849,7 @@
               }
             },
             {
-              "name": "zd-dialog-header-base",
+              "name": "dialog-header-base",
               "description": "The component's header base.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9853,7 +9857,7 @@
               }
             },
             {
-              "name": "zd-dialog-toolbar",
+              "name": "dialog-toolbar",
               "description": "The component's toolbar which contains action slot and close button.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -9861,7 +9865,7 @@
               }
             },
             {
-              "name": "zd-dialog-wrapper",
+              "name": "dialog-wrapper",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreDialog",
@@ -10506,7 +10510,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-disclosure-base",
+              "name": "disclosure-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreDisclosure",
@@ -10514,7 +10518,7 @@
               }
             },
             {
-              "name": "zd-disclosure-content",
+              "name": "disclosure-content",
               "description": "Wrapper around the main slotted content.",
               "inheritedFrom": {
                 "name": "CoreDisclosure",
@@ -10875,7 +10879,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-divider-line",
+              "name": "divider-line",
               "description": "The divider's line.",
               "inheritedFrom": {
                 "name": "CoreDivider",
@@ -10883,7 +10887,7 @@
               }
             },
             {
-              "name": "zd-divider-text",
+              "name": "divider-text",
               "description": "The divider's text.",
               "inheritedFrom": {
                 "name": "CoreDivider",
@@ -11357,7 +11361,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-icon-base",
+              "name": "icon-base",
               "description": "The base of the icon.",
               "inheritedFrom": {
                 "name": "CoreIcon",
@@ -13447,7 +13451,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-end",
+              "name": "end",
               "description": "Container for end slot.",
               "inheritedFrom": {
                 "name": "CoreInput",
@@ -13455,7 +13459,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text",
+              "name": "form-control-error-text",
               "description": "The error message container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -13463,7 +13467,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-icon",
+              "name": "form-control-error-text-icon",
               "description": "The error message icon.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -13471,7 +13475,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-message",
+              "name": "form-control-error-text-message",
               "description": "The error message text.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -13479,7 +13483,7 @@
               }
             },
             {
-              "name": "zd-form-control-help-text",
+              "name": "form-control-help-text",
               "description": "The help text container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -13487,7 +13491,7 @@
               }
             },
             {
-              "name": "zd-input",
+              "name": "input",
               "description": "The native input element.",
               "inheritedFrom": {
                 "name": "CoreInput",
@@ -13495,7 +13499,7 @@
               }
             },
             {
-              "name": "zd-input-base",
+              "name": "input-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreInput",
@@ -13503,7 +13507,7 @@
               }
             },
             {
-              "name": "zd-input-control",
+              "name": "input-control",
               "description": "The wrapper for start, input, and end.",
               "inheritedFrom": {
                 "name": "CoreInput",
@@ -13511,7 +13515,7 @@
               }
             },
             {
-              "name": "zd-input-label",
+              "name": "input-label",
               "description": "The label.",
               "inheritedFrom": {
                 "name": "CoreInput",
@@ -13519,7 +13523,7 @@
               }
             },
             {
-              "name": "zd-start",
+              "name": "start",
               "description": "Container for start slot.",
               "inheritedFrom": {
                 "name": "CoreInput",
@@ -13899,7 +13903,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-menu-group-base",
+              "name": "menu-group-base",
               "description": "The base wrapper for the menu group.",
               "inheritedFrom": {
                 "name": "CoreMenuGroup",
@@ -13907,7 +13911,7 @@
               }
             },
             {
-              "name": "zd-menu-group-heading",
+              "name": "menu-group-heading",
               "description": "The heading element for the menu group.",
               "inheritedFrom": {
                 "name": "CoreMenuGroup",
@@ -14813,7 +14817,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-menu-item-base",
+              "name": "menu-item-base",
               "description": "The control's base.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14821,7 +14825,7 @@
               }
             },
             {
-              "name": "zd-menu-item-checkbox",
+              "name": "menu-item-checkbox",
               "description": "The control's checkbox.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14829,7 +14833,7 @@
               }
             },
             {
-              "name": "zd-menu-item-checkbox-container",
+              "name": "menu-item-checkbox-container",
               "description": "The control's checkbox container.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14837,7 +14841,7 @@
               }
             },
             {
-              "name": "zd-menu-item-checkbox-icon",
+              "name": "menu-item-checkbox-icon",
               "description": "The control's checkbox icon.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14845,7 +14849,7 @@
               }
             },
             {
-              "name": "zd-menu-item-radio",
+              "name": "menu-item-radio",
               "description": "The control's radio.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14853,7 +14857,7 @@
               }
             },
             {
-              "name": "zd-menu-item-radio-container",
+              "name": "menu-item-radio-container",
               "description": "The control's radio container.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14861,7 +14865,7 @@
               }
             },
             {
-              "name": "zd-menu-item-radio-indicator",
+              "name": "menu-item-radio-indicator",
               "description": "The control's radio indicator.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14869,7 +14873,7 @@
               }
             },
             {
-              "name": "zd-menu-item-submenu-item-icon",
+              "name": "menu-item-submenu-item-icon",
               "description": "The control's submenu icon.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -14877,7 +14881,7 @@
               }
             },
             {
-              "name": "zd-menu-item-submenu-item-icon-expanded",
+              "name": "menu-item-submenu-item-icon-expanded",
               "description": "The control's submenu icon when expanded.",
               "inheritedFrom": {
                 "name": "CoreMenuItem",
@@ -15912,7 +15916,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-menu-popup",
+              "name": "menu-popup",
               "description": "The popup element that positions the menu.",
               "inheritedFrom": {
                 "name": "CoreMenu",
@@ -15920,7 +15924,7 @@
               }
             },
             {
-              "name": "zd-menu-popup-base",
+              "name": "menu-popup-base",
               "description": "The menu panel: background, border and shadow.",
               "inheritedFrom": {
                 "name": "CoreMenu",
@@ -15928,7 +15932,7 @@
               }
             },
             {
-              "name": "zd-menu-popup-dialog",
+              "name": "menu-popup-dialog",
               "description": "The popup's own positioned container.",
               "inheritedFrom": {
                 "name": "CoreMenu",
@@ -16755,7 +16759,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-overflow-base",
+              "name": "overflow-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -16763,7 +16767,7 @@
               }
             },
             {
-              "name": "zd-overflow-content",
+              "name": "overflow-content",
               "description": "The container for the default slot.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -16771,7 +16775,7 @@
               }
             },
             {
-              "name": "zd-overflow-end",
+              "name": "overflow-end",
               "description": "The end slot.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -16779,7 +16783,7 @@
               }
             },
             {
-              "name": "zd-overflow-menu",
+              "name": "overflow-menu",
               "description": "The menu for overflowed items.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -16787,7 +16791,7 @@
               }
             },
             {
-              "name": "zd-overflow-menu",
+              "name": "overflow-menu",
               "description": "The menu for overflowed items.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -16795,7 +16799,7 @@
               }
             },
             {
-              "name": "zd-overflow-menu-item",
+              "name": "overflow-menu-item",
               "description": "The menu item for overflowed items.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -16803,7 +16807,7 @@
               }
             },
             {
-              "name": "zd-overflow-start",
+              "name": "overflow-start",
               "description": "The start slot.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -16811,7 +16815,7 @@
               }
             },
             {
-              "name": "zd-overflow-trigger",
+              "name": "overflow-trigger",
               "description": "The trigger button for the overflow menu.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -18312,7 +18316,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-popup-arrow",
+              "name": "popup-arrow",
               "description": "The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow.",
               "inheritedFrom": {
                 "name": "CorePopup",
@@ -18320,7 +18324,7 @@
               }
             },
             {
-              "name": "zd-popup-base",
+              "name": "popup-base",
               "description": "The popup's container. Useful for setting a background color, box shadow, etc.",
               "inheritedFrom": {
                 "name": "CorePopup",
@@ -18876,7 +18880,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-progress-bar-base",
+              "name": "progress-bar-base",
               "description": "The component's internal wrapper.",
               "inheritedFrom": {
                 "name": "CoreProgressBar",
@@ -18884,7 +18888,7 @@
               }
             },
             {
-              "name": "zd-progress-bar-help-text",
+              "name": "progress-bar-help-text",
               "description": "The progress bar's help text.",
               "inheritedFrom": {
                 "name": "CoreProgressBar",
@@ -18892,7 +18896,7 @@
               }
             },
             {
-              "name": "zd-progress-bar-indicator",
+              "name": "progress-bar-indicator",
               "description": "The progress bar indicator.",
               "inheritedFrom": {
                 "name": "CoreProgressBar",
@@ -18900,7 +18904,7 @@
               }
             },
             {
-              "name": "zd-progress-bar-label",
+              "name": "progress-bar-label",
               "description": "The progress bar label.",
               "inheritedFrom": {
                 "name": "CoreProgressBar",
@@ -18908,7 +18912,7 @@
               }
             },
             {
-              "name": "zd-progress-bar-track",
+              "name": "progress-bar-track",
               "description": "The progress bar's track.",
               "inheritedFrom": {
                 "name": "CoreProgressBar",
@@ -19952,7 +19956,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-push-pane-actions",
+              "name": "push-pane-actions",
               "description": "The actions container in the footer.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -19960,7 +19964,7 @@
               }
             },
             {
-              "name": "zd-push-pane-base",
+              "name": "push-pane-base",
               "description": "The base container of the push pane.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -19968,7 +19972,7 @@
               }
             },
             {
-              "name": "zd-push-pane-close-button",
+              "name": "push-pane-close-button",
               "description": "The close button in header.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -19976,7 +19980,7 @@
               }
             },
             {
-              "name": "zd-push-pane-container",
+              "name": "push-pane-container",
               "description": "The push pane wrapper.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -19984,7 +19988,7 @@
               }
             },
             {
-              "name": "zd-push-pane-footer",
+              "name": "push-pane-footer",
               "description": "The footer of the push pane.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -19992,7 +19996,7 @@
               }
             },
             {
-              "name": "zd-push-pane-header",
+              "name": "push-pane-header",
               "description": "The header of the push pane.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -20000,7 +20004,7 @@
               }
             },
             {
-              "name": "zd-push-pane-heading",
+              "name": "push-pane-heading",
               "description": "The heading of the push pane.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -20008,7 +20012,7 @@
               }
             },
             {
-              "name": "zd-push-pane-toolbar",
+              "name": "push-pane-toolbar",
               "description": "The toolbar of the push pane.",
               "inheritedFrom": {
                 "name": "CorePushPane",
@@ -21497,7 +21501,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-form-control-error-text",
+              "name": "form-control-error-text",
               "description": "The control's error text's wrapper.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -21505,7 +21509,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-icon",
+              "name": "form-control-error-text-icon",
               "description": "The error message icon.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -21513,7 +21517,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-message",
+              "name": "form-control-error-text-message",
               "description": "The error message text.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -21521,7 +21525,7 @@
               }
             },
             {
-              "name": "zd-form-control-help-text",
+              "name": "form-control-help-text",
               "description": "The help text container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -21529,7 +21533,7 @@
               }
             },
             {
-              "name": "zd-radio-group-base",
+              "name": "radio-group-base",
               "description": "The component's internal wrapper.",
               "inheritedFrom": {
                 "name": "CoreRadioGroup",
@@ -21537,7 +21541,7 @@
               }
             },
             {
-              "name": "zd-radio-group-help-text",
+              "name": "radio-group-help-text",
               "description": "The help text's wrapper.",
               "inheritedFrom": {
                 "name": "CoreRadioGroup",
@@ -21545,7 +21549,7 @@
               }
             },
             {
-              "name": "zd-radio-group-label",
+              "name": "radio-group-label",
               "description": "The radio group's label.",
               "inheritedFrom": {
                 "name": "CoreRadioGroup",
@@ -21553,7 +21557,7 @@
               }
             },
             {
-              "name": "zd-radio-group-radios",
+              "name": "radio-group-radios",
               "description": "Wrapper around the default slot.",
               "inheritedFrom": {
                 "name": "CoreRadioGroup",
@@ -22275,7 +22279,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-radio-base",
+              "name": "radio-base",
               "description": "The component's internal wrapper.",
               "inheritedFrom": {
                 "name": "CoreRadio",
@@ -22283,7 +22287,7 @@
               }
             },
             {
-              "name": "zd-radio-checked-icon",
+              "name": "radio-checked-icon",
               "description": "The container the wraps the checked icon.",
               "inheritedFrom": {
                 "name": "CoreRadio",
@@ -22291,7 +22295,7 @@
               }
             },
             {
-              "name": "zd-radio-control",
+              "name": "radio-control",
               "description": "The radio control.",
               "inheritedFrom": {
                 "name": "CoreRadio",
@@ -22299,7 +22303,7 @@
               }
             },
             {
-              "name": "zd-radio-label",
+              "name": "radio-label",
               "description": "The radio label.",
               "inheritedFrom": {
                 "name": "CoreRadio",
@@ -24218,7 +24222,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-end",
+              "name": "end",
               "description": "Container for the end slot content.",
               "inheritedFrom": {
                 "name": "CoreSelect",
@@ -24226,7 +24230,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text",
+              "name": "form-control-error-text",
               "description": "The error message container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -24234,7 +24238,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-icon",
+              "name": "form-control-error-text-icon",
               "description": "The error message icon.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -24242,7 +24246,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-message",
+              "name": "form-control-error-text-message",
               "description": "The error message text.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -24250,7 +24254,7 @@
               }
             },
             {
-              "name": "zd-form-control-help-text",
+              "name": "form-control-help-text",
               "description": "The help text container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -24258,7 +24262,7 @@
               }
             },
             {
-              "name": "zd-select-base",
+              "name": "select-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreSelect",
@@ -24266,7 +24270,7 @@
               }
             },
             {
-              "name": "zd-select-control",
+              "name": "select-control",
               "description": "The component's select control.",
               "inheritedFrom": {
                 "name": "CoreSelect",
@@ -24274,7 +24278,7 @@
               }
             },
             {
-              "name": "zd-select-control-wrapper",
+              "name": "select-control-wrapper",
               "description": "The component's select control wrapper.",
               "inheritedFrom": {
                 "name": "CoreSelect",
@@ -24282,7 +24286,7 @@
               }
             },
             {
-              "name": "zd-select-icon",
+              "name": "select-icon",
               "description": "The component's select icon.",
               "inheritedFrom": {
                 "name": "CoreSelect",
@@ -24290,7 +24294,7 @@
               }
             },
             {
-              "name": "zd-select-label",
+              "name": "select-label",
               "description": "The component's label.",
               "inheritedFrom": {
                 "name": "CoreSelect",
@@ -24298,7 +24302,7 @@
               }
             },
             {
-              "name": "zd-start",
+              "name": "start",
               "description": "Container for the start slot content.",
               "inheritedFrom": {
                 "name": "CoreSelect",
@@ -24560,7 +24564,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-skeleton-base",
+              "name": "skeleton-base",
               "description": "the component's base wrapper",
               "inheritedFrom": {
                 "name": "CoreSkeleton",
@@ -24896,7 +24900,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-spinner-base",
+              "name": "spinner-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreSpinner",
@@ -24904,7 +24908,7 @@
               }
             },
             {
-              "name": "zd-spinner-container",
+              "name": "spinner-container",
               "description": "The spinner's container.",
               "inheritedFrom": {
                 "name": "CoreSpinner",
@@ -24912,7 +24916,7 @@
               }
             },
             {
-              "name": "zd-spinner-image",
+              "name": "spinner-image",
               "description": "The spinner's SVG element.",
               "inheritedFrom": {
                 "name": "CoreSpinner",
@@ -24920,7 +24924,7 @@
               }
             },
             {
-              "name": "zd-spinner-indicator",
+              "name": "spinner-indicator",
               "description": "The spinner's indicator.",
               "inheritedFrom": {
                 "name": "CoreSpinner",
@@ -24928,7 +24932,7 @@
               }
             },
             {
-              "name": "zd-spinner-label",
+              "name": "spinner-label",
               "description": "The spinner's label.",
               "inheritedFrom": {
                 "name": "CoreSpinner",
@@ -24936,7 +24940,7 @@
               }
             },
             {
-              "name": "zd-spinner-track",
+              "name": "spinner-track",
               "description": "The spinner's track.",
               "inheritedFrom": {
                 "name": "CoreSpinner",
@@ -26596,7 +26600,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-form-control-error-text",
+              "name": "form-control-error-text",
               "description": "The error message container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -26604,7 +26608,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-icon",
+              "name": "form-control-error-text-icon",
               "description": "The error message icon.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -26612,7 +26616,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-message",
+              "name": "form-control-error-text-message",
               "description": "The error message text.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -26620,7 +26624,7 @@
               }
             },
             {
-              "name": "zd-form-control-help-text",
+              "name": "form-control-help-text",
               "description": "The help text container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -26628,7 +26632,7 @@
               }
             },
             {
-              "name": "zd-switch-base",
+              "name": "switch-base",
               "description": "The component's internal wrapper.",
               "inheritedFrom": {
                 "name": "CoreSwitch",
@@ -26636,7 +26640,7 @@
               }
             },
             {
-              "name": "zd-switch-checked-message",
+              "name": "switch-checked-message",
               "description": "The message to display when the toggle is checked.",
               "inheritedFrom": {
                 "name": "CoreSwitch",
@@ -26644,7 +26648,7 @@
               }
             },
             {
-              "name": "zd-switch-control",
+              "name": "switch-control",
               "description": "The switch control.",
               "inheritedFrom": {
                 "name": "CoreSwitch",
@@ -26652,7 +26656,7 @@
               }
             },
             {
-              "name": "zd-switch-label",
+              "name": "switch-label",
               "description": "The switch label.",
               "inheritedFrom": {
                 "name": "CoreSwitch",
@@ -26660,7 +26664,7 @@
               }
             },
             {
-              "name": "zd-switch-thumb",
+              "name": "switch-thumb",
               "description": "The switch position indicator.",
               "inheritedFrom": {
                 "name": "CoreSwitch",
@@ -26668,7 +26672,7 @@
               }
             },
             {
-              "name": "zd-switch-unchecked-message",
+              "name": "switch-unchecked-message",
               "description": "The message to display when the toggle is unchecked.",
               "inheritedFrom": {
                 "name": "CoreSwitch",
@@ -27002,7 +27006,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-tab-panel-base",
+              "name": "tab-panel-base",
               "description": "The component's internal wrapper.",
               "inheritedFrom": {
                 "name": "CoreTabPanel",
@@ -27442,7 +27446,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-tab-base",
+              "name": "tab-base",
               "description": "The component's internal wrapper.",
               "inheritedFrom": {
                 "name": "CoreTab",
@@ -28136,7 +28140,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-tabs-tablist",
+              "name": "tabs-tablist",
               "description": "The tab list container.",
               "inheritedFrom": {
                 "name": "CoreTabs",
@@ -28897,6 +28901,7 @@
               "name": "resize",
               "description": "How the control can be resized. Charm leaves this unset (the browser default\nis `both`); Zocdoc's text area only grows vertically so it can't be dragged\nout of a form's column.",
               "privacy": "public",
+              "default": "'vertical'",
               "attribute": "resize",
               "reflects": true,
               "inheritedFrom": {
@@ -28941,6 +28946,7 @@
               "name": "rows",
               "description": "Number of visible rows. Charm defaults to 4; Zocdoc's text area is 6 rows.",
               "privacy": "public",
+              "default": "6",
               "attribute": "rows",
               "reflects": true,
               "inheritedFrom": {
@@ -29315,6 +29321,7 @@
               "type": {
                 "text": "'none' | 'horizontal' | 'vertical' | 'both'"
               },
+              "default": "'vertical'",
               "fieldName": "resize"
             },
             {
@@ -29323,6 +29330,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "6",
               "fieldName": "rows"
             },
             {
@@ -29674,7 +29682,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-form-control-error-text",
+              "name": "form-control-error-text",
               "description": "The error message container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -29682,7 +29690,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-icon",
+              "name": "form-control-error-text-icon",
               "description": "The error message icon.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -29690,7 +29698,7 @@
               }
             },
             {
-              "name": "zd-form-control-error-text-message",
+              "name": "form-control-error-text-message",
               "description": "The error message text.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -29698,7 +29706,7 @@
               }
             },
             {
-              "name": "zd-form-control-help-text",
+              "name": "form-control-help-text",
               "description": "The help text container.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -29706,7 +29714,7 @@
               }
             },
             {
-              "name": "zd-textarea-base",
+              "name": "textarea-base",
               "description": "The component's base wrapper.",
               "inheritedFrom": {
                 "name": "CoreTextArea",
@@ -29714,7 +29722,7 @@
               }
             },
             {
-              "name": "zd-textarea-control",
+              "name": "textarea-control",
               "description": "The textarea control.",
               "inheritedFrom": {
                 "name": "CoreTextArea",
@@ -29722,7 +29730,7 @@
               }
             },
             {
-              "name": "zd-textarea-control-input",
+              "name": "textarea-control-input",
               "description": "The textarea input.",
               "inheritedFrom": {
                 "name": "CoreTextArea",
@@ -29730,7 +29738,7 @@
               }
             },
             {
-              "name": "zd-textarea-label",
+              "name": "textarea-label",
               "description": "The textarea label.",
               "inheritedFrom": {
                 "name": "CoreTextArea",
@@ -31072,7 +31080,7 @@
           ],
           "cssParts": [
             {
-              "name": "zd-body",
+              "name": "body",
               "description": "The tooltip's body.",
               "inheritedFrom": {
                 "name": "CoreTooltip",
@@ -31080,7 +31088,7 @@
               }
             },
             {
-              "name": "zd-popup-arrow",
+              "name": "popup-arrow",
               "description": "The popup's `arrow` part. Use this to target the tooltip's arrow.",
               "inheritedFrom": {
                 "name": "CoreTooltip",
@@ -31088,7 +31096,7 @@
               }
             },
             {
-              "name": "zd-popup-base",
+              "name": "popup-base",
               "description": "The popup's `popup` part. Use this to target the tooltip's popup container.",
               "inheritedFrom": {
                 "name": "CoreTooltip",
@@ -31096,7 +31104,7 @@
               }
             },
             {
-              "name": "zd-tooltip-base",
+              "name": "tooltip-base",
               "description": "The component's base wrapper, a `<ch-popup>` element.",
               "inheritedFrom": {
                 "name": "CoreTooltip",

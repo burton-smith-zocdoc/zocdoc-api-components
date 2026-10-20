@@ -43,10 +43,10 @@ A single radio button option within a group.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-radio-base` | The component's internal wrapper. | `CoreRadio` |
-| `zd-radio-checked-icon` | The container the wraps the checked icon. | `CoreRadio` |
-| `zd-radio-control` | The radio control. | `CoreRadio` |
-| `zd-radio-label` | The radio label. | `CoreRadio` |
+| `radio-base` | The component's internal wrapper. | `CoreRadio` |
+| `radio-checked-icon` | The container the wraps the checked icon. | `CoreRadio` |
+| `radio-control` | The radio control. | `CoreRadio` |
+| `radio-label` | The radio label. | `CoreRadio` |
 
 ### CSS Custom Properties
 

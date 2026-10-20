@@ -30,28 +30,14 @@ The `<zd-availability-window>` component provides previous/next navigation for a
 </script>
 ```
 
-## Attributes
-
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `start-date` | `string` | — | Start of current range |
-| `end-date` | `string` | — | End of current range |
-| `can-go-earlier` | `boolean` | `true` | Enable the earlier-dates button; automatically disabled at today by the parent |
-
-## Events
-
-| Event | Detail | Description |
-|-------|--------|-------------|
-| `window-shift` | `{ direction: -1 \| 1 }` | Navigation clicked; `-1` moves earlier and `1` later |
-
 ## Accessibility
 
 - Buttons labeled "Earlier dates" and "Later dates"
 - Disabled state properly announced
 - Current range visible as text
 
-## Styling
+## API Reference
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-window-button-size` | `32px` | Navigation button size |
+```api-reference
+zd-availability-window
+```

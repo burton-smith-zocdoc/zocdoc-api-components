@@ -51,27 +51,6 @@ Pass provider data as JavaScript properties; HTML attributes cannot carry object
 
 The list never fetches, so set `loading` while the search or the next page is in flight and clear it when the new `providers` arrive. It shows one skeleton card per `page-size` slot instead of the "no providers" message, keeps the pager in place but disabled, and announces "Loading providers" once for the whole list.
 
-## Attributes
-
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `providers` | `ProviderLocation[]` | `[]` | Array of providers to display |
-| `availability` | `Map<string, number>` | — | Provider ID → appointment count |
-| `total-count` | `number` | `0` | Total results for pagination |
-| `page` | `number` | `1` | Current page number |
-| `hide-photos` | `boolean` | `false` | Hide provider photos |
-| `insurance-name` | `string` | — | Insurance to show on cards |
-| `loading` | `boolean` | `false` | Show skeleton cards instead of providers |
-
-## Events
-
-| Event | Detail | Description |
-|-------|--------|-------------|
-| `provider-select` | `{ providerLocationId, visitReasonId }` | Provider card clicked |
-| `day-select` | `{ providerLocationId, date }` | Day selected on availability grid |
-| `page-change` | `{ page }` | Pagination changed |
-| `window-change` | `{ startDate, endDate }` | Availability window shifted |
-
 ## Zocdoc API
 
 Renders a page of `GET /v1/provider_locations` results. Paging follows the API's zero-based `page` and its `page_size` (default 10). See the [Zocdoc API overview](/zocdoc-api-components/guides/zocdoc-api/).
@@ -82,9 +61,8 @@ Renders a page of `GET /v1/provider_locations` results. Paging follows the API's
 - Each card is focusable and activates on Enter/Space
 - Pagination controls labeled for screen readers
 
-## Styling
+## API Reference
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-results-gap` | `1rem` | Spacing between cards |
-| `--zd-results-columns` | `1` | Number of columns |
+```api-reference
+zd-provider-results
+```

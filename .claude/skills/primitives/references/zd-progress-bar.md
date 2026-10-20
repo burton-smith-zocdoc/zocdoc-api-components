@@ -39,11 +39,11 @@ Shows determinate or indeterminate progress, for multi-step flows and uploads.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-progress-bar-base` | The component's internal wrapper. | `CoreProgressBar` |
-| `zd-progress-bar-help-text` | The progress bar's help text. | `CoreProgressBar` |
-| `zd-progress-bar-indicator` | The progress bar indicator. | `CoreProgressBar` |
-| `zd-progress-bar-label` | The progress bar label. | `CoreProgressBar` |
-| `zd-progress-bar-track` | The progress bar's track. | `CoreProgressBar` |
+| `progress-bar-base` | The component's internal wrapper. | `CoreProgressBar` |
+| `progress-bar-help-text` | The progress bar's help text. | `CoreProgressBar` |
+| `progress-bar-indicator` | The progress bar indicator. | `CoreProgressBar` |
+| `progress-bar-label` | The progress bar label. | `CoreProgressBar` |
+| `progress-bar-track` | The progress bar's track. | `CoreProgressBar` |
 
 ### CSS Custom Properties
 
