@@ -39,6 +39,7 @@ export default defineConfig({
           label: 'Getting Started',
           items: [
             { label: 'Installation', slug: 'getting-started/installation' },
+            { label: 'Using with AI', slug: 'getting-started/using-with-ai' },
             { label: 'Quick Start', slug: 'getting-started/quick-start' },
             { label: 'Authentication', slug: 'getting-started/authentication' },
           ],
@@ -50,6 +51,7 @@ export default defineConfig({
             { label: 'Architecture', slug: 'guides/architecture' },
             { label: 'Composed vs Single Element', slug: 'guides/composed-vs-single' },
             { label: 'Framework Integration', slug: 'guides/frameworks' },
+            { label: 'Theming', slug: 'guides/theming' },
             { label: 'Testing', slug: 'guides/testing' },
           ],
         },

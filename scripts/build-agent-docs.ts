@@ -41,12 +41,19 @@ const TARGETS: Target[] = [
       {
         heading: 'Getting started',
         section: 'getting-started',
-        slugs: ['installation', 'quick-start', 'authentication'],
+        slugs: ['installation', 'using-with-ai', 'quick-start', 'authentication'],
       },
       {
         heading: 'Guides',
         section: 'guides',
-        slugs: ['zocdoc-api', 'architecture', 'composed-vs-single', 'frameworks', 'testing'],
+        slugs: [
+          'zocdoc-api',
+          'architecture',
+          'composed-vs-single',
+          'frameworks',
+          'theming',
+          'testing',
+        ],
       },
       { heading: 'Client API', section: 'client', slugs: ['configuration', 'endpoints', 'errors'] },
       { heading: 'Components', section: 'components', slugs: 'all' },

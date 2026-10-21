@@ -35,7 +35,8 @@ API changes between versions, and this skill deliberately states none of it.
    | Calling endpoints or handling errors directly | `guides/client/*.md` |
    | A component's usage, events, and payloads | `components/<name>.md` |
    | Every attribute, property, slot, CSS part | `reference/<tag>.md` |
-   | Layout tags, theming, primitives | `@zocdoc/api-primitive-components` → `agent-docs/index.md` |
+   | Brand colours, fonts, dark mode, `--zd-*` tokens, `::part()` | `guides/theming.md`; every token is in the primitives package's `TOKENS.md` |
+   | Layout tags, primitives | `@zocdoc/api-primitive-components` → `agent-docs/index.md` |
 
    Paths are relative to `@zocdoc/api-components/agent-docs/` unless the row names the
    primitives package.
