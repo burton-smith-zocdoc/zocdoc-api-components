@@ -46,8 +46,8 @@ getToken: () => sessionStorage.getItem('zocdoc_token')
 // Async
 getToken: async () => {
   const res = await fetch('/api/token');
-  const { token } = await res.json();
-  return token;
+  const { access_token } = await res.json(); // Zocdoc's token response, passed through
+  return access_token;
 }
 ```
 

@@ -5,6 +5,8 @@ import { reactWrapperGeneratorPlugin } from '@wc-toolkit/react-wrappers';
 import { svelteTypesGeneratorPlugin } from '@wc-toolkit/svelte-types';
 import { vuejsTypesGeneratorPlugin } from '@wc-toolkit/vuejs-types';
 import { cssPrefixPlugin } from './tools/cem-css-prefix/src/index.ts';
+import { eventTypesPlugin } from './tools/cem-event-types/src/index.ts';
+import { fieldDefaultsPlugin } from './tools/cem-field-defaults/src/index.ts';
 
 export const EXCLUDE = ['**/*.stories.ts', '**/*.test.ts', '**/*.performance.ts', '**/*.styles.ts'];
 
@@ -38,8 +40,15 @@ export function sharedConfig({ charmManifestPath, tsConfigPath, include }) {
     tsConfigPath,
     typeParsing: 'public',
     inheritance: { externalManifests: [charmManifest] },
-    // cssPrefix mutates in afterGenerate (post-sort); the emitted manifest carries prefixed names.
-    plugins: [litPluginAllFiles(), cssPrefixPlugin({ prefix: 'zd' })],
+    // cssPrefix, eventTypes, and fieldDefaults mutate in afterGenerate (post-sort); the emitted
+    // manifest carries prefixed names, `CustomEvent<Detail>` event types read from each `*EventMap`,
+    // and defaults read from field initializers.
+    plugins: [
+      litPluginAllFiles(),
+      cssPrefixPlugin({ prefix: 'zd' }),
+      eventTypesPlugin(),
+      fieldDefaultsPlugin(),
+    ],
   };
 }
 

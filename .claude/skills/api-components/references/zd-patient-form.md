@@ -26,11 +26,9 @@ in the code below rather than aspirational:
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `busy` | `busy` | `boolean` | — | Set while whoever is listening to `patient-submit` is still working on it. A booking is not idempotent: a second `POST /v1/appointments` books a second appointment. The listener has to guard that itself, but a Continue button that stays live and silent through a slow request is an invitation to press it again, so the form that owns the button owns disabling it. `submit()` refuses too, which covers the Enter key — Charm's inputs call `requestSubmit()` without consulting the button. |
-| — | `addEventListener` | `TypedEventTarget<ZdPatientFormEventMap>['addEventListener']` | — | — |
+| `busy` | `busy` | `boolean` | `false` | Set while whoever is listening to `patient-submit` is still working on it. A booking is not idempotent: a second `POST /v1/appointments` books a second appointment. The listener has to guard that itself, but a Continue button that stays live and silent through a slow request is an invitation to press it again, so the form that owns the button owns disabling it. `submit()` refuses too, which covers the Enter key — Charm's inputs call `requestSubmit()` without consulting the button. |
 | — | `insurancePlanId` | `string` | — | The insurance plan the patient chose while searching, sent as `patient.insurance.insurance_plan_id`. The form does not offer a plan picker of its own: the plan was already chosen to filter the search, and asking again here invites a second answer that disagrees with the first. Setting it shows the insurance group, so the patient can add a member ID. Insurance details are PHI, so like `values` this is `attribute: false`. |
-| — | `notes` | `string` | — | Free-text notes for the practice, capped at {@link NOTES_MAX_LENGTH}. Optional, and omitted from the event entirely when empty rather than sent as `''`. Patient-authored, so it is PHI as much as the demographics are, and `attribute: false` for the same reason. |
-| — | `removeEventListener` | `TypedEventTarget<ZdPatientFormEventMap>['removeEventListener']` | — | — |
+| — | `notes` | `string` | `''` | Free-text notes for the practice, capped at {@link NOTES_MAX_LENGTH}. Optional, and omitted from the event entirely when empty rather than sent as `''`. Patient-authored, so it is PHI as much as the demographics are, and `attribute: false` for the same reason. |
 | — | `requiredFields` | `readonly string[]` | — | The provider location's `booking_requirements.required_fields`, passed through as the API returns them. A location that lists the plan or member ID path rejects a booking without it, so the form requires those fields rather than letting the patient reach a `400` at the last step. Paths the form does not recognise are ignored, since it cannot collect them. |
 | — | `values` | `Record<string, string>` | — | The collected values, keyed by API field name. Public so a host page can prefill from an account it already has, and so tests can set ten fields without ten interactions. `attribute: false` is the PHI guard, not a convenience: an observed attribute would let a patient's name be written into the DOM as markup, and a reflected one would put it there on every keystroke. |
 
@@ -38,37 +36,37 @@ in the code below rather than aspirational:
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `patient-submit` | `Event` | Emitted with `{ patient, notes }` once every field is valid. Not emitted at all when validation fails, so a listener never sees a partial patient. |
+| `patient-submit` | `CustomEvent<PatientSubmitDetail>` | Emitted with `{ patient, notes }` once every field is valid. Not emitted at all when validation fails, so a listener never sees a partial patient. |
 
 ## Methods
 
 | Method | Description |
 | --- | --- |
-| `submit(): void` | Validates every field and emits `patient-submit` when all of them pass. Public so the host page or a coordinating parent can trigger it, which is also how the flow in Task 15 drives the form from its own Continue button. |
+| `submit(): void` | Validates every field and emits `patient-submit` when all of them pass. Public so the host page or a coordinating parent can trigger it from its own Continue button. |
 
 ## CSS Parts
 
 | Part | Description |
 | --- | --- |
-| `zd-about` | The name, date of birth, and sex at birth group. |
-| `zd-address` | The address group. |
-| `zd-address1` | The street address field. |
-| `zd-city` | The city field. |
-| `zd-contact` | The phone and email group. |
-| `zd-date-of-birth` | The date of birth field. |
-| `zd-email-address` | The email address field. |
-| `zd-first-name` | The first name field. |
-| `zd-form` | The form element. |
-| `zd-insurance` | The insurance group. Rendered only when a plan is set or the provider location requires insurance. |
-| `zd-insurance-member-id` | The insurance member ID field. |
-| `zd-insurance-required` | The notice shown when the location requires an insurance plan and none was chosen. |
-| `zd-last-name` | The last name field. |
-| `zd-notes` | The optional notes field. |
-| `zd-phone-number` | The phone number field. |
-| `zd-sex-at-birth` | The sex at birth select. |
-| `zd-state` | The state field. |
-| `zd-submit` | The submit button. |
-| `zd-zip-code` | The ZIP code field. |
+| `about` | The name, date of birth, and sex at birth group. |
+| `address` | The address group. |
+| `address1` | The street address field. |
+| `city` | The city field. |
+| `contact` | The phone and email group. |
+| `date-of-birth` | The date of birth field. |
+| `email-address` | The email address field. |
+| `first-name` | The first name field. |
+| `form` | The form element. |
+| `insurance` | The insurance group. Rendered only when a plan is set or the provider location requires insurance. |
+| `insurance-member-id` | The insurance member ID field. |
+| `insurance-required` | The notice shown when the location requires an insurance plan and none was chosen. |
+| `last-name` | The last name field. |
+| `notes` | The optional notes field. |
+| `phone-number` | The phone number field. |
+| `sex-at-birth` | The sex at birth select. |
+| `state` | The state field. |
+| `submit` | The submit button. |
+| `zip-code` | The ZIP code field. |
 
 ## Inherited
 

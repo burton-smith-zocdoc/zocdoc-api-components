@@ -15,13 +15,13 @@ An interactive button, with a variant per visual treatment and two densities.
 | `fluid` | `fluid` | `boolean` | — | Stretch the button to the width of its container. Charm's button is `display: inline-block` with a full-width `.control`, so this only has to widen the host. |
 | `loading` | `loading` | `boolean` | — | Show a spinner in place of the `start` slot and ignore activation until the work the button started has finished. Unlike `disabled`, the button keeps its variant colors, so it doesn't look like the action became unavailable, and it keeps its label, so its width and accessible name don't change. The inner control gets `aria-busy` and `aria-disabled`. The button doesn't announce anything itself: the component doing the work owns the `aria-live` region that says what is happening (A11Y-002). |
 | `size` | `size` | `'small' \| 'default' \| undefined` | — | The button's density. `small` swaps in the theme's `button.small.*` metrics; `default` and an omitted value both use the base metrics. |
-| `variant` | `variant` | `'inverse' \| 'primary' \| 'secondary' \| 'ghost' \| 'destructive' \| 'link' \| undefined` | — | The button's visual treatment. Omit it to use the base `button.*` tokens, which is what an unstyled Charm button renders. |
+| `variant` | `variant` | `'inverse' \| 'primary' \| 'secondary' \| 'ghost' \| 'destructive' \| 'link' \| undefined` | `'secondary'` | The button's visual treatment. Omit it to use the base `button.*` tokens, which is what an unstyled Charm button renders. |
 
 ## CSS Parts
 
 | Part | Description |
 | --- | --- |
-| `zd-spinner` | — |
+| `spinner` | — |
 
 ## Inherited
 
@@ -69,10 +69,10 @@ An interactive button, with a variant per visual treatment and two densities.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-button-control` | The component's base wrapper. | `CoreButton` |
-| `zd-content` | The button's label. | `CoreButton` |
-| `zd-end` | The container that wraps the suffix. | `CoreButton` |
-| `zd-start` | The container that wraps the prefix. | `CoreButton` |
+| `button-control` | The component's base wrapper. | `CoreButton` |
+| `content` | The button's label. | `CoreButton` |
+| `end` | The container that wraps the suffix. | `CoreButton` |
+| `start` | The container that wraps the prefix. | `CoreButton` |
 
 ### CSS Custom Properties
 

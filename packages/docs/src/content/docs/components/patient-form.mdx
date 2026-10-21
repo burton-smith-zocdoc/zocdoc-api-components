@@ -54,11 +54,7 @@ form.requiredFields = location.booking_requirements?.required_fields ?? [];
 
 To try both states in the sandbox or the mock, use the `pr_insuranceIdIsRequired|lo_insuranceIdIsRequired` [test scenario](/zocdoc-api-components/guides/testing/#test-scenarios).
 
-## Events
-
-| Event | Detail | Description |
-|-------|--------|-------------|
-| `patient-submit` | `{ patient: Patient, notes?: string }` | Form submitted with valid data |
+## Submitted Data
 
 `patient.insurance` is included only when a plan is set.
 
@@ -86,9 +82,8 @@ Client-side validation runs on submit:
 
 Server-side validation may return additional errors, displayed inline.
 
-## Styling
+## API Reference
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-form-gap` | `1rem` | Spacing between fields |
-| `--zd-form-label-size` | `0.875rem` | Label font size |
+```api-reference
+zd-patient-form
+```

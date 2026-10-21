@@ -28,7 +28,7 @@ A placeholder shown while content is loading.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-skeleton-base` | the component's base wrapper | `CoreSkeleton` |
+| `skeleton-base` | the component's base wrapper | `CoreSkeleton` |
 
 ### CSS Custom Properties
 

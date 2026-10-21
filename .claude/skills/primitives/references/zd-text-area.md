@@ -39,8 +39,8 @@ A multi-line text field with label and validation support.
 | `placeholder` | `placeholder` | `string` | — | The textarea's placeholder text. | `CoreTextArea` |
 | `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
 | `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
-| `resize` | `resize` | `'none' \| 'horizontal' \| 'vertical' \| 'both'` | — | How the control can be resized. Charm leaves this unset (the browser default is `both`); Zocdoc's text area only grows vertically so it can't be dragged out of a form's column. | `CoreTextArea` |
-| `rows` | `rows` | `number` | — | Number of visible rows. Charm defaults to 4; Zocdoc's text area is 6 rows. | `CoreTextArea` |
+| `resize` | `resize` | `'none' \| 'horizontal' \| 'vertical' \| 'both'` | `'vertical'` | How the control can be resized. Charm leaves this unset (the browser default is `both`); Zocdoc's text area only grows vertically so it can't be dragged out of a form's column. | `CoreTextArea` |
+| `rows` | `rows` | `number` | `6` | Number of visible rows. Charm defaults to 4; Zocdoc's text area is 6 rows. | `CoreTextArea` |
 | `value` | `value` | `unknown` | — | The input's value attribute. | `CharmFormControlElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
@@ -68,14 +68,14 @@ A multi-line text field with label and validation support.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-form-control-error-text` | The error message container. | `CharmFormControlElement` |
-| `zd-form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
-| `zd-form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
-| `zd-form-control-help-text` | The help text container. | `CharmFormControlElement` |
-| `zd-textarea-base` | The component's base wrapper. | `CoreTextArea` |
-| `zd-textarea-control` | The textarea control. | `CoreTextArea` |
-| `zd-textarea-control-input` | The textarea input. | `CoreTextArea` |
-| `zd-textarea-label` | The textarea label. | `CoreTextArea` |
+| `form-control-error-text` | The error message container. | `CharmFormControlElement` |
+| `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
+| `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
+| `form-control-help-text` | The help text container. | `CharmFormControlElement` |
+| `textarea-base` | The component's base wrapper. | `CoreTextArea` |
+| `textarea-control` | The textarea control. | `CoreTextArea` |
+| `textarea-control-input` | The textarea input. | `CoreTextArea` |
+| `textarea-label` | The textarea label. | `CoreTextArea` |
 
 ### CSS Custom Properties
 

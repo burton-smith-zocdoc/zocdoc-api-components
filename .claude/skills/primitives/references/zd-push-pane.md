@@ -53,14 +53,14 @@ A dismissible pane anchored to an edge of the viewport, which pushes page conten
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-push-pane-actions` | The actions container in the footer. | `CorePushPane` |
-| `zd-push-pane-base` | The base container of the push pane. | `CorePushPane` |
-| `zd-push-pane-close-button` | The close button in header. | `CorePushPane` |
-| `zd-push-pane-container` | The push pane wrapper. | `CorePushPane` |
-| `zd-push-pane-footer` | The footer of the push pane. | `CorePushPane` |
-| `zd-push-pane-header` | The header of the push pane. | `CorePushPane` |
-| `zd-push-pane-heading` | The heading of the push pane. | `CorePushPane` |
-| `zd-push-pane-toolbar` | The toolbar of the push pane. | `CorePushPane` |
+| `push-pane-actions` | The actions container in the footer. | `CorePushPane` |
+| `push-pane-base` | The base container of the push pane. | `CorePushPane` |
+| `push-pane-close-button` | The close button in header. | `CorePushPane` |
+| `push-pane-container` | The push pane wrapper. | `CorePushPane` |
+| `push-pane-footer` | The footer of the push pane. | `CorePushPane` |
+| `push-pane-header` | The header of the push pane. | `CorePushPane` |
+| `push-pane-heading` | The heading of the push pane. | `CorePushPane` |
+| `push-pane-toolbar` | The toolbar of the push pane. | `CorePushPane` |
 
 ### CSS Custom Properties
 

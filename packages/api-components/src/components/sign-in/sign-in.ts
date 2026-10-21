@@ -9,6 +9,8 @@ import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { PatientAuth } from '../../client/patient-auth.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
+// Re-exported because the generated framework types import every event payload from this module.
+export type { ErrorDetail } from '../events.js';
 import styles from './sign-in.styles.js';
 
 /**

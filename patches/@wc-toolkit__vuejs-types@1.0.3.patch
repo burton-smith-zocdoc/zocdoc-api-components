@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index fbeb47f39f4c9d6f4c69e12bf210e53918ff9195..a5a6f83b9741bc2b54da447f3aeed354b96d253a 100644
+index fbeb47f39f4c9d6f4c69e12bf210e53918ff9195..a5c43ff57d25c8ce0a2a96b236f6bd062fbb3f6b 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
 @@ -88,7 +88,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
@@ -74,7 +74,7 @@ index fbeb47f39f4c9d6f4c69e12bf210e53918ff9195..a5a6f83b9741bc2b54da447f3aeed354
          const propExists = prop.propName ? acc.includes(`  "${prop.propName}"?:`) : false;
          const attrExists = prop.attrName ? acc.includes(`  "${prop.attrName}"?:`) : false;
          let result = acc;
-@@ -583,6 +584,61 @@ declare module "vue" {
+@@ -583,7 +584,65 @@ declare module "vue" {
  }
  `;
  }
@@ -134,9 +134,13 @@ index fbeb47f39f4c9d6f4c69e12bf210e53918ff9195..a5a6f83b9741bc2b54da447f3aeed354
 +  return import_path.default.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
 +}
  function addImport(imports, importPath, exportName) {
++  // One file imports every component, and a payload shared by several (ErrorDetail) is
++  // re-exported from each of their modules; importing the same name twice won't compile.
++  for (const names of imports.values()) if (names.has(exportName)) return;
    const existing = imports.get(importPath);
    if (existing) {
-@@ -592,7 +648,7 @@ function addImport(imports, importPath, exportName) {
+     existing.add(exportName);
+@@ -592,7 +651,7 @@ function addImport(imports, importPath, exportName) {
    imports.set(importPath, /* @__PURE__ */ new Set([exportName]));
  }
  function getComponentImportPath(componentName, tagName, modulePath, options) {
@@ -146,7 +150,7 @@ index fbeb47f39f4c9d6f4c69e12bf210e53918ff9195..a5a6f83b9741bc2b54da447f3aeed354
  function getTypeImportPath(reference, componentModulePath, component, options) {
    if (reference.package) {
 diff --git a/dist/index.js b/dist/index.js
-index 487b7791bb188eed9dc3c4d5b47db470596b80f7..7d1d88e4052164ebee0ce0c6e8cf833ba40f1c50 100644
+index 487b7791bb188eed9dc3c4d5b47db470596b80f7..74703101b0b7e6cf67a8167a6619fd53a8b1a771 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -50,7 +50,7 @@ function getAllComponents(customElementsManifest, exclude = []) {
@@ -221,7 +225,7 @@ index 487b7791bb188eed9dc3c4d5b47db470596b80f7..7d1d88e4052164ebee0ce0c6e8cf833b
          const propExists = prop.propName ? acc.includes(`  "${prop.propName}"?:`) : false;
          const attrExists = prop.attrName ? acc.includes(`  "${prop.attrName}"?:`) : false;
          let result = acc;
-@@ -545,6 +546,61 @@ declare module "vue" {
+@@ -545,7 +546,65 @@ declare module "vue" {
  }
  `;
  }
@@ -281,9 +285,13 @@ index 487b7791bb188eed9dc3c4d5b47db470596b80f7..7d1d88e4052164ebee0ce0c6e8cf833b
 +  return path.isAbsolute(value) || value.startsWith(".") || value.includes("/") || /\.[cm]?[jt]sx?$/.test(value);
 +}
  function addImport(imports, importPath, exportName) {
++  // One file imports every component, and a payload shared by several (ErrorDetail) is
++  // re-exported from each of their modules; importing the same name twice won't compile.
++  for (const names of imports.values()) if (names.has(exportName)) return;
    const existing = imports.get(importPath);
    if (existing) {
-@@ -554,7 +610,7 @@ function addImport(imports, importPath, exportName) {
+     existing.add(exportName);
+@@ -554,7 +613,7 @@ function addImport(imports, importPath, exportName) {
    imports.set(importPath, /* @__PURE__ */ new Set([exportName]));
  }
  function getComponentImportPath(componentName, tagName, modulePath, options) {

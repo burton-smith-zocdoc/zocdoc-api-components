@@ -36,7 +36,7 @@ Coordinates a tab list and its panels.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-tabs-tablist` | The tab list container. | `CoreTabs` |
+| `tabs-tablist` | The tab list container. | `CoreTabs` |
 
 ### CSS Custom Properties
 

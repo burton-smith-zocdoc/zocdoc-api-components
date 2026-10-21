@@ -45,26 +45,6 @@ All days shown vertically:
 ></zd-availability-picker>
 ```
 
-## Attributes
-
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `provider-location-id` | `string` | — | Provider to show availability for |
-| `visit-reason-id` | `string` | — | Visit reason filter |
-| `layout` | `'strip' \| 'stacked'` | `'strip'` | Layout mode |
-| `hide-patient-type` | `boolean` | `false` | Hide the New/Existing patient control |
-| `start-date` | `string` | today | First day to request, as `YYYY-MM-DD` |
-| `days` | `number` | `7` | Number of days to request (max 30) |
-| `selected-start-time` | `string` | — | Pre-select a slot by its start time |
-
-## Events
-
-| Event | Detail | Description |
-|-------|--------|-------------|
-| `slot-select` | `{ startTime, providerLocationId }` | Slot clicked |
-| `patient-type-change` | `{ patientType: 'new' \| 'existing' }` | Patient type toggled |
-| `availability-error` | `{ error }` | Fetch failed |
-
 ## Zocdoc API
 
 Fetches its own timeslots from `GET /v1/provider_locations/availability` once `providerLocationId` and `visitReasonId` are set. The API limits a window to 30 days and guarantees availability up to 150 days out. Each slot's `start_time` must be passed to booking unchanged. See [Find Provider Availability and Book Appointments](https://api-docs.zocdoc.com/guides/patient/book-appointments).
@@ -77,9 +57,8 @@ Fetches its own timeslots from `GET /v1/provider_locations/availability` once `p
 - While loading, two placeholder days (a heading and a row of times each) stand in for the window. They are hidden from assistive technology, and one polite status region announces "Loading appointment times…"
 - Skeleton shimmer stops under `prefers-reduced-motion: reduce`
 
-## Styling
+## API Reference
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-picker-slot-height` | `40px` | Slot button height |
-| `--zd-picker-columns` | `4` | Slots per row |
+```api-reference
+zd-availability-picker
+```

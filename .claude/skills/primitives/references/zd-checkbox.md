@@ -60,15 +60,15 @@ A labelled checkbox for boolean and multi-select choices, with indeterminate sup
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-checkbox` | HTML label element, whose purpose is to aid with styling. | `CoreCheckbox` |
-| `zd-checkbox-base` | The checkbox's base wrapper. | `CoreCheckbox` |
-| `zd-checkbox-control` | Checkbox visual representation as a span. | `CoreCheckbox` |
-| `zd-checkbox-label` | The checkbox's label. | `CoreCheckbox` |
-| `zd-checkbox-visual-base` | Part who parent's the rendered checkbox as a span and its label. | `CoreCheckbox` |
-| `zd-form-control-error-text` | The error message container. | `CharmFormControlElement` |
-| `zd-form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
-| `zd-form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
-| `zd-form-control-help-text` | The help text container. | `CharmFormControlElement` |
+| `checkbox` | HTML label element, whose purpose is to aid with styling. | `CoreCheckbox` |
+| `checkbox-base` | The checkbox's base wrapper. | `CoreCheckbox` |
+| `checkbox-control` | Checkbox visual representation as a span. | `CoreCheckbox` |
+| `checkbox-label` | The checkbox's label. | `CoreCheckbox` |
+| `checkbox-visual-base` | Part who parent's the rendered checkbox as a span and its label. | `CoreCheckbox` |
+| `form-control-error-text` | The error message container. | `CharmFormControlElement` |
+| `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
+| `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
+| `form-control-help-text` | The help text container. | `CharmFormControlElement` |
 
 ### CSS Custom Properties
 

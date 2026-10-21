@@ -54,15 +54,15 @@ A single selectable action inside a menu.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-menu-item-base` | The control's base. | `CoreMenuItem` |
-| `zd-menu-item-checkbox` | The control's checkbox. | `CoreMenuItem` |
-| `zd-menu-item-checkbox-container` | The control's checkbox container. | `CoreMenuItem` |
-| `zd-menu-item-checkbox-icon` | The control's checkbox icon. | `CoreMenuItem` |
-| `zd-menu-item-radio` | The control's radio. | `CoreMenuItem` |
-| `zd-menu-item-radio-container` | The control's radio container. | `CoreMenuItem` |
-| `zd-menu-item-radio-indicator` | The control's radio indicator. | `CoreMenuItem` |
-| `zd-menu-item-submenu-item-icon` | The control's submenu icon. | `CoreMenuItem` |
-| `zd-menu-item-submenu-item-icon-expanded` | The control's submenu icon when expanded. | `CoreMenuItem` |
+| `menu-item-base` | The control's base. | `CoreMenuItem` |
+| `menu-item-checkbox` | The control's checkbox. | `CoreMenuItem` |
+| `menu-item-checkbox-container` | The control's checkbox container. | `CoreMenuItem` |
+| `menu-item-checkbox-icon` | The control's checkbox icon. | `CoreMenuItem` |
+| `menu-item-radio` | The control's radio. | `CoreMenuItem` |
+| `menu-item-radio-container` | The control's radio container. | `CoreMenuItem` |
+| `menu-item-radio-indicator` | The control's radio indicator. | `CoreMenuItem` |
+| `menu-item-submenu-item-icon` | The control's submenu icon. | `CoreMenuItem` |
+| `menu-item-submenu-item-icon-expanded` | The control's submenu icon when expanded. | `CoreMenuItem` |
 
 ### CSS Custom Properties
 

@@ -1,0 +1,147 @@
+---
+title: Theming
+description: Match the components to your brand with CSS custom properties, color scheme, and CSS parts
+---
+
+Every component is styled from CSS custom properties named `--zd-*`, called design tokens. The theme stylesheet declares all of them on `:root`. To match your brand, override the tokens you want to change. You don't need to rebuild or configure anything.
+
+## Load the theme
+
+The components don't include the theme. Load it once per page, before your own styles:
+
+```javascript
+import '@zocdoc/api-primitive-components/theme/all.css';
+```
+
+`all.css` combines four stylesheets, each of which you can also load on its own:
+
+| Stylesheet                  | Contents                                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `theme/tokens.css`          | Every design token, declared on `:root`                                                                 |
+| `theme/reset.css`           | A small page reset, and a fade that hides the page until the components are defined                     |
+| `theme/utilities.css`       | Utility classes such as `.text-brand-500`, `.bg-neutral-50` and `.p-16`                                 |
+| `theme/layout-elements.css` | Styles for the CSS-only [layout elements](/zocdoc-api-components/primitive-components/layout-elements/) |
+
+If your page has its own reset or utility classes, load `tokens.css` and `layout-elements.css` and leave out the rest. See [Installation](/zocdoc-api-components/getting-started/installation/) for the CDN URLs.
+
+## Override tokens
+
+Put your overrides in a stylesheet loaded after the theme:
+
+```css
+:root {
+  /* Brand palette */
+  --zd-color-brand-50: #eef6ff;
+  --zd-color-brand-100: #d9eaff;
+  --zd-color-brand-200: #b6d6ff;
+  --zd-color-brand-300: #85b9ff;
+  --zd-color-brand-400: #4f93fb;
+  --zd-color-brand-500: #2a6fe8;
+  --zd-color-brand-600: #1c56c9;
+  --zd-color-brand-700: #1a46a3;
+  --zd-color-brand-800: #1b3d82;
+  --zd-color-brand-900: #1c3668;
+  --zd-color-brand-950: #142243;
+
+  /* Type and shape */
+  --zd-font-family-base: 'Inter', system-ui, sans-serif;
+  --zd-border-radius-md: 4px;
+}
+```
+
+Tokens are layered, so changing a low-level token updates everything built on it:
+
+- **Palette** tokens hold the raw colours: `--zd-color-brand-500`, `--zd-color-accent-500`, `--zd-color-neutral-900`, and a 50–950 scale for each.
+- **Semantic** tokens give those colours a role: `--zd-surface-brand-bg-color`, `--zd-body-bg-color`, `--zd-body-fg-color`, `--zd-focus-outline-color`.
+- **Component** tokens style one component: `--zd-button-primary-bg-color`, `--zd-form-control-input-height`, `--zd-button-border-radius`.
+
+Override at the lowest level that does what you need. Replacing the brand palette rebrands every button, link and selected state. Overriding `--zd-button-primary-bg-color` changes only primary buttons.
+
+When you change a palette, keep text readable. Text on brand surfaces uses the `--zd-color-on-brand-*` tokens. Check each pair you change with a contrast checker, and override the matching `on-` token if needed:
+
+```css
+:root {
+  --zd-color-brand-500: #2a6fe8;
+  --zd-color-on-brand-500: #ffffff;
+}
+```
+
+### Find a token
+
+- Each primitive component's page lists the tokens it reads under **CSS Custom Properties**, in its API Reference. Some are under **Inherited**.
+- `@zocdoc/api-primitive-components/TOKENS.md`, in the installed package, lists every token with its resolved value. Search it for the part of the name you know, such as `radius` or `button-primary`.
+- In the browser's developer tools, select an element and look at the computed `--zd-*` values.
+
+Names follow the token's path: `button.primary.hover.bgColor` becomes `--zd-button-primary-hover-bg-color`.
+
+## Light and dark mode
+
+Colour tokens have a light and a dark value, chosen with CSS `light-dark()`. The theme sets `color-scheme: light dark` on `:root`, so the components follow the user's system setting.
+
+To fix the mode, or let users choose it, set `color-scheme` on your page:
+
+```css
+:root {
+  color-scheme: light; /* or dark */
+}
+```
+
+`color-scheme` is inherited, so you can also set it on one section of the page.
+
+If your own page background doesn't follow the system setting, fix the mode to match it. Otherwise the components can render dark on a light page.
+
+## Theme part of the page
+
+Custom properties are inherited, so you can override them on any element. The override applies to every component inside it:
+
+```css
+.checkout {
+  --zd-button-primary-bg-color: #315a46;
+  --zd-button-primary-hover-bg-color: #26473a;
+}
+```
+
+You can also set a token on a single element, with a selector or the `style` attribute:
+
+```html
+<zd-button variant="primary" style="--zd-button-border-radius: 999px">Book now</zd-button>
+```
+
+To apply overrides to one subtree without writing a selector for it, use [`zd-scoped-styles`](/zocdoc-api-components/primitive-components/scoped-styles/).
+
+## CSS parts
+
+API components expose named parts of their shadow DOM, such as the search form, step headings and the back button. Style them with `::part()`:
+
+```css
+zd-booking::part(step-heading) {
+  font-family: var(--zd-font-family-accent);
+}
+
+zd-provider-search::part(form) {
+  gap: var(--zd-spacing-24);
+}
+```
+
+Each component lists its parts under **CSS Parts** in its API Reference.
+
+Prefer tokens over parts where both work. A token reaches every place a value is used, including nested primitives, and keeps hover, focus and disabled states consistent. A part only reaches the element you name, and only from outside the component's shadow root. Use a part for layout and spacing changes that no token covers.
+
+## Fonts
+
+The theme sets font families but doesn't load any font files. Load your fonts as you normally would, for example with `@font-face` or a font service, then set:
+
+```css
+:root {
+  --zd-font-family-base: 'Inter', system-ui, sans-serif;
+  --zd-font-family-accent: 'Fraunces', Georgia, serif;
+}
+```
+
+## Before the components load
+
+`reset.css` hides the page for up to 50 ms while any custom element on it is still undefined, so components don't flash in unstyled. To change the wait, set `--zd-wc-loaded-timeout` on `body`, for example `--zd-wc-loaded-timeout: 0s` to never hide the page. If you don't load `reset.css`, the page isn't hidden.
+
+## Examples
+
+The [demo sites](/zocdoc-api-components/guides/frameworks/#see-it-in-other-stacks) each restyle the same components with a short `:root` override. One is fully dark, with a custom palette, fonts, and square corners.

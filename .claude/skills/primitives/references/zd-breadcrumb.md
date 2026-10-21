@@ -33,5 +33,5 @@ Shows the hierarchy leading to the current page.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-breadcrumb-base` | The component's base wrapper. | `CoreBreadcrumb` |
-| `zd-breadcrumb-list` | Default slot's wrapper. | `CoreBreadcrumb` |
+| `breadcrumb-base` | The component's base wrapper. | `CoreBreadcrumb` |
+| `breadcrumb-list` | Default slot's wrapper. | `CoreBreadcrumb` |

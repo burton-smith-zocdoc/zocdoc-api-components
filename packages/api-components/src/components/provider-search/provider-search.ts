@@ -13,6 +13,8 @@ import type {
   VisitType,
 } from '../../client/types.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
+// Re-exported because the generated framework types import every event payload from this module.
+export type { ErrorDetail } from '../events.js';
 import { userFacingError } from '../../utilities/error-message.js';
 import { NO_PROVIDERS_MATCH } from '../../utilities/messages.js';
 import {
@@ -88,9 +90,13 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  *   envelope has them — `providers` holds one page.
  * @event provider-search-error - Emitted with `{ error }` when the request fails.
  * @csspart form - The search form.
+ * @csspart specialty-field - The specialty select with its label.
  * @csspart specialty - The specialty select.
+ * @csspart location-field - The ZIP code field with its label.
  * @csspart zip - The ZIP code field.
+ * @csspart insurance-field - The insurance plan select with its label.
  * @csspart insurance - The insurance plan select.
+ * @csspart field-error - The alert listing what to fix before the search can run.
  * @csspart submit - The submit button.
  * @csspart loading-results - The placeholder cards shown while a search is in flight.
  */
@@ -120,6 +126,7 @@ export class ZdProviderSearch extends CharmElement {
   @property({ attribute: 'specialty-id' })
   public specialtyId?: string;
 
+  /** The insurance plan to filter by. Optional: without it the search spans every network. */
   @property({ attribute: 'insurance-plan-id' })
   public insurancePlanId?: string;
 

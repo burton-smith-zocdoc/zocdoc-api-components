@@ -1,0 +1,72 @@
+---
+title: Using with AI
+description: Point an AI coding agent at the docs for the version you have installed
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+AI coding agents often write code from memory of an older version of a library. They might use an attribute that was renamed, or guess the shape of an event payload. To prevent that, both packages ship their documentation as plain markdown, built for that exact release. A skill tells the agent to read those docs before writing code.
+
+## What the packages include
+
+Each package has an `agent-docs/` folder:
+
+| Path                     | Contents                                                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `agent-docs/index.md`    | Every page below, with a one-line summary                                                                         |
+| `agent-docs/guides/`     | The guides from this site: installation, authentication, framework integration, testing                           |
+| `agent-docs/components/` | One page per component: usage, events, and event payloads                                                         |
+| `agent-docs/reference/`  | The generated API for every tag: attributes, properties, events, slots, methods, CSS parts, and custom properties |
+
+`@zocdoc/api-components` has all four. `@zocdoc/api-primitive-components` has `index.md`, `components/` and `reference/`.
+
+These are the same pages as this site, generated when the package is built. This site documents the latest release; `agent-docs/` documents the version in your `node_modules`.
+
+## Install the skill
+
+The `zocdoc-web-components` skill works with Claude Code, Cursor, Codex, GitHub Copilot, and other agents that support [Agent Skills](https://agentskills.io).
+
+<Steps>
+
+1. Install the packages, if you haven't yet. See [Installation](/zocdoc-api-components/getting-started/installation/).
+
+2. From your project root, add the skill:
+
+   ```bash
+   npx skills add burton-smith-zocdoc/zocdoc-api-components
+   ```
+
+   The installer asks which agents to set it up for, and copies the skill into each one's skills directory.
+
+3. Ask your agent to do something with the components, for example "add a booking flow to the appointments page". The skill loads when your project depends on either package.
+
+</Steps>
+
+The skill holds no API details itself, only where to find the docs and how to use them. You don't need to reinstall it when you upgrade the packages.
+
+## What the agent does
+
+With the skill loaded, the agent:
+
+1. Runs a small script that finds each installed package, its version, and its `agent-docs/index.md`. In a monorepo, run it from the workspace that depends on the packages.
+2. Reads the index, then opens only the pages the task needs. A booking task, for example, needs the `zd-booking` page and the authentication guide.
+3. Before finishing, checks every import path against the package's `exports`, and every attribute, event and payload field against the component's page. It tells you about anything the docs didn't settle.
+
+## Without the skill
+
+If your agent doesn't support skills, add an instruction to the file it reads for project context, such as `AGENTS.md`, `CLAUDE.md` or `.github/copilot-instructions.md`:
+
+```markdown
+## Zocdoc components
+
+Before writing code that uses `@zocdoc/api-components` or `@zocdoc/api-primitive-components`,
+read `node_modules/@zocdoc/api-components/agent-docs/index.md` (and the primitives package's
+`agent-docs/index.md` for layout and theming), then the pages it lists for the task.
+Don't rely on memory of other versions or read `dist/`.
+```
+
+Adjust the path if your package manager doesn't put packages in the project's `node_modules`, as with Yarn Plug'n'Play.
+
+## Privacy
+
+The skill and `agent-docs/` are documentation only. They don't send anything anywhere, and they don't give the agent access to the Zocdoc API. Whatever your agent sends to its model provider is governed by your agent's own settings. Don't paste real patient data into prompts. Use the [documented test data](https://api-docs.zocdoc.com/guides/testing-data) instead.

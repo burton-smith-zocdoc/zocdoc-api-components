@@ -37,17 +37,6 @@
             },
             {
               "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAppointmentEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"appointment-cancel\" | \"appointment-reschedule\" | \"appointment-error\">(type: K, listener: (event: ZdAppointmentEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
-              }
-            },
-            {
-              "kind": "field",
               "name": "appointment",
               "privacy": "protected",
               "internal": true,
@@ -83,6 +72,7 @@
               "kind": "field",
               "name": "busy",
               "privacy": "protected",
+              "default": "false",
               "internal": true,
               "type": {
                 "text": "boolean"
@@ -215,6 +205,7 @@
               "name": "hidePhoto",
               "description": "Leaves the provider's photo out, as on `zd-provider-card`.",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-photo",
               "type": {
                 "text": "boolean"
@@ -300,6 +291,7 @@
               "kind": "field",
               "name": "mode",
               "privacy": "protected",
+              "default": "'view'",
               "internal": true,
               "type": {
                 "text": "Mode"
@@ -368,17 +360,6 @@
                 "type": {
                   "text": "Promise<void>"
                 }
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAppointmentEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"appointment-cancel\" | \"appointment-reschedule\" | \"appointment-error\">(type: K, listener: (event: ZdAppointmentEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -514,6 +495,7 @@
               "kind": "field",
               "name": "requestState",
               "privacy": "protected",
+              "default": "'idle'",
               "internal": true,
               "type": {
                 "text": "RequestState"
@@ -593,6 +575,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hidePhoto"
             },
             {
@@ -609,21 +592,21 @@
               "name": "appointment-cancel",
               "description": "Emitted with `{ appointmentId, status }` once cancelled.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<AppointmentCancelDetail>"
               }
             },
             {
               "name": "appointment-error",
               "description": "Emitted with `{ error, action, status? }` when a lookup, cancel or reschedule fails.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<AppointmentErrorDetail>"
               }
             },
             {
               "name": "appointment-reschedule",
               "description": "Emitted with `{ appointmentId, status, startTime }` once moved.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<AppointmentRescheduleDetail>"
               }
             },
             {
@@ -640,111 +623,111 @@
           ],
           "cssParts": [
             {
-              "name": "zd-action-error",
+              "name": "action-error",
               "description": "The alert shown when an action fails."
             },
             {
-              "name": "zd-actions",
+              "name": "actions",
               "description": "The row of action buttons."
             },
             {
-              "name": "zd-appointment-status",
+              "name": "appointment-status",
               "description": "The status, in patient words."
             },
             {
-              "name": "zd-back",
+              "name": "back",
               "description": "The button that backs out of rescheduling."
             },
             {
-              "name": "zd-cancel",
+              "name": "cancel",
               "description": "The \"Cancel appointment\" button."
             },
             {
-              "name": "zd-cancel-form",
+              "name": "cancel-form",
               "description": "The cancel confirmation form."
             },
             {
-              "name": "zd-confirm-cancel",
+              "name": "confirm-cancel",
               "description": "The button that sends the cancel."
             },
             {
-              "name": "zd-confirm-reschedule",
+              "name": "confirm-reschedule",
               "description": "The button that sends the new time."
             },
             {
-              "name": "zd-details",
+              "name": "details",
               "description": "The list of appointment details."
             },
             {
-              "name": "zd-heading",
+              "name": "heading",
               "description": "The panel heading."
             },
             {
-              "name": "zd-keep",
+              "name": "keep",
               "description": "The button that backs out of cancelling."
             },
             {
-              "name": "zd-notice",
+              "name": "notice",
               "description": "The polite live region announcing a completed action."
             },
             {
-              "name": "zd-panel",
+              "name": "panel",
               "description": "The container for every mode, and the focus target on each mode change."
             },
             {
-              "name": "zd-phone",
+              "name": "phone",
               "description": "The practice's phone number, as a `tel:` link."
             },
             {
-              "name": "zd-picker",
+              "name": "picker",
               "description": "The embedded availability picker."
             },
             {
-              "name": "zd-provider",
+              "name": "provider",
               "description": "The provider row's value: the looked-up summary, or `provider-name` as a fallback."
             },
             {
-              "name": "zd-provider-detail",
+              "name": "provider-detail",
               "description": "The text column beside the photo."
             },
             {
-              "name": "zd-provider-location",
+              "name": "provider-location",
               "description": "The address, or \"Video visit\"."
             },
             {
-              "name": "zd-provider-name",
+              "name": "provider-name",
               "description": "The provider's name and credential."
             },
             {
-              "name": "zd-provider-photo",
+              "name": "provider-photo",
               "description": "The provider's photo, unless `hide-photo` is set."
             },
             {
-              "name": "zd-provider-specialty",
+              "name": "provider-specialty",
               "description": "The provider's first specialty."
             },
             {
-              "name": "zd-provider-summary",
+              "name": "provider-summary",
               "description": "The looked-up provider block."
             },
             {
-              "name": "zd-reason",
+              "name": "reason",
               "description": "The cancellation reason select."
             },
             {
-              "name": "zd-reference",
+              "name": "reference",
               "description": "The confirmation number."
             },
             {
-              "name": "zd-reschedule",
+              "name": "reschedule",
               "description": "The \"Change time\" button."
             },
             {
-              "name": "zd-waiting-room",
+              "name": "waiting-room",
               "description": "The link to a video visit's waiting room."
             },
             {
-              "name": "zd-when",
+              "name": "when",
               "description": "The appointment's date and time, in the provider's zone."
             }
           ]
@@ -805,17 +788,6 @@
             },
             {
               "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAvailabilityGridEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"availability-error\" | \"day-select\" | \"window-change\" | \"more-select\">(type: K, listener: (event: ZdAvailabilityGridEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
-              }
-            },
-            {
-              "kind": "field",
               "name": "baseName",
               "privacy": "public",
               "static": true,
@@ -842,6 +814,7 @@
               "name": "days",
               "description": "How many days the window covers, counting the first. Fourteen is two rows of seven, which is\nthe shape the production UI uses; clamped to the 30 the API allows.",
               "privacy": "public",
+              "default": "14",
               "attribute": "days",
               "type": {
                 "text": "number"
@@ -970,6 +943,7 @@
               "name": "hideWindow",
               "description": "Drops this component's own window control, leaving the days.\n\nWhat a results list sets on every card: the production search page has one range control\nabove the list governing every provider in it, not ten of them disagreeing. The pager still\nworks through `shiftWindow` and `start-date`, so whoever owns the shared control drives all\nof them by binding the same `start-date` down.\n\nNamed for what it does rather than as `show-window`, which would default to true and could\nthen never be turned off through an attribute — a boolean attribute's presence is its value.",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-window",
               "type": {
                 "text": "boolean"
@@ -1021,6 +995,7 @@
               "name": "loading",
               "description": "Whether the host is loading availability it supplied through `timeslots`.\n\nSet this while replacing supplied slots to keep stale counts out of view and announce loading.\nIt does not start a request.",
               "privacy": "public",
+              "default": "false",
               "attribute": "loading",
               "type": {
                 "text": "boolean"
@@ -1029,7 +1004,9 @@
             {
               "kind": "field",
               "name": "patientType",
+              "description": "Which patient the days are counted for, since a practice can open different times to each.",
               "privacy": "public",
+              "default": "'new'",
               "attribute": "patient-type",
               "type": {
                 "text": "PatientType"
@@ -1046,17 +1023,6 @@
               "attribute": "provider-location-id",
               "type": {
                 "text": "string"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAvailabilityGridEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"availability-error\" | \"day-select\" | \"window-change\" | \"more-select\">(type: K, listener: (event: ZdAvailabilityGridEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -1095,6 +1061,7 @@
               "kind": "field",
               "name": "requestState",
               "privacy": "private",
+              "default": "'idle'",
               "internal": true,
               "type": {
                 "text": "RequestState"
@@ -1174,6 +1141,7 @@
               "name": "showMore",
               "description": "Renders the \"More\" control. Off by default: it is only meaningful when the host page has\nsomewhere for it to go, and a control that does nothing is worse than no control.",
               "privacy": "public",
+              "default": "false",
               "attribute": "show-more",
               "type": {
                 "text": "boolean"
@@ -1243,6 +1211,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "14",
               "fieldName": "days"
             },
             {
@@ -1260,6 +1229,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hideWindow"
             },
             {
@@ -1268,16 +1238,19 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "loading"
             },
             {
               "name": "patient-type",
+              "description": "Which patient the days are counted for, since a practice can open different times to each.",
               "type": {
                 "text": "PatientType"
               },
               "parsedType": {
                 "text": "'new' | 'existing'"
               },
+              "default": "'new'",
               "fieldName": "patientType"
             },
             {
@@ -1302,6 +1275,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "showMore"
             },
             {
@@ -1326,21 +1300,21 @@
               "name": "availability-error",
               "description": "Emitted with `{ error }` when this component's own request fails.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ErrorDetail>"
               }
             },
             {
               "name": "day-select",
               "description": "Emitted with `{ day, providerLocationId }` when a day with appointments is\nchosen. `day` is a `YYYY-MM-DD` key in the provider's own local time.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<DaySelectDetail>"
               }
             },
             {
               "name": "more-select",
               "description": "Emitted when \"More\" is pressed, and only rendered when `show-more` is set.\nWhere that goes is the host page's business — a profile, a full calendar — so nothing here\nnavigates.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<Record<string, never>>"
               }
             },
             {
@@ -1358,53 +1332,53 @@
               "name": "window-change",
               "description": "Emitted with `{ startDate, endDate }` when the range moves. Both are\n`YYYY-MM-DD` and inclusive, ready to pass to `getAvailability`.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<AvailabilityWindowDetail>"
               }
             }
           ],
           "cssParts": [
             {
-              "name": "zd-day",
+              "name": "day",
               "description": "One day cell."
             },
             {
-              "name": "zd-day-count",
+              "name": "day-count",
               "description": "The appointment count line of a cell."
             },
             {
-              "name": "zd-day-date",
+              "name": "day-date",
               "description": "The month and day line of a cell."
             },
             {
-              "name": "zd-day-skeleton",
+              "name": "day-skeleton",
               "description": "A day placeholder while self-fetching availability."
             },
             {
-              "name": "zd-day-weekday",
+              "name": "day-weekday",
               "description": "The weekday line of a cell."
             },
             {
-              "name": "zd-days",
+              "name": "days",
               "description": "The grid of days."
             },
             {
-              "name": "zd-more",
+              "name": "more",
               "description": "The \"More\" control, when `show-more` is set."
             },
             {
-              "name": "zd-window",
+              "name": "window",
               "description": "The header holding the range and its controls."
             },
             {
-              "name": "zd-window-next",
+              "name": "window-next",
               "description": "The control moving the range forward."
             },
             {
-              "name": "zd-window-previous",
+              "name": "window-previous",
               "description": "The control moving the range back."
             },
             {
-              "name": "zd-window-range",
+              "name": "window-range",
               "description": "The line naming the range on show."
             }
           ]
@@ -1465,17 +1439,6 @@
             },
             {
               "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAvailabilityPickerEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"slot-select\" | \"patient-type-change\" | \"availability-error\">(type: K, listener: (event: ZdAvailabilityPickerEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
-              }
-            },
-            {
-              "kind": "field",
               "name": "baseName",
               "privacy": "public",
               "static": true,
@@ -1511,6 +1474,7 @@
               "name": "days",
               "description": "Size of the availability window in days, counting the first. Clamped to the API's 30.",
               "privacy": "public",
+              "default": "7",
               "attribute": "days",
               "type": {
                 "text": "number"
@@ -1583,6 +1547,7 @@
               "name": "hidePatientType",
               "description": "Drops the New/Existing patient control, leaving the times.\n\nWhat a host page sets when it asks the question itself — the production booking modal has one\ncontrol governing the whole panel, not one per section — and it then binds `patient-type` down.\n\nNamed for what it does rather than as `show-patient-type`, which would default to true and\ncould then never be turned off through an attribute: a boolean attribute's presence is its\nvalue.",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-patient-type",
               "type": {
                 "text": "boolean"
@@ -1623,6 +1588,7 @@
               "name": "layout",
               "description": "How the days are laid out. `strip` shows one day at a time behind a row of day buttons;\n`stacked` shows every day of the window at once, each with its own heading.",
               "privacy": "public",
+              "default": "'strip'",
               "attribute": "layout",
               "type": {
                 "text": "'strip' | 'stacked'"
@@ -1644,6 +1610,7 @@
               "name": "patientType",
               "description": "Which patient the times are for. Also the value of the rendered control, so setting it is\nboth how a host page pre-selects an answer and what the control writes back.",
               "privacy": "public",
+              "default": "'new'",
               "attribute": "patient-type",
               "type": {
                 "text": "PatientType"
@@ -1660,17 +1627,6 @@
               "attribute": "provider-location-id",
               "type": {
                 "text": "string"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAvailabilityPickerEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"slot-select\" | \"patient-type-change\" | \"availability-error\">(type: K, listener: (event: ZdAvailabilityPickerEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -1760,6 +1716,7 @@
               "kind": "field",
               "name": "requestState",
               "privacy": "private",
+              "default": "'idle'",
               "internal": true,
               "type": {
                 "text": "RequestState"
@@ -1870,6 +1827,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "7",
               "fieldName": "days"
             },
             {
@@ -1887,6 +1845,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hidePatientType"
             },
             {
@@ -1895,6 +1854,7 @@
               "type": {
                 "text": "'strip' | 'stacked'"
               },
+              "default": "'strip'",
               "fieldName": "layout"
             },
             {
@@ -1906,6 +1866,7 @@
               "parsedType": {
                 "text": "'new' | 'existing'"
               },
+              "default": "'new'",
               "fieldName": "patientType"
             },
             {
@@ -1946,14 +1907,14 @@
               "name": "availability-error",
               "description": "Emitted with `{ error }` when the request fails.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ErrorDetail>"
               }
             },
             {
               "name": "patient-type-change",
               "description": "Emitted with `{ patientType }` when the New/Existing control is\nused. A host page that books through its own step should follow it, since the same value has\nto go to `POST /v1/appointments`.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<PatientTypeChangeDetail>"
               }
             },
             {
@@ -1971,57 +1932,57 @@
               "name": "slot-select",
               "description": "Emitted with `{ startTime, providerLocationId }` when a time is\nchosen. `startTime` is the API's own string, offset included, so it can be handed\nback to `POST /v1/appointments` unmodified.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<SlotSelectDetail>"
               }
             }
           ],
           "cssParts": [
             {
-              "name": "zd-day",
+              "name": "day",
               "description": "One day button. `strip` layout only."
             },
             {
-              "name": "zd-day-empty",
+              "name": "day-empty",
               "description": "The line shown for a span with nothing open. `stacked` layout only."
             },
             {
-              "name": "zd-day-group",
+              "name": "day-group",
               "description": "One day, or one span of closed days. `stacked` layout only."
             },
             {
-              "name": "zd-day-groups",
+              "name": "day-groups",
               "description": "The list of day groups. `stacked` layout only."
             },
             {
-              "name": "zd-day-heading",
+              "name": "day-heading",
               "description": "The line naming a group's day or span. `stacked` layout only."
             },
             {
-              "name": "zd-days",
+              "name": "days",
               "description": "The strip of days with availability. `strip` layout only."
             },
             {
-              "name": "zd-loading-days",
+              "name": "loading-days",
               "description": "The placeholder days shown while availability loads."
             },
             {
-              "name": "zd-patient-type",
+              "name": "patient-type",
               "description": "The New/Existing patient control."
             },
             {
-              "name": "zd-patient-type-option",
+              "name": "patient-type-option",
               "description": "One option of that control."
             },
             {
-              "name": "zd-skeleton",
+              "name": "skeleton",
               "description": "One placeholder heading or time inside them."
             },
             {
-              "name": "zd-slot",
+              "name": "slot",
               "description": "One timeslot button."
             },
             {
-              "name": "zd-slots",
+              "name": "slots",
               "description": "A list of times."
             }
           ]
@@ -2073,17 +2034,6 @@
             },
             {
               "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAvailabilityWindowEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"window-shift\">(type: K, listener: (event: ZdAvailabilityWindowEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
-              }
-            },
-            {
-              "kind": "field",
               "name": "baseName",
               "privacy": "public",
               "static": true,
@@ -2101,6 +2051,7 @@
               "name": "canGoEarlier",
               "description": "Whether there is anywhere earlier to go. False at today, because the API returns nothing in\nthe past and a window behind it comes back empty — which reads as no availability at all.",
               "privacy": "public",
+              "default": "true",
               "attribute": "can-go-earlier",
               "type": {
                 "text": "boolean"
@@ -2200,17 +2151,6 @@
             },
             {
               "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdAvailabilityWindowEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"window-shift\">(type: K, listener: (event: ZdAvailabilityWindowEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
-              }
-            },
-            {
-              "kind": "field",
               "name": "scope",
               "privacy": "protected",
               "inheritedFrom": {
@@ -2257,6 +2197,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "true",
               "fieldName": "canGoEarlier"
             },
             {
@@ -2301,25 +2242,25 @@
               "name": "window-shift",
               "description": "Emitted with `{ direction: -1 | 1 }` when a navigation button is pressed.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<WindowShiftDetail>"
               }
             }
           ],
           "cssParts": [
             {
-              "name": "zd-window",
+              "name": "window",
               "description": "The container holding the range and controls."
             },
             {
-              "name": "zd-window-next",
+              "name": "window-next",
               "description": "The control moving the range forward."
             },
             {
-              "name": "zd-window-previous",
+              "name": "window-previous",
               "description": "The control moving the range back."
             },
             {
-              "name": "zd-window-range",
+              "name": "window-range",
               "description": "The line naming the range on show."
             }
           ]
@@ -2544,6 +2485,7 @@
               "name": "status",
               "description": "The `appointment_status` from the booking response. Defaults to `confirmed` because a\nhost page rendering this component by hand has already decided the booking worked; a\nflow passing the API's own value through gets the pending wording for free.",
               "privacy": "public",
+              "default": "'confirmed'",
               "attribute": "status",
               "type": {
                 "text": "AppointmentStatus"
@@ -2621,6 +2563,7 @@
               "parsedType": {
                 "text": "'pending_booking' | 'confirmed' | 'booking_failed' | 'cancelled' | 'no_show' | 'pending_reschedule' | 'rescheduled' | 'reschedule_failed'"
               },
+              "default": "'confirmed'",
               "fieldName": "status"
             }
           ],
@@ -2639,39 +2582,39 @@
           ],
           "cssParts": [
             {
-              "name": "zd-confirmation",
+              "name": "confirmation",
               "description": "The alert wrapping the whole confirmation."
             },
             {
-              "name": "zd-contact",
+              "name": "contact",
               "description": "The line carrying the practice's phone number."
             },
             {
-              "name": "zd-detail",
+              "name": "detail",
               "description": "The line qualifying a pending request."
             },
             {
-              "name": "zd-phone",
+              "name": "phone",
               "description": "The practice's phone number, as a `tel:` link."
             },
             {
-              "name": "zd-provider",
+              "name": "provider",
               "description": "The line naming the provider."
             },
             {
-              "name": "zd-reference",
+              "name": "reference",
               "description": "The line carrying the confirmation number."
             },
             {
-              "name": "zd-video",
+              "name": "video",
               "description": "The line carrying the video waiting room link."
             },
             {
-              "name": "zd-waiting-room",
+              "name": "waiting-room",
               "description": "The link to the video waiting room."
             },
             {
-              "name": "zd-when",
+              "name": "when",
               "description": "The appointment's date and time."
             }
           ]
@@ -2719,17 +2662,6 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdBookingEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"availability-error\" | \"booking-complete\" | \"booking-error\">(type: K, listener: (event: ZdBookingEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -2830,6 +2762,7 @@
               "kind": "field",
               "name": "booking",
               "privacy": "private",
+              "default": "false",
               "internal": true,
               "type": {
                 "text": "boolean"
@@ -2958,6 +2891,7 @@
               "name": "hidePhotos",
               "description": "Hides provider photos in the results list and booking summary.",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-photos",
               "type": {
                 "text": "boolean"
@@ -3006,6 +2940,7 @@
             {
               "kind": "field",
               "name": "insurancePlanId",
+              "description": "The insurance plan the flow opens on. Narrows the search, is sent with the booking, and\ntells the patient form whether to ask for a member ID. Kept in step with what the patient\nsearched.",
               "privacy": "public",
               "attribute": "insurance-plan-id",
               "type": {
@@ -3036,6 +2971,7 @@
               "name": "modal",
               "description": "Runs every step after the search in a dialog over the results, instead of in their place.\n\nOff by default, because inline is the arrangement a host page can place and style freely; a\nmodal is a decision about the page rather than about the flow. What it changes is only where\nthe steps are drawn — the state machine, the events and the children are the same either way,\nand the search stays mounted underneath, so dismissing the dialog returns the patient to their\nresults rather than to a refetch.",
               "privacy": "public",
+              "default": "false",
               "attribute": "modal",
               "type": {
                 "text": "boolean"
@@ -3046,6 +2982,7 @@
               "name": "page",
               "description": "The zero-indexed page in hand. Bound down to both children so they cannot disagree.",
               "privacy": "public",
+              "default": "0",
               "attribute": "page",
               "type": {
                 "text": "number"
@@ -3056,6 +2993,7 @@
               "name": "pageSize",
               "description": "Results per page, forwarded to the search that requests them and to the list that pages\nthrough them. Updated from what the API says it used, since it is free to clamp.",
               "privacy": "public",
+              "default": "10",
               "attribute": "page-size",
               "type": {
                 "text": "number"
@@ -3066,6 +3004,7 @@
               "name": "patientType",
               "description": "Whether the patient is new to the practice. Affects which slots are bookable.",
               "privacy": "public",
+              "default": "'new'",
               "attribute": "patient-type",
               "type": {
                 "text": "PatientType"
@@ -3100,17 +3039,6 @@
               "privacy": "public",
               "type": {
                 "text": "ProviderLocation[]"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdBookingEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"availability-error\" | \"booking-complete\" | \"booking-error\">(type: K, listener: (event: ZdBookingEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -3338,6 +3266,7 @@
               "name": "zipCode",
               "description": "The ZIP code the flow opens on. Kept in step with what the patient searched.",
               "privacy": "public",
+              "default": "''",
               "attribute": "zip-code",
               "type": {
                 "text": "string"
@@ -3360,6 +3289,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hidePhotos"
             },
             {
@@ -3372,6 +3302,7 @@
             },
             {
               "name": "insurance-plan-id",
+              "description": "The insurance plan the flow opens on. Narrows the search, is sent with the booking, and\ntells the patient form whether to ask for a member ID. Kept in step with what the patient\nsearched.",
               "type": {
                 "text": "string"
               },
@@ -3383,6 +3314,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "modal"
             },
             {
@@ -3391,6 +3323,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "0",
               "fieldName": "page"
             },
             {
@@ -3399,6 +3332,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "10",
               "fieldName": "pageSize"
             },
             {
@@ -3410,6 +3344,7 @@
               "parsedType": {
                 "text": "'new' | 'existing'"
               },
+              "default": "'new'",
               "fieldName": "patientType"
             },
             {
@@ -3458,6 +3393,7 @@
               "type": {
                 "text": "string"
               },
+              "default": "''",
               "fieldName": "zipCode"
             }
           ],
@@ -3466,21 +3402,21 @@
               "name": "availability-error",
               "description": "Emitted with `{ error }` when the batched availability request for\nthe results list fails. Nothing is rendered for it — the list keeps working without day\ncounts — so this event is the only notice a host page gets. Same caution about the `error`.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ErrorDetail>"
               }
             },
             {
               "name": "booking-complete",
               "description": "Emitted with `{ appointmentId, status }` once the API has taken\nthe appointment. `status` is `confirmed` or `pending_booking`; both are bookings, and the\ndifference is whether the practice has accepted yet, so a host page that treats them alike\nis telling some patients the wrong thing.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<BookingCompleteDetail>"
               }
             },
             {
               "name": "booking-error",
               "description": "Emitted with `{ error, status }` when the booking does not happen.\n`status` is present when the API answered 200 with a status that is not a booking, and\nabsent when the request itself failed. Named `booking-error` rather than `error` because\n`error` is a native event name that already fires on this element for failed resource\nloads, and a listener could not tell the two apart (COMP-003).\nThe `error` it carries is the client's own, whose body can echo submitted values — do not\nlog it wholesale (PHI-001).",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<BookingErrorDetail>"
               }
             },
             {
@@ -3497,67 +3433,67 @@
           ],
           "cssParts": [
             {
-              "name": "zd-back",
+              "name": "back",
               "description": "The button returning to the previous step."
             },
             {
-              "name": "zd-confirmation",
+              "name": "confirmation",
               "description": "The booking confirmation."
             },
             {
-              "name": "zd-dialog",
+              "name": "dialog",
               "description": "The dialog the steps after the search run in, present only in `modal` mode."
             },
             {
-              "name": "zd-error",
+              "name": "error",
               "description": "The alert shown when a booking fails."
             },
             {
-              "name": "zd-modal-step",
+              "name": "modal-step",
               "description": "The current step's container inside the dialog, and the focus target on\ntransitions between two steps that are both in the dialog."
             },
             {
-              "name": "zd-modal-step-heading",
+              "name": "modal-step-heading",
               "description": "The step's heading inside the dialog. Visually hidden, since the\ndialog carries a heading of its own, but it is what a screen reader announces on arrival."
             },
             {
-              "name": "zd-patient-form",
+              "name": "patient-form",
               "description": "The patient details form."
             },
             {
-              "name": "zd-picker",
+              "name": "picker",
               "description": "The availability picker."
             },
             {
-              "name": "zd-provider-summary",
+              "name": "provider-summary",
               "description": "The provider block inside the summary, shared with\n`zd-provider-results` — see `internal/provider-summary.ts` for its inner parts."
             },
             {
-              "name": "zd-results",
+              "name": "results",
               "description": "The provider results list."
             },
             {
-              "name": "zd-search",
+              "name": "search",
               "description": "The provider search form."
             },
             {
-              "name": "zd-status",
+              "name": "status",
               "description": "The live region announcing that a booking is in flight."
             },
             {
-              "name": "zd-step",
+              "name": "step",
               "description": "The current step's container, and the focus target on every transition. In\n`modal` mode this is always the search, which stays on the page under the dialog."
             },
             {
-              "name": "zd-step-heading",
+              "name": "step-heading",
               "description": "The current step's heading."
             },
             {
-              "name": "zd-summary",
+              "name": "summary",
               "description": "The block restating what is about to be booked."
             },
             {
-              "name": "zd-summary-time",
+              "name": "summary-time",
               "description": "The appointment time, on the patient step."
             }
           ]
@@ -3609,17 +3545,6 @@
             },
             {
               "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdPatientFormEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"patient-submit\">(type: K, listener: (event: ZdPatientFormEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
-              }
-            },
-            {
-              "kind": "field",
               "name": "baseName",
               "privacy": "public",
               "static": true,
@@ -3637,6 +3562,7 @@
               "name": "busy",
               "description": "Set while whoever is listening to `patient-submit` is still working on it.\n\nA booking is not idempotent: a second `POST /v1/appointments` books a second\nappointment. The listener has to guard that itself, but a Continue button that stays\nlive and silent through a slow request is an invitation to press it again, so the form\nthat owns the button owns disabling it. `submit()` refuses too, which covers the Enter\nkey — Charm's inputs call `requestSubmit()` without consulting the button.",
               "privacy": "public",
+              "default": "false",
               "attribute": "busy",
               "type": {
                 "text": "boolean"
@@ -3832,19 +3758,9 @@
               "name": "notes",
               "description": "Free-text notes for the practice, capped at {@link NOTES_MAX_LENGTH}. Optional, and\nomitted from the event entirely when empty rather than sent as `''`.\n\nPatient-authored, so it is PHI as much as the demographics are, and `attribute: false`\nfor the same reason.",
               "privacy": "public",
+              "default": "''",
               "type": {
                 "text": "string"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdPatientFormEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"patient-submit\">(type: K, listener: (event: ZdPatientFormEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -3954,7 +3870,7 @@
             {
               "kind": "method",
               "name": "submit",
-              "description": "Validates every field and emits `patient-submit` when all of them pass. Public so the\nhost page or a coordinating parent can trigger it, which is also how the flow in\nTask 15 drives the form from its own Continue button.",
+              "description": "Validates every field and emits `patient-submit` when all of them pass. Public so the\nhost page or a coordinating parent can trigger it from its own Continue button.",
               "privacy": "public",
               "return": {
                 "type": {
@@ -4031,6 +3947,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "busy"
             },
             {
@@ -4048,7 +3965,7 @@
               "name": "patient-submit",
               "description": "Emitted with `{ patient, notes }` once every field is valid.\nNot emitted at all when validation fails, so a listener never sees a partial patient.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<PatientSubmitDetail>"
               }
             },
             {
@@ -4065,79 +3982,79 @@
           ],
           "cssParts": [
             {
-              "name": "zd-about",
+              "name": "about",
               "description": "The name, date of birth, and sex at birth group."
             },
             {
-              "name": "zd-address",
+              "name": "address",
               "description": "The address group."
             },
             {
-              "name": "zd-address1",
+              "name": "address1",
               "description": "The street address field."
             },
             {
-              "name": "zd-city",
+              "name": "city",
               "description": "The city field."
             },
             {
-              "name": "zd-contact",
+              "name": "contact",
               "description": "The phone and email group."
             },
             {
-              "name": "zd-date-of-birth",
+              "name": "date-of-birth",
               "description": "The date of birth field."
             },
             {
-              "name": "zd-email-address",
+              "name": "email-address",
               "description": "The email address field."
             },
             {
-              "name": "zd-first-name",
+              "name": "first-name",
               "description": "The first name field."
             },
             {
-              "name": "zd-form",
+              "name": "form",
               "description": "The form element."
             },
             {
-              "name": "zd-insurance",
+              "name": "insurance",
               "description": "The insurance group. Rendered only when a plan is set or the provider\nlocation requires insurance."
             },
             {
-              "name": "zd-insurance-member-id",
+              "name": "insurance-member-id",
               "description": "The insurance member ID field."
             },
             {
-              "name": "zd-insurance-required",
+              "name": "insurance-required",
               "description": "The notice shown when the location requires an insurance plan\nand none was chosen."
             },
             {
-              "name": "zd-last-name",
+              "name": "last-name",
               "description": "The last name field."
             },
             {
-              "name": "zd-notes",
+              "name": "notes",
               "description": "The optional notes field."
             },
             {
-              "name": "zd-phone-number",
+              "name": "phone-number",
               "description": "The phone number field."
             },
             {
-              "name": "zd-sex-at-birth",
+              "name": "sex-at-birth",
               "description": "The sex at birth select."
             },
             {
-              "name": "zd-state",
+              "name": "state",
               "description": "The state field."
             },
             {
-              "name": "zd-submit",
+              "name": "submit",
               "description": "The submit button."
             },
             {
-              "name": "zd-zip-code",
+              "name": "zip-code",
               "description": "The ZIP code field."
             }
           ]
@@ -4185,17 +4102,6 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdProviderCardEventMap>[\"addEventListener\"]"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"profile-request\">(type: K, listener: (event: ZdProviderCardEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -4279,6 +4185,7 @@
               "name": "hidePhoto",
               "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-photo",
               "type": {
                 "text": "boolean"
@@ -4329,6 +4236,7 @@
               "name": "loading",
               "description": "Shows skeleton placeholders in the card's layout instead of `provider`. The card never\nfetches, so the parent sets this while its own request is in flight and clears it when\nthe data arrives.",
               "privacy": "public",
+              "default": "false",
               "attribute": "loading",
               "reflects": true,
               "type": {
@@ -4356,17 +4264,6 @@
                 "type": {
                   "text": "string"
                 }
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdProviderCardEventMap>[\"removeEventListener\"]"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"profile-request\">(type: K, listener: (event: ZdProviderCardEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -4430,6 +4327,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hidePhoto"
             },
             {
@@ -4446,6 +4344,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "loading"
             }
           ],
@@ -4454,7 +4353,7 @@
               "name": "profile-request",
               "description": "Emitted with `{ provider }` when the provider's name is clicked.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ProfileRequestDetail>"
               }
             },
             {
@@ -4481,31 +4380,31 @@
           ],
           "cssParts": [
             {
-              "name": "zd-details",
+              "name": "details",
               "description": "The text column."
             },
             {
-              "name": "zd-insurance",
+              "name": "insurance",
               "description": "The network status line."
             },
             {
-              "name": "zd-location",
+              "name": "location",
               "description": "The distance and address line."
             },
             {
-              "name": "zd-name",
+              "name": "name",
               "description": "The clickable provider name button."
             },
             {
-              "name": "zd-photo",
+              "name": "photo",
               "description": "The avatar element."
             },
             {
-              "name": "zd-skeleton",
+              "name": "skeleton",
               "description": "Each placeholder shown while `loading` is set."
             },
             {
-              "name": "zd-specialty",
+              "name": "specialty",
               "description": "The specialty line."
             }
           ]
@@ -4637,6 +4536,7 @@
               "name": "hidePhoto",
               "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-photo",
               "type": {
                 "text": "boolean"
@@ -4849,6 +4749,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hidePhoto"
             },
             {
@@ -4893,94 +4794,91 @@
           ],
           "cssParts": [
             {
-              "name": "zd-${name}"
-            },
-            {
-              "name": "zd-about",
+              "name": "about",
               "description": "The section carrying the provider's own statement."
             },
             {
-              "name": "zd-address",
+              "name": "address",
               "description": "The street address."
             },
             {
-              "name": "zd-certifications",
+              "name": "certifications",
               "description": "The certifications section."
             },
             {
-              "name": "zd-contact",
+              "name": "contact",
               "description": "The `<address>` holding all three."
             },
             {
-              "name": "zd-education",
+              "name": "education",
               "description": "The education section."
             },
             {
-              "name": "zd-header",
+              "name": "header",
               "description": "The photo, name, specialty, and address together."
             },
             {
-              "name": "zd-header-location",
+              "name": "header-location",
               "description": "The address under the name, or the video-visit line."
             },
             {
-              "name": "zd-identity",
+              "name": "identity",
               "description": "The text column beside the photo."
             },
             {
-              "name": "zd-insurance",
+              "name": "insurance",
               "description": "The network status line, when `insurance-name` is set."
             },
             {
-              "name": "zd-languages",
+              "name": "languages",
               "description": "The languages section."
             },
             {
-              "name": "zd-list",
+              "name": "list",
               "description": "The list inside languages, certifications, or education."
             },
             {
-              "name": "zd-list-item",
+              "name": "list-item",
               "description": "One entry in that list."
             },
             {
-              "name": "zd-location",
+              "name": "location",
               "description": "The practice, address, and phone section."
             },
             {
-              "name": "zd-name",
+              "name": "name",
               "description": "The provider's name and credential, as an `<h2>`."
             },
             {
-              "name": "zd-phone",
+              "name": "phone",
               "description": "The practice's phone number, as a `tel:` link."
             },
             {
-              "name": "zd-photo",
+              "name": "photo",
               "description": "The provider's photo, unless `hide-photo` is set."
             },
             {
-              "name": "zd-place",
+              "name": "place",
               "description": "One line naming the office or the practice."
             },
             {
-              "name": "zd-profile",
+              "name": "profile",
               "description": "The `<article>` wrapping the whole profile, and the element every section\nis spaced by."
             },
             {
-              "name": "zd-section",
+              "name": "section",
               "description": "Every section, so one rule can space them all."
             },
             {
-              "name": "zd-section-heading",
+              "name": "section-heading",
               "description": "A section's `<h3>`."
             },
             {
-              "name": "zd-specialty",
+              "name": "specialty",
               "description": "The provider's primary specialty."
             },
             {
-              "name": "zd-statement",
+              "name": "statement",
               "description": "The statement itself."
             }
           ]
@@ -5032,17 +4930,6 @@
             },
             {
               "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdProviderResultsEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"day-select\" | \"window-change\" | \"provider-select\" | \"page-change\">(type: K, listener: (event: ZdProviderResultsEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
-              }
-            },
-            {
-              "kind": "field",
               "name": "availability",
               "description": "Day counts per card, from one batched availability request for the whole page.\n\nBatched by whoever owns the search, not by the cards: the endpoint takes an array of\n`provider_location_ids` and answers for all of them at once, so ten cards fetching for\nthemselves would be ten requests for one screen. Left undefined by a host page with no\navailability to show, in which case no card renders a grid at all — which is the standalone\ncase, and the list still works (COMP-004).\n\nEntries the batch did not answer for get {@link NO_TIMESLOTS} rather than nothing, so a card\nsays \"no appointments\" instead of quietly going and asking on its own.",
               "privacy": "public",
@@ -5055,6 +4942,7 @@
               "name": "availabilityDays",
               "description": "How many days of availability each card shows. Clamped to the API's 30-day maximum.",
               "privacy": "public",
+              "default": "14",
               "attribute": "availability-days",
               "type": {
                 "text": "number"
@@ -5190,6 +5078,7 @@
               "name": "hidePhotos",
               "description": "Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see\n`ProviderSummaryOptions.hidePhoto`.",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-photos",
               "type": {
                 "text": "boolean"
@@ -5249,6 +5138,7 @@
               "name": "loading",
               "description": "Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this\ncomponent never fetches, so whoever owns the search sets this while a page is in flight and\nclears it when the new `providers` arrive.",
               "privacy": "public",
+              "default": "false",
               "attribute": "loading",
               "reflects": true,
               "type": {
@@ -5278,6 +5168,7 @@
               "name": "page",
               "description": "The zero-indexed page `providers` holds, matching the API's own indexing.",
               "privacy": "public",
+              "default": "0",
               "attribute": "page",
               "type": {
                 "text": "number"
@@ -5288,6 +5179,7 @@
               "name": "pageSize",
               "description": "The page size the search used. Defaults to the API's own, which is what it fell back to.",
               "privacy": "public",
+              "default": "10",
               "attribute": "page-size",
               "type": {
                 "text": "number"
@@ -5297,6 +5189,7 @@
               "kind": "field",
               "name": "profileOpen",
               "privacy": "private",
+              "default": "false",
               "internal": true,
               "type": {
                 "text": "boolean"
@@ -5318,17 +5211,6 @@
               "privacy": "public",
               "type": {
                 "text": "ProviderLocation[]"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdProviderResultsEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"day-select\" | \"window-change\" | \"provider-select\" | \"page-change\">(type: K, listener: (event: ZdProviderResultsEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -5540,6 +5422,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "14",
               "fieldName": "availabilityDays"
             },
             {
@@ -5565,6 +5448,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hidePhotos"
             },
             {
@@ -5581,6 +5465,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "loading"
             },
             {
@@ -5589,6 +5474,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "0",
               "fieldName": "page"
             },
             {
@@ -5597,6 +5483,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "10",
               "fieldName": "pageSize"
             },
             {
@@ -5621,21 +5508,21 @@
               "name": "day-select",
               "description": "Emitted with `{ day, provider }` when a day is chosen on a card, forwarded\nfrom that card's grid with the provider attached.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ProviderDaySelectDetail>"
               }
             },
             {
               "name": "page-change",
               "description": "Emitted with `{ page }` when the patient pages. Zero-indexed, matching\nthe API. The owner of the search is expected to fetch that page and hand back new\n`providers`; nothing here changes until it does.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<PageChangeDetail>"
               }
             },
             {
               "name": "provider-select",
               "description": "Emitted with `{ provider }` when a provider is chosen.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ProviderSelectDetail>"
               }
             },
             {
@@ -5653,125 +5540,125 @@
               "name": "window-change",
               "description": "Emitted with `{ startDate, endDate }` when the shared window moves. The\nowner of `availability` is expected to refetch that window; the dates on show move regardless.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<AvailabilityWindowDetail>"
               }
             }
           ],
           "cssParts": [
             {
-              "name": "zd-availability-day",
+              "name": "availability-day",
               "description": "One day cell inside a card's grid."
             },
             {
-              "name": "zd-availability-days",
+              "name": "availability-days",
               "description": "The day list inside a card's grid."
             },
             {
-              "name": "zd-availability-empty",
+              "name": "availability-empty",
               "description": "A card's no-availability message."
             },
             {
-              "name": "zd-empty",
+              "name": "empty",
               "description": "The message shown when there are no providers."
             },
             {
-              "name": "zd-header",
+              "name": "header",
               "description": "The count line and the window control together, present only with availability."
             },
             {
-              "name": "zd-header-skeleton",
+              "name": "header-skeleton",
               "description": "The placeholder count and window control while `loading` is set."
             },
             {
-              "name": "zd-list",
+              "name": "list",
               "description": "The list wrapper."
             },
             {
-              "name": "zd-loading",
+              "name": "loading",
               "description": "The status line announced while `loading` is set."
             },
             {
-              "name": "zd-pager",
+              "name": "pager",
               "description": "The paging controls."
             },
             {
-              "name": "zd-pager-next",
+              "name": "pager-next",
               "description": "The button going forward a page."
             },
             {
-              "name": "zd-pager-position",
+              "name": "pager-position",
               "description": "The line saying which page this is."
             },
             {
-              "name": "zd-pager-previous",
+              "name": "pager-previous",
               "description": "The button going back a page."
             },
             {
-              "name": "zd-provider",
+              "name": "provider",
               "description": "The selectable control for one provider."
             },
             {
-              "name": "zd-provider-availability",
+              "name": "provider-availability",
               "description": "One card's availability grid."
             },
             {
-              "name": "zd-provider-badges",
+              "name": "provider-badges",
               "description": "The per-card slot for anything `renderBadges` adds."
             },
             {
-              "name": "zd-provider-detail",
+              "name": "provider-detail",
               "description": "The text column beside the photo."
             },
             {
-              "name": "zd-provider-insurance",
+              "name": "provider-insurance",
               "description": "The network line, when `insurance-name` is set."
             },
             {
-              "name": "zd-provider-location",
+              "name": "provider-location",
               "description": "The distance and address, or the video-visit line."
             },
             {
-              "name": "zd-provider-name",
+              "name": "provider-name",
               "description": "The provider's display name and credential."
             },
             {
-              "name": "zd-provider-photo",
+              "name": "provider-photo",
               "description": "The provider's photo, unless `hide-photos` is set."
             },
             {
-              "name": "zd-provider-specialty",
+              "name": "provider-specialty",
               "description": "The provider's primary specialty."
             },
             {
-              "name": "zd-provider-summary",
+              "name": "provider-summary",
               "description": "The summary block for one provider."
             },
             {
-              "name": "zd-results",
+              "name": "results",
               "description": "The header and list together; `aria-busy` while `loading` is set."
             },
             {
-              "name": "zd-skeleton",
+              "name": "skeleton",
               "description": "One placeholder card while `loading` is set."
             },
             {
-              "name": "zd-summary",
+              "name": "summary",
               "description": "The line counting what the search found."
             },
             {
-              "name": "zd-window",
+              "name": "window",
               "description": "The shared availability window control."
             },
             {
-              "name": "zd-window-next",
+              "name": "window-next",
               "description": "The control stepping the window forward."
             },
             {
-              "name": "zd-window-previous",
+              "name": "window-previous",
               "description": "The control stepping the window back."
             },
             {
-              "name": "zd-window-range",
+              "name": "window-range",
               "description": "The dates the window covers."
             }
           ]
@@ -5819,17 +5706,6 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdProviderSearchEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"provider-results\" | \"provider-search-error\">(type: K, listener: (event: ZdProviderSearchEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -5988,6 +5864,7 @@
             {
               "kind": "field",
               "name": "insurancePlanId",
+              "description": "The insurance plan to filter by. Optional: without it the search spans every network.",
               "privacy": "public",
               "attribute": "insurance-plan-id",
               "type": {
@@ -6073,6 +5950,7 @@
               "name": "page",
               "description": "Zero-indexed, as the API counts pages. Reset to 0 whenever the form is submitted.",
               "privacy": "public",
+              "default": "0",
               "attribute": "page",
               "type": {
                 "text": "number"
@@ -6086,17 +5964,6 @@
               "attribute": "page-size",
               "type": {
                 "text": "number"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdProviderSearchEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"provider-results\" | \"provider-search-error\">(type: K, listener: (event: ZdProviderSearchEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -6114,6 +5981,7 @@
               "kind": "field",
               "name": "requestState",
               "privacy": "private",
+              "default": "'idle'",
               "internal": true,
               "type": {
                 "text": "RequestState"
@@ -6199,6 +6067,7 @@
               "name": "zipCode",
               "description": "The ZIP code to search. Required by the API — there is no search-everywhere mode.",
               "privacy": "public",
+              "default": "''",
               "attribute": "zip-code",
               "type": {
                 "text": "string"
@@ -6217,6 +6086,7 @@
             },
             {
               "name": "insurance-plan-id",
+              "description": "The insurance plan to filter by. Optional: without it the search spans every network.",
               "type": {
                 "text": "string"
               },
@@ -6236,6 +6106,7 @@
               "type": {
                 "text": "number"
               },
+              "default": "0",
               "fieldName": "page"
             },
             {
@@ -6271,6 +6142,7 @@
               "type": {
                 "text": "string"
               },
+              "default": "''",
               "fieldName": "zipCode"
             }
           ],
@@ -6279,14 +6151,14 @@
               "name": "provider-results",
               "description": "Emitted with `{ providers, totalCount, searchParameters, zipCode,\nspecialtyId, insurancePlanId, visitType, page, pageSize }` on a successful search,\nincluding a search that matched nothing, so a listener can clear a stale list. The\ncriteria are the ones actually used, which is how a parent learns what the patient\nchanged in these fields. `totalCount` and `pageSize` are what a pager needs, and only the\nenvelope has them — `providers` holds one page.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ProviderResultsDetail>"
               }
             },
             {
               "name": "provider-search-error",
               "description": "Emitted with `{ error }` when the request fails.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ErrorDetail>"
               }
             },
             {
@@ -6303,39 +6175,43 @@
           ],
           "cssParts": [
             {
-              "name": "zd-field-error"
+              "name": "field-error",
+              "description": "The alert listing what to fix before the search can run."
             },
             {
-              "name": "zd-form",
+              "name": "form",
               "description": "The search form."
             },
             {
-              "name": "zd-insurance",
+              "name": "insurance",
               "description": "The insurance plan select."
             },
             {
-              "name": "zd-insurance-field"
+              "name": "insurance-field",
+              "description": "The insurance plan select with its label."
             },
             {
-              "name": "zd-loading-results",
+              "name": "loading-results",
               "description": "The placeholder cards shown while a search is in flight."
             },
             {
-              "name": "zd-location-field"
+              "name": "location-field",
+              "description": "The ZIP code field with its label."
             },
             {
-              "name": "zd-specialty",
+              "name": "specialty",
               "description": "The specialty select."
             },
             {
-              "name": "zd-specialty-field"
+              "name": "specialty-field",
+              "description": "The specialty select with its label."
             },
             {
-              "name": "zd-submit",
+              "name": "submit",
               "description": "The submit button."
             },
             {
-              "name": "zd-zip",
+              "name": "zip",
               "description": "The ZIP code field."
             }
           ]
@@ -6448,6 +6324,7 @@
               "name": "hidePhoto",
               "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-photo",
               "type": {
                 "text": "boolean"
@@ -6564,6 +6441,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hidePhoto"
             },
             {
@@ -6590,26 +6468,27 @@
           ],
           "cssParts": [
             {
-              "name": "zd-details"
+              "name": "details",
+              "description": "The text column beside the photo."
             },
             {
-              "name": "zd-insurance",
+              "name": "insurance",
               "description": "The network status line."
             },
             {
-              "name": "zd-location",
+              "name": "location",
               "description": "The distance and address line."
             },
             {
-              "name": "zd-name",
+              "name": "name",
               "description": "The provider name and credential."
             },
             {
-              "name": "zd-photo",
+              "name": "photo",
               "description": "The avatar element."
             },
             {
-              "name": "zd-specialty",
+              "name": "specialty",
               "description": "The specialty line."
             }
           ]
@@ -6657,17 +6536,6 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "addEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdSignInEventMap>['addEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"sign-in-complete\" | \"sign-in-error\">(type: K, listener: (event: ZdSignInEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -6743,6 +6611,7 @@
               "name": "email",
               "description": "The email field's value, sent to Zocdoc as `login_hint`. Property-only so it never lands in\nthe DOM, where it would end up in a screenshot or a page cache (PHI-001). It's still sent\nwhen `hide-email` is set, so a host that already knows it can pre-fill Zocdoc's page.",
               "privacy": "public",
+              "default": "''",
               "type": {
                 "text": "string"
               }
@@ -6821,6 +6690,7 @@
               "name": "hideEmail",
               "description": "Leaves out the optional email field.",
               "privacy": "public",
+              "default": "false",
               "attribute": "hide-email",
               "type": {
                 "text": "boolean"
@@ -6854,17 +6724,6 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "removeEventListener",
-              "privacy": "public",
-              "type": {
-                "text": "TypedEventTarget<ZdSignInEventMap>['removeEventListener']"
-              },
-              "parsedType": {
-                "text": "{ <K extends \"sign-in-complete\" | \"sign-in-error\">(type: K, listener: (event: ZdSignInEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; <K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }"
               }
             },
             {
@@ -6934,6 +6793,7 @@
               "kind": "field",
               "name": "signInState",
               "privacy": "protected",
+              "default": "'idle'",
               "internal": true,
               "type": {
                 "text": "SignInState"
@@ -6956,6 +6816,7 @@
               "type": {
                 "text": "boolean"
               },
+              "default": "false",
               "fieldName": "hideEmail"
             }
           ],
@@ -6975,14 +6836,14 @@
               "name": "sign-in-complete",
               "description": "Emitted with `{}` once the patient is signed in. Read the token through `auth.getToken`.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<SignInCompleteDetail>"
               }
             },
             {
               "name": "sign-in-error",
               "description": "Emitted with `{ error }` when signing in, or completing a returned sign-in, fails.",
               "type": {
-                "text": "Event"
+                "text": "CustomEvent<ErrorDetail>"
               }
             }
           ],
@@ -6994,39 +6855,39 @@
           ],
           "cssParts": [
             {
-              "name": "zd-email",
+              "name": "email",
               "description": "The optional email field."
             },
             {
-              "name": "zd-error",
+              "name": "error",
               "description": "The alert shown when sign-in fails."
             },
             {
-              "name": "zd-form",
+              "name": "form",
               "description": "The sign-in form."
             },
             {
-              "name": "zd-heading",
+              "name": "heading",
               "description": "The heading wrapper."
             },
             {
-              "name": "zd-help",
+              "name": "help",
               "description": "The line saying sign-in finishes on Zocdoc."
             },
             {
-              "name": "zd-panel",
+              "name": "panel",
               "description": "The container, and the focus target after a successful sign-in."
             },
             {
-              "name": "zd-retry",
+              "name": "retry",
               "description": "The button in the alert that returns to the form."
             },
             {
-              "name": "zd-status",
+              "name": "status",
               "description": "The polite live region announcing loading and success."
             },
             {
-              "name": "zd-submit",
+              "name": "submit",
               "description": "The \"Continue with Zocdoc\" button."
             }
           ]

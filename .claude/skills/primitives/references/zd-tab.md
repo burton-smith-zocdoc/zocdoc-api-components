@@ -35,7 +35,7 @@ A single selectable tab in a tab list.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-tab-base` | The component's internal wrapper. | `CoreTab` |
+| `tab-base` | The component's internal wrapper. | `CoreTab` |
 
 ### CSS Custom Properties
 

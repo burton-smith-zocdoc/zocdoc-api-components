@@ -54,10 +54,10 @@ Describes or labels its anchor, showing supplementary text on hover and focus.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-body` | The tooltip's body. | `CoreTooltip` |
-| `zd-popup-arrow` | The popup's `arrow` part. Use this to target the tooltip's arrow. | `CoreTooltip` |
-| `zd-popup-base` | The popup's `popup` part. Use this to target the tooltip's popup container. | `CoreTooltip` |
-| `zd-tooltip-base` | The component's base wrapper, a `<ch-popup>` element. | `CoreTooltip` |
+| `body` | The tooltip's body. | `CoreTooltip` |
+| `popup-arrow` | The popup's `arrow` part. Use this to target the tooltip's arrow. | `CoreTooltip` |
+| `popup-base` | The popup's `popup` part. Use this to target the tooltip's popup container. | `CoreTooltip` |
+| `tooltip-base` | The component's base wrapper, a `<ch-popup>` element. | `CoreTooltip` |
 
 ### CSS Custom Properties
 

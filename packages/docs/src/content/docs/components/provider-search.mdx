@@ -39,22 +39,6 @@ The `<zd-provider-search>` component collects search criteria and fetches matchi
 ></zd-provider-search>
 ```
 
-## Attributes
-
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `zip-code` | `string` | — | Pre-fill ZIP code |
-| `specialty-id` | `string` | — | Pre-select specialty |
-| `insurance-plan-id` | `string` | — | Pre-select insurance plan |
-| `insurance-name` | `string` | — | Display name for insurance |
-
-## Events
-
-| Event | Detail | Description |
-|-------|--------|-------------|
-| `provider-results` | `{ providers, totalCount, page, pageSize, searchParameters, zipCode, specialtyId?, insurancePlanId?, insurancePlanName?, visitType? }` | Search returned results and the criteria used |
-| `provider-search-error` | `{ error }` | Search failed |
-
 ## Zocdoc API
 
 Loads specialties, visit reasons, and insurance plans from the [reference data](https://api-docs.zocdoc.com/guides/reference-data) endpoints, then searches `GET /v1/provider_locations`. A ZIP code is required. Sandbox ZIPs `11201` (results), `99734` (empty), and `10112` (error) drive each state. See [Test Scenarios](/zocdoc-api-components/guides/testing/#test-scenarios).
@@ -67,8 +51,8 @@ Loads specialties, visit reasons, and insurance plans from the [reference data](
 - While searching, two placeholder provider cards with loading availability grids stand in for results. They are hidden from assistive technology and marked `aria-busy`, and a single polite status region outside them announces "Searching…" instead
 - Skeleton shimmer stops under `prefers-reduced-motion: reduce`
 
-## Styling
+## API Reference
 
-| CSS Property | Default | Description |
-|--------------|---------|-------------|
-| `--zd-search-gap` | `1rem` | Spacing between form fields |
+```api-reference
+zd-provider-search
+```

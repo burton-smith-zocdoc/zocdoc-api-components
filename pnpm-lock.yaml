@@ -8,10 +8,10 @@ overrides:
   '@lit/reactive-element': 2.1.2
 
 patchedDependencies:
-  '@wc-toolkit/jsx-types@1.8.2': a236b4e4bdd3fab85430d33d95d06deb9e9320d634cc53e63f0af6042cb3577f
+  '@wc-toolkit/jsx-types@1.8.2': 043c221deb6cd8a2df108c1ff50a635d4834666cfc29a911499ce4535c807d92
   '@wc-toolkit/react-wrappers@1.2.11': 444b49a1aae3778f37c517330bcb62939782fde4507c5f53105d8601411a52f4
-  '@wc-toolkit/svelte-types@1.0.3': 5b6b0e6ca05b2b13cf31e9b9a1a4d16ae4cbf1c03a13719a15d7d711fa158320
-  '@wc-toolkit/vuejs-types@1.0.3': 88c72afd85238a9e0c60acacc24d44756f6e73fccd08cecb30c14521c5eb9936
+  '@wc-toolkit/svelte-types@1.0.3': d8f03afa5a80c2b031c0d60b0d7287399926e36716bcb9e82e93d6c8988e942c
+  '@wc-toolkit/vuejs-types@1.0.3': eea947a4cc9b1a7a747faf9cbedb720382261d3de37cbc28bd08ecda968bd00f
 
 importers:
 
@@ -32,6 +32,9 @@ importers:
       '@storybook/web-components-vite':
         specifier: ^10.5.5
         version: 10.5.5(esbuild@0.28.1)(lit@3.3.3)(rollup@4.62.4)(storybook@10.5.5(@types/react@19.2.18)(prettier@3.9.9)(react@19.2.8))(vite@7.3.6(@types/node@24.13.3)(lightningcss@1.33.0)(tsx@4.23.5))
+      '@types/mdast':
+        specifier: ^4.0.4
+        version: 4.0.4
       '@types/node':
         specifier: ^24.3.0
         version: 24.13.3
@@ -52,7 +55,7 @@ importers:
         version: 0.1.9
       '@wc-toolkit/jsx-types':
         specifier: ^1.8.2
-        version: 1.8.2(patch_hash=a236b4e4bdd3fab85430d33d95d06deb9e9320d634cc53e63f0af6042cb3577f)(prettier@3.9.9)
+        version: 1.8.2(patch_hash=043c221deb6cd8a2df108c1ff50a635d4834666cfc29a911499ce4535c807d92)(prettier@3.9.9)
       '@wc-toolkit/react-wrappers':
         specifier: ^1.2.11
         version: 1.2.11(patch_hash=444b49a1aae3778f37c517330bcb62939782fde4507c5f53105d8601411a52f4)(prettier@3.9.9)(react@19.2.8)
@@ -61,16 +64,22 @@ importers:
         version: 10.7.3(lit@3.3.3)(storybook@10.5.5(@types/react@19.2.18)(prettier@3.9.9)(react@19.2.8))
       '@wc-toolkit/svelte-types':
         specifier: ^1.0.3
-        version: 1.0.3(patch_hash=5b6b0e6ca05b2b13cf31e9b9a1a4d16ae4cbf1c03a13719a15d7d711fa158320)(prettier@3.9.9)
+        version: 1.0.3(patch_hash=d8f03afa5a80c2b031c0d60b0d7287399926e36716bcb9e82e93d6c8988e942c)(prettier@3.9.9)
       '@wc-toolkit/vuejs-types':
         specifier: ^1.0.3
-        version: 1.0.3(patch_hash=88c72afd85238a9e0c60acacc24d44756f6e73fccd08cecb30c14521c5eb9936)(prettier@3.9.9)
+        version: 1.0.3(patch_hash=eea947a4cc9b1a7a747faf9cbedb720382261d3de37cbc28bd08ecda968bd00f)(prettier@3.9.9)
       axe-core:
         specifier: ^4.12.1
         version: 4.12.1
       lit:
         specifier: ^3.2.1
         version: 3.3.3
+      mdast-util-directive:
+        specifier: ^3.1.0
+        version: 3.1.0
+      mdast-util-mdx-jsx:
+        specifier: ^3.2.0
+        version: 3.2.0
       oxfmt:
         specifier: ^0.62.0
         version: 0.62.0
@@ -80,12 +89,33 @@ importers:
       playwright:
         specifier: ^1.62.1
         version: 1.62.1
+      remark-directive:
+        specifier: ^4.0.0
+        version: 4.0.0
+      remark-gfm:
+        specifier: ^4.0.1
+        version: 4.0.1
+      remark-mdx:
+        specifier: ^3.1.1
+        version: 3.1.1
+      remark-parse:
+        specifier: ^11.0.0
+        version: 11.0.0
+      remark-stringify:
+        specifier: ^11.0.0
+        version: 11.0.0
       storybook:
         specifier: ^10.5.5
         version: 10.5.5(@types/react@19.2.18)(prettier@3.9.9)(react@19.2.8)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      unified:
+        specifier: ^11.0.5
+        version: 11.0.5
+      unist-util-visit:
+        specifier: ^5.1.0
+        version: 5.1.0
       vite:
         specifier: ^7.1.5
         version: 7.3.6(@types/node@24.13.3)(lightningcss@1.33.0)(tsx@4.23.5)
@@ -6272,7 +6302,7 @@ snapshots:
       postcss: 8.5.25
       typescript: 5.9.3
 
-  '@wc-toolkit/jsx-types@1.8.2(patch_hash=a236b4e4bdd3fab85430d33d95d06deb9e9320d634cc53e63f0af6042cb3577f)(prettier@3.9.9)':
+  '@wc-toolkit/jsx-types@1.8.2(patch_hash=043c221deb6cd8a2df108c1ff50a635d4834666cfc29a911499ce4535c807d92)(prettier@3.9.9)':
     dependencies:
       '@prettier/sync': 0.6.1(prettier@3.9.9)
       '@wc-toolkit/cem-generator': 0.1.8
@@ -6292,14 +6322,14 @@ snapshots:
       lit: 3.3.3
       storybook: 10.5.5(@types/react@19.2.18)(prettier@3.9.9)(react@19.2.8)
 
-  '@wc-toolkit/svelte-types@1.0.3(patch_hash=5b6b0e6ca05b2b13cf31e9b9a1a4d16ae4cbf1c03a13719a15d7d711fa158320)(prettier@3.9.9)':
+  '@wc-toolkit/svelte-types@1.0.3(patch_hash=d8f03afa5a80c2b031c0d60b0d7287399926e36716bcb9e82e93d6c8988e942c)(prettier@3.9.9)':
     dependencies:
       '@prettier/sync': 0.6.1(prettier@3.9.9)
       '@wc-toolkit/cem-generator': 0.1.8
     transitivePeerDependencies:
       - prettier
 
-  '@wc-toolkit/vuejs-types@1.0.3(patch_hash=88c72afd85238a9e0c60acacc24d44756f6e73fccd08cecb30c14521c5eb9936)(prettier@3.9.9)':
+  '@wc-toolkit/vuejs-types@1.0.3(patch_hash=eea947a4cc9b1a7a747faf9cbedb720382261d3de37cbc28bd08ecda968bd00f)(prettier@3.9.9)':
     dependencies:
       '@prettier/sync': 0.6.1(prettier@3.9.9)
       '@wc-toolkit/cem-generator': 0.1.8

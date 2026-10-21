@@ -30,7 +30,7 @@ The content region shown when its tab is selected.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-tab-panel-base` | The component's internal wrapper. | `CoreTabPanel` |
+| `tab-panel-base` | The component's internal wrapper. | `CoreTabPanel` |
 
 ### CSS Custom Properties
 

@@ -39,9 +39,9 @@ A small label or status indicator.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-badge-base` | The component's base wrapper. | `CoreBadge` |
-| `zd-badge-end` | The end slot container. | `CoreBadge` |
-| `zd-badge-start` | The start slot container. | `CoreBadge` |
+| `badge-base` | The component's base wrapper. | `CoreBadge` |
+| `badge-end` | The end slot container. | `CoreBadge` |
+| `badge-start` | The start slot container. | `CoreBadge` |
 
 ### CSS Custom Properties
 

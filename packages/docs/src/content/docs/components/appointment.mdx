@@ -19,13 +19,7 @@ The `<zd-appointment>` component loads a booked appointment by its ID, shows its
 
 The example uses the sandbox's confirmed appointment ID. In the docs it runs against the mock, which doesn't store anything, so a cancelled appointment comes back confirmed when you reload.
 
-## Attributes
-
-| Attribute        | Property        | Type      | Description                                                                                  |
-| ---------------- | --------------- | --------- | -------------------------------------------------------------------------------------------- |
-| `appointment-id` | `appointmentId` | `string`  | The `appointment_id` from booking. Changing it reloads                                       |
-| `provider-name`  | `providerName`  | `string`  | Optional. Shown in the Provider row until the provider lookup finishes, and kept if it fails |
-| `hide-photo`     | `hidePhoto`     | `boolean` | Leaves out the provider's photo                                                              |
+## Provider and Practice Details
 
 The component looks up the provider by the appointment's `provider_location_id` and shows their photo, name, specialty, and address. If that lookup fails, the appointment still shows: the Provider row falls back to `provider-name`, or is left out. No error appears and no `appointment-error` event fires, because the appointment itself loaded.
 
@@ -45,23 +39,11 @@ The appointment's status decides which actions appear:
 
 Cancelling asks for confirmation first, with an optional reason.
 
-## Methods
+## Cancelling and Rescheduling
 
-| Method                  | Description                                                                                           |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| `load()`                | Fetches the appointment again                                                                         |
-| `cancel(reasonType?)`   | Cancels without the confirmation step. `reasonType` is a `CancellationReasonType`                     |
-| `reschedule(startTime)` | Moves the appointment to `startTime`, a timeslot for its own location, visit reason, and patient type |
+`cancel()` and `reschedule(startTime)` are listed under [API Reference](#api-reference). While one action is in flight, a second call does nothing. Neither action retries by itself.
 
-While one action is in flight, a second call does nothing. Neither action retries by itself.
-
-## Events
-
-| Event                    | Detail                                 | Description                                                                                                                                                                     |
-| ------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `appointment-cancel`     | `{ appointmentId, status }`            | The appointment was cancelled                                                                                                                                                   |
-| `appointment-reschedule` | `{ appointmentId, status, startTime }` | The appointment moved. `status` may be `pending_reschedule` while the practice reviews it                                                                                       |
-| `appointment-error`      | `{ error, action, status? }`           | A lookup, cancel, or reschedule failed. `action` is `load`, `cancel`, or `reschedule`. `status` is set when the API returned `200` with an outcome that isn't the one asked for |
+## Handling Events
 
 The embedded picker's `availability-error` and `slot-select` events also bubble out.
 
@@ -89,18 +71,8 @@ See Zocdoc's [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointm
 - A failed action is announced as an alert
 - Focus moves to the panel on each change between viewing, cancelling, and choosing a time
 
-## Styling
+## API Reference
 
-| CSS part                                                                                                            | Element                                            |
-| ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `panel`                                                                                                             | The container for every mode, and the focus target |
-| `heading`                                                                                                           | The panel heading                                  |
-| `details`                                                                                                           | The details list                                   |
-| `appointment-status`, `provider`, `when`, `reference`                                                               | The individual details                             |
-| `waiting-room`, `phone`                                                                                             | The video visit link and the practice phone link   |
-| `notice`                                                                                                            | The status message after an action                 |
-| `action-error`                                                                                                      | The alert when an action fails                     |
-| `actions`, `reschedule`, `cancel`                                                                                   | The action row and its buttons                     |
-| `cancel-form`, `reason`, `confirm-cancel`, `keep`                                                                   | The cancel confirmation                            |
-| `picker`, `confirm-reschedule`, `back`                                                                              | The new-time step                                  |
-| `provider-summary`, `provider-photo`, `provider-detail`, `provider-name`, `provider-specialty`, `provider-location` | The looked-up provider                             |
+```api-reference
+zd-appointment
+```

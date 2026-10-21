@@ -24,18 +24,16 @@ The component doesn't configure the client. The host passes `auth.getToken` to
 
 | Attribute | Property | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `hide-email` | `hideEmail` | `boolean` | — | Leaves out the optional email field. |
-| — | `addEventListener` | `TypedEventTarget<ZdSignInEventMap>['addEventListener']` | — | — |
+| `hide-email` | `hideEmail` | `boolean` | `false` | Leaves out the optional email field. |
 | — | `auth` | `PatientAuth` | — | What signs the patient in. Required: without it the button is disabled. Setting a new one starts over from idle and completes any sign-in that returned to this page. |
-| — | `email` | `string` | — | The email field's value, sent to Zocdoc as `login_hint`. Property-only so it never lands in the DOM, where it would end up in a screenshot or a page cache (PHI-001). It's still sent when `hide-email` is set, so a host that already knows it can pre-fill Zocdoc's page. |
-| — | `removeEventListener` | `TypedEventTarget<ZdSignInEventMap>['removeEventListener']` | — | — |
+| — | `email` | `string` | `''` | The email field's value, sent to Zocdoc as `login_hint`. Property-only so it never lands in the DOM, where it would end up in a screenshot or a page cache (PHI-001). It's still sent when `hide-email` is set, so a host that already knows it can pre-fill Zocdoc's page. |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `sign-in-complete` | `Event` | Emitted with `{}` once the patient is signed in. Read the token through `auth.getToken`. |
-| `sign-in-error` | `Event` | Emitted with `{ error }` when signing in, or completing a returned sign-in, fails. |
+| `sign-in-complete` | `CustomEvent<SignInCompleteDetail>` | Emitted with `{}` once the patient is signed in. Read the token through `auth.getToken`. |
+| `sign-in-error` | `CustomEvent<ErrorDetail>` | Emitted with `{ error }` when signing in, or completing a returned sign-in, fails. |
 
 ## Slots
 
@@ -47,15 +45,15 @@ The component doesn't configure the client. The host passes `auth.getToken` to
 
 | Part | Description |
 | --- | --- |
-| `zd-email` | The optional email field. |
-| `zd-error` | The alert shown when sign-in fails. |
-| `zd-form` | The sign-in form. |
-| `zd-heading` | The heading wrapper. |
-| `zd-help` | The line saying sign-in finishes on Zocdoc. |
-| `zd-panel` | The container, and the focus target after a successful sign-in. |
-| `zd-retry` | The button in the alert that returns to the form. |
-| `zd-status` | The polite live region announcing loading and success. |
-| `zd-submit` | The "Continue with Zocdoc" button. |
+| `email` | The optional email field. |
+| `error` | The alert shown when sign-in fails. |
+| `form` | The sign-in form. |
+| `heading` | The heading wrapper. |
+| `help` | The line saying sign-in finishes on Zocdoc. |
+| `panel` | The container, and the focus target after a successful sign-in. |
+| `retry` | The button in the alert that returns to the form. |
+| `status` | The polite live region announcing loading and success. |
+| `submit` | The "Continue with Zocdoc" button. |
 
 ## Inherited
 

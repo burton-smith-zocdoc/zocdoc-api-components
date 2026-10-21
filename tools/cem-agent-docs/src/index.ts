@@ -1,7 +1,7 @@
 export { generateAgentDocs, selectComponents } from './generate.ts';
 export { runCli } from './cli.ts';
 export { cell, code, table } from './markdown.ts';
-export { renderComponentPage } from './render-component.ts';
+export { renderApiBody, renderComponentPage } from './render-component.ts';
 export { stylingSections } from './render-styling.ts';
 export { firstSentence, renderIndex } from './render-index.ts';
 export { isLiteralUnion, normalizeUnion, resolveType, splitUnion } from './resolve-type.ts';

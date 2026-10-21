@@ -1,6 +1,9 @@
 ---
 name: client
 description: API client layer patterns - endpoints, errors, caching, configuration. Use when working on packages/api-components/src/client/.
+metadata:
+  # For contributors to this repo; `npx skills add` offers only skills/ to consumers.
+  internal: true
 ---
 
 # API Client Reference

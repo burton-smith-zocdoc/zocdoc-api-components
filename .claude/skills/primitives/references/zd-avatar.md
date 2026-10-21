@@ -38,12 +38,12 @@ Displays an image or initials representing a person.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-avatar-background` | A wrapper around the default slot and image. | `CoreAvatar` |
-| `zd-avatar-base` | A wrapper for the entire avatar. | `CoreAvatar` |
-| `zd-avatar-icon` | A wrapper for the default slot fallback when no image or initials are present. | `CoreAvatar` |
-| `zd-avatar-image` | The image tag for the avatar. | `CoreAvatar` |
-| `zd-avatar-initials` | A wrapper for the user initials. | `CoreAvatar` |
-| `zd-avatar-status-container` | A wrapper for the status indicator. | `CoreAvatar` |
+| `avatar-background` | A wrapper around the default slot and image. | `CoreAvatar` |
+| `avatar-base` | A wrapper for the entire avatar. | `CoreAvatar` |
+| `avatar-icon` | A wrapper for the default slot fallback when no image or initials are present. | `CoreAvatar` |
+| `avatar-image` | The image tag for the avatar. | `CoreAvatar` |
+| `avatar-initials` | A wrapper for the user initials. | `CoreAvatar` |
+| `avatar-status-container` | A wrapper for the status indicator. | `CoreAvatar` |
 
 ### CSS Custom Properties
 

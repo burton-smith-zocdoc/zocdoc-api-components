@@ -47,14 +47,14 @@ Collapses items that no longer fit into an overflow menu.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `zd-overflow-base` | The component's base wrapper. | `CoreOverflow` |
-| `zd-overflow-content` | The container for the default slot. | `CoreOverflow` |
-| `zd-overflow-end` | The end slot. | `CoreOverflow` |
-| `zd-overflow-menu` | The menu for overflowed items. | `CoreOverflow` |
-| `zd-overflow-menu` | The menu for overflowed items. | `CoreOverflow` |
-| `zd-overflow-menu-item` | The menu item for overflowed items. | `CoreOverflow` |
-| `zd-overflow-start` | The start slot. | `CoreOverflow` |
-| `zd-overflow-trigger` | The trigger button for the overflow menu. | `CoreOverflow` |
+| `overflow-base` | The component's base wrapper. | `CoreOverflow` |
+| `overflow-content` | The container for the default slot. | `CoreOverflow` |
+| `overflow-end` | The end slot. | `CoreOverflow` |
+| `overflow-menu` | The menu for overflowed items. | `CoreOverflow` |
+| `overflow-menu` | The menu for overflowed items. | `CoreOverflow` |
+| `overflow-menu-item` | The menu item for overflowed items. | `CoreOverflow` |
+| `overflow-start` | The start slot. | `CoreOverflow` |
+| `overflow-trigger` | The trigger button for the overflow menu. | `CoreOverflow` |
 
 ### CSS Custom Properties
 

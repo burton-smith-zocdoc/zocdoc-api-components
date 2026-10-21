@@ -1,6 +1,9 @@
 ---
 name: primitives
 description: Reference for @zocdoc/api-primitive-components - Charm UX components with zd- prefix. Use when creating components that use primitives, or when you need to know what UI elements are available.
+metadata:
+  # For contributors to this repo; `npx skills add` offers only skills/ to consumers.
+  internal: true
 ---
 
 # Primitives Reference

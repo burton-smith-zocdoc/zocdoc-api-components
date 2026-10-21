@@ -21,7 +21,7 @@ const manifest = (): CemPackage =>
             kind: 'class',
             name: 'ZdButton',
             tagName: 'zd-button',
-            cssParts: [{ name: 'base' }],
+            cssParts: [{ name: 'base' }, { name: '${name}' }],
             cssProperties: [{ name: '--button-bg' }, { name: '--zd-already' }],
           },
           // Reproduces `"cssProperties": null` seen in the probe smoke test.
@@ -32,13 +32,20 @@ const manifest = (): CemPackage =>
   }) as unknown as CemPackage;
 
 describe('cssPrefixPlugin', () => {
-  it('prefixes css parts and custom properties with the given prefix', () => {
+  it('prefixes custom properties but leaves part names as the template writes them', () => {
     const m = manifest();
     // Invoke the real hook directly — cssPrefixPlugin returns a Plugin with afterGenerate.
     cssPrefixPlugin({ prefix: 'zd' }).afterGenerate?.(m);
     const decl = (m.modules[0].declarations as any[])[0];
-    expect(decl.cssParts[0].name).toBe('zd-base');
+    expect(decl.cssParts[0].name).toBe('base');
     expect(decl.cssProperties[0].name).toBe('--zd-button-bg');
+  });
+
+  it('drops a part name the template scan read from an interpolation', () => {
+    const m = manifest();
+    cssPrefixPlugin({ prefix: 'zd' }).afterGenerate?.(m);
+    const decl = (m.modules[0].declarations as any[])[0];
+    expect(decl.cssParts.map((p: { name: string }) => p.name)).toEqual(['base']);
   });
 
   it('does not double-prefix already-prefixed names', () => {

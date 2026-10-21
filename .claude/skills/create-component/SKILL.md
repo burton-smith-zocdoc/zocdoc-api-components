@@ -1,6 +1,9 @@
 ---
 name: create-component
 description: Step-by-step workflow for creating a new API component. Use when adding a component to packages/api-components.
+metadata:
+  # For contributors to this repo; `npx skills add` offers only skills/ to consumers.
+  internal: true
 ---
 
 # Create API Component
@@ -25,6 +28,9 @@ packages/api-components/src/components/<name>/
 import { CharmElement, ZdButton } from '@zocdoc/api-primitive-components';
 import { property, state } from 'lit/decorators.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
+// Every payload type in the event map is exported from this module — the generated framework
+// types import it from here, and `pnpm cem` fails on one that isn't.
+export type { ErrorDetail } from '../events.js';
 import { userFacingError } from '../internal/error-message.js';
 import {
   renderRequestState,
@@ -47,7 +53,8 @@ export interface Zd<Name>EventMap {
  * Description.
  *
  * @tag zd-<name>
- * @event <name>-result - Fires when the fetch succeeds
+ * @event <name>-result - Fires when the fetch succeeds. The manifest takes its type from the event map.
+ * @event <name>-error - Fires when the fetch fails
  * @csspart content - Main content area
  */
 export class Zd<Name> extends CharmElement {
@@ -256,6 +263,8 @@ export const Default: Story = {};
 - [ ] Axe accessibility tests for each state
 - [ ] `<name>.performance.ts` benchmark (TEST-004); ran `pnpm test:performance` on it
 - [ ] Row added to the Component Events table in `AGENTS.md`
+- [ ] Docs page in `packages/docs/src/content/docs/components/` ends with `## API Reference` and an
+      ` ```api-reference ` fence naming the tag — no hand-written API tables
 - [ ] Ran `pnpm run docs:check` (or `pnpm run cem && pnpm -r run cem`) and committed the
       regenerated `references/<tag>.md` page plus the updated
       `references/index.md` — a new component with no reference page is invisible to every

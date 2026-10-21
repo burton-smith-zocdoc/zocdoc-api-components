@@ -54,7 +54,7 @@
       }
     },
     {
-      "files": ["scripts/**", "*.config.ts", "*.config.mjs", ".storybook/**"],
+      "files": ["scripts/**", "skills/*/scripts/**", "*.config.ts", "*.config.mjs", ".storybook/**"],
       "env": {
         "node": true
       },
