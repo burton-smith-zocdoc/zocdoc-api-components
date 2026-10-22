@@ -6,6 +6,7 @@ project.scope.registerComponent(ZdProviderResults);
 export { ZdProviderResults };
 export type {
   PageChangeDetail,
+  ProviderAnnotation,
   ProviderDaySelectDetail,
   ProviderSelectDetail,
   ZdProviderResultsEventMap,

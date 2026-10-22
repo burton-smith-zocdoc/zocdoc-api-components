@@ -7,7 +7,7 @@ import {
 } from '@zocdoc/api-primitive-components';
 import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import type { AvailabilitySlot, PatientType } from '../../client/types.js';
+import type { AvailabilitySlot, PatientType, ProviderLocation } from '../../client/types.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 // Re-exported because the generated framework types import every event payload from this module.
 export type { ErrorDetail } from '../events.js';
@@ -18,6 +18,8 @@ import {
   windowSpan,
 } from '../../utilities/availability-window.js';
 import { userFacingError } from '../../utilities/error-message.js';
+import { handoffHref, navigateTo } from '../../utilities/handoff.js';
+import { hydrateFromMarkup, type HydrationShape } from '../../utilities/hydrate.js';
 import { addDays, dayKey, isValidDate, providerLocalTime } from '../../utilities/provider-time.js';
 import {
   renderRequestState,
@@ -62,10 +64,24 @@ export interface PatientTypeChangeDetail {
   patientType: PatientType;
 }
 
+/**
+ * The window a picker with supplied `timeslots` needs slots for. It's the same set of inputs a
+ * fetching picker would send to the API, so the host page can make that request itself.
+ */
+export interface AvailabilityRequestDetail {
+  providerLocationId: string;
+  visitReasonId?: string;
+  patientType: PatientType;
+  /** The window's first day, as `YYYY-MM-DD`, after falling back to today. */
+  startDate: string;
+  days: number;
+}
+
 export interface ZdAvailabilityPickerEventMap {
   'slot-select': CustomEvent<SlotSelectDetail>;
   'patient-type-change': CustomEvent<PatientTypeChangeDetail>;
   'availability-error': CustomEvent<ErrorDetail>;
+  'availability-request': CustomEvent<AvailabilityRequestDetail>;
 }
 
 /**
@@ -119,14 +135,24 @@ function groupHeading(group: DayGroup): string {
  * Emits the chosen slot rather than booking it, so it composes with `zd-patient-form` or
  * with a host page that owns its own booking step (COMP-002).
  *
+ * **Handoff.** A picker whose slots came from a JSON block has nobody listening to book with, so
+ * a tap goes to Zocdoc: the slot's `booking_url`, or the provider's `profile_url` when the slot
+ * has none (`booking_url` is often null). `disable-handoff` turns that off. The patient-type
+ * control is hidden in that mode too, since nobody would answer its `availability-request`;
+ * `interactive` shows it again for a page that will.
+ *
  * @tag zd-availability-picker
  * @event slot-select - Emitted with `{ startTime, providerLocationId }` when a time is
  *   chosen. `startTime` is the API's own string, offset included, so it can be handed
- *   back to `POST /v1/appointments` unmodified.
+ *   back to `POST /v1/appointments` unmodified. Cancelable: `preventDefault()` stops the
+ *   handoff to Zocdoc.
  * @event patient-type-change - Emitted with `{ patientType }` when the New/Existing control is
  *   used. A host page that books through its own step should follow it, since the same value has
  *   to go to `POST /v1/appointments`.
  * @event availability-error - Emitted with `{ error }` when the request fails.
+ * @event availability-request - Emitted with `{ providerLocationId, visitReasonId, patientType,
+ *   startDate, days }` instead of a fetch when `timeslots` is supplied and one of those inputs
+ *   changes. The host page answers by setting `timeslots` again.
  * @csspart patient-type - The New/Existing patient control.
  * @csspart patient-type-option - One option of that control.
  * @csspart days - The strip of days with availability. `strip` layout only.
@@ -219,8 +245,46 @@ export class ZdAvailabilityPicker extends CharmElement {
   @property({ attribute: 'selected-start-time' })
   public selectedStartTime?: string;
 
+  /**
+   * The slots to show, when the host page already has them.
+   *
+   * `undefined` means "not supplied", which lets this component fetch its own; `[]` means
+   * "supplied, and there are none", which renders the empty state and asks for nothing. While
+   * supplied, a change to the window or the patient type emits `availability-request` instead
+   * of fetching.
+   */
+  @property({ attribute: false })
+  public timeslots?: readonly AvailabilitySlot[];
+
+  /**
+   * Whether the host is loading availability it supplies through `timeslots`.
+   *
+   * Set this while replacing supplied slots to keep stale times out of view and announce loading.
+   * It does not start a request.
+   */
+  @property({ type: Boolean })
+  public loading = false;
+
+  /**
+   * The provider the slots belong to. Only read for its `profile_url`, where a slot tap goes in
+   * handoff mode when the slot has no `booking_url`.
+   */
+  @property({ attribute: false })
+  public provider?: ProviderLocation;
+
+  /** Stops a picker hydrated from markup from sending a slot tap to Zocdoc. */
+  @property({ type: Boolean, attribute: 'disable-handoff' })
+  public disableHandoff = false;
+
+  /**
+   * Says the page will answer `availability-request` itself, so a picker hydrated from markup
+   * keeps its patient-type control.
+   */
+  @property({ type: Boolean })
+  public interactive = false;
+
   @state()
-  private slots: AvailabilitySlot[] = [];
+  private fetched: readonly AvailabilitySlot[] = [];
 
   @state()
   private requestState: RequestState = 'idle';
@@ -237,7 +301,27 @@ export class ZdAvailabilityPicker extends CharmElement {
    * sets them once the user has picked a provider. Reactive state set before the first
    * await lands in the update already in flight, so the loading state paints immediately.
    */
+  /**
+   * The properties a page can supply as inline JSON blocks, and the shape each must parse to:
+   * `<script type="application/json" data-zd-prop="{name}">`. A property set by script wins.
+   */
+  public static hydratable: Readonly<Record<string, HydrationShape>> = {
+    timeslots: 'array',
+    provider: 'object',
+  };
+
+  /** Whether any property came from a JSON block, read on the first update. */
+  protected hydrated = false;
+
+  /** Whether a slot tap goes to Zocdoc: data from markup, and the page hasn't opted out. */
+  protected get handingOff(): boolean {
+    return this.hydrated && !this.disableHandoff;
+  }
+
   protected override willUpdate(changed: PropertyValues<this>): void {
+    // Applied here, so a supplied `timeslots` is in `changed` and no fetch or request starts.
+    if (!this.hasUpdated) this.hydrated = hydrateFromMarkup(this, ZdAvailabilityPicker.hydratable);
+
     if (
       changed.has('providerLocationId') ||
       changed.has('visitReasonId') ||
@@ -245,8 +329,39 @@ export class ZdAvailabilityPicker extends CharmElement {
       changed.has('startDate') ||
       changed.has('days')
     ) {
+      if (this.timeslots === undefined) void this.load();
+      // Slots set in the same update already answer the new inputs, as on first render.
+      else if (!changed.has('timeslots')) this.requestAvailability();
+    } else if (changed.has('timeslots') && this.timeslots === undefined) {
       void this.load();
     }
+
+    if (changed.has('timeslots') && this.timeslots !== undefined) {
+      this.activeDay = this.dayKeys[0];
+      this.requestState = this.timeslots.length === 0 ? 'empty' : 'success';
+      this.errorMessage = undefined;
+    }
+  }
+
+  /** The slots on show: the host page's when it supplied them, otherwise the last fetch. */
+  protected get slots(): readonly AvailabilitySlot[] {
+    return this.timeslots ?? this.fetched;
+  }
+
+  /** Asks the host page for the current window, since supplied slots aren't this component's to fetch. */
+  protected requestAvailability(): void {
+    const providerLocationId = this.providerLocationId;
+    if (!providerLocationId) return;
+
+    this.emit('availability-request', {
+      detail: {
+        providerLocationId,
+        visitReasonId: this.visitReasonId,
+        patientType: this.patientType,
+        startDate: this.windowStart,
+        days: this.days,
+      },
+    });
   }
 
   /** The window's first day, falling back to today for an unset or unparseable `start-date`. */
@@ -257,6 +372,9 @@ export class ZdAvailabilityPicker extends CharmElement {
   /** Fetches availability. Safe to call repeatedly; stays idle without both ids. */
   public async load(): Promise<void> {
     const providerLocationId = this.providerLocationId;
+
+    // Supplied slots are the host page's, and fetching over them would race its own request.
+    if (this.timeslots !== undefined) return;
 
     if (!providerLocationId || !this.visitReasonId) {
       this.requestState = 'idle';
@@ -269,7 +387,7 @@ export class ZdAvailabilityPicker extends CharmElement {
     const startDate = this.windowStart;
 
     try {
-      this.slots = await getLocationSlots({
+      this.fetched = await getLocationSlots({
         providerLocationId,
         visitReasonId: this.visitReasonId,
         patientType: this.patientType,
@@ -341,7 +459,16 @@ export class ZdAvailabilityPicker extends CharmElement {
     if (!providerLocationId) return;
 
     this.selectedStartTime = slot.start_time;
-    this.emit('slot-select', { detail: { startTime: slot.start_time, providerLocationId } });
+    const event = this.emit('slot-select', {
+      detail: { startTime: slot.start_time, providerLocationId },
+      cancelable: true,
+    });
+    if (!this.handingOff || event.defaultPrevented) return;
+
+    const href =
+      handoffHref(slot.booking_url, 'availability-picker') ??
+      handoffHref(this.provider?.provider.profile_url, 'availability-picker');
+    if (href) navigateTo(href);
   }
 
   /**
@@ -477,7 +604,7 @@ export class ZdAvailabilityPicker extends CharmElement {
    * keys with it. Grouped and labelled rather than left as two bare controls (A11Y-004).
    */
   protected renderPatientType(): unknown {
-    if (this.hidePatientType) return nothing;
+    if (this.hidePatientType || (this.handingOff && !this.interactive)) return nothing;
 
     return this.html`
       <scoped-button-group
@@ -527,9 +654,10 @@ export class ZdAvailabilityPicker extends CharmElement {
    * screen reader still announces it (A11Y-002).
    */
   protected override render(): unknown {
+    const requestState = this.loading ? 'loading' : this.requestState;
     return this.html`
       ${this.renderPatientType()}
-      ${renderRequestState(this.requestState, {
+      ${renderRequestState(requestState, {
         emptyMessage: 'No appointments available in this range.',
         errorMessage: this.errorMessage,
         loadingMessage: 'Loading appointment times…',
@@ -538,15 +666,15 @@ export class ZdAvailabilityPicker extends CharmElement {
         // placeholders and what replaces them share one container.
         children: () => nothing,
       })}
-      <div class="days-region" aria-busy=${this.requestState === 'loading' ? 'true' : 'false'}>
-        ${this.renderDaysRegion()}
+      <div class="days-region" aria-busy=${requestState === 'loading' ? 'true' : 'false'}>
+        ${this.renderDaysRegion(requestState)}
       </div>
     `;
   }
 
-  protected renderDaysRegion(): unknown {
-    if (this.requestState === 'loading') return this.renderLoadingDays();
-    if (this.requestState !== 'success') return nothing;
+  protected renderDaysRegion(requestState: RequestState = this.requestState): unknown {
+    if (requestState === 'loading') return this.renderLoadingDays();
+    if (requestState !== 'success') return nothing;
 
     return this.layout === 'stacked'
       ? this.renderDayGroups()

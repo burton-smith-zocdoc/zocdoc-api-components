@@ -51,6 +51,7 @@ export default defineConfig({
             { label: 'Architecture', slug: 'guides/architecture' },
             { label: 'Composed vs Single Element', slug: 'guides/composed-vs-single' },
             { label: 'Framework Integration', slug: 'guides/frameworks' },
+            { label: 'Markup and Supplied Data', slug: 'guides/markup-and-supplied-data' },
             { label: 'Theming', slug: 'guides/theming' },
             { label: 'Testing', slug: 'guides/testing' },
           ],

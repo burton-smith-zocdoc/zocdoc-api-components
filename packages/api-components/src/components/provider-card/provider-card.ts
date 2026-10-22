@@ -5,33 +5,57 @@ import {
   ZdCard,
   ZdIcon,
   ZdSkeleton,
-} from "@zocdoc/api-primitive-components";
-import { nothing } from "lit";
-import { property } from "lit/decorators.js";
-import type { ProviderLocation } from "../../client/types.js";
-import type { TypedEmit, TypedEventTarget } from "../events.js";
+} from '@zocdoc/api-primitive-components';
+import { nothing, type PropertyValues } from 'lit';
+import { property, state } from 'lit/decorators.js';
+import type { ProviderLocation } from '../../client/types.js';
+import { handoffHref, navigateTo } from '../../utilities/handoff.js';
+import { hydrateFromMarkup, type HydrationShape } from '../../utilities/hydrate.js';
+import type { TypedEmit, TypedEventTarget } from '../events.js';
 import {
   providerHeading,
   providerLocationLine,
   providerPhotoUrl,
-} from "../../utilities/provider-summary.js";
-import styles from "./provider-card.styles.js";
+} from '../../utilities/provider-summary.js';
+import styles from './provider-card.styles.js';
 
 export interface ProfileRequestDetail {
   provider: ProviderLocation;
 }
 
+/** The provider the patient chose "Book now" for. */
+export interface BookSelectDetail {
+  provider: ProviderLocation;
+}
+
+/** The annotation slots, in the order they render: after the specialty, before the badges. */
+const ANNOTATION_SLOTS = ['reason', 'review', 'sponsored'] as const;
+
+/** The slots whose content the card tracks: the annotations, and whether it has times to tap. */
+type TrackedSlot = (typeof ANNOTATION_SLOTS)[number] | 'availability';
+
 export interface ZdProviderCardEventMap {
-  "profile-request": CustomEvent<ProfileRequestDetail>;
+  'profile-request': CustomEvent<ProfileRequestDetail>;
+  'book-select': CustomEvent<BookSelectDetail>;
 }
 
 /**
  * Displays a provider's photo, name, specialty, location, and insurance status
  * in a horizontal card layout with a slot for availability.
  *
+ * **Handoff.** A card whose provider came from a JSON block, or that `zd-provider-results` marks
+ * with `handoff`, shows a "Book now" link to the provider's Zocdoc profile when it has no times
+ * of its own to tap. It needs a `profile_url` on Zocdoc over `https:`; without one there is no
+ * link. `disable-handoff` turns it off.
+ *
  * @tag zd-provider-card
  * @event profile-request - Emitted with `{ provider }` when the provider's name is clicked.
+ * @event book-select - Emitted with `{ provider }` when "Book now" is chosen. Cancelable:
+ *   `preventDefault()` keeps the patient on the page.
  * @slot availability - Content to display on the right side (typically zd-availability-grid).
+ * @slot reason - One line on why this provider fits the search, shown below the specialty.
+ * @slot review - A verified review snippet, shown below the reason.
+ * @slot sponsored - The label for a paid placement, shown below the review.
  * @slot badges - Content to display below the insurance line (badges, awards).
  * @csspart photo - The avatar element.
  * @csspart details - The text column.
@@ -39,22 +63,37 @@ export interface ZdProviderCardEventMap {
  * @csspart specialty - The specialty line.
  * @csspart location - The distance and address line.
  * @csspart insurance - The network status line.
+ * @csspart book - The "Book now" link, shown in handoff mode.
+ * @csspart reason - The wrapper around the `reason` slot, hidden while the slot is empty.
+ * @csspart review - The wrapper around the `review` slot, hidden while the slot is empty.
+ * @csspart sponsored - The wrapper around the `sponsored` slot, hidden while the slot is empty.
  * @csspart skeleton - Each placeholder shown while `loading` is set.
  */
 export class ZdProviderCard extends CharmElement {
-  public static override baseName = "provider-card";
+  public static override baseName = 'provider-card';
 
-  declare public addEventListener: TypedEventTarget<ZdProviderCardEventMap>["addEventListener"];
-  declare public removeEventListener: TypedEventTarget<ZdProviderCardEventMap>["removeEventListener"];
+  declare public addEventListener: TypedEventTarget<ZdProviderCardEventMap>['addEventListener'];
+  declare public removeEventListener: TypedEventTarget<ZdProviderCardEventMap>['removeEventListener'];
   declare protected emit: TypedEmit<ZdProviderCardEventMap>;
 
-  public static override styles = [
-    ...super.styles,
-    styles,
-  ] as typeof CharmElement.styles;
+  public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [ZdCard, ZdAvatar, ZdButton, ZdIcon, ZdSkeleton];
+  }
+
+  /**
+   * The properties a page can supply as inline JSON blocks, and the shape each must parse to:
+   * `<script type="application/json" data-zd-prop="{name}">`. A property set by script wins.
+   */
+  public static hydratable: Readonly<Record<string, HydrationShape>> = { provider: 'object' };
+
+  /** Whether any property came from a JSON block, read on the first update. */
+  protected hydrated = false;
+
+  protected override willUpdate(changed: PropertyValues<this>): void {
+    if (!this.hasUpdated) this.hydrated = hydrateFromMarkup(this, ZdProviderCard.hydratable);
+    super.willUpdate(changed);
   }
 
   /**
@@ -73,24 +112,105 @@ export class ZdProviderCard extends CharmElement {
    * Hides the provider's photo, which otherwise renders from Zocdoc's image CDN
    * (see `ProviderSummaryOptions.hidePhoto`).
    */
-  @property({ type: Boolean, attribute: "hide-photo" })
+  @property({ type: Boolean, attribute: 'hide-photo' })
   public hidePhoto = false;
 
   /**
    * The insurance plan name the search was run with. Enables the network
    * status line when provided.
    */
-  @property({ attribute: "insurance-name" })
+  @property({ attribute: 'insurance-name' })
   public insuranceName?: string;
+
+  /**
+   * Puts the card in handoff mode as if its provider had come from a JSON block. Set by
+   * `zd-provider-results` on the cards of a hydrated list, which only ever show day counts, so the
+   * card shows "Book now" even with availability slotted in.
+   */
+  @property({ attribute: false })
+  public handoff = false;
+
+  /** Stops a card in handoff mode from showing "Book now". */
+  @property({ type: Boolean, attribute: 'disable-handoff' })
+  public disableHandoff = false;
+
+  /** The slots that have content, so an empty one leaves no gap in the column. */
+  @state() protected filledSlots: ReadonlySet<TrackedSlot> = new Set();
+
+  /** Whether "Book now" can show: data from markup or a hydrated parent, and not opted out. */
+  protected get handingOff(): boolean {
+    return (this.hydrated || this.handoff) && !this.disableHandoff;
+  }
+
+  /** Where "Book now" goes, or `undefined` when it shouldn't render. */
+  protected get bookHref(): string | undefined {
+    if (!this.handingOff) return undefined;
+    // A card with times of its own lets the patient tap one of those instead.
+    if (!this.handoff && this.filledSlots.has('availability')) return undefined;
+    return handoffHref(this.provider?.provider.profile_url, 'provider-card');
+  }
+
+  /** Emits `book-select`, then follows the link unless a listener kept the patient here. */
+  protected handleBookClick(event: MouseEvent, href: string): void {
+    // Charm's `click()` on a link button fires on the host and then again on its inner `<a>`. Only
+    // the `<a>` one is the tap, which is all a pointer or the keyboard ever produces.
+    if (event.composedPath()[0] === event.currentTarget) return;
+    // Always stopped, so an iframe opens a new tab rather than loading Zocdoc in the frame.
+    event.preventDefault();
+    if (!this.provider) return;
+
+    const selected = this.emit('book-select', {
+      detail: { provider: this.provider },
+      cancelable: true,
+    });
+    if (!selected.defaultPrevented) navigateTo(href);
+  }
+
+  protected renderBook(): unknown {
+    const href = this.bookHref;
+    if (!href) return nothing;
+
+    return this.html`
+      <scoped-button
+        class="book"
+        part="book"
+        variant="primary"
+        href=${href}
+        @click=${(event: MouseEvent) => this.handleBookClick(event, href)}
+      >
+        Book now
+      </scoped-button>
+    `;
+  }
+
+  protected handleSlotChange(name: TrackedSlot, event: Event): void {
+    const filled = (event.target as HTMLSlotElement).assignedNodes({ flatten: true }).length > 0;
+    if (filled === this.filledSlots.has(name)) return;
+
+    const next = new Set(this.filledSlots);
+    if (filled) next.add(name);
+    else next.delete(name);
+    this.filledSlots = next;
+  }
+
+  protected renderAnnotations(): unknown {
+    return ANNOTATION_SLOTS.map(
+      (name) => this.html`
+        <div class="annotation ${name}" part=${name} ?hidden=${!this.filledSlots.has(name)}>
+          <slot name=${name} @slotchange=${(event: Event) => this.handleSlotChange(name, event)}></slot>
+        </div>
+      `
+    );
+  }
 
   /**
    * Derives initials from the provider's name for the avatar fallback.
    */
   protected providerInitials(): string {
     const provider = this.provider?.provider;
-    const first = provider?.first_name?.[0] ?? "";
-    const last = provider?.last_name?.[0] ?? "";
-    return (first + last).toUpperCase() || "?";
+    const first = provider?.first_name?.[0] ?? '';
+    const last = provider?.last_name?.[0] ?? '';
+    return (first + last).toUpperCase() || '?';
   }
 
   protected renderAvatar(): unknown {
@@ -117,17 +237,16 @@ export class ZdProviderCard extends CharmElement {
     if (!this.insuranceName || !this.provider) return nothing;
 
     const acceptance = this.provider.accepts_patient_insurance;
-    if (acceptance !== "accepted" && acceptance !== "not_accepted")
-      return nothing;
+    if (acceptance !== 'accepted' && acceptance !== 'not_accepted') return nothing;
 
-    const status = acceptance === "accepted" ? "In-network" : "Out-of-network";
+    const status = acceptance === 'accepted' ? 'In-network' : 'Out-of-network';
     return this
       .html`<span class="insurance" part="insurance"><scoped-icon name="insurance-accepted"></scoped-icon>${status} · ${this.insuranceName}</span>`;
   }
 
   protected handleNameClick(): void {
     if (!this.provider) return;
-    this.emit("profile-request", { detail: { provider: this.provider } });
+    this.emit('profile-request', { detail: { provider: this.provider } });
   }
 
   /**
@@ -187,15 +306,17 @@ export class ZdProviderCard extends CharmElement {
                   </button>
                 </h3>
                 ${specialty ? this.html`<h4 class="specialty" part="specialty">${specialty}</h4>` : nothing}
+                ${this.renderAnnotations()}
               </div>
             </div>
             <div class="details">
               ${location ? this.html`<span class="location" part="location"><scoped-icon name=${this.provider.provider_location_type === 'virtual_provider' ? 'video-filled' : 'location-pin'}></scoped-icon>${location}</span>` : nothing}
               ${this.renderInsurance()}
               <slot name="badges"></slot>
+              ${this.renderBook()}
             </div>
           </div>
-          <slot name="availability"></slot>
+          <slot name="availability" @slotchange=${(event: Event) => this.handleSlotChange('availability', event)}></slot>
         </div>
       </scoped-card>
     `;

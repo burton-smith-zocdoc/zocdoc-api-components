@@ -35,8 +35,10 @@ export type { AvailabilityWindowDetail, DetailOf, ErrorDetail } from './componen
 export {
   ZdAppointment,
   type AppointmentCancelDetail,
+  type AppointmentCancelRequestDetail,
   type AppointmentErrorDetail,
   type AppointmentRescheduleDetail,
+  type AppointmentRescheduleRequestDetail,
   type ZdAppointmentEventMap,
 } from './components/appointment/index.js';
 export {
@@ -51,6 +53,7 @@ export {
 } from './components/availability-window/index.js';
 export {
   ZdAvailabilityPicker,
+  type AvailabilityRequestDetail,
   type PatientTypeChangeDetail,
   type SlotSelectDetail,
   type ZdAvailabilityPickerEventMap,
@@ -73,6 +76,7 @@ export {
 export { ZdProviderProfile } from './components/provider-profile/index.js';
 export {
   ZdProviderCard,
+  type BookSelectDetail,
   type ProfileRequestDetail,
   type ZdProviderCardEventMap,
 } from './components/provider-card/index.js';
@@ -80,6 +84,7 @@ export { ZdProviderSummary } from './components/provider-summary/index.js';
 export {
   ZdProviderResults,
   type PageChangeDetail,
+  type ProviderAnnotation,
   type ProviderDaySelectDetail,
   type ProviderSelectDetail,
   type ZdProviderResultsEventMap,
@@ -87,6 +92,7 @@ export {
 export {
   ZdProviderSearch,
   type ProviderResultsDetail,
+  type ProviderSearchRequestDetail,
   type ZdProviderSearchEventMap,
 } from './components/provider-search/index.js';
 export {

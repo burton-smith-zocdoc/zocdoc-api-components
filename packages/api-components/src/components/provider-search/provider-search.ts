@@ -6,16 +6,12 @@ import {
   type ProviderSearchResult,
 } from '../../client/provider-locations.js';
 import { getInsurancePlans, getSpecialties } from '../../client/reference-data.js';
-import type {
-  InsurancePlan,
-  ProviderLocation,
-  Specialty,
-  VisitType,
-} from '../../client/types.js';
+import type { InsurancePlan, ProviderLocation, Specialty, VisitType } from '../../client/types.js';
 import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 // Re-exported because the generated framework types import every event payload from this module.
 export type { ErrorDetail } from '../events.js';
 import { userFacingError } from '../../utilities/error-message.js';
+import { hydrateFromMarkup, type HydrationShape } from '../../utilities/hydrate.js';
 import { NO_PROVIDERS_MATCH } from '../../utilities/messages.js';
 import {
   renderRequestState,
@@ -59,9 +55,24 @@ export interface ProviderResultsDetail {
   visitType?: VisitType;
 }
 
+/**
+ * The search a `supplied` form wants run. The criteria are the ones `searchProviderLocations`
+ * takes, already validated, so the host page can send them to the API as they are.
+ */
+export interface ProviderSearchRequestDetail {
+  zipCode: string;
+  specialtyId?: string;
+  insurancePlanId?: string;
+  visitType?: VisitType;
+  maxDistanceToPatientMi?: number;
+  page: number;
+  pageSize?: number;
+}
+
 export interface ZdProviderSearchEventMap {
   'provider-results': CustomEvent<ProviderResultsDetail>;
   'provider-search-error': CustomEvent<ErrorDetail>;
+  'provider-search-request': CustomEvent<ProviderSearchRequestDetail>;
 }
 
 /** The fields this form validates, in render order — which is the order errors are visited. */
@@ -81,6 +92,11 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  * rather than surfacing as a failed search (CLIENT-003, A11Y-004). This component does not
  * collect a visit reason; the API defaults to "any" for the chosen specialty.
  *
+ * **Supplied mode.** A host page that makes its own API calls, such as an MCP server, sets
+ * `supplied`, and can hand over `specialties` and `insurancePlans` so the selects need no
+ * lookups. A submit or page change then emits `provider-search-request` instead of searching.
+ * The host sets `loading` while it fetches and gives the results to its own `zd-provider-results`.
+ *
  * @tag zd-provider-search
  * @event provider-results - Emitted with `{ providers, totalCount, searchParameters, zipCode,
  *   specialtyId, insurancePlanId, visitType, page, pageSize }` on a successful search,
@@ -89,6 +105,9 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  *   changed in these fields. `totalCount` and `pageSize` are what a pager needs, and only the
  *   envelope has them — `providers` holds one page.
  * @event provider-search-error - Emitted with `{ error }` when the request fails.
+ * @event provider-search-request - Emitted with `{ zipCode, specialtyId, insurancePlanId,
+ *   visitType, maxDistanceToPatientMi, page, pageSize }` instead of a search when `supplied` is
+ *   set. Only valid criteria are sent: field validation runs first, as it does before a search.
  * @csspart form - The search form.
  * @csspart specialty-field - The specialty select with its label.
  * @csspart specialty - The specialty select.
@@ -110,7 +129,14 @@ export class ZdProviderSearch extends CharmElement {
   public static override styles = [...super.styles, styles] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdButton, ZdIcon, ZdSkeleton, ZdProviderCard, ZdAvailabilityGrid, ...requestStateDependencies];
+    return [
+      ZdButton,
+      ZdIcon,
+      ZdSkeleton,
+      ZdProviderCard,
+      ZdAvailabilityGrid,
+      ...requestStateDependencies,
+    ];
   }
 
   /** The ZIP code to search. Required by the API — there is no search-everywhere mode. */
@@ -150,11 +176,33 @@ export class ZdProviderSearch extends CharmElement {
   @property({ type: Number, attribute: 'page-size' })
   public pageSize?: number;
 
-  @state()
-  private specialties: Specialty[] = [];
+  /**
+   * Requests searches from the host page instead of running them. A submit or page change emits
+   * `provider-search-request`, and nothing here calls the search API.
+   */
+  @property({ type: Boolean })
+  public supplied = false;
+
+  /**
+   * Whether the host page is running a search for a `supplied` form. Shows the same loading state
+   * as a search of this component's own. It does not start a request.
+   */
+  @property({ type: Boolean })
+  public loading = false;
+
+  /** The specialty options, when the host page has them. Skips that lookup. */
+  @property({ attribute: false })
+  public specialties?: Specialty[];
+
+  /** The insurance plan options, when the host page has them. Skips that lookup. */
+  @property({ attribute: false })
+  public insurancePlans?: InsurancePlan[];
 
   @state()
-  private insurancePlans: InsurancePlan[] = [];
+  private fetchedSpecialties: Specialty[] = [];
+
+  @state()
+  private fetchedInsurancePlans: InsurancePlan[] = [];
 
   @state()
   private requestState: RequestState = 'idle';
@@ -174,9 +222,25 @@ export class ZdProviderSearch extends CharmElement {
    */
   private searchedPage?: number;
 
+  /**
+   * The properties a page can supply as inline JSON blocks, and the shape each must parse to:
+   * `<script type="application/json" data-zd-prop="{name}">`. A property set by script wins.
+   */
+  public static hydratable: Readonly<Record<string, HydrationShape>> = {
+    specialties: 'array',
+    insurancePlans: 'array',
+  };
+
+  /** Whether any property came from a JSON block, read on the first update. */
+  protected hydrated = false;
+
+  /**
+   * The first load runs in `willUpdate`, after the JSON blocks are read, so a supplied list is
+   * never fetched. A reconnect loads again, which retries a list that failed.
+   */
   public override connectedCallback(): void {
     super.connectedCallback();
-    void this.loadReferenceData();
+    if (this.hasUpdated) void this.loadReferenceData();
   }
 
   /**
@@ -187,6 +251,11 @@ export class ZdProviderSearch extends CharmElement {
    * map is what keeps `handleSubmit`'s own reset to page 0 from searching twice.
    */
   protected override willUpdate(changed: PropertyValues<this>): void {
+    if (!this.hasUpdated) {
+      this.hydrated = hydrateFromMarkup(this, ZdProviderSearch.hydratable);
+      void this.loadReferenceData();
+    }
+
     if (this.searchedPage !== undefined && this.searchedPage !== this.page) {
       void this.search();
     }
@@ -199,13 +268,25 @@ export class ZdProviderSearch extends CharmElement {
    * for the search itself failing.
    */
   protected async loadReferenceData(): Promise<void> {
+    // Only the lists the host page didn't supply. Each lookup is cached, so a list supplied later
+    // costs nothing but the one request.
     const [specialties, insurancePlans] = await Promise.all([
-      getSpecialties().catch(() => []),
-      getInsurancePlans().catch(() => []),
+      this.specialties ? undefined : getSpecialties().catch(() => []),
+      this.insurancePlans ? undefined : getInsurancePlans().catch(() => []),
     ]);
 
-    this.specialties = specialties;
-    this.insurancePlans = insurancePlans;
+    if (specialties) this.fetchedSpecialties = specialties;
+    if (insurancePlans) this.fetchedInsurancePlans = insurancePlans;
+  }
+
+  /** The specialty options on show: the host page's when supplied, otherwise the fetched list. */
+  protected get specialtyOptions(): Specialty[] {
+    return this.specialties ?? this.fetchedSpecialties;
+  }
+
+  /** The insurance plan options on show: the host page's when supplied, otherwise the fetched list. */
+  protected get insurancePlanOptions(): InsurancePlan[] {
+    return this.insurancePlans ?? this.fetchedInsurancePlans;
   }
 
   /**
@@ -263,20 +344,28 @@ export class ZdProviderSearch extends CharmElement {
       return;
     }
 
+    const criteria: ProviderSearchRequestDetail = {
+      zipCode: this.zipCode,
+      specialtyId: this.specialtyId,
+      insurancePlanId: this.insurancePlanId,
+      visitType: this.visitType,
+      maxDistanceToPatientMi: this.maxDistanceToPatientMi,
+      page: this.page,
+      pageSize: this.pageSize,
+    };
+
+    // The host page runs the search and owns `loading`, so the request state stays where it is.
+    if (this.supplied) {
+      this.emit('provider-search-request', { detail: criteria });
+      return;
+    }
+
     this.requestState = 'loading';
     this.errorMessage = undefined;
 
     try {
       const { providerLocations, totalCount, pageSize, searchParameters } =
-        await searchProviderLocations({
-          zipCode: this.zipCode,
-          specialtyId: this.specialtyId,
-          insurancePlanId: this.insurancePlanId,
-          visitType: this.visitType,
-          maxDistanceToPatientMi: this.maxDistanceToPatientMi,
-          page: this.page,
-          pageSize: this.pageSize,
-        });
+        await searchProviderLocations(criteria);
 
       this.requestState = providerLocations.length === 0 ? 'empty' : 'success';
 
@@ -299,7 +388,8 @@ export class ZdProviderSearch extends CharmElement {
           zipCode: this.zipCode,
           specialtyId: this.specialtyId,
           insurancePlanId: this.insurancePlanId,
-          insurancePlanName: this.insurancePlans.find((p) => p.id === this.insurancePlanId)?.name,
+          insurancePlanName: this.insurancePlanOptions.find((p) => p.id === this.insurancePlanId)
+            ?.name,
           visitType: this.visitType,
           page: this.page,
           // The size the response was built with, not `this.pageSize`, which is usually unset —
@@ -382,7 +472,8 @@ export class ZdProviderSearch extends CharmElement {
   }
 
   protected override render(): unknown {
-    const loading = this.requestState === 'loading';
+    const requestState: RequestState = this.loading ? 'loading' : this.requestState;
+    const loading = requestState === 'loading';
     const errorMessage = this.fieldErrors.specialty || this.fieldErrors.zip;
 
     return this.html`
@@ -399,7 +490,7 @@ export class ZdProviderSearch extends CharmElement {
             }}
           >
             <option value="" .selected=${!this.specialtyId}>Condition, procedure or doctor name</option>
-            ${this.optionsFor(this.specialties, this.specialtyId)}
+            ${this.optionsFor(this.specialtyOptions, this.specialtyId)}
           </select>
         </div>
 
@@ -431,7 +522,7 @@ export class ZdProviderSearch extends CharmElement {
             }}
           >
             <option value="" .selected=${!this.insurancePlanId}>Any insurance</option>
-            ${this.optionsFor(this.insurancePlans, this.insurancePlanId)}
+            ${this.optionsFor(this.insurancePlanOptions, this.insurancePlanId)}
           </select>
         </div>
 
@@ -439,14 +530,18 @@ export class ZdProviderSearch extends CharmElement {
           <scoped-icon name="search" label="Find care"></scoped-icon>
         </scoped-button>
 
-        ${errorMessage ? this.html`
+        ${
+          errorMessage
+            ? this.html`
           <div id="field-error" class="error-container" role="alert" part="field-error">
             ${errorMessage}
           </div>
-        ` : nothing}
+        `
+            : nothing
+        }
       </form>
 
-      ${renderRequestState(this.requestState, {
+      ${renderRequestState(requestState, {
         emptyMessage: NO_PROVIDERS_MATCH,
         errorMessage: this.errorMessage,
         loadingMessage: 'Searching…',

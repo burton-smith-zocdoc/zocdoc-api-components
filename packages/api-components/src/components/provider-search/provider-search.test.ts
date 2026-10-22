@@ -5,9 +5,10 @@ import * as providerLocations from '../../client/provider-locations.js';
 import * as referenceData from '../../client/reference-data.js';
 import { DEFAULT_PAGE_SIZE, type ProviderSearchResult } from '../../client/provider-locations.js';
 import { SCENARIOS, SPECIALTIES } from '../../client/mock/fixtures.js';
-import type { VisitType } from '../../client/types.js';
+import type { InsurancePlan, Specialty, VisitType } from '../../client/types.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
-import { mount, settled, shadow } from '../../utils/test/mount.js';
+import { mount, settled, shadow, track } from '../../utils/test/mount.js';
+import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
 import './index.js';
 
 /**
@@ -48,6 +49,10 @@ type Search = HTMLElement & {
   maxDistanceToPatientMi?: number;
   page: number;
   pageSize?: number;
+  specialties?: Specialty[];
+  insurancePlans?: InsurancePlan[];
+  supplied: boolean;
+  loading: boolean;
   search(): Promise<void>;
 };
 
@@ -79,6 +84,32 @@ function mountSearch(zipCode: string = SCENARIOS.zipWithResults): Promise<Search
   return mount<Search>(
     `<zd-provider-search zip-code="${zipCode}" specialty-id="${SPECIALTY.id}"></zd-provider-search>`
   );
+}
+
+/** Invented plans for the supplied-data tests, distinct from the mocked fetch's (PHI-002). */
+const SUPPLIED_PLANS: InsurancePlan[] = [
+  { id: 'ip_supplied_1', name: 'Test Plan One' },
+  { id: 'ip_supplied_2', name: 'Test Plan Two' },
+];
+
+/**
+ * The host-driven way in: reference data set before the element connects, as a framework binding
+ * or a hydrated page would, so the lookups never start.
+ */
+async function mountSupplied(
+  markup = `zip-code="${SCENARIOS.zipWithResults}" specialty-id="${SPECIALTY.id}" supplied`,
+  data: { specialties?: Specialty[]; insurancePlans?: InsurancePlan[] } = {
+    specialties: SPECIALTIES,
+    insurancePlans: SUPPLIED_PLANS,
+  }
+): Promise<Search> {
+  const host = document.createElement('div');
+  host.innerHTML = `<zd-provider-search ${markup}></zd-provider-search>`;
+  const element = host.firstElementChild as Search;
+  Object.assign(element, data);
+  document.body.append(track(element));
+  await settled(element);
+  return element;
 }
 
 describe('zd-provider-search', () => {
@@ -535,7 +566,9 @@ describe('zd-provider-search', () => {
       const root = shadow(element);
 
       expect(getComputedStyle(root.querySelector('[part="loading"]')!).display).toBe('none');
-      expect(root.querySelector('[part="loading-message"]')?.textContent?.trim()).toBe('Searching…');
+      expect(root.querySelector('[part="loading-message"]')?.textContent?.trim()).toBe(
+        'Searching…'
+      );
       expect(root.querySelector('[part="status"]')?.getAttribute('aria-live')).toBe('polite');
 
       await finish();
@@ -551,7 +584,9 @@ describe('zd-provider-search', () => {
       expect(
         shadow(element).querySelector('[part="loading-results"]')?.getAttribute('aria-busy')
       ).toBe('true');
-      expect(shadow(element).querySelector('[part="status"]')?.closest('[aria-busy="true"]')).toBeNull();
+      expect(
+        shadow(element).querySelector('[part="status"]')?.closest('[aria-busy="true"]')
+      ).toBeNull();
 
       await finish();
     });
@@ -577,8 +612,8 @@ describe('zd-provider-search', () => {
   it('renders visible labels for every field', async () => {
     const element = await mountSearch();
 
-    const labels = [...shadow(element).querySelectorAll('.field label')].map(
-      (label) => label.textContent?.trim()
+    const labels = [...shadow(element).querySelectorAll('.field label')].map((label) =>
+      label.textContent?.trim()
     );
 
     expect(labels).toEqual(['Search', 'ZIP code', 'Insurance']);
@@ -589,6 +624,133 @@ describe('zd-provider-search', () => {
    * is different markup rather than a different string (A11Y-005). `idle` is skipped only
    * because it is the form, which `success` also renders.
    */
+  describe('supplied', () => {
+    it('uses supplied reference data without fetching it', async () => {
+      const element = await mountSupplied();
+
+      expect(selectOptions(element, 'specialty')).toHaveLength(SPECIALTIES.length + 1);
+      expect(selectOptions(element, 'insurance').map((option) => option.value)).toEqual([
+        '',
+        'ip_supplied_1',
+        'ip_supplied_2',
+      ]);
+      expect(referenceData.getSpecialties).not.toHaveBeenCalled();
+      expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
+    });
+
+    it('fetches only the list not supplied', async () => {
+      const element = await mountSupplied(`zip-code="${SCENARIOS.zipWithResults}"`, {
+        insurancePlans: SUPPLIED_PLANS,
+      });
+
+      await vi.waitFor(() =>
+        expect(selectOptions(element, 'specialty')).toHaveLength(SPECIALTIES.length + 1)
+      );
+      expect(referenceData.getSpecialties).toHaveBeenCalledOnce();
+      expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
+      expect(selectOptions(element, 'insurance')).toHaveLength(SUPPLIED_PLANS.length + 1);
+    });
+
+    it('prefers supplied reference data set after connecting', async () => {
+      const element = await mountSearch();
+      await vi.waitFor(() => expect(selectOptions(element, 'insurance')).toHaveLength(2));
+
+      element.insurancePlans = SUPPLIED_PLANS;
+      await settled(element);
+
+      expect(selectOptions(element, 'insurance')).toHaveLength(SUPPLIED_PLANS.length + 1);
+    });
+
+    it('submit emits provider-search-request and does not search', async () => {
+      const element = await mountSupplied(
+        `zip-code="${SCENARIOS.zipWithResults}" specialty-id="${SPECIALTY.id}" insurance-plan-id="ip_supplied_1" visit-type="all" max-distance-to-patient-mi="25" page="2" page-size="5" supplied`
+      );
+      const requests: CustomEvent[] = [];
+      element.addEventListener('provider-search-request', (event) =>
+        requests.push(event as CustomEvent)
+      );
+
+      shadow(element).querySelector('form')?.requestSubmit();
+      await settled(element);
+      await settled(element);
+
+      expect(requests.map((event) => event.detail)).toEqual([
+        {
+          zipCode: SCENARIOS.zipWithResults,
+          specialtyId: SPECIALTY.id,
+          insurancePlanId: 'ip_supplied_1',
+          visitType: 'all',
+          maxDistanceToPatientMi: 25,
+          page: 0,
+          pageSize: 5,
+        },
+      ]);
+      expect(providerLocations.searchProviderLocations).not.toHaveBeenCalled();
+      // The host decides when it's loading, so nothing here claims to be.
+      expect(shadow(element).querySelector('[part="loading"]')).toBeNull();
+    });
+
+    it('submit with an invalid ZIP shows the field error and emits nothing', async () => {
+      const element = await mountSupplied(
+        `zip-code="1234" specialty-id="${SPECIALTY.id}" supplied`
+      );
+      const requests: Event[] = [];
+      element.addEventListener('provider-search-request', (event) => requests.push(event));
+
+      shadow(element).querySelector('form')?.requestSubmit();
+      await settled(element);
+
+      expect(getErrorMessage(element)).toBe('Enter a 5-digit ZIP code.');
+      expect(requests).toHaveLength(0);
+      expect(providerLocations.searchProviderLocations).not.toHaveBeenCalled();
+    });
+
+    it('a page change emits provider-search-request with the new page', async () => {
+      const element = await mountSupplied();
+      const requests: CustomEvent[] = [];
+      element.addEventListener('provider-search-request', (event) =>
+        requests.push(event as CustomEvent)
+      );
+
+      await element.search();
+      element.page = 1;
+      await settled(element);
+      await settled(element);
+
+      expect(requests.map((event) => event.detail.page)).toEqual([0, 1]);
+      expect(providerLocations.searchProviderLocations).not.toHaveBeenCalled();
+    });
+
+    it('shows the loading state for loading without searching', async () => {
+      const element = await mountSupplied();
+      element.loading = true;
+      await settled(element);
+
+      expect(shadow(element).querySelector('[part="loading"]')).not.toBeNull();
+      expect(placeholderCards(element)).toHaveLength(2);
+      expect(shadow(element).querySelector('[part="submit"]')?.hasAttribute('disabled')).toBe(true);
+      expect(providerLocations.searchProviderLocations).not.toHaveBeenCalled();
+
+      element.loading = false;
+      await settled(element);
+      expect(shadow(element).querySelector('[part="loading"]')).toBeNull();
+      expect(placeholderCards(element)).toHaveLength(0);
+    });
+
+    it('passes axe checks on the supplied form', async () => {
+      const element = await mountSupplied();
+      await expectNoViolations(element);
+    });
+
+    it('passes axe checks while the host is loading', async () => {
+      const element = await mountSupplied();
+      element.loading = true;
+      await settled(element);
+
+      await expectNoViolations(element);
+    });
+  });
+
   describe('accessibility', () => {
     it('passes axe checks with the filters loaded', async () => {
       const element = await mountSearch();
@@ -655,5 +817,51 @@ describe('zd-provider-search', () => {
 
       await expectNoViolations(element);
     });
+  });
+});
+
+describe('zd-provider-search markup hydration', () => {
+  beforeEach(() => {
+    vi.spyOn(referenceData, 'getSpecialties').mockResolvedValue(SPECIALTIES);
+    vi.spyOn(referenceData, 'getInsurancePlans').mockResolvedValue([
+      { id: 'ip_1', name: 'Aetna PPO' },
+    ]);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const attrs = `zip-code="${SCENARIOS.zipWithResults}" specialty-id="${SPECIALTY.id}" supplied`;
+  const markup = `<zd-provider-search ${attrs}>${jsonBlock('specialties', SPECIALTIES)}${jsonBlock('insurancePlans', SUPPLIED_PLANS)}</zd-provider-search>`;
+
+  it('renders the same from JSON blocks as from the properties', async () => {
+    const fromProperty = await mountSupplied(attrs);
+    const fromMarkup = await mount<Search>(markup);
+
+    expect(
+      selectOptions(fromMarkup, 'insurance').map((option) => option.textContent?.trim())
+    ).toContain('Test Plan One');
+    expect(renderedText(fromMarkup)).toBe(renderedText(fromProperty));
+  });
+
+  it('lets a property set before upgrade win over the block', async () => {
+    const chosen = SUPPLIED_PLANS.slice(1);
+    const element = await mountBeforeUpgrade<Search>(markup, { insurancePlans: chosen });
+    expect(element.insurancePlans).toBe(chosen);
+  });
+
+  it('fetches no reference data when hydrated', async () => {
+    await mount<Search>(markup);
+    expect(referenceData.getSpecialties).not.toHaveBeenCalled();
+    expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
+  });
+
+  it('still fetches a list the markup left out', async () => {
+    await mount<Search>(
+      `<zd-provider-search ${attrs}>${jsonBlock('specialties', SPECIALTIES)}</zd-provider-search>`
+    );
+    expect(referenceData.getSpecialties).not.toHaveBeenCalled();
+    expect(referenceData.getInsurancePlans).toHaveBeenCalledOnce();
   });
 });

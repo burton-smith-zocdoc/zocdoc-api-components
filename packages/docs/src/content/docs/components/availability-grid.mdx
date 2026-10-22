@@ -52,6 +52,20 @@ When a parent has already fetched availability, assign its slots through the `ti
 
 `timeslots` is a JavaScript property, not an HTML attribute. An empty array means the parent supplied availability with no slots; leave it `undefined` when the grid should fetch for itself.
 
+### Markup
+
+`timeslots` can also be written into the HTML as a JSON block, read once on first render:
+
+```html
+<zd-availability-grid start-date="2026-11-02">
+  <script type="application/json" data-zd-prop="timeslots">
+    […]
+  </script>
+</zd-availability-grid>
+```
+
+Moving the range emits `window-change`; answer it by setting `timeslots`, with `loading` set while you fetch. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+
 ## Accessibility
 
 - Days are buttons with date labels

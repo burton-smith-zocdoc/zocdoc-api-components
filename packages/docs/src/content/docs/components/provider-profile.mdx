@@ -47,6 +47,20 @@ The `<zd-provider-profile>` component displays complete provider details includi
 </script>
 ```
 
+## Markup
+
+The `provider` can be written into the HTML as a JSON block instead of set by script:
+
+```html
+<zd-provider-profile>
+  <script type="application/json" data-zd-prop="provider">
+    { "provider_location_id": "…", "provider": { … } }
+  </script>
+</zd-provider-profile>
+```
+
+See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+
 ## Accessibility
 
 - Sections use semantic headings (h2, h3)

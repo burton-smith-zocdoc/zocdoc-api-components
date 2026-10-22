@@ -1,11 +1,13 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import * as availability from '../../client/availability.js';
 import { ZocdocError } from '../../client/errors.js';
-import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
-import type { ProviderLocationAvailability } from '../../client/types.js';
+import { buildTimeslots, PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
+import type { AvailabilitySlot, ProviderLocationAvailability } from '../../client/types.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
 import { dayFromToday } from '../../utils/test/dates.js';
-import { mount, parts, settled, shadow, texts } from '../../utils/test/mount.js';
+import { mount, parts, settled, shadow, texts, track } from '../../utils/test/mount.js';
+import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
+import * as handoff from '../../utilities/handoff.js';
 import './index.js';
 
 /**
@@ -14,6 +16,9 @@ import './index.js';
  * ES module are non-configurable in browser mode and `vi.spyOn` throws.
  */
 vi.mock('../../client/availability.js', { spy: true });
+
+/** Stubbed per test, so a handoff never leaves the test page. */
+vi.mock('../../utilities/handoff.js', { spy: true });
 
 const PROVIDER_LOCATION_ID = 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890';
 const VISIT_REASON_ID = 'pc_FRO-18leckytNKtruw5dLR';
@@ -50,6 +55,8 @@ type Picker = HTMLElement & {
   layout: 'strip' | 'stacked';
   startDate?: string;
   days: number;
+  timeslots?: readonly AvailabilitySlot[];
+  loading: boolean;
   load(): Promise<void>;
 };
 
@@ -79,6 +86,20 @@ async function mountReady(markup = ''): Promise<Picker> {
   const element = await mount<Picker>(
     `<zd-availability-picker visit-reason-id="${VISIT_REASON_ID}" ${markup}></zd-availability-picker>`
   );
+  element.providerLocationId = PROVIDER_LOCATION_ID;
+  await settled(element);
+  return element;
+}
+
+/** The prop-driven way in: both ids and the slots supplied, so nothing is fetched. */
+async function mountSupplied(
+  timeslots: readonly AvailabilitySlot[] = buildTimeslots(dayFromToday(0), ['14:00', '15:30']),
+  markup = ''
+): Promise<Picker> {
+  const element = await mount<Picker>(
+    `<zd-availability-picker visit-reason-id="${VISIT_REASON_ID}" ${markup}></zd-availability-picker>`
+  );
+  element.timeslots = timeslots;
   element.providerLocationId = PROVIDER_LOCATION_ID;
   await settled(element);
   return element;
@@ -579,7 +600,9 @@ describe('zd-availability-picker', () => {
       const element = await mountReady();
       await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
 
-      expect(shadow(element).querySelector('.days-region')?.getAttribute('aria-busy')).toBe('false');
+      expect(shadow(element).querySelector('.days-region')?.getAttribute('aria-busy')).toBe(
+        'false'
+      );
     });
 
     it('removes the placeholders once times arrive', async () => {
@@ -587,6 +610,116 @@ describe('zd-availability-picker', () => {
       await vi.waitFor(() => expect(shadow(element).querySelector('[part="slot"]')).not.toBeNull());
 
       expect(shadow(element).querySelector('[part="loading-days"]')).toBeNull();
+    });
+  });
+
+  describe('with supplied timeslots', () => {
+    it('renders them without fetching', async () => {
+      const element = await mountSupplied();
+
+      expect(shadow(element).querySelectorAll('[part="slot"]')).toHaveLength(2);
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+    });
+
+    /*
+     * The slots arrive with the inputs they answer, so neither the first render nor an update that
+     * sets both at once is a question for the host.
+     */
+    it('asks for nothing when the slots arrive with the inputs', async () => {
+      const element = await mount<Picker>('<zd-availability-picker></zd-availability-picker>');
+      const requests: Event[] = [];
+      element.addEventListener('availability-request', (event) => requests.push(event));
+
+      element.visitReasonId = VISIT_REASON_ID;
+      element.providerLocationId = PROVIDER_LOCATION_ID;
+      element.timeslots = buildTimeslots(dayFromToday(0), ['14:00']);
+      await settled(element);
+
+      element.startDate = dayFromToday(1);
+      element.timeslots = buildTimeslots(dayFromToday(1), ['09:00']);
+      await settled(element);
+
+      expect(requests).toHaveLength(0);
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+    });
+
+    it('renders the empty state for [] without fetching', async () => {
+      const element = await mountSupplied([]);
+
+      expect(shadow(element).querySelector('[part="empty"]')).not.toBeNull();
+      expect(shadow(element).querySelector('[role="alert"]')).toBeNull();
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+    });
+
+    /*
+     * A supplied picker can't fetch the window it was just moved to, since the parent owns the
+     * request, so the event is the whole mechanism (COMP-002).
+     */
+    it('asks for availability instead of fetching when an input changes', async () => {
+      const startDate = dayFromToday(1);
+      const element = await mountSupplied();
+
+      const requests: CustomEvent[] = [];
+      element.addEventListener('availability-request', (event) =>
+        requests.push(event as CustomEvent)
+      );
+
+      element.setAttribute('start-date', startDate);
+      await settled(element);
+      options(element)[1]!.click();
+      await settled(element);
+
+      expect(requests.map((event) => event.detail)).toEqual([
+        {
+          providerLocationId: PROVIDER_LOCATION_ID,
+          visitReasonId: VISIT_REASON_ID,
+          patientType: 'new',
+          startDate,
+          days: 7,
+        },
+        {
+          providerLocationId: PROVIDER_LOCATION_ID,
+          visitReasonId: VISIT_REASON_ID,
+          patientType: 'existing',
+          startDate,
+          days: 7,
+        },
+      ]);
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+    });
+
+    it('shows the loading state for loading and fetches nothing', async () => {
+      const element = await mountSupplied([], 'loading');
+
+      expect(shadow(element).querySelector('[part="loading"]')).not.toBeNull();
+      expect(shadow(element).querySelector('[part="loading-days"]')).not.toBeNull();
+      expect(shadow(element).querySelector('[part="empty"]')).toBeNull();
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+    });
+
+    // A framework can set the property before the element is defined; Lit has to keep it.
+    it('keeps slots set before the element upgrades', async () => {
+      const inert = document.implementation.createHTMLDocument('');
+      const element = inert.createElement('zd-availability-picker') as Picker;
+      element.timeslots = buildTimeslots(dayFromToday(0), ['14:00', '15:30']);
+      element.setAttribute('visit-reason-id', VISIT_REASON_ID);
+      element.setAttribute('provider-location-id', PROVIDER_LOCATION_ID);
+
+      document.body.append(track(document.adoptNode(element)));
+      await settled(element);
+
+      expect(shadow(element).querySelectorAll('[part="slot"]')).toHaveLength(2);
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+    });
+
+    it('fetches again once the slots are no longer supplied', async () => {
+      const element = await mountSupplied();
+      expect(availability.getAvailability).not.toHaveBeenCalled();
+
+      element.timeslots = undefined;
+      await settled(element);
+
+      await vi.waitFor(() => expect(availability.getAvailability).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -640,6 +773,16 @@ describe('zd-availability-picker', () => {
       await expectNoViolations(element);
     });
 
+    it('has no violations with supplied times', async () => {
+      const element = await mountSupplied();
+      await expectNoViolations(element);
+    });
+
+    it('has no violations with supplied empty times', async () => {
+      const element = await mountSupplied([]);
+      await expectNoViolations(element);
+    });
+
     it('has no violations in the error state', async () => {
       vi.mocked(availability.getAvailability).mockRejectedValue(
         new ZocdocError('Zocdoc API request failed with 500.', 500)
@@ -652,5 +795,160 @@ describe('zd-availability-picker', () => {
 
       await expectNoViolations(element);
     });
+  });
+});
+
+describe('zd-availability-picker markup hydration', () => {
+  beforeEach(() => {
+    vi.spyOn(availability, 'getAvailability').mockResolvedValue(entry());
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const SLOTS = buildTimeslots(dayFromToday(0), ['14:00', '15:30']);
+  const markup = (timeslots: readonly AvailabilitySlot[]) =>
+    `<zd-availability-picker provider-location-id="${PROVIDER_LOCATION_ID}" visit-reason-id="${VISIT_REASON_ID}">${jsonBlock('timeslots', timeslots)}</zd-availability-picker>`;
+
+  // `interactive` keeps the patient-type control, which handoff mode otherwise hides.
+  it('renders the same from a JSON block as from the property', async () => {
+    const fromProperty = await mountSupplied(SLOTS);
+    const fromMarkup = await mount<Picker>(markup(SLOTS).replace('>', ' interactive>'));
+
+    expect(renderedText(fromMarkup)).not.toBe('');
+    expect(renderedText(fromMarkup)).toBe(renderedText(fromProperty));
+  });
+
+  it('lets a property set before upgrade win over the block', async () => {
+    const chosen = SLOTS.slice(0, 1);
+    const element = await mountBeforeUpgrade<Picker>(markup(SLOTS), { timeslots: chosen });
+    expect(element.timeslots).toBe(chosen);
+  });
+
+  it('fetches nothing and asks for nothing when hydrated', async () => {
+    const requested = vi.fn<(event: Event) => void>();
+    document.addEventListener('availability-request', requested);
+    try {
+      await mount<Picker>(markup(SLOTS));
+    } finally {
+      document.removeEventListener('availability-request', requested);
+    }
+    expect(availability.getAvailability).not.toHaveBeenCalled();
+    expect(requested).not.toHaveBeenCalled();
+  });
+});
+
+describe('zd-availability-picker handoff', () => {
+  /** An invented Zocdoc profile path, not a real provider (PHI-002). */
+  const PROFILE_URL = 'https://www.zocdoc.com/doctor/test-provider-12345';
+  const BOOKING_URL = 'https://www.zocdoc.com/booking/test-slot';
+  const PROVIDER = {
+    ...PROVIDER_LOCATIONS[0]!,
+    provider: { ...PROVIDER_LOCATIONS[0]!.provider, profile_url: PROFILE_URL },
+  };
+
+  let navigate: MockInstance<typeof handoff.navigateTo>;
+
+  beforeEach(() => {
+    vi.spyOn(availability, 'getAvailability').mockResolvedValue(entry());
+    navigate = vi.spyOn(handoff, 'navigateTo').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  function slotsWith(bookingUrl: string | null): AvailabilitySlot[] {
+    return buildTimeslots(dayFromToday(0), ['14:00']).map((slot) => ({
+      ...slot,
+      booking_url: bookingUrl,
+    }));
+  }
+
+  function hydrated(
+    timeslots: AvailabilitySlot[],
+    { provider, attrs = '' }: { provider?: unknown; attrs?: string } = {}
+  ): Promise<Picker> {
+    const blocks =
+      jsonBlock('timeslots', timeslots) + (provider ? jsonBlock('provider', provider) : '');
+    return mount<Picker>(
+      `<zd-availability-picker provider-location-id="${PROVIDER_LOCATION_ID}" visit-reason-id="${VISIT_REASON_ID}" ${attrs}>${blocks}</zd-availability-picker>`
+    );
+  }
+
+  function tapSlot(element: Picker): void {
+    shadow(element).querySelector<HTMLElement>('[part="slot"]')!.click();
+  }
+
+  it('hydrated slot tap navigates to booking_url with referrer params', async () => {
+    tapSlot(await hydrated(slotsWith(BOOKING_URL), { provider: PROVIDER }));
+
+    expect(navigate).toHaveBeenCalledOnce();
+    const href = new URL(navigate.mock.calls[0]![0]);
+    expect(href.origin + href.pathname).toBe(BOOKING_URL);
+    expect(href.searchParams.get('referrerType')).toBe('api_components');
+    expect(href.searchParams.get('component')).toBe('availability-picker');
+  });
+
+  it('falls back to provider.profile_url when booking_url is null', async () => {
+    tapSlot(await hydrated(slotsWith(null), { provider: PROVIDER }));
+
+    expect(navigate).toHaveBeenCalledOnce();
+    expect(navigate.mock.calls[0]![0]).toMatch(
+      /^https:\/\/www\.zocdoc\.com\/doctor\/test-provider-12345\?/
+    );
+  });
+
+  it('does nothing beyond the event without either', async () => {
+    const element = await hydrated(slotsWith(null));
+    const events: Event[] = [];
+    element.addEventListener('slot-select', (event) => events.push(event));
+
+    tapSlot(element);
+
+    expect(events).toHaveLength(1);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('does not follow a booking_url that is not an https Zocdoc URL', async () => {
+    tapSlot(await hydrated(slotsWith('https://evil.example/booking')));
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('preventDefault on slot-select stops navigation', async () => {
+    const element = await hydrated(slotsWith(BOOKING_URL));
+    element.addEventListener('slot-select', (event) => event.preventDefault());
+
+    tapSlot(element);
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('disable-handoff stops navigation', async () => {
+    tapSlot(await hydrated(slotsWith(BOOKING_URL), { attrs: 'disable-handoff' }));
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('a property-driven picker never navigates', async () => {
+    const element = await mountSupplied(slotsWith(BOOKING_URL));
+    (element as Picker & { provider?: unknown }).provider = PROVIDER;
+    await settled(element);
+
+    tapSlot(element);
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('hides the patient-type toggle when hydrated, shows it with interactive', async () => {
+    const hidden = await hydrated(slotsWith(BOOKING_URL));
+    const shown = await hydrated(slotsWith(BOOKING_URL), { attrs: 'interactive' });
+
+    expect(parts(hidden, 'patient-type')).toHaveLength(0);
+    expect(parts(shown, 'patient-type')).toHaveLength(1);
+  });
+
+  it('passes axe checks when hydrated', async () => {
+    await expectNoViolations(await hydrated(slotsWith(BOOKING_URL), { provider: PROVIDER }));
   });
 });

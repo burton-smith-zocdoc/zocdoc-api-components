@@ -1,10 +1,12 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import * as availability from '../../client/availability.js';
 import { buildTimeslots } from '../../client/mock/fixtures.js';
 import type { ProviderLocation, ProviderLocationAvailability } from '../../client/types.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
 import { dayFromToday } from '../../utils/test/dates.js';
 import { mount, part, settled, shadow } from '../../utils/test/mount.js';
+import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
+import * as handoff from '../../utilities/handoff.js';
 import './index.js';
 
 /**
@@ -14,6 +16,9 @@ import './index.js';
  * while making the exports redefinable, which `vi.spyOn` needs in browser mode.
  */
 vi.mock('../../client/availability.js', { spy: true });
+
+/** Stubbed per test, so a handoff never leaves the test page. */
+vi.mock('../../utilities/handoff.js', { spy: true });
 
 /**
  * Deliberately unmistakable fake names. Providers are directory data rather than
@@ -80,7 +85,11 @@ type Results = HTMLElement & {
 type Grid = HTMLElement & { timeslots?: readonly unknown[]; startDate?: string };
 
 /** One provider card, which is a `zd-provider-card` element with its own shadow root. */
-type Card = HTMLElement & { provider?: ProviderLocation; hidePhoto?: boolean; insuranceName?: string };
+type Card = HTMLElement & {
+  provider?: ProviderLocation;
+  hidePhoto?: boolean;
+  insuranceName?: string;
+};
 
 /** Get all provider cards in the results. */
 function cards(element: Results): Card[] {
@@ -737,5 +746,214 @@ describe('zd-provider-results', () => {
 
       await expectNoViolations(element);
     });
+  });
+});
+
+describe('zd-provider-results annotations', () => {
+  /** The light-DOM text a card was handed for one of its annotation slots. */
+  function slotted(card: Card, name: string): string | undefined {
+    return card.querySelector(`[slot="${name}"]`)?.textContent ?? undefined;
+  }
+
+  async function mountAnnotated(annotations: Record<string, unknown>): Promise<Results> {
+    const element = await mountResults(PROVIDERS);
+    (element as Results & { annotations?: unknown }).annotations = annotations;
+    await settled(element);
+    return element;
+  }
+
+  it('renders annotations per provider', async () => {
+    const element = await mountAnnotated({
+      'pr_a|lo_a': { reason: 'Sees patients for skin checks', review: 'Thorough and kind' },
+      'pr_b|lo_b': { sponsored: true },
+    });
+    const [first, second] = cards(element);
+
+    expect(slotted(first!, 'reason')).toBe('Sees patients for skin checks');
+    expect(slotted(first!, 'review')).toBe('Thorough and kind');
+    expect(slotted(first!, 'sponsored')).toBeUndefined();
+    expect(slotted(second!, 'reason')).toBeUndefined();
+    expect(slotted(second!, 'sponsored')).toBeDefined();
+  });
+
+  it('renders the Sponsored label from the component, not caller text', async () => {
+    const element = await mountAnnotated({
+      'pr_a|lo_a': { sponsored: true },
+      'pr_b|lo_b': { sponsored: false },
+    });
+    const [first, second] = cards(element);
+
+    expect(slotted(first!, 'sponsored')).toBe('Sponsored');
+    expect(slotted(second!, 'sponsored')).toBeUndefined();
+  });
+
+  it('escapes annotation text', async () => {
+    const element = await mountAnnotated({ 'pr_a|lo_a': { reason: '<b>Bold</b> claim' } });
+    const [first] = cards(element);
+
+    expect(slotted(first!, 'reason')).toBe('<b>Bold</b> claim');
+    expect(first!.querySelector('b')).toBeNull();
+  });
+
+  it('ignores annotations for providers not in the list', async () => {
+    const element = await mountAnnotated({ 'pr_z|lo_z': { reason: 'Not on this page' } });
+
+    expect(cards(element)).toHaveLength(2);
+    expect(shadow(element).textContent).not.toContain('Not on this page');
+    for (const card of cards(element)) expect(slotted(card, 'reason')).toBeUndefined();
+  });
+
+  it('reads annotations from a JSON block', async () => {
+    const element = await mount<Results>(
+      `<zd-provider-results>${jsonBlock('providers', PROVIDERS)}${jsonBlock('annotations', {
+        'pr_a|lo_a': { reason: 'Sees patients for skin checks' },
+      })}</zd-provider-results>`
+    );
+    expect(slotted(cards(element)[0]!, 'reason')).toBe('Sees patients for skin checks');
+  });
+
+  it('passes axe checks with annotations', async () => {
+    const element = await mountAnnotated({
+      'pr_a|lo_a': { reason: 'Sees patients for skin checks', sponsored: true },
+      'pr_b|lo_b': { review: 'Thorough and kind' },
+    });
+    await expectNoViolations(element);
+  });
+});
+
+describe('zd-provider-results markup hydration', () => {
+  it('renders the same from JSON blocks as from the properties', async () => {
+    const fromProperty = await mountResults(PROVIDERS);
+    fromProperty.availability = batch();
+    await settled(fromProperty);
+    const fromMarkup = await mount<Results>(
+      `<zd-provider-results>${jsonBlock('providers', PROVIDERS)}${jsonBlock('availability', batch())}</zd-provider-results>`
+    );
+
+    // Each card renders its provider in its own shadow root, so compare the cards' text too.
+    const cardText = (element: Results) =>
+      [...shadow(element).querySelectorAll<HTMLElement>('zd-provider-card')].map(renderedText);
+
+    expect(cardText(fromMarkup)).toHaveLength(2);
+    expect(cardText(fromMarkup)[0]).toContain('Ada Testerson');
+    expect(cardText(fromMarkup)).toEqual(cardText(fromProperty));
+    expect(renderedText(fromMarkup)).toBe(renderedText(fromProperty));
+  });
+
+  it('lets a property set before upgrade win over the block', async () => {
+    const chosen = [PROVIDERS[1]!];
+    const element = await mountBeforeUpgrade<Results>(
+      `<zd-provider-results>${jsonBlock('providers', PROVIDERS)}</zd-provider-results>`,
+      { providers: chosen }
+    );
+    expect(element.providers).toBe(chosen);
+  });
+
+  it('fetches no availability when it is supplied in markup', async () => {
+    const getAvailability = vi.spyOn(availability, 'getAvailability');
+    await mount<Results>(
+      `<zd-provider-results>${jsonBlock('providers', PROVIDERS)}${jsonBlock('availability', batch())}</zd-provider-results>`
+    );
+    expect(getAvailability).not.toHaveBeenCalled();
+  });
+});
+
+describe('zd-provider-results handoff', () => {
+  /** An invented Zocdoc profile path, not a real provider (PHI-002). */
+  const PROFILE_URL = 'https://www.zocdoc.com/doctor/test-provider-12345';
+  const LINKED = PROVIDERS.map((location) => ({
+    ...location,
+    provider: {
+      ...location.provider,
+      profile_url: `${PROFILE_URL}-${location.provider.provider_id}`,
+    },
+  }));
+
+  let navigate: MockInstance<typeof handoff.navigateTo>;
+
+  beforeEach(() => {
+    navigate = vi.spyOn(handoff, 'navigateTo').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /** Two of 25 providers, so the pager would render, with availability, so the window would. */
+  function hydrated(attrs = ''): Promise<Results> {
+    return mount<Results>(
+      `<zd-provider-results total-count="25" page-size="10" ${attrs}>${jsonBlock('providers', LINKED)}${jsonBlock('availability', batch())}</zd-provider-results>`
+    );
+  }
+
+  function bookLinks(element: Results): (HTMLElement | null)[] {
+    return cards(element).map((card) => cardPart(card, 'book'));
+  }
+
+  it('hydrated results show Book now on every card', async () => {
+    const links = bookLinks(await hydrated());
+
+    expect(links).toHaveLength(2);
+    for (const link of links) expect(link?.textContent?.trim()).toBe('Book now');
+  });
+
+  it('day cell tap in handoff mode navigates for that provider', async () => {
+    const element = await hydrated();
+    const booked: CustomEvent[] = [];
+    element.addEventListener('book-select', (event) => booked.push(event as CustomEvent));
+
+    grids(element)[0]!.shadowRoot!.querySelector<HTMLButtonElement>('[part="day"]')!.click();
+
+    expect(booked).toHaveLength(1);
+    expect(booked[0]!.detail.provider.provider_location_id).toBe('pr_a|lo_a');
+    expect(navigate).toHaveBeenCalledOnce();
+    expect(navigate.mock.calls[0]![0]).toContain('test-provider-12345-pr_a?');
+    expect(new URL(navigate.mock.calls[0]![0]).searchParams.get('component')).toBe(
+      'provider-results'
+    );
+  });
+
+  it('preventDefault on book-select stops a day cell navigating', async () => {
+    const element = await hydrated();
+    element.addEventListener('book-select', (event) => event.preventDefault());
+
+    grids(element)[0]!.shadowRoot!.querySelector<HTMLButtonElement>('[part="day"]')!.click();
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('pager and window control hidden when hydrated, shown with interactive', async () => {
+    const hidden = await hydrated();
+    const shown = await hydrated('interactive');
+
+    expect(shadow(hidden).querySelector('[part="pager"]')).toBeNull();
+    expect(shadow(hidden).querySelector('zd-availability-window')).toBeNull();
+    expect(shadow(shown).querySelector('[part="pager"]')).not.toBeNull();
+    expect(shadow(shown).querySelector('zd-availability-window')).not.toBeNull();
+  });
+
+  it('disable-handoff leaves the cards without Book now and days inert', async () => {
+    const element = await hydrated('disable-handoff');
+
+    expect(bookLinks(element)).toEqual([null, null]);
+    grids(element)[0]!.shadowRoot!.querySelector<HTMLButtonElement>('[part="day"]')!.click();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('property-driven results are unchanged', async () => {
+    const element = await mountResults(LINKED);
+    element.availability = batch();
+    element.totalCount = 25;
+    element.pageSize = 10;
+    await settled(element);
+
+    expect(bookLinks(element)).toEqual([null, null]);
+    expect(shadow(element).querySelector('[part="pager"]')).not.toBeNull();
+    grids(element)[0]!.shadowRoot!.querySelector<HTMLButtonElement>('[part="day"]')!.click();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('passes axe checks when hydrated', async () => {
+    await expectNoViolations(await hydrated());
   });
 });

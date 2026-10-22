@@ -23,6 +23,7 @@ import {
 } from '../../utilities/availability-window.js';
 import { userFacingError } from '../../utilities/error-message.js';
 import { formatCount } from '../../utilities/format.js';
+import { hydrateFromMarkup, type HydrationShape } from '../../utilities/hydrate.js';
 import {
   addDays,
   dayKey,
@@ -261,7 +262,19 @@ export class ZdAvailabilityGrid extends CharmElement {
    * after having supplied slots — hands fetching back to this component rather than leaving a
    * grid that counts nothing.
    */
+  /**
+   * The properties a page can supply as inline JSON blocks, and the shape each must parse to:
+   * `<script type="application/json" data-zd-prop="{name}">`. A property set by script wins.
+   */
+  public static hydratable: Readonly<Record<string, HydrationShape>> = { timeslots: 'array' };
+
+  /** Whether any property came from a JSON block, read on the first update. */
+  protected hydrated = false;
+
   protected override willUpdate(changed: PropertyValues<this>): void {
+    // Applied here, so a supplied `timeslots` is in `changed` and no fetch starts.
+    if (!this.hasUpdated) this.hydrated = hydrateFromMarkup(this, ZdAvailabilityGrid.hydratable);
+
     if (
       changed.has('providerLocationId') ||
       changed.has('visitReasonId') ||

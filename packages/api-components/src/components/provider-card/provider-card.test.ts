@@ -1,8 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
-import { mount, part, parts, queryPart, shadow } from '../../utils/test/mount.js';
+import { mount, part, parts, queryPart, settled, shadow } from '../../utils/test/mount.js';
 import type { ZdProviderCard } from './provider-card.js';
+import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
+import * as handoff from '../../utilities/handoff.js';
 import './index.js';
 
 /**
@@ -13,6 +16,9 @@ import './index.js';
  * component's tests already draw from (see `provider-profile.test.ts`).
  */
 const PROVIDER = PROVIDER_LOCATIONS[0]!;
+
+/** Stubbed per test, so a handoff never leaves the test page. */
+vi.mock('../../utilities/handoff.js', { spy: true });
 
 type Card = ZdProviderCard;
 
@@ -36,7 +42,9 @@ describe('zd-provider-card', () => {
       await card.updateComplete;
 
       const name = part(card, 'name');
-      expect(name?.textContent).toContain(PROVIDER.provider.full_name ?? PROVIDER.provider.last_name);
+      expect(name?.textContent).toContain(
+        PROVIDER.provider.full_name ?? PROVIDER.provider.last_name
+      );
     });
 
     it('renders specialty', async () => {
@@ -165,6 +173,73 @@ describe('zd-provider-card', () => {
       expect(slotted).not.toBeNull();
       expect(slotted?.textContent).toBe('Badge here');
     });
+
+    async function mountAnnotated(content: string): Promise<Card> {
+      const card = await mount<Card>(`<zd-provider-card>${content}</zd-provider-card>`);
+      card.provider = PROVIDER;
+      await settled(card);
+      return card;
+    }
+
+    const ANNOTATED = [
+      '<span slot="reason">Sees patients for skin checks</span>',
+      '<span slot="review">Thorough and kind</span>',
+      '<span slot="sponsored">Sponsored</span>',
+    ].join('');
+
+    it('renders slotted reason, review and sponsored text', async () => {
+      const card = await mountAnnotated(ANNOTATED);
+
+      const shown = ['reason', 'review', 'sponsored'].map((name) => {
+        const wrapper = queryPart(card, name);
+        const slot = wrapper?.querySelector<HTMLSlotElement>(`slot[name="${name}"]`);
+        return { name, hidden: wrapper?.hidden, text: slot?.assignedNodes()[0]?.textContent };
+      });
+
+      expect(shown).toEqual([
+        { name: 'reason', hidden: false, text: 'Sees patients for skin checks' },
+        { name: 'review', hidden: false, text: 'Thorough and kind' },
+        { name: 'sponsored', hidden: false, text: 'Sponsored' },
+      ]);
+    });
+
+    it('renders them after the specialty and before the badges', async () => {
+      const card = await mountAnnotated(`${ANNOTATED}<span slot="badges">Badge</span>`);
+      const order = [
+        ...shadow(card).querySelectorAll(
+          '[part="specialty"], [part="reason"], [part="review"], [part="sponsored"], slot[name="badges"]'
+        ),
+      ].map((node) => node.getAttribute('part') ?? node.getAttribute('name'));
+
+      expect(order).toEqual(['specialty', 'reason', 'review', 'sponsored', 'badges']);
+    });
+
+    it('renders no wrapper for an empty slot', async () => {
+      const card = await mountAnnotated('<span slot="review">Thorough and kind</span>');
+
+      expect(queryPart(card, 'review')!.hidden).toBe(false);
+      expect(queryPart(card, 'reason')!.hidden).toBe(true);
+      expect(queryPart(card, 'sponsored')!.hidden).toBe(true);
+    });
+
+    it('shows a wrapper once content is slotted in later', async () => {
+      const card = await mountAnnotated('');
+      expect(queryPart(card, 'reason')!.hidden).toBe(true);
+
+      card.insertAdjacentHTML(
+        'beforeend',
+        '<span slot="reason">Sees patients for skin checks</span>'
+      );
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await settled(card);
+
+      expect(queryPart(card, 'reason')!.hidden).toBe(false);
+    });
+
+    it('passes axe checks with all three filled', async () => {
+      const card = await mountAnnotated(ANNOTATED);
+      await expectNoViolations(card);
+    });
   });
 
   describe('loading', () => {
@@ -212,5 +287,147 @@ describe('zd-provider-card', () => {
 
       await expectNoViolations(card);
     });
+  });
+});
+
+describe('zd-provider-card markup hydration', () => {
+  it('renders the same from a JSON block as from the property', async () => {
+    const fromProperty = await mount<Card>('<zd-provider-card></zd-provider-card>');
+    fromProperty.provider = PROVIDER;
+    await settled(fromProperty);
+    const fromMarkup = await mount<Card>(
+      `<zd-provider-card>${jsonBlock('provider', PROVIDER)}</zd-provider-card>`
+    );
+
+    expect(renderedText(fromMarkup)).not.toBe('');
+    expect(renderedText(fromMarkup)).toBe(renderedText(fromProperty));
+  });
+
+  it('lets a property set before upgrade win over the block', async () => {
+    const other = PROVIDER_LOCATIONS[1]!;
+    const element = await mountBeforeUpgrade<Card>(
+      `<zd-provider-card>${jsonBlock('provider', PROVIDER)}</zd-provider-card>`,
+      { provider: other }
+    );
+    expect(element.provider).toBe(other);
+  });
+});
+
+describe('zd-provider-card handoff', () => {
+  /** An invented Zocdoc profile path, not a real provider (PHI-002). */
+  const PROFILE_URL = 'https://www.zocdoc.com/doctor/test-provider-12345';
+
+  function withProfile(profileUrl: string | undefined) {
+    return { ...PROVIDER, provider: { ...PROVIDER.provider, profile_url: profileUrl } };
+  }
+
+  let navigate: MockInstance<typeof handoff.navigateTo>;
+
+  beforeEach(() => {
+    navigate = vi.spyOn(handoff, 'navigateTo').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  function hydrated(provider = withProfile(PROFILE_URL), attrs = '', content = ''): Promise<Card> {
+    return mount<Card>(
+      `<zd-provider-card ${attrs}>${jsonBlock('provider', provider)}${content}</zd-provider-card>`
+    );
+  }
+
+  function book(card: Card): (HTMLElement & { href?: string }) | null {
+    return queryPart(card, 'book') as (HTMLElement & { href?: string }) | null;
+  }
+
+  it('shows Book now when handoff and profile_url are present', async () => {
+    const card = await hydrated();
+    const link = book(card);
+
+    expect(link?.textContent?.trim()).toBe('Book now');
+    const href = new URL(link!.getAttribute('href')!);
+    expect(href.origin + href.pathname).toBe(PROFILE_URL);
+    expect(href.searchParams.get('component')).toBe('provider-card');
+  });
+
+  it.each([
+    ['no profile_url', undefined],
+    ['a protocol-relative URL', '//www.zocdoc.com/doctor/x'],
+    ['http:', 'http://www.zocdoc.com/doctor/x'],
+    ['another host', 'https://evil.example/doctor/x'],
+  ])('hides Book now with %s', async (_, url) => {
+    expect(book(await hydrated(withProfile(url)))).toBeNull();
+  });
+
+  it('Book now emits book-select then navigates', async () => {
+    const card = await hydrated();
+    const order: string[] = [];
+    card.addEventListener('book-select', (event) => {
+      order.push('book-select');
+      expect((event as CustomEvent).detail.provider.provider_location_id).toBe(
+        PROVIDER.provider_location_id
+      );
+    });
+    navigate.mockImplementation(() => order.push('navigate'));
+
+    book(card)!.click();
+
+    expect(order).toEqual(['book-select', 'navigate']);
+  });
+
+  it('preventDefault stops it', async () => {
+    const card = await hydrated();
+    card.addEventListener('book-select', (event) => event.preventDefault());
+
+    book(card)!.click();
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('disable-handoff hides Book now', async () => {
+    expect(book(await hydrated(withProfile(PROFILE_URL), 'disable-handoff'))).toBeNull();
+  });
+
+  it('no Book now for a property-driven card', async () => {
+    const card = await mount<Card>('<zd-provider-card></zd-provider-card>');
+    card.provider = withProfile(PROFILE_URL);
+    await settled(card);
+
+    expect(book(card)).toBeNull();
+  });
+
+  it('no Book now when the card has times of its own to tap', async () => {
+    const card = await hydrated(
+      withProfile(PROFILE_URL),
+      '',
+      '<span slot="availability">Times here</span>'
+    );
+    expect(book(card)).toBeNull();
+  });
+
+  it('shows Book now for a card its parent marks with handoff, availability or not', async () => {
+    const card = await mount<Card>(
+      '<zd-provider-card><span slot="availability">Day counts</span></zd-provider-card>'
+    );
+    Object.assign(card, { provider: withProfile(PROFILE_URL), handoff: true });
+    await settled(card);
+
+    expect(book(card)).not.toBeNull();
+  });
+
+  it('Book now is reachable and activatable by keyboard', async () => {
+    const card = await hydrated();
+    const anchor = book(card)!.shadowRoot!.querySelector('a')!;
+    expect(anchor.getAttribute('href')).toMatch(/^https:\/\/www\.zocdoc\.com\//);
+
+    anchor.focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(navigate).toHaveBeenCalledOnce();
+  });
+
+  it('passes axe checks when hydrated', async () => {
+    await expectNoViolations(await hydrated());
   });
 });

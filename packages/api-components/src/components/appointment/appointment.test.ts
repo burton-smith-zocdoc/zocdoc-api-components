@@ -7,6 +7,7 @@ import * as providerLocations from '../../client/provider-locations.js';
 import type {
   AppointmentDetails,
   AppointmentResponseData,
+  AvailabilitySlot,
   ProviderLocation,
 } from '../../client/types.js';
 import { dayFromToday } from '../../utils/test/dates.js';
@@ -36,6 +37,10 @@ const LOCATION: ProviderLocation = {
 
 type Manage = HTMLElement & {
   appointmentId?: string;
+  appointment?: AppointmentDetails;
+  providerLocation?: ProviderLocation;
+  actionError?: string;
+  rescheduleTimeslots?: readonly AvailabilitySlot[];
   cancel(reasonType?: string): Promise<void>;
   reschedule(startTime: string): Promise<void>;
 };
@@ -45,6 +50,8 @@ type Picker = HTMLElement & {
   visitReasonId?: string;
   patientType: string;
   hidePatientType: boolean;
+  timeslots?: readonly AvailabilitySlot[];
+  loading: boolean;
 };
 
 function details(overrides: Partial<AppointmentDetails> = {}): AppointmentDetails {
@@ -102,6 +109,37 @@ async function mountLoaded(appointment = details()): Promise<Manage> {
   return element;
 }
 
+/** The host-driven way in: the appointment is set as a property, so nothing is looked up. */
+async function mountSupplied(
+  appointment = details(),
+  { withProvider = true } = {}
+): Promise<Manage> {
+  const element = await mount<Manage>(`<zd-appointment></zd-appointment>`);
+  if (withProvider) element.providerLocation = LOCATION;
+  element.appointment = appointment;
+  await settled(element);
+  return element;
+}
+
+/** Picks `NEW_TIME` in the open reschedule picker, as the patient would. */
+async function chooseNewTime(element: Manage): Promise<void> {
+  part(element, 'picker').dispatchEvent(
+    new CustomEvent('slot-select', {
+      detail: { startTime: NEW_TIME, providerLocationId: SCENARIOS.providerLocationConfirmed },
+    })
+  );
+  await settled(element);
+}
+
+/** Every client call the component could make. In supplied mode, none of them may happen. */
+function expectNoApiCalls(): void {
+  expect(appointments.getAppointment).not.toHaveBeenCalled();
+  expect(appointments.cancelAppointment).not.toHaveBeenCalled();
+  expect(appointments.rescheduleAppointment).not.toHaveBeenCalled();
+  expect(providerLocations.getProviderLocation).not.toHaveBeenCalled();
+  expect(availability.getAvailability).not.toHaveBeenCalled();
+}
+
 async function click(element: Manage, name: string): Promise<void> {
   part(element, name).click();
   await settled(element);
@@ -109,6 +147,7 @@ async function click(element: Manage, name: string): Promise<void> {
 
 describe('zd-appointment', () => {
   beforeEach(() => {
+    vi.spyOn(appointments, 'getAppointment');
     vi.spyOn(appointments, 'cancelAppointment').mockResolvedValue({
       appointment_id: ID,
       appointment_status: 'cancelled',
@@ -656,6 +695,272 @@ describe('zd-appointment', () => {
       );
 
       await expectNoViolations(element);
+    });
+  });
+
+  /*
+   * A host that already has the appointment, such as an MCP server answering a tool call, sets it
+   * as a property and makes the API calls itself. The component turns each action into a request
+   * event and never calls the API, however it got there.
+   */
+  describe('supplied', () => {
+    it('renders a supplied appointment without fetching, even after appointment-id changes', async () => {
+      const element = await mountSupplied();
+
+      expect(text(element, 'appointment-status')).toBe('Confirmed');
+      expect(text(element, 'reference')).toBe(ID);
+      expect(text(element, 'provider')).toContain('Avery Sandoval, MD');
+
+      element.appointmentId = SCENARIOS.appointmentConfirmed;
+      await settled(element);
+
+      expect(text(element, 'reference')).toBe(ID);
+      expectNoApiCalls();
+    });
+
+    it('looks the provider up only when providerLocation is not supplied', async () => {
+      await mountSupplied();
+      expect(providerLocations.getProviderLocation).not.toHaveBeenCalled();
+
+      const element = await mountSupplied(details(), { withProvider: false });
+      await vi.waitFor(() => part(element, 'provider-summary'));
+      expect(providerLocations.getProviderLocation).toHaveBeenCalledWith(
+        SCENARIOS.providerLocationConfirmed
+      );
+    });
+
+    it('cancel emits appointment-cancel-request and calls no API', async () => {
+      const element = await mountSupplied();
+      const requests = record(element, 'appointment-cancel-request');
+      const cancels = record(element, 'appointment-cancel');
+
+      await click(element, 'cancel');
+      const reason = part<HTMLElement & { value: string }>(element, 'reason');
+      reason.value = 'patient_no_longer_available';
+      reason.dispatchEvent(new Event('change'));
+      part<HTMLFormElement>(element, 'cancel-form').requestSubmit();
+      await settled(element);
+
+      expect(requests.map((event) => event.detail)).toEqual([
+        { appointmentId: ID, reasonType: 'patient_no_longer_available' },
+      ]);
+      expect(part(element, 'confirm-cancel').hasAttribute('disabled')).toBe(true);
+      expect(cancels).toHaveLength(0);
+
+      element.appointment = details({ appointment_status: 'cancelled' });
+      await settled(element);
+
+      expect(text(element, 'appointment-status')).toBe('Cancelled');
+      expect(text(element, 'notice')).toBe('Your appointment is cancelled.');
+      expect(queryPart(element, 'cancel-form')).toBeNull();
+      expect(cancels.map((event) => event.detail)).toEqual([
+        { appointmentId: ID, status: 'cancelled' },
+      ]);
+      expectNoApiCalls();
+    });
+
+    it('sends one cancel request when called twice at once', async () => {
+      const element = await mountSupplied();
+      const requests = record(element, 'appointment-cancel-request');
+
+      void element.cancel();
+      void element.cancel();
+      await settled(element);
+
+      expect(requests.map((event) => event.detail)).toEqual([{ appointmentId: ID }]);
+    });
+
+    it('reschedule emits appointment-reschedule-request with the chosen time and calls no API', async () => {
+      const element = await mountSupplied();
+      const requests = record(element, 'appointment-reschedule-request');
+      const moves = record(element, 'appointment-reschedule');
+
+      await click(element, 'reschedule');
+      await chooseNewTime(element);
+      await click(element, 'confirm-reschedule');
+
+      expect(requests.map((event) => event.detail)).toEqual([
+        { appointmentId: ID, startTime: NEW_TIME },
+      ]);
+      expect(part(element, 'confirm-reschedule').hasAttribute('disabled')).toBe(true);
+      expect(moves).toHaveLength(0);
+
+      element.appointment = details({ appointment_status: 'rescheduled', start_time: NEW_TIME });
+      await settled(element);
+
+      expect(text(element, 'appointment-status')).toBe('Rescheduled');
+      expect(text(element, 'when')).toContain('2:00');
+      expect(text(element, 'notice')).toBe('Your appointment has a new time.');
+      expect(moves.map((event) => event.detail)).toEqual([
+        { appointmentId: ID, status: 'rescheduled', startTime: NEW_TIME },
+      ]);
+      expectNoApiCalls();
+    });
+
+    it('treats an updated appointment that did not move as a failed reschedule', async () => {
+      const element = await mountSupplied();
+      const moves = record(element, 'appointment-reschedule');
+
+      await click(element, 'reschedule');
+      await chooseNewTime(element);
+      await click(element, 'confirm-reschedule');
+
+      element.appointment = details({ appointment_status: 'reschedule_failed' });
+      await settled(element);
+
+      expect(text(element, 'action-error')).toBe(
+        'The new time could not be booked. Try choosing another time.'
+      );
+      expect(queryPart(element, 'picker')).not.toBeNull();
+      expect(moves).toHaveLength(0);
+    });
+
+    /*
+     * The host's error text is whatever its API call threw, which is developer-facing and may
+     * echo request data, so only the fact of a failure is used (CLIENT-003, PHI-001).
+     */
+    it('actionError shows the component’s own copy, not the string given', async () => {
+      const element = await mountSupplied();
+
+      await click(element, 'cancel');
+      part<HTMLFormElement>(element, 'cancel-form').requestSubmit();
+      await settled(element);
+
+      element.actionError = 'raw api text';
+      await settled(element);
+
+      const alert = text(element, 'action-error');
+      expect(alert).toBe('This appointment could not be cancelled. Please contact the practice.');
+      expect(alert).not.toContain('raw api text');
+      expect(part(element, 'confirm-cancel').hasAttribute('disabled')).toBe(false);
+    });
+
+    it('takes a new actionError for the next failed action', async () => {
+      const element = await mountSupplied();
+
+      await click(element, 'cancel');
+      part<HTMLFormElement>(element, 'cancel-form').requestSubmit();
+      await settled(element);
+      element.actionError = 'failed';
+      await settled(element);
+
+      part<HTMLFormElement>(element, 'cancel-form').requestSubmit();
+      await settled(element);
+      expect(element.actionError).toBeUndefined();
+      expect(queryPart(element, 'action-error')).toBeNull();
+
+      element.actionError = 'failed';
+      await settled(element);
+      expect(queryPart(element, 'action-error')).not.toBeNull();
+    });
+
+    it('stays supplied after appointment is set to undefined', async () => {
+      const element = await mountSupplied();
+
+      element.appointment = undefined;
+      await settled(element);
+      expect(queryPart(element, 'panel')).toBeNull();
+
+      element.appointmentId = ID;
+      await settled(element);
+
+      element.appointment = details();
+      await settled(element);
+      const requests = record(element, 'appointment-cancel-request');
+      await element.cancel();
+
+      expect(requests).toHaveLength(1);
+      expectNoApiCalls();
+    });
+
+    it('drops a lookup already in flight once the appointment is supplied', async () => {
+      const pending = deferred<AppointmentDetails>();
+      vi.mocked(appointments.getAppointment).mockReturnValue(pending.promise);
+      const element = await mount<Manage>(
+        `<zd-appointment appointment-id="${ID}"></zd-appointment>`
+      );
+
+      element.appointment = details({ appointment_status: 'pending_booking' });
+      await settled(element);
+      pending.resolve(details());
+      await settled(element);
+
+      expect(text(element, 'appointment-status')).toBe(
+        'Requested. The practice still has to accept it.'
+      );
+    });
+
+    it('ignores JSON blocks, since an appointment never comes from markup', async () => {
+      const element = await mount<Manage>(
+        `<zd-appointment><script type="application/json" data-zd-prop="appointment">${JSON.stringify(details())}</script></zd-appointment>`
+      );
+
+      expect(element.appointment).toBeUndefined();
+      expect(queryPart(element, 'panel')).toBeNull();
+    });
+
+    describe('reschedule picker', () => {
+      it('shows loading and asks the host for times instead of fetching them', async () => {
+        const element = await mountSupplied();
+        const requests = record(element, 'availability-request');
+
+        await click(element, 'reschedule');
+        const picker = part<Picker>(element, 'picker');
+        await settled(picker);
+
+        expect(picker.loading).toBe(true);
+        expect(requests).toHaveLength(1);
+        expect(requests[0]!.detail).toEqual({
+          providerLocationId: SCENARIOS.providerLocationConfirmed,
+          visitReasonId: 'pc_TlZW-r06U0W3pCsIGtSI5B',
+          patientType: 'new',
+          startDate: dayFromToday(0),
+          days: 7,
+        });
+        expectNoApiCalls();
+      });
+
+      it('passes rescheduleTimeslots to the picker and asks for nothing', async () => {
+        const element = await mountSupplied();
+        const requests = record(element, 'availability-request');
+        element.rescheduleTimeslots = buildTimeslots(NEW_DAY, ['14:00']);
+        await click(element, 'reschedule');
+        const picker = part<Picker>(element, 'picker');
+        await settled(picker);
+
+        expect(picker.loading).toBe(false);
+        expect(picker.timeslots).toBe(element.rescheduleTimeslots);
+        expect(requests).toHaveLength(0);
+        expect(queryPart(picker, 'slot')).not.toBeNull();
+        expectNoApiCalls();
+      });
+    });
+
+    describe('accessibility', () => {
+      it('has no violations in the supplied view', async () => {
+        const element = await mountSupplied();
+        await expectNoViolations(element);
+      });
+
+      it('has no violations while a cancel request is pending', async () => {
+        const element = await mountSupplied();
+        await click(element, 'cancel');
+        part<HTMLFormElement>(element, 'cancel-form').requestSubmit();
+        await settled(element);
+
+        await expectNoViolations(element);
+      });
+
+      it('has no violations with an action error', async () => {
+        const element = await mountSupplied();
+        await click(element, 'cancel');
+        part<HTMLFormElement>(element, 'cancel-form').requestSubmit();
+        await settled(element);
+        element.actionError = 'failed';
+        await settled(element);
+
+        await expectNoViolations(element);
+      });
     });
   });
 

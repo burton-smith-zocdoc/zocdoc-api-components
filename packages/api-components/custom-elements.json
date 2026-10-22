@@ -10,7 +10,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdAppointment",
-          "description": "Looks up a booked appointment by ID and lets the patient cancel it or move it to a new\ntime.\n\nIt fetches its own appointment, the way the availability picker fetches its own times, so\nit can be the whole of a \"manage your appointment\" page (COMP-004). Reschedule embeds the\npicker locked to the appointment's location, visit reason and patient type, because the\nAPI moves only the time. Times for anything else would be rejected.\n\nNeither action retries by itself. The API doesn't document either as idempotent, so each\none sends at most one request at a time.",
+          "description": "Looks up a booked appointment by ID and lets the patient cancel it or move it to a new\ntime.\n\nIt fetches its own appointment, the way the availability picker fetches its own times, so\nit can be the whole of a \"manage your appointment\" page (COMP-004). Reschedule embeds the\npicker locked to the appointment's location, visit reason and patient type, because the\nAPI moves only the time. Times for anything else would be rejected.\n\nNeither action retries by itself. The API doesn't document either as idempotent, so each\none sends at most one request at a time.\n\n**Supplied mode.** A host page that already has the appointment, such as an MCP server\nanswering a tool call, sets `appointment` instead. From then on the component never calls the\nAPI: cancel and reschedule emit a request event, show their busy state, and wait for the host\nto set an updated `appointment` or `actionError`. The mode latches, so there is no way back to\nthe API calls. The appointment is property-only and never read from markup (PHI-001).",
           "tagName": "zd-appointment",
           "superclass": {
             "name": "CharmElement",
@@ -29,6 +29,15 @@
             {
               "kind": "field",
               "name": "actionError",
+              "description": "Set by the host page in supplied mode when the requested cancel or reschedule failed.\n\nOnly whether it's set counts. The component shows its own copy for the action, never this\nstring, because a host's error text can be developer-facing or echo request data\n(CLIENT-003, PHI-001). It is cleared when the next action starts.",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "actionMessage",
               "privacy": "protected",
               "internal": true,
               "type": {
@@ -38,10 +47,13 @@
             {
               "kind": "field",
               "name": "appointment",
-              "privacy": "protected",
-              "internal": true,
+              "description": "The appointment to show, when the host page already has it. Setting it puts the component in\nsupplied mode for the rest of its life: it never calls the API again, and cancel and\nreschedule emit request events for the host page to answer.\n\nThe host answers an action by setting this to the updated appointment. The component works\nout the outcome from the status, as it does from the API's answer.",
+              "privacy": "public",
               "type": {
                 "text": "AppointmentDetails"
+              },
+              "parsedType": {
+                "text": "{ start_time: string; provider_location_id: string; visit_reason_id: string; visit_type?: 'in_person' | 'zocdoc_video_service' | 'third_party_video_service' | undefined; patient_type?: 'new' | 'existing' | undefined; created_time_utc?: string | undefined; last_modified_time_utc?: string | undefined; practice_id?: string | undefined; cancellation_reason?: null | string | undefined; source?: string | null | undefined; appointment_id: string; appointment_status: 'pending_booking' | 'confirmed' | 'booking_failed' | 'cancelled' | 'no_show' | 'pending_reschedule' | 'rescheduled' | 'reschedule_failed'; is_provider_resource: boolean; confirmation_type: 'auto' | 'manual' | 'pending_evaluation'; developer_patient_id?: string | null | undefined; location_phone_number?: string | undefined; location_phone_extension?: string | null | undefined; waiting_room_path?: string | null | undefined; notes?: string | null | undefined } | undefined"
               }
             },
             {
@@ -137,6 +149,15 @@
                 "type": {
                   "text": "boolean"
                 }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "current",
+              "description": "The appointment on show: the host page's in supplied mode, otherwise the looked-up one.",
+              "privacy": "protected",
+              "type": {
+                "text": "AppointmentDetails | undefined"
               }
             },
             {
@@ -253,6 +274,24 @@
               }
             },
             {
+              "kind": "field",
+              "name": "loaded",
+              "privacy": "protected",
+              "internal": true,
+              "type": {
+                "text": "AppointmentDetails"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "loadedProvider",
+              "privacy": "protected",
+              "internal": true,
+              "type": {
+                "text": "ProviderLocation"
+              }
+            },
+            {
               "kind": "method",
               "name": "loadProvider",
               "description": "Fills in the provider row. Secondary to the appointment, so it is quiet: a failure keeps the\n`provider-name` fallback and emits nothing. A host acting on `appointment-error` would show a\nfailure while the appointment is on screen and correct.",
@@ -317,11 +356,22 @@
             },
             {
               "kind": "field",
+              "name": "pending",
+              "privacy": "private",
+              "type": {
+                "text": "PendingAction"
+              }
+            },
+            {
+              "kind": "field",
               "name": "providerLocation",
-              "privacy": "protected",
-              "internal": true,
+              "description": "The appointment's provider, when the host page has it. Skips the provider lookup.",
+              "privacy": "public",
               "type": {
                 "text": "ProviderLocation"
+              },
+              "parsedType": {
+                "text": "{ provider_location_id: string; provider_location_type?: 'in_person_provider' | 'virtual_provider' | undefined; accepts_patient_insurance?: 'accepted' | 'not_accepted' | 'insurance_not_specified' | undefined; first_availability_date_in_provider_local_time?: null | string | undefined; provider: { provider_id: string; npi?: string | undefined; first_name?: string | undefined; last_name?: string | undefined; title?: string | undefined; full_name?: string | undefined; gender_identity?: string | undefined; specialties?: string[] | undefined; specialty_ids?: string[] | undefined; default_visit_reason_id?: string | undefined; visit_reason_ids?: string[] | undefined; statement?: string | undefined; provider_photo_url?: string | undefined; languages?: string[] | undefined; profile_url?: string | undefined; credentials?: { certifications?: string[] | undefined; education?: { institutions?: string[] | undefined } | undefined } | undefined }; location?: { address1?: string | undefined; address2?: string | undefined; city?: string | undefined; state?: string | undefined; zip_code?: string | undefined; latitude?: number | undefined; longitude?: number | undefined; location_name?: string | undefined; phone_number?: string | undefined; phone_extension?: string | null | undefined; time_zone?: string | undefined; distance_to_patient_mi?: number | undefined } | undefined; virtual_location?: null | { state?: string | undefined; location_name?: string | undefined; time_zone?: string | undefined } | undefined; practice?: { practice_id: string; practice_name: string } | undefined; booking_requirements?: { required_fields?: string[] | undefined; accepts_booking_requests_from?: BookingRequestSource[] | undefined } | undefined } | undefined"
               }
             },
             {
@@ -492,6 +542,36 @@
               }
             },
             {
+              "kind": "method",
+              "name": "request",
+              "description": "Hands an action to the host page in supplied mode, and waits busy for its answer.",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "pending",
+                  "type": {
+                    "text": "PendingAction"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "requestRescheduleTimes",
+              "description": "Asks the host page for the reschedule picker's first window. The picker can't, because it\ngets its slots and its inputs in one update, and asks only when an input moves after that.",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "requestState",
               "privacy": "protected",
@@ -522,6 +602,15 @@
             },
             {
               "kind": "field",
+              "name": "rescheduleTimeslots",
+              "description": "Times for the reschedule picker in supplied mode. Until it's set the picker shows its loading\nstate. The picker's `availability-request` event reaches the host page, which answers by\nsetting this.",
+              "privacy": "public",
+              "type": {
+                "text": "readonly AvailabilitySlot[]"
+              }
+            },
+            {
+              "kind": "field",
               "name": "scope",
               "privacy": "protected",
               "inheritedFrom": {
@@ -548,6 +637,69 @@
                 "type": {
                   "text": "void"
                 }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "settle",
+              "description": "Works out a supplied action's outcome from the updated appointment, the same way the API path\nreads the API's answer, and fires the same events.",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "pending",
+                  "type": {
+                    "text": "PendingAction"
+                  }
+                },
+                {
+                  "name": "next",
+                  "type": {
+                    "text": "AppointmentDetails"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "showCancelled",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "showMoved",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "status",
+                  "type": {
+                    "text": "AppointmentStatus"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "supplied",
+              "description": "Latched the first time `appointment` is set and never reset, so no path leads back to the API.",
+              "privacy": "private",
+              "default": "false",
+              "type": {
+                "text": "boolean"
               }
             }
           ],
@@ -596,6 +748,13 @@
               }
             },
             {
+              "name": "appointment-cancel-request",
+              "description": "Emitted with `{ appointmentId, reasonType? }` in supplied\nmode when the patient confirms a cancel. The host page cancels it and sets the updated\n`appointment`, or sets `actionError`.",
+              "type": {
+                "text": "CustomEvent<AppointmentCancelRequestDetail>"
+              }
+            },
+            {
               "name": "appointment-error",
               "description": "Emitted with `{ error, action, status? }` when a lookup, cancel or reschedule fails.",
               "type": {
@@ -607,6 +766,20 @@
               "description": "Emitted with `{ appointmentId, status, startTime }` once moved.",
               "type": {
                 "text": "CustomEvent<AppointmentRescheduleDetail>"
+              }
+            },
+            {
+              "name": "appointment-reschedule-request",
+              "description": "Emitted with `{ appointmentId, startTime }` in supplied\nmode when the patient confirms a new time. The host page moves it and sets the updated\n`appointment`, or sets `actionError`.",
+              "type": {
+                "text": "CustomEvent<AppointmentRescheduleRequestDetail>"
+              }
+            },
+            {
+              "name": "availability-request",
+              "description": "Emitted with `{ providerLocationId, visitReasonId, patientType,\nstartDate, days }` in supplied mode when the patient opens reschedule and no\n`rescheduleTimeslots` are set. The host page answers by setting them. The embedded picker\nemits the same event when the patient moves its window.",
+              "type": {
+                "text": "CustomEvent<AvailabilityRequestDetail>"
               }
             },
             {
@@ -977,6 +1150,27 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydratable",
+              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "privacy": "public",
+              "static": true,
+              "default": "{ timeslots: 'array' }",
+              "type": {
+                "text": "Readonly<Record<string, HydrationShape>>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydrated",
+              "description": "Whether any property came from a JSON block, read on the first update.",
+              "privacy": "protected",
+              "default": "false",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -1412,7 +1606,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdAvailabilityPicker",
-          "description": "Fetches bookable timeslots for one provider location and renders them for the patient to\nchoose from. No calendar primitive is involved — the booking flow needs a list of times, and\nthat is a list of buttons.\n\n**Two layouts.** `strip` is a row of days with the selected day's times beneath it, which is\nwhat fits in a step of a flow. `stacked` is every day of the window in order, each with its own\nheading and its times under it, which is the shape of the production booking modal: nothing is\nhidden behind a day that has to be pressed first. Closed days appear in `stacked` too, as one\nspan apiece — \"Sat, Aug 8 – Tue, Aug 11 / No available appointments\" — because a day quietly\nmissing from the list is indistinguishable from a window that ends early.\n\n**Patient type is a control, not just a property.** It changes which slots the API returns, so\na patient who sees nothing bookable needs it within reach — often switching it is the fix. It\nstays rendered in the empty and error states for exactly that reason, and setting it refetches.\n\nEmits the chosen slot rather than booking it, so it composes with `zd-patient-form` or\nwith a host page that owns its own booking step (COMP-002).",
+          "description": "Fetches bookable timeslots for one provider location and renders them for the patient to\nchoose from. No calendar primitive is involved — the booking flow needs a list of times, and\nthat is a list of buttons.\n\n**Two layouts.** `strip` is a row of days with the selected day's times beneath it, which is\nwhat fits in a step of a flow. `stacked` is every day of the window in order, each with its own\nheading and its times under it, which is the shape of the production booking modal: nothing is\nhidden behind a day that has to be pressed first. Closed days appear in `stacked` too, as one\nspan apiece — \"Sat, Aug 8 – Tue, Aug 11 / No available appointments\" — because a day quietly\nmissing from the list is indistinguishable from a window that ends early.\n\n**Patient type is a control, not just a property.** It changes which slots the API returns, so\na patient who sees nothing bookable needs it within reach — often switching it is the fix. It\nstays rendered in the empty and error states for exactly that reason, and setting it refetches.\n\nEmits the chosen slot rather than booking it, so it composes with `zd-patient-form` or\nwith a host page that owns its own booking step (COMP-002).\n\n**Handoff.** A picker whose slots came from a JSON block has nobody listening to book with, so\na tap goes to Zocdoc: the slot's `booking_url`, or the provider's `profile_url` when the slot\nhas none (`booking_url` is often null). `disable-handoff` turns that off. The patient-type\ncontrol is hidden in that mode too, since nobody would answer its `availability-request`;\n`interactive` shows it again for a page that will.",
           "tagName": "zd-availability-picker",
           "superclass": {
             "name": "CharmElement",
@@ -1504,6 +1698,17 @@
             },
             {
               "kind": "field",
+              "name": "disableHandoff",
+              "description": "Stops a picker hydrated from markup from sending a slot tap to Zocdoc.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "disable-handoff",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "emit",
               "privacy": "protected",
               "type": {
@@ -1517,6 +1722,15 @@
               "internal": true,
               "type": {
                 "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "fetched",
+              "privacy": "private",
+              "internal": true,
+              "type": {
+                "text": "readonly AvailabilitySlot[]"
               }
             },
             {
@@ -1540,6 +1754,15 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "handingOff",
+              "description": "Whether a slot tap goes to Zocdoc: data from markup, and the page hasn't opted out.",
+              "privacy": "protected",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -1585,6 +1808,38 @@
             },
             {
               "kind": "field",
+              "name": "hydratable",
+              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "privacy": "public",
+              "static": true,
+              "default": "{\n    timeslots: 'array',\n    provider: 'object',\n  }",
+              "type": {
+                "text": "Readonly<Record<string, HydrationShape>>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydrated",
+              "description": "Whether any property came from a JSON block, read on the first update.",
+              "privacy": "protected",
+              "default": "false",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "interactive",
+              "description": "Says the page will answer `availability-request` itself, so a picker hydrated from markup\nkeeps its patient-type control.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "interactive",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "layout",
               "description": "How the days are laid out. `strip` shows one day at a time behind a row of day buttons;\n`stacked` shows every day of the window at once, each with its own heading.",
               "privacy": "public",
@@ -1607,6 +1862,17 @@
             },
             {
               "kind": "field",
+              "name": "loading",
+              "description": "Whether the host is loading availability it supplies through `timeslots`.\n\nSet this while replacing supplied slots to keep stale times out of view and announce loading.\nIt does not start a request.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "loading",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "patientType",
               "description": "Which patient the times are for. Also the value of the rendered control, so setting it is\nboth how a host page pre-selects an answer and what the control writes back.",
               "privacy": "public",
@@ -1617,6 +1883,18 @@
               },
               "parsedType": {
                 "text": "'new' | 'existing'"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "provider",
+              "description": "The provider the slots belong to. Only read for its `profile_url`, where a slot tap goes in\nhandoff mode when the slot has no `booking_url`.",
+              "privacy": "public",
+              "type": {
+                "text": "ProviderLocation"
+              },
+              "parsedType": {
+                "text": "{ provider_location_id: string; provider_location_type?: 'in_person_provider' | 'virtual_provider' | undefined; accepts_patient_insurance?: 'accepted' | 'not_accepted' | 'insurance_not_specified' | undefined; first_availability_date_in_provider_local_time?: null | string | undefined; provider: { provider_id: string; npi?: string | undefined; first_name?: string | undefined; last_name?: string | undefined; title?: string | undefined; full_name?: string | undefined; gender_identity?: string | undefined; specialties?: string[] | undefined; specialty_ids?: string[] | undefined; default_visit_reason_id?: string | undefined; visit_reason_ids?: string[] | undefined; statement?: string | undefined; provider_photo_url?: string | undefined; languages?: string[] | undefined; profile_url?: string | undefined; credentials?: { certifications?: string[] | undefined; education?: { institutions?: string[] | undefined } | undefined } | undefined }; location?: { address1?: string | undefined; address2?: string | undefined; city?: string | undefined; state?: string | undefined; zip_code?: string | undefined; latitude?: number | undefined; longitude?: number | undefined; location_name?: string | undefined; phone_number?: string | undefined; phone_extension?: string | null | undefined; time_zone?: string | undefined; distance_to_patient_mi?: number | undefined } | undefined; virtual_location?: null | { state?: string | undefined; location_name?: string | undefined; time_zone?: string | undefined } | undefined; practice?: { practice_id: string; practice_name: string } | undefined; booking_requirements?: { required_fields?: string[] | undefined; accepts_booking_requests_from?: BookingRequestSource[] | undefined } | undefined } | undefined"
               }
             },
             {
@@ -1655,6 +1933,15 @@
               "kind": "method",
               "name": "renderDaysRegion",
               "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "requestState",
+                  "type": {
+                    "text": "RequestState"
+                  },
+                  "default": "this.requestState"
+                }
+              ],
               "return": {
                 "type": {
                   "text": "unknown"
@@ -1709,6 +1996,17 @@
               "return": {
                 "type": {
                   "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "requestAvailability",
+              "description": "Asks the host page for the current window, since supplied slots aren't this component's to fetch.",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
                 }
               }
             },
@@ -1784,10 +2082,10 @@
             {
               "kind": "field",
               "name": "slots",
-              "privacy": "private",
-              "internal": true,
+              "description": "The slots on show: the host page's when it supplied them, otherwise the last fetch.",
+              "privacy": "protected",
               "type": {
-                "text": "AvailabilitySlot[]"
+                "text": "readonly AvailabilitySlot[]"
               }
             },
             {
@@ -1798,6 +2096,15 @@
               "attribute": "start-date",
               "type": {
                 "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "timeslots",
+              "description": "The slots to show, when the host page already has them.\n\n`undefined` means \"not supplied\", which lets this component fetch its own; `[]` means\n\"supplied, and there are none\", which renders the empty state and asks for nothing. While\nsupplied, a change to the window or the patient type emits `availability-request` instead\nof fetching.",
+              "privacy": "public",
+              "type": {
+                "text": "readonly AvailabilitySlot[]"
               }
             },
             {
@@ -1840,6 +2147,15 @@
               }
             },
             {
+              "name": "disable-handoff",
+              "description": "Stops a picker hydrated from markup from sending a slot tap to Zocdoc.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disableHandoff"
+            },
+            {
               "name": "hide-patient-type",
               "description": "Drops the New/Existing patient control, leaving the times.\n\nWhat a host page sets when it asks the question itself — the production booking modal has one\ncontrol governing the whole panel, not one per section — and it then binds `patient-type` down.\n\nNamed for what it does rather than as `show-patient-type`, which would default to true and\ncould then never be turned off through an attribute: a boolean attribute's presence is its\nvalue.",
               "type": {
@@ -1849,6 +2165,15 @@
               "fieldName": "hidePatientType"
             },
             {
+              "name": "interactive",
+              "description": "Says the page will answer `availability-request` itself, so a picker hydrated from markup\nkeeps its patient-type control.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "interactive"
+            },
+            {
               "name": "layout",
               "description": "How the days are laid out. `strip` shows one day at a time behind a row of day buttons;\n`stacked` shows every day of the window at once, each with its own heading.",
               "type": {
@@ -1856,6 +2181,15 @@
               },
               "default": "'strip'",
               "fieldName": "layout"
+            },
+            {
+              "name": "loading",
+              "description": "Whether the host is loading availability it supplies through `timeslots`.\n\nSet this while replacing supplied slots to keep stale times out of view and announce loading.\nIt does not start a request.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "loading"
             },
             {
               "name": "patient-type",
@@ -1911,6 +2245,13 @@
               }
             },
             {
+              "name": "availability-request",
+              "description": "Emitted with `{ providerLocationId, visitReasonId, patientType,\nstartDate, days }` instead of a fetch when `timeslots` is supplied and one of those inputs\nchanges. The host page answers by setting `timeslots` again.",
+              "type": {
+                "text": "CustomEvent<AvailabilityRequestDetail>"
+              }
+            },
+            {
               "name": "patient-type-change",
               "description": "Emitted with `{ patientType }` when the New/Existing control is\nused. A host page that books through its own step should follow it, since the same value has\nto go to `POST /v1/appointments`.",
               "type": {
@@ -1930,7 +2271,7 @@
             },
             {
               "name": "slot-select",
-              "description": "Emitted with `{ startTime, providerLocationId }` when a time is\nchosen. `startTime` is the API's own string, offset included, so it can be handed\nback to `POST /v1/appointments` unmodified.",
+              "description": "Emitted with `{ startTime, providerLocationId }` when a time is\nchosen. `startTime` is the API's own string, offset included, so it can be handed\nback to `POST /v1/appointments` unmodified. Cancelable: `preventDefault()` stops the\nhandoff to Zocdoc.",
               "type": {
                 "text": "CustomEvent<SlotSelectDetail>"
               }
@@ -4088,7 +4429,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdProviderCard",
-          "description": "Displays a provider's photo, name, specialty, location, and insurance status\nin a horizontal card layout with a slot for availability.",
+          "description": "Displays a provider's photo, name, specialty, location, and insurance status\nin a horizontal card layout with a slot for availability.\n\n**Handoff.** A card whose provider came from a JSON block, or that `zd-provider-results` marks\nwith `handoff`, shows a \"Book now\" link to the provider's Zocdoc profile when it has no times\nof its own to tap. It needs a `profile_url` on Zocdoc over `https:`; without one there is no\nlink. `disable-handoff` turns it off.",
           "tagName": "zd-provider-card",
           "superclass": {
             "name": "CharmElement",
@@ -4109,13 +4450,22 @@
               "name": "baseName",
               "privacy": "public",
               "static": true,
-              "default": "\"provider-card\"",
+              "default": "'provider-card'",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "bookHref",
+              "description": "Where \"Book now\" goes, or `undefined` when it shouldn't render.",
+              "privacy": "protected",
+              "type": {
+                "text": "string | undefined"
               }
             },
             {
@@ -4141,10 +4491,31 @@
             },
             {
               "kind": "field",
+              "name": "disableHandoff",
+              "description": "Stops a card in handoff mode from showing \"Book now\".",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "disable-handoff",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "emit",
               "privacy": "protected",
               "type": {
                 "text": "TypedEmit<ZdProviderCardEventMap>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "filledSlots",
+              "description": "The slots that have content, so an empty one leaves no gap in the column.",
+              "privacy": "protected",
+              "internal": true,
+              "type": {
+                "text": "ReadonlySet<TrackedSlot>"
               }
             },
             {
@@ -4171,6 +4542,40 @@
               }
             },
             {
+              "kind": "field",
+              "name": "handingOff",
+              "description": "Whether \"Book now\" can show: data from markup or a hydrated parent, and not opted out.",
+              "privacy": "protected",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleBookClick",
+              "description": "Emits `book-select`, then follows the link unless a listener kept the patient here.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                },
+                {
+                  "name": "href",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
               "kind": "method",
               "name": "handleNameClick",
               "privacy": "protected",
@@ -4178,6 +4583,40 @@
                 "type": {
                   "text": "void"
                 }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleSlotChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "name",
+                  "type": {
+                    "text": "TrackedSlot"
+                  }
+                },
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "handoff",
+              "description": "Puts the card in handoff mode as if its provider had come from a JSON block. Set by\n`zd-provider-results` on the cards of a hydrated list, which only ever show day counts, so the\ncard shows \"Book now\" even with availability slotted in.",
+              "privacy": "public",
+              "default": "false",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -4219,6 +4658,27 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydratable",
+              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "privacy": "public",
+              "static": true,
+              "default": "{ provider: 'object' }",
+              "type": {
+                "text": "Readonly<Record<string, HydrationShape>>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydrated",
+              "description": "Whether any property came from a JSON block, read on the first update.",
+              "privacy": "protected",
+              "default": "false",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -4268,7 +4728,27 @@
             },
             {
               "kind": "method",
+              "name": "renderAnnotations",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "renderAvatar",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderBook",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -4322,6 +4802,15 @@
               }
             },
             {
+              "name": "disable-handoff",
+              "description": "Stops a card in handoff mode from showing \"Book now\".",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disableHandoff"
+            },
+            {
               "name": "hide-photo",
               "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
               "type": {
@@ -4350,6 +4839,13 @@
           ],
           "events": [
             {
+              "name": "book-select",
+              "description": "Emitted with `{ provider }` when \"Book now\" is chosen. Cancelable:\n`preventDefault()` keeps the patient on the page.",
+              "type": {
+                "text": "CustomEvent<BookSelectDetail>"
+              }
+            },
+            {
               "name": "profile-request",
               "description": "Emitted with `{ provider }` when the provider's name is clicked.",
               "type": {
@@ -4370,15 +4866,34 @@
           ],
           "slots": [
             {
+              "name": ""
+            },
+            {
               "name": "availability",
               "description": "Content to display on the right side (typically zd-availability-grid)."
             },
             {
               "name": "badges",
               "description": "Content to display below the insurance line (badges, awards)."
+            },
+            {
+              "name": "reason",
+              "description": "One line on why this provider fits the search, shown below the specialty."
+            },
+            {
+              "name": "review",
+              "description": "A verified review snippet, shown below the reason."
+            },
+            {
+              "name": "sponsored",
+              "description": "The label for a paid placement, shown below the review."
             }
           ],
           "cssParts": [
+            {
+              "name": "book",
+              "description": "The \"Book now\" link, shown in handoff mode."
+            },
             {
               "name": "details",
               "description": "The text column."
@@ -4400,12 +4915,24 @@
               "description": "The avatar element."
             },
             {
+              "name": "reason",
+              "description": "The wrapper around the `reason` slot, hidden while the slot is empty."
+            },
+            {
+              "name": "review",
+              "description": "The wrapper around the `review` slot, hidden while the slot is empty."
+            },
+            {
               "name": "skeleton",
               "description": "Each placeholder shown while `loading` is set."
             },
             {
               "name": "specialty",
               "description": "The specialty line."
+            },
+            {
+              "name": "sponsored",
+              "description": "The wrapper around the `sponsored` slot, hidden while the slot is empty."
             }
           ]
         }
@@ -4570,6 +5097,27 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydratable",
+              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "privacy": "public",
+              "static": true,
+              "default": "{ provider: 'object' }",
+              "type": {
+                "text": "Readonly<Record<string, HydrationShape>>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydrated",
+              "description": "Whether any property came from a JSON block, read on the first update.",
+              "privacy": "protected",
+              "default": "false",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -4912,7 +5460,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdProviderResults",
-          "description": "Renders a list of provider locations and emits the one the user picks.\nPurely presentational — it performs no network requests, and it works on its\nown with nothing above it (COMP-004).\n\n**Paging is reported, not performed.** `page-change` says which page the patient asked for\nand the component updates `page` to match, but fetching it belongs to whatever owns the\nrequest — this component never learns the search criteria, so it could not refetch if it\nwanted to (COMP-002). `window-change` works the same way.\n\nSupply `availability` and each card grows a `zd-availability-grid` of day counts, with one\nshared window control above the list driving all of them.",
+          "description": "Renders a list of provider locations and emits the one the user picks.\nPurely presentational — it performs no network requests, and it works on its\nown with nothing above it (COMP-004).\n\n**Paging is reported, not performed.** `page-change` says which page the patient asked for\nand the component updates `page` to match, but fetching it belongs to whatever owns the\nrequest — this component never learns the search criteria, so it could not refetch if it\nwanted to (COMP-002). `window-change` works the same way.\n\nSupply `availability` and each card grows a `zd-availability-grid` of day counts, with one\nshared window control above the list driving all of them.\n\n**Handoff.** A list hydrated from JSON blocks has nobody to answer its events, so every card\nshows \"Book now\" to the provider's Zocdoc profile, and a day on a card does the same. Paging\nand the window control are hidden, since nothing would fetch the page or window they ask for;\n`interactive` shows them again for a page that will. `disable-handoff` turns handoff off.",
           "tagName": "zd-provider-results",
           "superclass": {
             "name": "CharmElement",
@@ -4926,6 +5474,15 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "annotations",
+              "description": "Extra lines for the cards, keyed by `provider_location_id`: the card's `reason`, `review` and\n`sponsored` slots, which a card inside this shadow root can't be handed any other way. An\nentry for a provider not in `providers` is ignored.",
+              "privacy": "public",
+              "type": {
+                "text": "Readonly<Record<string, ProviderAnnotation>>"
               }
             },
             {
@@ -4974,6 +5531,25 @@
             },
             {
               "kind": "method",
+              "name": "bookFromDay",
+              "description": "A day tapped in handoff mode does what the card's \"Book now\" does: a day count with nothing\nbehind it would read as broken.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "location",
+                  "type": {
+                    "text": "ProviderLocation"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "closeProfileDialog",
               "description": "Follows the dialog rather than driving it, on `dialog-hide` — the event the dialog actually\nemits when it closes, and not `close`, which nothing dispatches.\n\nThe dialog dismisses itself on its own close button, Escape and the backdrop, so a flag left\ntrue after any of those no longer describes the dialog it drives: pressing the same provider's\nname again would set a flag that was already set, and the profile would never come back.",
               "privacy": "protected",
@@ -5002,6 +5578,17 @@
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disableHandoff",
+              "description": "Stops a list hydrated from markup from handing taps off to Zocdoc.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "disable-handoff",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -5052,6 +5639,15 @@
                 "type": {
                   "text": "void"
                 }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "handingOff",
+              "description": "Whether taps go to Zocdoc: data from markup, and the page hasn't opted out.",
+              "privacy": "protected",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -5116,12 +5712,44 @@
             },
             {
               "kind": "field",
+              "name": "hydratable",
+              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "privacy": "public",
+              "static": true,
+              "default": "{\n    providers: 'array',\n    availability: 'array',\n    annotations: 'object',\n  }",
+              "type": {
+                "text": "Readonly<Record<string, HydrationShape>>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydrated",
+              "description": "Whether any property came from a JSON block, read on the first update.",
+              "privacy": "protected",
+              "default": "false",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "insuranceName",
               "description": "The insurance plan the search was run with. Supplying it is what allows the network line\nto render at all, since `accepts_patient_insurance` is only meaningful against a plan.",
               "privacy": "public",
               "attribute": "insurance-name",
               "type": {
                 "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "interactive",
+              "description": "Says the page will answer `page-change` and `window-change` itself, so a list hydrated from\nmarkup keeps its pager and window control.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "interactive",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -5141,6 +5769,15 @@
               "default": "false",
               "attribute": "loading",
               "reflects": true,
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "navigable",
+              "description": "Whether the pager and window control show: always, unless handing off to a page that won't answer them.",
+              "privacy": "protected",
               "type": {
                 "text": "boolean"
               }
@@ -5206,11 +5843,39 @@
             },
             {
               "kind": "field",
+              "name": "providerList",
+              "description": "`providers`, with unset read as none.",
+              "privacy": "protected",
+              "type": {
+                "text": "ProviderLocation[]"
+              }
+            },
+            {
+              "kind": "field",
               "name": "providers",
-              "description": "The provider locations to display.",
+              "description": "The provider locations to display. Unset renders the same as `[]`; it's unset rather than\n`[]` by default so a JSON block can supply it.",
               "privacy": "public",
               "type": {
                 "text": "ProviderLocation[]"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderAnnotations",
+              "description": "The card's annotation slots for one provider, through text bindings only.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "location",
+                  "type": {
+                    "text": "ProviderLocation"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
               }
             },
             {
@@ -5319,6 +5984,24 @@
               "name": "renderSummary",
               "description": "How many the search found, which is the one number a patient reads before deciding whether\nto narrow it.\n\nA live region, because paging replaces the whole list without moving focus or changing the\npage — without it, the only feedback a screen reader user gets for pressing Next is that\nthe list they were reading is now different (A11Y-002). Counting the total rather than the\npage is the point: `providers.length` is 10 on every page of 334.",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "unknown"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderWindow",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "startDate",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "return": {
                 "type": {
                   "text": "unknown"
@@ -5443,6 +6126,15 @@
               }
             },
             {
+              "name": "disable-handoff",
+              "description": "Stops a list hydrated from markup from handing taps off to Zocdoc.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disableHandoff"
+            },
+            {
               "name": "hide-photos",
               "description": "Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see\n`ProviderSummaryOptions.hidePhoto`.",
               "type": {
@@ -5458,6 +6150,15 @@
                 "text": "string"
               },
               "fieldName": "insuranceName"
+            },
+            {
+              "name": "interactive",
+              "description": "Says the page will answer `page-change` and `window-change` itself, so a list hydrated from\nmarkup keeps its pager and window control.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "interactive"
             },
             {
               "name": "loading",
@@ -5504,6 +6205,13 @@
             }
           ],
           "events": [
+            {
+              "name": "book-select",
+              "description": "Emitted with `{ provider }` in handoff mode, when \"Book now\" or a day on a\ncard is chosen. Cancelable: `preventDefault()` keeps the patient on the page.",
+              "type": {
+                "text": "CustomEvent<BookSelectDetail>"
+              }
+            },
             {
               "name": "day-select",
               "description": "Emitted with `{ day, provider }` when a day is chosen on a card, forwarded\nfrom that card's grid with the provider attached.",
@@ -5692,7 +6400,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdProviderSearch",
-          "description": "Collects search criteria and queries `GET /v1/provider_locations`.\n\nEmits results rather than rendering them, so it composes with `zd-provider-results` or\nwith a host page that wants to lay results out itself (COMP-002).\n\nA ZIP alone is not a search. The endpoint requires a 5-digit `zip_code` **and** a\n`specialty_id`, and answers a request missing either with a 400 whose body is\ndeveloper-facing — so both are checked here and reported on the field that caused them,\nrather than surfacing as a failed search (CLIENT-003, A11Y-004). This component does not\ncollect a visit reason; the API defaults to \"any\" for the chosen specialty.",
+          "description": "Collects search criteria and queries `GET /v1/provider_locations`.\n\nEmits results rather than rendering them, so it composes with `zd-provider-results` or\nwith a host page that wants to lay results out itself (COMP-002).\n\nA ZIP alone is not a search. The endpoint requires a 5-digit `zip_code` **and** a\n`specialty_id`, and answers a request missing either with a 400 whose body is\ndeveloper-facing — so both are checked here and reported on the field that caused them,\nrather than surfacing as a failed search (CLIENT-003, A11Y-004). This component does not\ncollect a visit reason; the API defaults to \"any\" for the chosen specialty.\n\n**Supplied mode.** A host page that makes its own API calls, such as an MCP server, sets\n`supplied`, and can hand over `specialties` and `insurancePlans` so the selects need no\nlookups. A submit or page change then emits `provider-search-request` instead of searching.\nThe host sets `loading` while it fetches and gives the results to its own `zd-provider-results`.",
           "tagName": "zd-provider-search",
           "superclass": {
             "name": "CharmElement",
@@ -5758,6 +6466,24 @@
               "internal": true,
               "type": {
                 "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "fetchedInsurancePlans",
+              "privacy": "private",
+              "internal": true,
+              "type": {
+                "text": "InsurancePlan[]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "fetchedSpecialties",
+              "privacy": "private",
+              "internal": true,
+              "type": {
+                "text": "Specialty[]"
               }
             },
             {
@@ -5863,6 +6589,27 @@
             },
             {
               "kind": "field",
+              "name": "hydratable",
+              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "privacy": "public",
+              "static": true,
+              "default": "{\n    specialties: 'array',\n    insurancePlans: 'array',\n  }",
+              "type": {
+                "text": "Readonly<Record<string, HydrationShape>>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydrated",
+              "description": "Whether any property came from a JSON block, read on the first update.",
+              "privacy": "protected",
+              "default": "false",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
               "name": "insurancePlanId",
               "description": "The insurance plan to filter by. Optional: without it the search spans every network.",
               "privacy": "public",
@@ -5873,11 +6620,31 @@
             },
             {
               "kind": "field",
-              "name": "insurancePlans",
-              "privacy": "private",
-              "internal": true,
+              "name": "insurancePlanOptions",
+              "description": "The insurance plan options on show: the host page's when supplied, otherwise the fetched list.",
+              "privacy": "protected",
               "type": {
                 "text": "InsurancePlan[]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "insurancePlans",
+              "description": "The insurance plan options, when the host page has them. Skips that lookup.",
+              "privacy": "public",
+              "type": {
+                "text": "InsurancePlan[]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "loading",
+              "description": "Whether the host page is running a search for a `supplied` form. Shows the same loading state\nas a search of this component's own. It does not start a request.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "loading",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -6022,8 +6789,8 @@
             {
               "kind": "field",
               "name": "specialties",
-              "privacy": "private",
-              "internal": true,
+              "description": "The specialty options, when the host page has them. Skips that lookup.",
+              "privacy": "public",
               "type": {
                 "text": "Specialty[]"
               }
@@ -6036,6 +6803,26 @@
               "attribute": "specialty-id",
               "type": {
                 "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "specialtyOptions",
+              "description": "The specialty options on show: the host page's when supplied, otherwise the fetched list.",
+              "privacy": "protected",
+              "type": {
+                "text": "Specialty[]"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "supplied",
+              "description": "Requests searches from the host page instead of running them. A submit or page change emits\n`provider-search-request`, and nothing here calls the search API.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "supplied",
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -6059,7 +6846,7 @@
                 "text": "VisitType"
               },
               "parsedType": {
-                "text": "'all' | 'in_person' | 'video_visit' | undefined"
+                "text": "'in_person' | 'all' | 'video_visit' | undefined"
               }
             },
             {
@@ -6091,6 +6878,15 @@
                 "text": "string"
               },
               "fieldName": "insurancePlanId"
+            },
+            {
+              "name": "loading",
+              "description": "Whether the host page is running a search for a `supplied` form. Shows the same loading state\nas a search of this component's own. It does not start a request.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "loading"
             },
             {
               "name": "max-distance-to-patient-mi",
@@ -6126,13 +6922,22 @@
               "fieldName": "specialtyId"
             },
             {
+              "name": "supplied",
+              "description": "Requests searches from the host page instead of running them. A submit or page change emits\n`provider-search-request`, and nothing here calls the search API.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "supplied"
+            },
+            {
               "name": "visit-type",
               "description": "Which visit formats to include. Left unset the **API defaults to `in_person`**, so video\nvisits are absent from results until this is set to `all` or `video_visit`. The default\nis the API's rather than ours so that the component reports what the endpoint does.",
               "type": {
                 "text": "VisitType"
               },
               "parsedType": {
-                "text": "'all' | 'in_person' | 'video_visit' | undefined"
+                "text": "'in_person' | 'all' | 'video_visit' | undefined"
               },
               "fieldName": "visitType"
             },
@@ -6159,6 +6964,13 @@
               "description": "Emitted with `{ error }` when the request fails.",
               "type": {
                 "text": "CustomEvent<ErrorDetail>"
+              }
+            },
+            {
+              "name": "provider-search-request",
+              "description": "Emitted with `{ zipCode, specialtyId, insurancePlanId,\nvisitType, maxDistanceToPatientMi, page, pageSize }` instead of a search when `supplied` is\nset. Only valid criteria are sent: field validation runs first, as it does before a search.",
+              "type": {
+                "text": "CustomEvent<ProviderSearchRequestDetail>"
               }
             },
             {
@@ -6358,6 +7170,27 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydratable",
+              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "privacy": "public",
+              "static": true,
+              "default": "{ provider: 'object' }",
+              "type": {
+                "text": "Readonly<Record<string, HydrationShape>>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hydrated",
+              "description": "Whether any property came from a JSON block, read on the first update.",
+              "privacy": "protected",
+              "default": "false",
+              "type": {
+                "text": "boolean"
               }
             },
             {

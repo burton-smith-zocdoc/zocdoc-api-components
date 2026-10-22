@@ -49,6 +49,25 @@ All days shown vertically:
 
 Fetches its own timeslots from `GET /v1/provider_locations/availability` once `providerLocationId` and `visitReasonId` are set. The API limits a window to 30 days and guarantees availability up to 150 days out. Each slot's `start_time` must be passed to booking unchanged. See [Find Provider Availability and Book Appointments](https://api-docs.zocdoc.com/guides/patient/book-appointments).
 
+## Supplied Data and Markup
+
+Set `timeslots` to render times you already have; the picker then never fetches. Moving the window or switching patient type emits `availability-request` with `{ providerLocationId, visitReasonId, patientType, startDate, days }`, and you answer by setting `timeslots` again, with `loading` set in between. `slot-select` is cancelable.
+
+A server-rendered page can write the times, and the provider for the fallback link, into the HTML:
+
+```html
+<zd-availability-picker provider-location-id="pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890">
+  <script type="application/json" data-zd-prop="timeslots">
+    […]
+  </script>
+  <script type="application/json" data-zd-prop="provider">
+    { "provider_location_id": "…", "provider": { "profile_url": "…" } }
+  </script>
+</zd-availability-picker>
+```
+
+A picker hydrated this way is in handoff mode. Tapping a time goes to the slot's `booking_url` on Zocdoc, or to the provider's `profile_url` when `booking_url` is null, and the New/Existing patient control is hidden. Add `interactive` to show it again, or `disable-handoff` to keep taps on the page. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+
 ## Accessibility
 
 - Slots are buttons with full datetime labels

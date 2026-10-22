@@ -5,6 +5,7 @@ project.scope.registerComponent(ZdAvailabilityPicker);
 
 export { ZdAvailabilityPicker };
 export type {
+  AvailabilityRequestDetail,
   PatientTypeChangeDetail,
   SlotSelectDetail,
   ZdAvailabilityPickerEventMap,

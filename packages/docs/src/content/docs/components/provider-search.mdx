@@ -43,6 +43,25 @@ The `<zd-provider-search>` component collects search criteria and fetches matchi
 
 Loads specialties, visit reasons, and insurance plans from the [reference data](https://api-docs.zocdoc.com/guides/reference-data) endpoints, then searches `GET /v1/provider_locations`. A ZIP code is required. Sandbox ZIPs `11201` (results), `99734` (empty), and `10112` (error) drive each state. See [Test Scenarios](/zocdoc-api-components/guides/testing/#test-scenarios).
 
+## Supplied Data and Markup
+
+Set the `supplied` attribute when your page makes its own API calls. A submit or page change then emits `provider-search-request` with the validated criteria instead of searching. Set `loading` while you fetch, and give the results to your own `zd-provider-results`.
+
+`specialties` and `insurancePlans` can be set by script, or written as JSON blocks, so the selects need no lookups:
+
+```html
+<zd-provider-search supplied zip-code="11201">
+  <script type="application/json" data-zd-prop="specialties">
+    […]
+  </script>
+  <script type="application/json" data-zd-prop="insurancePlans">
+    […]
+  </script>
+</zd-provider-search>
+```
+
+See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+
 ## Accessibility
 
 - Form fields have visible labels

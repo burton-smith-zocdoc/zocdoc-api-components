@@ -1,0 +1,147 @@
+---
+title: Markup and Supplied Data
+description: Render the components from data you already have, set by script or written into the HTML, and what taps do when nobody is listening
+---
+
+Most components can fetch for themselves from the Zocdoc API. They can also render data your page already has, either set as properties by script or written into the HTML as JSON. This page covers both, and what happens when a patient taps something on a page that has no script of its own.
+
+## Supplied data
+
+A component whose data property is **`undefined`** fetches it. A component whose data property **holds a value** renders that value and never fetches it. That includes an empty array, which renders the empty state.
+
+```javascript
+const picker = document.querySelector('zd-availability-picker');
+picker.timeslots = slotsFromMyServer; // rendered as-is, no request
+picker.timeslots = []; // "No appointments available", no request
+picker.timeslots = undefined; // back to fetching
+```
+
+While you fetch the next set, set `loading`. It shows the loading state and announces it. It doesn't start a request.
+
+When something changes that would make a fetching component request again, a supplied component emits a **request event** instead. Answer it by setting the property again.
+
+| Component                | Supplied properties                                                     | Request events                                                                         |
+| ------------------------ | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `zd-availability-picker` | `timeslots`                                                             | `availability-request`                                                                 |
+| `zd-availability-grid`   | `timeslots`                                                             | `window-change`                                                                        |
+| `zd-appointment`         | `appointment`, `providerLocation`, `rescheduleTimeslots`, `actionError` | `appointment-cancel-request`, `appointment-reschedule-request`, `availability-request` |
+| `zd-provider-search`     | `specialties`, `insurancePlans`, and the `supplied` attribute           | `provider-search-request`                                                              |
+| `zd-provider-results`    | `providers`, `availability`, `annotations`                              | `page-change`, `window-change`                                                         |
+
+`zd-provider-results`, `zd-provider-card`, `zd-provider-summary` and `zd-provider-profile` never fetch, so for them supplied data is the only way in.
+
+`zd-appointment` reports a failed cancel or reschedule through `actionError`. Set it to any value and the component shows its own message. It never shows yours, so API error text never reaches the patient.
+
+## Markup
+
+A page rendered on a server can write the data into the HTML, so the components render it without any script of your own.
+
+- **Scalars** such as ids, dates, flags and counts go in attributes, as they always have: `provider-location-id`, `start-date`, `total-count`.
+- **Text for people to read** goes in named slots, so it stays in the page where browser translation can reach it.
+- **Lists and objects** go in an inline JSON block, one per property.
+
+```html
+<zd-provider-results total-count="1" page-size="10">
+  <script type="application/json" data-zd-prop="providers">
+    [
+      {
+        "provider_location_id": "pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890",
+        "provider_location_type": "in_person_provider",
+        "provider": {
+          "provider_id": "pr_abc123-def456_wxyz7890",
+          "first_name": "Avery",
+          "last_name": "Sandoval",
+          "title": "MD",
+          "specialties": ["Primary Care Doctor"],
+          "profile_url": "https://www.zocdoc.com/doctor/test-provider-12345"
+        },
+        "location": {
+          "address1": "1 Sandbox Plaza",
+          "city": "Brooklyn",
+          "state": "NY",
+          "zip_code": "11201"
+        }
+      }
+    ]
+  </script>
+  <script type="application/json" data-zd-prop="annotations">
+    {
+      "pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890": {
+        "reason": "Sees new patients for annual checkups",
+        "sponsored": true
+      }
+    }
+  </script>
+</zd-provider-results>
+```
+
+### How blocks are read
+
+- A block is a `<script type="application/json" data-zd-prop="name">` that is a **direct child** of the component. A block inside a nested element belongs to that element.
+- Blocks are read once, when the component first renders. Change the data later by setting the property.
+- **A property set by script wins.** A block only fills a property nothing else has set.
+- The content is parsed with `JSON.parse` and nothing else, so it's never run as script. When you write JSON into HTML on a server, escape `<` as `\u003c` so the text `</script>` can't end the block early.
+- A block that isn't valid JSON, or isn't the expected shape, is ignored with a console warning naming the element and the property, never the content. The component then behaves as if the block weren't there.
+- Only the properties below are read. A block naming anything else is ignored.
+
+| Component                | Properties read from blocks                |
+| ------------------------ | ------------------------------------------ |
+| `zd-provider-results`    | `providers`, `availability`, `annotations` |
+| `zd-provider-card`       | `provider`                                 |
+| `zd-provider-summary`    | `provider`                                 |
+| `zd-provider-profile`    | `provider`                                 |
+| `zd-availability-grid`   | `timeslots`                                |
+| `zd-availability-picker` | `timeslots`, `provider`                    |
+| `zd-provider-search`     | `specialties`, `insurancePlans`            |
+
+### Components that never read markup
+
+`zd-patient-form`, `zd-appointment`, `zd-booking-confirmation`, `zd-sign-in` and `zd-booking` ignore JSON blocks entirely. They handle patient information or a booking in progress, and that data should never be written into a page's HTML, where it ends up in caches and saved pages. Set their properties by script.
+
+### Slots for text
+
+`zd-provider-card` has three slots for text you write: `reason` (one line on why this provider fits), `review` (a verified review snippet) and `sponsored` (the label for a paid placement). Each renders only when it has content.
+
+```html
+<zd-provider-card>
+  <script type="application/json" data-zd-prop="provider">
+    { … }
+  </script>
+  <span slot="reason">Sees new patients for annual checkups</span>
+  <span slot="review">"Thorough and kind."</span>
+</zd-provider-card>
+```
+
+`zd-provider-results` renders its cards itself, so it takes the same three through `annotations`, keyed by `provider_location_id`. `reason` and `review` render as plain text, never HTML. `sponsored: true` shows the component's own "Sponsored" label, so a paid placement is always labelled the same way.
+
+## Taps
+
+Events such as `slot-select` and `book-select` are **cancelable**. On a page that listens, they work as they always have.
+
+A component whose data came from a JSON block is in **handoff mode**, because there's probably no script on the page to answer it. In handoff mode, taps take the patient to Zocdoc to finish booking:
+
+- **A time in `zd-availability-picker`** goes to the slot's `booking_url`. `booking_url` is often `null`, so when it is, the tap goes to the provider's `profile_url` from the picker's `provider` instead. With neither, nothing happens beyond the event.
+- **`zd-provider-card`** shows a "Book now" link to the provider's `profile_url`, unless the card has times of its own in its `availability` slot. Without a `profile_url` there's no link.
+- **`zd-provider-results`** shows "Book now" on every card, since its cards only show day counts. Tapping a day does the same as "Book now" for that card.
+
+Before navigating, the component emits the event. Call `preventDefault()` on it to keep the patient on the page.
+
+Only absolute `https:` URLs on `zocdoc.com` are followed. The components add two query parameters, `referrerType=api_components` and `component`, which say which component sent the visit and nothing about who. Inside an iframe, the link opens in a new tab rather than loading Zocdoc in the frame.
+
+### Controls nobody would answer
+
+Some controls only work if the page answers their request events. In handoff mode they're hidden: the pager and the shared window control on `zd-provider-results`, and the New/Existing patient control on `zd-availability-picker`. Add the `interactive` attribute to show them again, which tells the component your page will handle `page-change`, `window-change` and `availability-request` itself.
+
+### Turning handoff off
+
+Add `disable-handoff` to keep a component from linking to Zocdoc. Taps then only emit their events.
+
+```html
+<zd-provider-results disable-handoff>…</zd-provider-results>
+```
+
+Components whose data you set by script are never in handoff mode, so pages that already use them see no change.
+
+## Stability
+
+The markup format is public API: tag names, attributes, slot names, the `data-zd-prop` names and the shape of their JSON. Changes to it are additive only, so markup written today keeps working.
