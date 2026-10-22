@@ -99,10 +99,6 @@ export default css`
   .annotation {
     line-height: var(--zd-line-height-normal, 1.4);
 
-    &[hidden] {
-      display: none;
-    }
-
     &.review {
       font-style: italic;
     }

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as availability from '../../client/availability.js';
 import { ZocdocError } from '../../client/errors.js';
 import { buildTimeslots, PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
@@ -7,7 +7,6 @@ import { expectNoViolations } from '../../utils/test/a11y.js';
 import { dayFromToday } from '../../utils/test/dates.js';
 import { mount, parts, settled, shadow, texts, track } from '../../utils/test/mount.js';
 import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
-import * as handoff from '../../utilities/handoff.js';
 import './index.js';
 
 /**
@@ -16,9 +15,6 @@ import './index.js';
  * ES module are non-configurable in browser mode and `vi.spyOn` throws.
  */
 vi.mock('../../client/availability.js', { spy: true });
-
-/** Stubbed per test, so a handoff never leaves the test page. */
-vi.mock('../../utilities/handoff.js', { spy: true });
 
 const PROVIDER_LOCATION_ID = 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890';
 const VISIT_REASON_ID = 'pc_FRO-18leckytNKtruw5dLR';
@@ -688,6 +684,52 @@ describe('zd-availability-picker', () => {
       expect(availability.getAvailability).not.toHaveBeenCalled();
     });
 
+    it('shows loading after a request until the answering timeslots arrive', async () => {
+      const element = await mountSupplied();
+
+      element.startDate = dayFromToday(1);
+      await settled(element);
+      expect(shadow(element).querySelector('[part="loading-days"]')).not.toBeNull();
+      expect(shadow(element).querySelector('[part="slot"]')).toBeNull();
+
+      element.timeslots = buildTimeslots(dayFromToday(1), ['09:00']);
+      await settled(element);
+      expect(shadow(element).querySelector('[part="loading-days"]')).toBeNull();
+      expect(shadow(element).querySelectorAll('[part="slot"]')).toHaveLength(1);
+    });
+
+    it('asks for the window it renders, clamped to 30 days', async () => {
+      const element = await mountSupplied();
+      const requests: CustomEvent[] = [];
+      element.addEventListener('availability-request', (event) =>
+        requests.push(event as CustomEvent)
+      );
+
+      element.days = 90;
+      await settled(element);
+
+      expect(requests[0]!.detail.days).toBe(30);
+    });
+
+    it('drops a fetch that resolves after slots were supplied', async () => {
+      let resolve!: (value: ProviderLocationAvailability[]) => void;
+      vi.mocked(availability.getAvailability).mockReturnValueOnce(
+        new Promise((done) => {
+          resolve = done;
+        })
+      );
+      const element = await mountReady();
+
+      element.timeslots = [];
+      await settled(element);
+      resolve(entry());
+      await new Promise((done) => setTimeout(done));
+      await settled(element);
+
+      expect(shadow(element).querySelector('[part="empty"]')).not.toBeNull();
+      expect(shadow(element).querySelector('[part="slot"]')).toBeNull();
+    });
+
     it('shows the loading state for loading and fetches nothing', async () => {
       const element = await mountSupplied([], 'loading');
 
@@ -848,14 +890,21 @@ describe('zd-availability-picker handoff', () => {
     provider: { ...PROVIDER_LOCATIONS[0]!.provider, profile_url: PROFILE_URL },
   };
 
-  let navigate: MockInstance<typeof handoff.navigateTo>;
+  /** Cancels each tap's default after the picker has seen it, so the test page never navigates. */
+  let followed: boolean[];
+  function stopNavigation(event: Event): void {
+    followed.push(!event.defaultPrevented);
+    event.preventDefault();
+  }
 
   beforeEach(() => {
     vi.spyOn(availability, 'getAvailability').mockResolvedValue(entry());
-    navigate = vi.spyOn(handoff, 'navigateTo').mockImplementation(() => {});
+    followed = [];
+    window.addEventListener('click', stopNavigation);
   });
 
   afterEach(() => {
+    window.removeEventListener('click', stopNavigation);
     vi.restoreAllMocks();
   });
 
@@ -877,25 +926,34 @@ describe('zd-availability-picker handoff', () => {
     );
   }
 
+  /** The inner `<a>` or `<button>` a tap lands on. */
   function tapSlot(element: Picker): void {
-    shadow(element).querySelector<HTMLElement>('[part="slot"]')!.click();
+    const slot = shadow(element).querySelector<HTMLElement>('[part="slot"]')!;
+    slot.shadowRoot!.querySelector<HTMLElement>('a, button')!.click();
   }
 
-  it('hydrated slot tap navigates to booking_url with referrer params', async () => {
-    tapSlot(await hydrated(slotsWith(BOOKING_URL), { provider: PROVIDER }));
+  function slotHref(element: Picker): URL | undefined {
+    const anchor = shadow(element)
+      .querySelector('[part="slot"]')!
+      .shadowRoot!.querySelector<HTMLAnchorElement>('a');
+    return anchor ? new URL(anchor.href) : undefined;
+  }
 
-    expect(navigate).toHaveBeenCalledOnce();
-    const href = new URL(navigate.mock.calls[0]![0]);
+  it('hydrated slot is a link to booking_url with referrer params', async () => {
+    const element = await hydrated(slotsWith(BOOKING_URL), { provider: PROVIDER });
+    tapSlot(element);
+
+    expect(followed).toEqual([true]);
+    const href = slotHref(element)!;
     expect(href.origin + href.pathname).toBe(BOOKING_URL);
     expect(href.searchParams.get('referrerType')).toBe('api_components');
     expect(href.searchParams.get('component')).toBe('availability-picker');
   });
 
   it('falls back to provider.profile_url when booking_url is null', async () => {
-    tapSlot(await hydrated(slotsWith(null), { provider: PROVIDER }));
+    const element = await hydrated(slotsWith(null), { provider: PROVIDER });
 
-    expect(navigate).toHaveBeenCalledOnce();
-    expect(navigate.mock.calls[0]![0]).toMatch(
+    expect(slotHref(element)?.href).toMatch(
       /^https:\/\/www\.zocdoc\.com\/doctor\/test-provider-12345\?/
     );
   });
@@ -908,12 +966,11 @@ describe('zd-availability-picker handoff', () => {
     tapSlot(element);
 
     expect(events).toHaveLength(1);
-    expect(navigate).not.toHaveBeenCalled();
+    expect(slotHref(element)).toBeUndefined();
   });
 
   it('does not follow a booking_url that is not an https Zocdoc URL', async () => {
-    tapSlot(await hydrated(slotsWith('https://evil.example/booking')));
-    expect(navigate).not.toHaveBeenCalled();
+    expect(slotHref(await hydrated(slotsWith('https://evil.example/booking')))).toBeUndefined();
   });
 
   it('preventDefault on slot-select stops navigation', async () => {
@@ -922,12 +979,18 @@ describe('zd-availability-picker handoff', () => {
 
     tapSlot(element);
 
-    expect(navigate).not.toHaveBeenCalled();
+    expect(followed).toEqual([false]);
   });
 
   it('disable-handoff stops navigation', async () => {
-    tapSlot(await hydrated(slotsWith(BOOKING_URL), { attrs: 'disable-handoff' }));
-    expect(navigate).not.toHaveBeenCalled();
+    const element = await hydrated(slotsWith(BOOKING_URL), { attrs: 'disable-handoff' });
+    expect(slotHref(element)).toBeUndefined();
+  });
+
+  it('tells screen readers a linked time opens Zocdoc', async () => {
+    const element = await hydrated(slotsWith(BOOKING_URL));
+    const hint = shadow(element).querySelector('[part="slot"] .visually-hidden');
+    expect(hint?.textContent).toBe(', opens Zocdoc');
   });
 
   it('a property-driven picker never navigates', async () => {
@@ -935,9 +998,7 @@ describe('zd-availability-picker handoff', () => {
     (element as Picker & { provider?: unknown }).provider = PROVIDER;
     await settled(element);
 
-    tapSlot(element);
-
-    expect(navigate).not.toHaveBeenCalled();
+    expect(slotHref(element)).toBeUndefined();
   });
 
   it('hides the patient-type toggle when hydrated, shows it with interactive', async () => {

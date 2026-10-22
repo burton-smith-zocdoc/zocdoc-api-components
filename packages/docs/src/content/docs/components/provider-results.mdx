@@ -70,12 +70,14 @@ document.querySelector('zd-provider-results').annotations = {
 
 ## Markup and Handoff
 
-`providers`, `availability` and `annotations` can all be written into the HTML as JSON blocks, so a server-rendered page needs no script. A list hydrated this way is in handoff mode. Each card shows "Book now" linking to the provider's Zocdoc profile, tapping a day does the same, and `book-select` is emitted first, cancelable. The pager and the shared window control are hidden, since nobody would answer them. Add `interactive` to show them again, or `disable-handoff` to turn handoff off. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/) for a complete example.
+`providers`, `availability` and `annotations` can all be written into the HTML as JSON blocks, so a server-rendered page needs no script. A list hydrated this way is in handoff mode. Each card shows "Book now" linking to the provider's Zocdoc profile, tapping a day does the same, and `book-select` is emitted first, cancelable. The pager and the shared window control are hidden, since nobody would answer them. Add `interactive` to show them again, or `disable-handoff` to turn handoff off. In handoff mode, a day tap emits `book-select`, not `day-select`, and each day says it opens Zocdoc.
+
+Outside handoff mode, "Book now" is a button. It emits `provider-select` with the card's provider, and a day tap emits `day-select`. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/) for a complete example.
 
 ## Accessibility
 
 - Results announced via `aria-live` region
-- Each card is focusable and activates on Enter/Space
+- "Book now" names its provider for screen readers, so a list of them can be told apart
 - Pagination controls labeled for screen readers
 
 ## API Reference

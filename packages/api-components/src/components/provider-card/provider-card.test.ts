@@ -1,11 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
 import { mount, part, parts, queryPart, settled, shadow } from '../../utils/test/mount.js';
 import type { ZdProviderCard } from './provider-card.js';
 import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
-import * as handoff from '../../utilities/handoff.js';
 import './index.js';
 
 /**
@@ -16,9 +15,6 @@ import './index.js';
  * component's tests already draw from (see `provider-profile.test.ts`).
  */
 const PROVIDER = PROVIDER_LOCATIONS[0]!;
-
-/** Stubbed per test, so a handoff never leaves the test page. */
-vi.mock('../../utilities/handoff.js', { spy: true });
 
 type Card = ZdProviderCard;
 
@@ -191,15 +187,14 @@ describe('zd-provider-card', () => {
       const card = await mountAnnotated(ANNOTATED);
 
       const shown = ['reason', 'review', 'sponsored'].map((name) => {
-        const wrapper = queryPart(card, name);
-        const slot = wrapper?.querySelector<HTMLSlotElement>(`slot[name="${name}"]`);
-        return { name, hidden: wrapper?.hidden, text: slot?.assignedNodes()[0]?.textContent };
+        const slot = queryPart(card, name) as HTMLSlotElement | null;
+        return { name, text: slot?.assignedNodes()[0]?.textContent };
       });
 
       expect(shown).toEqual([
-        { name: 'reason', hidden: false, text: 'Sees patients for skin checks' },
-        { name: 'review', hidden: false, text: 'Thorough and kind' },
-        { name: 'sponsored', hidden: false, text: 'Sponsored' },
+        { name: 'reason', text: 'Sees patients for skin checks' },
+        { name: 'review', text: 'Thorough and kind' },
+        { name: 'sponsored', text: 'Sponsored' },
       ]);
     });
 
@@ -214,26 +209,12 @@ describe('zd-provider-card', () => {
       expect(order).toEqual(['specialty', 'reason', 'review', 'sponsored', 'badges']);
     });
 
-    it('renders no wrapper for an empty slot', async () => {
+    it('gives an empty slot no box, so it leaves no gap', async () => {
       const card = await mountAnnotated('<span slot="review">Thorough and kind</span>');
 
-      expect(queryPart(card, 'review')!.hidden).toBe(false);
-      expect(queryPart(card, 'reason')!.hidden).toBe(true);
-      expect(queryPart(card, 'sponsored')!.hidden).toBe(true);
-    });
-
-    it('shows a wrapper once content is slotted in later', async () => {
-      const card = await mountAnnotated('');
-      expect(queryPart(card, 'reason')!.hidden).toBe(true);
-
-      card.insertAdjacentHTML(
-        'beforeend',
-        '<span slot="reason">Sees patients for skin checks</span>'
-      );
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-      await settled(card);
-
-      expect(queryPart(card, 'reason')!.hidden).toBe(false);
+      for (const name of ['reason', 'review', 'sponsored']) {
+        expect(getComputedStyle(queryPart(card, name)!).display).toBe('contents');
+      }
     });
 
     it('passes axe checks with all three filled', async () => {
@@ -321,14 +302,20 @@ describe('zd-provider-card handoff', () => {
     return { ...PROVIDER, provider: { ...PROVIDER.provider, profile_url: profileUrl } };
   }
 
-  let navigate: MockInstance<typeof handoff.navigateTo>;
+  /** Cancels the tap's default after the card has seen it, so the test page never navigates. */
+  let followed: boolean[];
+  function stopNavigation(event: Event): void {
+    followed.push(!event.defaultPrevented);
+    event.preventDefault();
+  }
 
   beforeEach(() => {
-    navigate = vi.spyOn(handoff, 'navigateTo').mockImplementation(() => {});
+    followed = [];
+    window.addEventListener('click', stopNavigation);
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    window.removeEventListener('click', stopNavigation);
   });
 
   function hydrated(provider = withProfile(PROFILE_URL), attrs = '', content = ''): Promise<Card> {
@@ -341,11 +328,16 @@ describe('zd-provider-card handoff', () => {
     return queryPart(card, 'book') as (HTMLElement & { href?: string }) | null;
   }
 
+  /** The `<a>` a tap lands on. Charm's host `click()` also re-clicks it, so tests click it directly. */
+  function anchor(card: Card): HTMLAnchorElement {
+    return book(card)!.shadowRoot!.querySelector('a')!;
+  }
+
   it('shows Book now when handoff and profile_url are present', async () => {
     const card = await hydrated();
     const link = book(card);
 
-    expect(link?.textContent?.trim()).toBe('Book now');
+    expect(link?.textContent?.trim()).toMatch(/^Book now/);
     const href = new URL(link!.getAttribute('href')!);
     expect(href.origin + href.pathname).toBe(PROFILE_URL);
     expect(href.searchParams.get('component')).toBe('provider-card');
@@ -360,29 +352,42 @@ describe('zd-provider-card handoff', () => {
     expect(book(await hydrated(withProfile(url)))).toBeNull();
   });
 
-  it('Book now emits book-select then navigates', async () => {
+  it('Book now emits book-select and lets the link be followed', async () => {
     const card = await hydrated();
-    const order: string[] = [];
-    card.addEventListener('book-select', (event) => {
-      order.push('book-select');
-      expect((event as CustomEvent).detail.provider.provider_location_id).toBe(
-        PROVIDER.provider_location_id
-      );
-    });
-    navigate.mockImplementation(() => order.push('navigate'));
+    const selected = vi.fn();
+    card.addEventListener('book-select', selected);
 
-    book(card)!.click();
+    anchor(card).click();
 
-    expect(order).toEqual(['book-select', 'navigate']);
+    expect(selected).toHaveBeenCalledOnce();
+    expect(selected.mock.calls[0]![0].detail.provider.provider_location_id).toBe(
+      PROVIDER.provider_location_id
+    );
+    expect(followed).toEqual([true]);
   });
 
-  it('preventDefault stops it', async () => {
+  it('preventDefault keeps the patient on the page', async () => {
     const card = await hydrated();
     card.addEventListener('book-select', (event) => event.preventDefault());
 
-    book(card)!.click();
+    anchor(card).click();
 
-    expect(navigate).not.toHaveBeenCalled();
+    expect(followed).toEqual([false]);
+  });
+
+  it('names the provider in the link for screen readers', async () => {
+    const card = await hydrated();
+    const name = book(card)!.querySelector('.visually-hidden');
+
+    expect(name?.textContent).toBe(' with Avery Sandoval, MD');
+    expect(getComputedStyle(name!).position).toBe('absolute');
+  });
+
+  // The test page is itself inside an iframe, which is the case that needs a new tab.
+  it('opens in a new tab inside an iframe', async () => {
+    const link = anchor(await hydrated());
+    expect(link.target).toBe('_blank');
+    expect(link.rel).toBe('noreferrer noopener');
   });
 
   it('disable-handoff hides Book now', async () => {
@@ -418,13 +423,13 @@ describe('zd-provider-card handoff', () => {
 
   it('Book now is reachable and activatable by keyboard', async () => {
     const card = await hydrated();
-    const anchor = book(card)!.shadowRoot!.querySelector('a')!;
-    expect(anchor.getAttribute('href')).toMatch(/^https:\/\/www\.zocdoc\.com\//);
+    const link = anchor(card);
+    expect(link.getAttribute('href')).toMatch(/^https:\/\/www\.zocdoc\.com\//);
 
-    anchor.focus();
+    link.focus();
     await userEvent.keyboard('{Enter}');
 
-    expect(navigate).toHaveBeenCalledOnce();
+    expect(followed).toEqual([true]);
   });
 
   it('passes axe checks when hydrated', async () => {

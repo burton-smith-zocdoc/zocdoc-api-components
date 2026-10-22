@@ -6,7 +6,8 @@ in a horizontal card layout with a slot for availability.
 **Handoff.** A card whose provider came from a JSON block, or that `zd-provider-results` marks
 with `handoff`, shows a "Book now" link to the provider's Zocdoc profile when it has no times
 of its own to tap. It needs a `profile_url` on Zocdoc over `https:`; without one there is no
-link. `disable-handoff` turns it off.
+link. `disable-handoff` turns it off. Outside handoff mode, `selectable` shows "Book now" as a
+button that only emits `book-select`.
 
 **Class** `ZdProviderCard` — **Package** `@zocdoc/api-components`
 
@@ -22,6 +23,7 @@ link. `disable-handoff` turns it off.
 | `hide-photo` | `hidePhoto` | `boolean` | `false` | Hides the provider's photo, which otherwise renders from Zocdoc's image CDN (see `ProviderSummaryOptions.hidePhoto`). |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan name the search was run with. Enables the network status line when provided. |
 | `loading` | `loading` | `boolean` | `false` | Shows skeleton placeholders in the card's layout instead of `provider`. The card never fetches, so the parent sets this while its own request is in flight and clears it when the data arrives. |
+| `selectable` | `selectable` | `boolean` | `false` | Shows "Book now" as a button that only emits `book-select`, for a parent that books on the page. Set by `zd-provider-results` on the cards of a list that isn't in handoff mode. |
 | — | `handoff` | `boolean` | `false` | Puts the card in handoff mode as if its provider had come from a JSON block. Set by `zd-provider-results` on the cards of a hydrated list, which only ever show day counts, so the card shows "Book now" even with availability slotted in. |
 | — | `provider` | `ProviderLocation` | — | The provider location data to render. |
 
@@ -29,7 +31,7 @@ link. `disable-handoff` turns it off.
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `book-select` | `CustomEvent<BookSelectDetail>` | Emitted with `{ provider }` when "Book now" is chosen. Cancelable: `preventDefault()` keeps the patient on the page. |
+| `book-select` | `CustomEvent<BookSelectDetail>` | Emitted with `{ provider }` when "Book now" is chosen. Cancelable: in handoff mode, `preventDefault()` keeps the patient on the page. |
 | `profile-request` | `CustomEvent<ProfileRequestDetail>` | Emitted with `{ provider }` when the provider's name is clicked. |
 
 ## Slots
@@ -47,17 +49,17 @@ link. `disable-handoff` turns it off.
 
 | Part | Description |
 | --- | --- |
-| `book` | The "Book now" link, shown in handoff mode. |
+| `book` | The "Book now" control: a link in handoff mode, a button with `selectable`. |
 | `details` | The text column. |
 | `insurance` | The network status line. |
 | `location` | The distance and address line. |
 | `name` | The clickable provider name button. |
 | `photo` | The avatar element. |
-| `reason` | The wrapper around the `reason` slot, hidden while the slot is empty. |
-| `review` | The wrapper around the `review` slot, hidden while the slot is empty. |
+| `reason` | The `reason` slot. It has no box, so style the text it inherits. |
+| `review` | The `review` slot. It has no box, so style the text it inherits. |
 | `skeleton` | Each placeholder shown while `loading` is set. |
 | `specialty` | The specialty line. |
-| `sponsored` | The wrapper around the `sponsored` slot, hidden while the slot is empty. |
+| `sponsored` | The `sponsored` slot. It has no box, so style the text it inherits. |
 
 ## Inherited
 

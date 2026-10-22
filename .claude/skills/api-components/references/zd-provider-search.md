@@ -12,9 +12,10 @@ rather than surfacing as a failed search (CLIENT-003, A11Y-004). This component 
 collect a visit reason; the API defaults to "any" for the chosen specialty.
 
 **Supplied mode.** A host page that makes its own API calls, such as an MCP server, sets
-`supplied`, and can hand over `specialties` and `insurancePlans` so the selects need no
-lookups. A submit or page change then emits `provider-search-request` instead of searching.
-The host sets `loading` while it fetches and gives the results to its own `zd-provider-results`.
+`supplied` and hands over `specialties` and `insurancePlans`. The component then calls no API
+at all: a list the host leaves out stays empty, and a submit or page change emits
+`provider-search-request` instead of searching. The host sets `loading` while it fetches and
+gives the results to its own `zd-provider-results`.
 
 **Class** `ZdProviderSearch` — **Package** `@zocdoc/api-components`
 
@@ -32,17 +33,17 @@ The host sets `loading` while it fetches and gives the results to its own `zd-pr
 | `page` | `page` | `number` | `0` | Zero-indexed, as the API counts pages. Reset to 0 whenever the form is submitted. |
 | `page-size` | `pageSize` | `number` | — | Results per page. The API defaults to 10 when unset. |
 | `specialty-id` | `specialtyId` | `string` | — | The specialty to search within, and the field that makes a search possible at all. `GET /v1/provider_locations` requires a `specialty_id` and rejects a request without one with a 400 — see {@link validate}. |
-| `supplied` | `supplied` | `boolean` | `false` | Requests searches from the host page instead of running them. A submit or page change emits `provider-search-request`, and nothing here calls the search API. |
+| `supplied` | `supplied` | `boolean` | `false` | Requests searches from the host page instead of running them. A submit or page change emits `provider-search-request`, and nothing here calls the API, including the option lists. |
 | `visit-type` | `visitType` | `'in_person' \| 'all' \| 'video_visit' \| undefined` | — | Which visit formats to include. Left unset the **API defaults to `in_person`**, so video visits are absent from results until this is set to `all` or `video_visit`. The default is the API's rather than ours so that the component reports what the endpoint does. |
 | `zip-code` | `zipCode` | `string` | `''` | The ZIP code to search. Required by the API — there is no search-everywhere mode. |
-| — | `insurancePlans` | `InsurancePlan[]` | — | The insurance plan options, when the host page has them. Skips that lookup. |
-| — | `specialties` | `Specialty[]` | — | The specialty options, when the host page has them. Skips that lookup. |
+| — | `insurancePlans` | `InsurancePlan[]` | — | The insurance plan options, when the host page has them. Skips that lookup. Unset again, it's fetched. |
+| — | `specialties` | `Specialty[]` | — | The specialty options, when the host page has them. Skips that lookup. Unset again, it's fetched. |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `provider-results` | `CustomEvent<ProviderResultsDetail>` | Emitted with `{ providers, totalCount, searchParameters, zipCode, specialtyId, insurancePlanId, visitType, page, pageSize }` on a successful search, including a search that matched nothing, so a listener can clear a stale list. The criteria are the ones actually used, which is how a parent learns what the patient changed in these fields. `totalCount` and `pageSize` are what a pager needs, and only the envelope has them — `providers` holds one page. |
+| `provider-results` | `CustomEvent<ProviderResultsDetail>` | Emitted with `{ providers, totalCount, searchParameters, zipCode, specialtyId, insurancePlanId, visitType, page, pageSize }` on a successful search, including a search that matched nothing, so a listener can clear a stale list. The criteria are the ones actually used, which is how a parent learns what the patient changed in these fields. `totalCount` and `pageSize` are what a pager needs, and only the envelope has them — `providers` holds one page. Only the latest search emits: an answer overtaken by a newer search is dropped. |
 | `provider-search-error` | `CustomEvent<ErrorDetail>` | Emitted with `{ error }` when the request fails. |
 | `provider-search-request` | `CustomEvent<ProviderSearchRequestDetail>` | Emitted with `{ zipCode, specialtyId, insurancePlanId, visitType, maxDistanceToPatientMi, page, pageSize }` instead of a search when `supplied` is set. Only valid criteria are sent: field validation runs first, as it does before a search. |
 
@@ -63,9 +64,11 @@ The host sets `loading` while it fetches and gives the results to its own `zd-pr
 | `loading-results` | The placeholder cards shown while a search is in flight. |
 | `location-field` | The ZIP code field with its label. |
 | `specialty` | The specialty select. |
+| `specialty-error` | The specialty field's message, inside `field-error`. |
 | `specialty-field` | The specialty select with its label. |
 | `submit` | The submit button. |
 | `zip` | The ZIP code field. |
+| `zip-error` | The ZIP code field's message, inside `field-error`. |
 
 ## Inherited
 

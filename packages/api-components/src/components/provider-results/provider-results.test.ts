@@ -826,8 +826,9 @@ describe('zd-provider-results markup hydration', () => {
     const fromProperty = await mountResults(PROVIDERS);
     fromProperty.availability = batch();
     await settled(fromProperty);
+    // Without handoff, so both lists offer the same "Book now" button.
     const fromMarkup = await mount<Results>(
-      `<zd-provider-results>${jsonBlock('providers', PROVIDERS)}${jsonBlock('availability', batch())}</zd-provider-results>`
+      `<zd-provider-results disable-handoff>${jsonBlock('providers', PROVIDERS)}${jsonBlock('availability', batch())}</zd-provider-results>`
     );
 
     // Each card renders its provider in its own shadow root, so compare the cards' text too.
@@ -894,16 +895,22 @@ describe('zd-provider-results handoff', () => {
     const links = bookLinks(await hydrated());
 
     expect(links).toHaveLength(2);
-    for (const link of links) expect(link?.textContent?.trim()).toBe('Book now');
+    for (const link of links) {
+      expect(link?.textContent?.trim()).toMatch(/^Book now/);
+      expect(link?.getAttribute('href')).toMatch(/^https:\/\/www\.zocdoc\.com\//);
+    }
   });
 
   it('day cell tap in handoff mode navigates for that provider', async () => {
     const element = await hydrated();
     const booked: CustomEvent[] = [];
+    const days = vi.fn<(event: Event) => void>();
     element.addEventListener('book-select', (event) => booked.push(event as CustomEvent));
+    element.addEventListener('day-select', days);
 
     grids(element)[0]!.shadowRoot!.querySelector<HTMLButtonElement>('[part="day"]')!.click();
 
+    expect(days).not.toHaveBeenCalled();
     expect(booked).toHaveLength(1);
     expect(booked[0]!.detail.provider.provider_location_id).toBe('pr_a|lo_a');
     expect(navigate).toHaveBeenCalledOnce();
@@ -911,6 +918,14 @@ describe('zd-provider-results handoff', () => {
     expect(new URL(navigate.mock.calls[0]![0]).searchParams.get('component')).toBe(
       'provider-results'
     );
+  });
+
+  it('tells screen readers a day opens Zocdoc in handoff mode only', async () => {
+    const hint = (element: Results) =>
+      grids(element)[0]!.shadowRoot!.querySelector('[part="day"]:not([disabled]) .visually-hidden');
+
+    expect(hint(await hydrated())?.textContent).toBe(', opens Zocdoc');
+    expect(hint(await hydrated('disable-handoff'))).toBeNull();
   });
 
   it('preventDefault on book-select stops a day cell navigating', async () => {
@@ -932,22 +947,38 @@ describe('zd-provider-results handoff', () => {
     expect(shadow(shown).querySelector('zd-availability-window')).not.toBeNull();
   });
 
-  it('disable-handoff leaves the cards without Book now and days inert', async () => {
+  it('disable-handoff leaves the cards without links and days emitting day-select', async () => {
     const element = await hydrated('disable-handoff');
+    const days = vi.fn<(event: Event) => void>();
+    element.addEventListener('day-select', days);
 
-    expect(bookLinks(element)).toEqual([null, null]);
+    expect(bookLinks(element).map((link) => link?.hasAttribute('href'))).toEqual([false, false]);
     grids(element)[0]!.shadowRoot!.querySelector<HTMLButtonElement>('[part="day"]')!.click();
     expect(navigate).not.toHaveBeenCalled();
+    expect(days).toHaveBeenCalledOnce();
   });
 
-  it('property-driven results are unchanged', async () => {
+  it('property-driven results show Book now as a button that emits provider-select', async () => {
     const element = await mountResults(LINKED);
     element.availability = batch();
     element.totalCount = 25;
     element.pageSize = 10;
     await settled(element);
 
-    expect(bookLinks(element)).toEqual([null, null]);
+    const links = bookLinks(element);
+    expect(links.map((link) => link?.hasAttribute('href'))).toEqual([false, false]);
+
+    const chosen: CustomEvent[] = [];
+    const booked = vi.fn<(event: Event) => void>();
+    element.addEventListener('provider-select', (event) => chosen.push(event as CustomEvent));
+    element.addEventListener('book-select', booked);
+    links[1]!.shadowRoot!.querySelector('button')!.click();
+
+    expect(chosen.map((event) => event.detail.provider.provider_location_id)).toEqual([
+      'pr_b|lo_b',
+    ]);
+    expect(booked).not.toHaveBeenCalled();
+    expect(element.selectedId).toBe('pr_b|lo_b');
     expect(shadow(element).querySelector('[part="pager"]')).not.toBeNull();
     grids(element)[0]!.shadowRoot!.querySelector<HTMLButtonElement>('[part="day"]')!.click();
     expect(navigate).not.toHaveBeenCalled();

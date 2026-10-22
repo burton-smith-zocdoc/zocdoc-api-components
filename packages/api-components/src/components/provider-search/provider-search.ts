@@ -11,7 +11,11 @@ import type { ErrorDetail, TypedEmit, TypedEventTarget } from '../events.js';
 // Re-exported because the generated framework types import every event payload from this module.
 export type { ErrorDetail } from '../events.js';
 import { userFacingError } from '../../utilities/error-message.js';
-import { hydrateFromMarkup, type HydrationShape } from '../../utilities/hydrate.js';
+import {
+  afterDocumentParsed,
+  hydrateFromMarkup,
+  type HydrationShape,
+} from '../../utilities/hydrate.js';
 import { NO_PROVIDERS_MATCH } from '../../utilities/messages.js';
 import {
   renderRequestState,
@@ -93,9 +97,10 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  * collect a visit reason; the API defaults to "any" for the chosen specialty.
  *
  * **Supplied mode.** A host page that makes its own API calls, such as an MCP server, sets
- * `supplied`, and can hand over `specialties` and `insurancePlans` so the selects need no
- * lookups. A submit or page change then emits `provider-search-request` instead of searching.
- * The host sets `loading` while it fetches and gives the results to its own `zd-provider-results`.
+ * `supplied` and hands over `specialties` and `insurancePlans`. The component then calls no API
+ * at all: a list the host leaves out stays empty, and a submit or page change emits
+ * `provider-search-request` instead of searching. The host sets `loading` while it fetches and
+ * gives the results to its own `zd-provider-results`.
  *
  * @tag zd-provider-search
  * @event provider-results - Emitted with `{ providers, totalCount, searchParameters, zipCode,
@@ -103,7 +108,8 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  *   including a search that matched nothing, so a listener can clear a stale list. The
  *   criteria are the ones actually used, which is how a parent learns what the patient
  *   changed in these fields. `totalCount` and `pageSize` are what a pager needs, and only the
- *   envelope has them — `providers` holds one page.
+ *   envelope has them — `providers` holds one page. Only the latest search emits: an answer
+ *   overtaken by a newer search is dropped.
  * @event provider-search-error - Emitted with `{ error }` when the request fails.
  * @event provider-search-request - Emitted with `{ zipCode, specialtyId, insurancePlanId,
  *   visitType, maxDistanceToPatientMi, page, pageSize }` instead of a search when `supplied` is
@@ -116,6 +122,8 @@ type ValidatedField = (typeof VALIDATED_FIELDS)[number];
  * @csspart insurance-field - The insurance plan select with its label.
  * @csspart insurance - The insurance plan select.
  * @csspart field-error - The alert listing what to fix before the search can run.
+ * @csspart specialty-error - The specialty field's message, inside `field-error`.
+ * @csspart zip-error - The ZIP code field's message, inside `field-error`.
  * @csspart submit - The submit button.
  * @csspart loading-results - The placeholder cards shown while a search is in flight.
  */
@@ -178,7 +186,7 @@ export class ZdProviderSearch extends CharmElement {
 
   /**
    * Requests searches from the host page instead of running them. A submit or page change emits
-   * `provider-search-request`, and nothing here calls the search API.
+   * `provider-search-request`, and nothing here calls the API, including the option lists.
    */
   @property({ type: Boolean })
   public supplied = false;
@@ -190,11 +198,11 @@ export class ZdProviderSearch extends CharmElement {
   @property({ type: Boolean })
   public loading = false;
 
-  /** The specialty options, when the host page has them. Skips that lookup. */
+  /** The specialty options, when the host page has them. Skips that lookup. Unset again, it's fetched. */
   @property({ attribute: false })
   public specialties?: Specialty[];
 
-  /** The insurance plan options, when the host page has them. Skips that lookup. */
+  /** The insurance plan options, when the host page has them. Skips that lookup. Unset again, it's fetched. */
   @property({ attribute: false })
   public insurancePlans?: InsurancePlan[];
 
@@ -222,21 +230,23 @@ export class ZdProviderSearch extends CharmElement {
    */
   private searchedPage?: number;
 
-  /**
-   * The properties a page can supply as inline JSON blocks, and the shape each must parse to:
-   * `<script type="application/json" data-zd-prop="{name}">`. A property set by script wins.
-   */
+  /** Bumped by every search, so an answer overtaken by a newer search is dropped. */
+  private searchToken = 0;
+
+  /** The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`). */
   public static hydratable: Readonly<Record<string, HydrationShape>> = {
     specialties: 'array',
     insurancePlans: 'array',
   };
 
-  /** Whether any property came from a JSON block, read on the first update. */
-  protected hydrated = false;
+  protected override scheduleUpdate(): void | Promise<unknown> {
+    return afterDocumentParsed(this, () => super.scheduleUpdate());
+  }
 
   /**
    * The first load runs in `willUpdate`, after the JSON blocks are read, so a supplied list is
-   * never fetched. A reconnect loads again, which retries a list that failed.
+   * never fetched. A reconnect loads again, which retries a list that failed, and so does a list
+   * the host page takes back by setting it to `undefined`.
    */
   public override connectedCallback(): void {
     super.connectedCallback();
@@ -252,7 +262,12 @@ export class ZdProviderSearch extends CharmElement {
    */
   protected override willUpdate(changed: PropertyValues<this>): void {
     if (!this.hasUpdated) {
-      this.hydrated = hydrateFromMarkup(this, ZdProviderSearch.hydratable);
+      hydrateFromMarkup(this, ZdProviderSearch.hydratable);
+      void this.loadReferenceData();
+    } else if (
+      (changed.get('specialties') && !this.specialties) ||
+      (changed.get('insurancePlans') && !this.insurancePlans)
+    ) {
       void this.loadReferenceData();
     }
 
@@ -268,6 +283,8 @@ export class ZdProviderSearch extends CharmElement {
    * for the search itself failing.
    */
   protected async loadReferenceData(): Promise<void> {
+    if (this.supplied) return;
+
     // Only the lists the host page didn't supply. Each lookup is cached, so a list supplied later
     // costs nothing but the one request.
     const [specialties, insurancePlans] = await Promise.all([
@@ -336,6 +353,7 @@ export class ZdProviderSearch extends CharmElement {
      * render the new field messages triggered and call this indefinitely.
      */
     this.searchedPage = this.page;
+    const token = ++this.searchToken;
 
     const invalidField = this.validate();
     if (invalidField) {
@@ -354,8 +372,11 @@ export class ZdProviderSearch extends CharmElement {
       pageSize: this.pageSize,
     };
 
-    // The host page runs the search and owns `loading`, so the request state stays where it is.
+    // The host page runs the search and owns `loading`. Any state left from a search of this
+    // component's own is cleared, so it can't show over the host's.
     if (this.supplied) {
+      this.requestState = 'idle';
+      this.errorMessage = undefined;
       this.emit('provider-search-request', { detail: criteria });
       return;
     }
@@ -366,6 +387,7 @@ export class ZdProviderSearch extends CharmElement {
     try {
       const { providerLocations, totalCount, pageSize, searchParameters } =
         await searchProviderLocations(criteria);
+      if (token !== this.searchToken) return;
 
       this.requestState = providerLocations.length === 0 ? 'empty' : 'success';
 
@@ -374,7 +396,8 @@ export class ZdProviderSearch extends CharmElement {
        * patient can change after a parent handed them down, and the event is the only moment
        * the parent can learn what they settled on. Without them, a coordinator has to either
        * read them off this element or push its own stale values back down on the next
-       * render, wiping a typed ZIP (COMP-002).
+       * render, wiping a typed ZIP (COMP-002). They're the ones captured before the await,
+       * since the patient may have edited the fields while it was in flight.
        *
        * `searchParameters` is the API's own echo, and carries the `visit_reason_id` it filled
        * in from the specialty's "any reason" default — which is the only way a parent learns
@@ -385,19 +408,22 @@ export class ZdProviderSearch extends CharmElement {
           providers: providerLocations,
           totalCount,
           searchParameters,
-          zipCode: this.zipCode,
-          specialtyId: this.specialtyId,
-          insurancePlanId: this.insurancePlanId,
-          insurancePlanName: this.insurancePlanOptions.find((p) => p.id === this.insurancePlanId)
-            ?.name,
-          visitType: this.visitType,
-          page: this.page,
+          zipCode: criteria.zipCode,
+          specialtyId: criteria.specialtyId,
+          insurancePlanId: criteria.insurancePlanId,
+          insurancePlanName: this.insurancePlanOptions.find(
+            (p) => p.id === criteria.insurancePlanId
+          )?.name,
+          visitType: criteria.visitType,
+          page: criteria.page,
           // The size the response was built with, not `this.pageSize`, which is usually unset —
           // a pager needs the real one to know how many pages `totalCount` is.
           pageSize,
         },
       });
     } catch (error: unknown) {
+      if (token !== this.searchToken) return;
+
       this.requestState = 'error';
       // The raw error rides the event on purpose: the host page's handling of it is
       // developer-facing, while what reaches the DOM goes through userFacingError (PHI-001).
@@ -474,7 +500,7 @@ export class ZdProviderSearch extends CharmElement {
   protected override render(): unknown {
     const requestState: RequestState = this.loading ? 'loading' : this.requestState;
     const loading = requestState === 'loading';
-    const errorMessage = this.fieldErrors.specialty || this.fieldErrors.zip;
+    const { specialty: specialtyError, zip: zipError } = this.fieldErrors;
 
     return this.html`
       <form class="search-bar" part="form" novalidate @submit=${(event: Event) => this.handleSubmit(event)}>
@@ -484,7 +510,8 @@ export class ZdProviderSearch extends CharmElement {
             id="specialty-select"
             part="specialty"
             .value=${this.specialtyId ?? ''}
-            aria-describedby=${this.fieldErrors.specialty ? 'field-error' : nothing}
+            aria-invalid=${specialtyError ? 'true' : nothing}
+            aria-describedby=${specialtyError ? 'specialty-error' : nothing}
             @change=${(event: Event) => {
               this.specialtyId = (event.target as HTMLSelectElement).value || undefined;
             }}
@@ -504,7 +531,8 @@ export class ZdProviderSearch extends CharmElement {
             autocomplete="postal-code"
             maxlength="5"
             .value=${this.zipCode}
-            aria-describedby=${this.fieldErrors.zip ? 'field-error' : nothing}
+            aria-invalid=${zipError ? 'true' : nothing}
+            aria-describedby=${zipError ? 'zip-error' : nothing}
             @input=${(event: Event) => {
               this.zipCode = (event.target as HTMLInputElement).value;
             }}
@@ -531,10 +559,11 @@ export class ZdProviderSearch extends CharmElement {
         </scoped-button>
 
         ${
-          errorMessage
+          specialtyError || zipError
             ? this.html`
-          <div id="field-error" class="error-container" role="alert" part="field-error">
-            ${errorMessage}
+          <div class="error-container" role="alert" part="field-error">
+            ${specialtyError ? this.html`<p id="specialty-error" part="specialty-error">${specialtyError}</p>` : nothing}
+            ${zipError ? this.html`<p id="zip-error" part="zip-error">${zipError}</p>` : nothing}
           </div>
         `
             : nothing

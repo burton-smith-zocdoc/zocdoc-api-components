@@ -30,11 +30,17 @@ When something changes that would make a fetching component request again, a sup
 
 `zd-provider-results`, `zd-provider-card`, `zd-provider-summary` and `zd-provider-profile` never fetch, so for them supplied data is the only way in.
 
-`zd-appointment` reports a failed cancel or reschedule through `actionError`. Set it to any value and the component shows its own message. It never shows yours, so API error text never reaches the patient.
+A `supplied` `zd-provider-search` makes no API calls at all, not even for its option lists. A list you don't set stays empty.
+
+`zd-appointment` still looks up the appointment's provider in supplied mode, unless you also set `providerLocation`. Set it to keep the component from calling the API at all.
+
+`zd-appointment` reports a failed cancel or reschedule through `actionError`. Set it to any string each time an action fails, even the same one as last time. You never have to clear it. The component shows its own message and emits `appointment-error`. It never shows your text, so API error text never reaches the patient.
 
 ## Markup
 
 A page rendered on a server can write the data into the HTML, so the components render it without any script of your own.
+
+Load the components with a `defer` or `type="module"` script, or at the end of `<body>`. Then each component reads its blocks once the page has finished parsing, so all of its blocks are there. A component that upgrades while the page is still loading waits until the page has been parsed before it renders.
 
 - **Scalars** such as ids, dates, flags and counts go in attributes, as they always have: `provider-location-id`, `start-date`, `total-count`.
 - **Text for people to read** goes in named slots, so it stays in the page where browser translation can reach it.
@@ -120,11 +126,11 @@ Events such as `slot-select` and `book-select` are **cancelable**. On a page tha
 
 A component whose data came from a JSON block is in **handoff mode**, because there's probably no script on the page to answer it. In handoff mode, taps take the patient to Zocdoc to finish booking:
 
-- **A time in `zd-availability-picker`** goes to the slot's `booking_url`. `booking_url` is often `null`, so when it is, the tap goes to the provider's `profile_url` from the picker's `provider` instead. With neither, nothing happens beyond the event.
+- **A time in `zd-availability-picker`** is a link to the slot's `booking_url`. `booking_url` is often `null`, so when it is, the link goes to the provider's `profile_url` from the picker's `provider` instead. With neither, the time is a button that only emits the event.
 - **`zd-provider-card`** shows a "Book now" link to the provider's `profile_url`, unless the card has times of its own in its `availability` slot. Without a `profile_url` there's no link.
-- **`zd-provider-results`** shows "Book now" on every card, since its cards only show day counts. Tapping a day does the same as "Book now" for that card.
+- **`zd-provider-results`** shows "Book now" on every card, since its cards only show day counts. Tapping a day does the same as "Book now" for that card, and emits `book-select` rather than `day-select`.
 
-Before navigating, the component emits the event. Call `preventDefault()` on it to keep the patient on the page.
+Each of these is a real link, so it can be opened in a new tab, and a screen reader hears that it opens Zocdoc. Tapping it emits the event first. Call `preventDefault()` on the event to keep the patient on the page.
 
 Only absolute `https:` URLs on `zocdoc.com` are followed. The components add two query parameters, `referrerType=api_components` and `component`, which say which component sent the visit and nothing about who. Inside an iframe, the link opens in a new tab rather than loading Zocdoc in the frame.
 
@@ -140,7 +146,15 @@ Add `disable-handoff` to keep a component from linking to Zocdoc. Taps then only
 <zd-provider-results disable-handoff>…</zd-provider-results>
 ```
 
-Components whose data you set by script are never in handoff mode, so pages that already use them see no change.
+Handoff depends only on where the data came from and `disable-handoff`, not on whether your page has a script. A page that sets its data by script and writes none as JSON blocks is not in handoff mode. There, `zd-provider-results` still shows "Book now" on every card, as a button that emits `provider-select` with the card's provider, and tapping a day emits `day-select`.
+
+### Open questions
+
+These are known gaps we haven't settled yet:
+
+- **Sandboxed iframes.** Inside an iframe, handoff links open in a new tab. An iframe sandboxed without `allow-popups` blocks that tab, so the tap does nothing. Add `disable-handoff` there and handle the events yourself.
+- **Credentials.** Which credential a server-rendered page should use to fetch the data it writes into the HTML isn't documented yet.
+- **Missing URLs.** `booking_url` and `profile_url` aren't always in the API's answers. `booking_url` is often `null`, and `profile_url` is optional. Without either one, a handoff tap only emits its event.
 
 ## Stability
 

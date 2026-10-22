@@ -91,3 +91,20 @@ export function hydrateFromMarkup(
 ): boolean {
   return applyHydratedProps(host, readHydratedProps(host, allowed));
 }
+
+/**
+ * Runs a component's first update once the document has finished parsing; later updates run at once.
+ *
+ * A component defined by a classic script in `<head>` upgrades as soon as the parser reaches its
+ * start tag, before its JSON blocks exist, so a first update then would find none. Call it from
+ * `scheduleUpdate`: `return afterDocumentParsed(this, () => super.scheduleUpdate());`
+ */
+export function afterDocumentParsed<T>(
+  host: { readonly hasUpdated: boolean },
+  update: () => T
+): T | Promise<T> {
+  if (host.hasUpdated || document.readyState !== 'loading') return update();
+  return new Promise<void>((resolve) => {
+    document.addEventListener('DOMContentLoaded', () => resolve(), { once: true });
+  }).then(update);
+}

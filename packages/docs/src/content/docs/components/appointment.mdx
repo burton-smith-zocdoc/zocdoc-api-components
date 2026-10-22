@@ -66,14 +66,16 @@ See Zocdoc's [Cancel](https://api-docs.zocdoc.com/guides/patient/cancel-appointm
 
 ## Supplied Data
 
-A page that already has the appointment, such as an MCP server, sets `appointment` (and optionally `providerLocation`) by script. From then on the component never calls the API. Cancel and reschedule emit `appointment-cancel-request` and `appointment-reschedule-request`, then wait for you to set the updated `appointment`, or `actionError` when the action failed. Opening reschedule emits `availability-request`, answered by setting `rescheduleTimeslots`.
+A page that already has the appointment, such as an MCP server, sets `appointment` by script. From then on the component makes no appointment calls. It still looks up the provider unless you also set `providerLocation`. Cancel and reschedule emit `appointment-cancel-request` and `appointment-reschedule-request`, say "Cancelling your appointment…" or "Changing your appointment time…", and wait for you to set the updated `appointment`, or `actionError` when the action failed. Opening reschedule emits `availability-request`, answered by setting `rescheduleTimeslots`.
 
-`actionError` only has to be set: the component shows its own message, never your text. The appointment is never read from markup, because it's patient data. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+A reschedule counts as done when the updated appointment is at the chosen time, or is `pending_reschedule`. Setting an appointment with a different `appointment_id` drops any action waiting for an answer, and asks for reschedule times again unless you set `rescheduleTimeslots` with it.
+
+Set `actionError` to any string each time an action fails, even the same one as last time. You never have to clear it. The component shows its own message and emits `appointment-error` with the action, never your text. The appointment is never read from markup, because it's patient data. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
 
 ## Accessibility
 
 - Loading and errors use the same live regions as the other components
-- A completed action is announced through a polite status region
+- An action in flight and a completed action are both announced through a polite status region
 - A failed action is announced as an alert
 - Focus moves to the panel on each change between viewing, cancelling, and choosing a time
 

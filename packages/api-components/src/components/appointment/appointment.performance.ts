@@ -8,6 +8,7 @@ import * as appointments from '../../client/appointments.js';
 import * as availability from '../../client/availability.js';
 import { buildAppointment, PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
 import * as providerLocations from '../../client/provider-locations.js';
+import type { ZdAppointment } from './index.js';
 import './index.js';
 
 vi.mock('../../client/appointments.js', { spy: true });
@@ -33,6 +34,23 @@ describe('zd-appointment performance', () => {
         create: () => {
           const element = document.createElement('zd-appointment');
           element.setAttribute('appointment-id', ID);
+          return element;
+        },
+        update: (element) => element.toggleAttribute('hide-photo'),
+        ready: untilPart('panel'),
+      },
+      { ...COMPOSED_OPTIONS, record: 'api-components' }
+    );
+  });
+
+  it('reports timings when supplied, with no API calls', async () => {
+    await benchmarkComponent(
+      {
+        name: 'appointment/supplied',
+        create: () => {
+          const element = document.createElement('zd-appointment') as ZdAppointment;
+          element.appointment = APPOINTMENT;
+          element.providerLocation = PROVIDER_LOCATIONS[0];
           return element;
         },
         update: (element) => element.toggleAttribute('hide-photo'),

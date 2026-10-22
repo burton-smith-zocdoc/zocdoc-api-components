@@ -8,6 +8,7 @@ import { INSURANCE_PLANS, SCENARIOS, SPECIALTIES } from '../../client/mock/fixtu
 import * as providerLocations from '../../client/provider-locations.js';
 import { DEFAULT_PAGE_SIZE } from '../../client/provider-locations.js';
 import * as referenceData from '../../client/reference-data.js';
+import type { ZdProviderSearch } from './index.js';
 import './index.js';
 
 vi.mock('../../client/provider-locations.js', { spy: true });
@@ -49,6 +50,27 @@ describe('zd-provider-search performance', () => {
         name: 'provider-search',
         create: () => {
           const element = document.createElement('zd-provider-search');
+          element.setAttribute('zip-code', SCENARIOS.zipWithResults);
+          element.setAttribute('specialty-id', SPECIALTIES[0].id);
+          return element;
+        },
+        update: (element, i) =>
+          element.setAttribute('specialty-id', SPECIALTIES[1 + (i % (SPECIALTIES.length - 1))].id),
+        ready: referenceDataLoaded,
+      },
+      OPTIONS
+    );
+  });
+
+  it('reports timings when supplied, with no API calls', async () => {
+    await benchmarkComponent(
+      {
+        name: 'provider-search/supplied',
+        create: () => {
+          const element = document.createElement('zd-provider-search') as ZdProviderSearch;
+          element.supplied = true;
+          element.specialties = SPECIALTIES;
+          element.insurancePlans = INSURANCE_PLANS;
           element.setAttribute('zip-code', SCENARIOS.zipWithResults);
           element.setAttribute('specialty-id', SPECIALTIES[0].id);
           return element;

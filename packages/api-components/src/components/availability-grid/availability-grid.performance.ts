@@ -4,6 +4,7 @@ import {
   type PerformanceOptions,
 } from '../../../../primitives/src/utils/test/performance.js';
 import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
+import { jsonBlock } from '../../utils/test/hydration.js';
 import type { ZdAvailabilityGrid } from './index.js';
 import './index.js';
 
@@ -30,6 +31,23 @@ describe('zd-availability-grid performance', () => {
           element.setAttribute('provider-location-id', PROVIDER_LOCATION_ID);
           element.setAttribute('start-date', '2026-08-05');
           element.timeslots = WEEK_A;
+          return element;
+        },
+        update: (element) => (element.timeslots = WEEK_B),
+      },
+      OPTIONS
+    );
+  });
+
+  it('reports timings when hydrated from a JSON block', async () => {
+    await benchmarkComponent<ZdAvailabilityGrid>(
+      {
+        name: 'availability-grid/hydrated',
+        create: () => {
+          const element = document.createElement('zd-availability-grid') as ZdAvailabilityGrid;
+          element.setAttribute('provider-location-id', PROVIDER_LOCATION_ID);
+          element.setAttribute('start-date', '2026-08-05');
+          element.innerHTML = jsonBlock('timeslots', WEEK_A);
           return element;
         },
         update: (element) => (element.timeslots = WEEK_B),

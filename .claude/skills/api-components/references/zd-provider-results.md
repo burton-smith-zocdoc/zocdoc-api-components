@@ -47,9 +47,9 @@ and the window control are hidden, since nothing would fetch the page or window 
 | Event | Type | Description |
 | --- | --- | --- |
 | `book-select` | `CustomEvent<BookSelectDetail>` | Emitted with `{ provider }` in handoff mode, when "Book now" or a day on a card is chosen. Cancelable: `preventDefault()` keeps the patient on the page. |
-| `day-select` | `CustomEvent<ProviderDaySelectDetail>` | Emitted with `{ day, provider }` when a day is chosen on a card, forwarded from that card's grid with the provider attached. |
+| `day-select` | `CustomEvent<ProviderDaySelectDetail>` | Emitted with `{ day, provider }` when a day is chosen on a card, forwarded from that card's grid with the provider attached. Not emitted in handoff mode, where the day emits `book-select` instead. |
 | `page-change` | `CustomEvent<PageChangeDetail>` | Emitted with `{ page }` when the patient pages. Zero-indexed, matching the API. The owner of the search is expected to fetch that page and hand back new `providers`; nothing here changes until it does. |
-| `provider-select` | `CustomEvent<ProviderSelectDetail>` | Emitted with `{ provider }` when a provider is chosen. |
+| `provider-select` | `CustomEvent<ProviderSelectDetail>` | Emitted with `{ provider }` when "Book now" is chosen on a card, outside handoff mode. |
 | `window-change` | `CustomEvent<AvailabilityWindowDetail>` | Emitted with `{ startDate, endDate }` when the shared window moves. The owner of `availability` is expected to refetch that window; the dates on show move regardless. |
 
 ## Methods
@@ -75,7 +75,7 @@ and the window control are hidden, since nothing would fetch the page or window 
 | `pager-next` | The button going forward a page. |
 | `pager-position` | The line saying which page this is. |
 | `pager-previous` | The button going back a page. |
-| `provider` | The selectable control for one provider. |
+| `provider` | One provider's card. |
 | `provider-availability` | One card's availability grid. |
 | `provider-badges` | The per-card slot for anything `renderBadges` adds. |
 | `provider-detail` | The text column beside the photo. |

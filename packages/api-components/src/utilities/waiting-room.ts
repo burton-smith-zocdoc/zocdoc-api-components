@@ -1,3 +1,5 @@
+import { parseHttpsUrl } from './https-url.js';
+
 /**
  * The `href` for an appointment's video waiting room, or `undefined` when there is nothing
  * safe to link to.
@@ -16,15 +18,5 @@
  * it take it as a property and never reflect it to an attribute (PHI-001).
  */
 export function waitingRoomHref(value: string | null | undefined): string | undefined {
-  const trimmed = value?.trim();
-  if (!trimmed) return undefined;
-
-  let url: URL;
-  try {
-    url = new URL(trimmed);
-  } catch {
-    return undefined;
-  }
-
-  return url.protocol === 'https:' && url.hostname ? trimmed : undefined;
+  return parseHttpsUrl(value) ? value?.trim() : undefined;
 }

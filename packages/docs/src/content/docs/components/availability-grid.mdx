@@ -64,7 +64,7 @@ When a parent has already fetched availability, assign its slots through the `ti
 </zd-availability-grid>
 ```
 
-Moving the range emits `window-change`; answer it by setting `timeslots`, with `loading` set while you fetch. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+Moving the range emits `window-change`; answer it by setting `timeslots`, with `loading` set while you fetch. Set `opens-zocdoc` when a day tap takes the patient to Zocdoc, so screen readers hear that on each day. `zd-provider-results` sets it in handoff mode. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
 
 ## Accessibility
 

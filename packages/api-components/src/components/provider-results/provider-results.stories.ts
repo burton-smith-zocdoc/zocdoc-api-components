@@ -6,6 +6,10 @@ import { addDays, todayDayKey } from '../../utilities/provider-time.js';
 import type { ZdProviderResults } from './provider-results.js';
 import './index.js';
 
+/** One inline data block, as a server writes it, with `<` escaped so the JSON can't end it early. */
+const jsonBlock = (name: string, value: unknown): string =>
+  `<script type="application/json" data-zd-prop="${name}">${JSON.stringify(value).replaceAll('<', String.raw`\u003c`)}</script>`;
+
 const { args, argTypes, template } = getStorybookHelpers<ZdProviderResults>('zd-provider-results', {
   excludeCategories: ['cssParts'],
 });
@@ -191,5 +195,40 @@ export const WithPhotos: Story = {
         provider: { provider_id: 'pr_nophoto', first_name: 'Bo', last_name: 'Sampleton' },
       },
     ],
+  },
+};
+
+/** Host-written text on each card: why this provider fits, a review snippet, and a sponsored label. */
+export const WithAnnotations: Story = {
+  args: {
+    annotations: {
+      [PROVIDER_LOCATIONS[0]!.provider_location_id]: {
+        reason: 'Sees new patients for annual checkups',
+        review: '"Thorough and kind."',
+        sponsored: true,
+      },
+      [PROVIDER_LOCATIONS[1]!.provider_location_id]: { reason: 'Evening hours on weekdays' },
+    },
+  },
+};
+
+/**
+ * Handoff mode, from JSON blocks with no script on the page. Each card links "Book now" to the
+ * provider's Zocdoc profile, a day tap does the same, and the pager and window control are hidden.
+ */
+export const Handoff: Story = {
+  render: () => {
+    const host = document.createElement('div');
+    host.innerHTML = `<zd-provider-results total-count="${PROVIDER_LOCATIONS.length}">${jsonBlock(
+      'providers',
+      PROVIDER_LOCATIONS.map((location) => ({
+        ...location,
+        provider: {
+          ...location.provider,
+          profile_url: 'https://www.zocdoc.com/doctor/test-provider-12345',
+        },
+      }))
+    )}${jsonBlock('availability', AVAILABILITY)}</zd-provider-results>`;
+    return host;
   },
 };

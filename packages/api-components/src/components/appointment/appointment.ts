@@ -83,16 +83,34 @@ export interface ZdAppointmentEventMap {
 }
 
 type Mode = 'view' | 'cancel' | 'reschedule';
+type Action = 'cancel' | 'reschedule';
 
-/** A request handed to the host page in supplied mode, waiting for its answer. */
-type PendingAction = { action: 'cancel' } | { action: 'reschedule'; startTime: string };
+/**
+ * A request handed to the host page in supplied mode, waiting for its answer. `from` is the
+ * appointment it was asked about, so only a later one settles it.
+ */
+type PendingAction = { from: AppointmentDetails } & (
+  | { action: 'cancel' }
+  | { action: 'reschedule'; startTime: string }
+);
 
 /** The reschedule picker's window, in days. It's the picker's own default, set here so both agree. */
 const RESCHEDULE_DAYS = 7;
 
 /** What a failed action says. The same copy whichever mode reported the failure. */
-const CANCEL_FAILED = 'This appointment could not be cancelled. Please contact the practice.';
-const RESCHEDULE_FAILED = 'The new time could not be booked. Try choosing another time.';
+const ACTION_FAILED: Record<Action, string> = {
+  cancel: 'This appointment could not be cancelled. Please contact the practice.',
+  reschedule: 'The new time could not be booked. Try choosing another time.',
+};
+
+/** What the notice says while an action is in flight, so the wait is visible and announced. */
+const ACTION_BUSY: Record<Action, string> = {
+  cancel: 'Cancelling your appointment…',
+  reschedule: 'Changing your appointment time…',
+};
+
+/** One empty list for every render, so the picker doesn't see a new value each time. */
+const NO_TIMESLOTS: readonly AvailabilitySlot[] = Object.freeze([]);
 
 /** The panel heading per mode. It's also the panel's accessible name. */
 const HEADINGS: Record<Mode, string> = {
@@ -244,11 +262,12 @@ export class ZdAppointment extends CharmElement {
   /**
    * Set by the host page in supplied mode when the requested cancel or reschedule failed.
    *
-   * Only whether it's set counts. The component shows its own copy for the action, never this
-   * string, because a host's error text can be developer-facing or echo request data
-   * (CLIENT-003, PHI-001). It is cleared when the next action starts.
+   * Every time it's set to a value, the pending action fails, even with the same text as last
+   * time, so the host never has to clear it. The component never writes it. It shows its own
+   * copy for the action and emits `appointment-error`, never this string, because a host's error
+   * text can be developer-facing or echo request data (CLIENT-003, PHI-001).
    */
-  @property({ attribute: false })
+  @property({ attribute: false, hasChanged: (value?: string) => value !== undefined })
   public actionError?: string;
 
   /**
@@ -263,7 +282,8 @@ export class ZdAppointment extends CharmElement {
   @state() protected errorMessage?: string;
   @state() protected loaded?: AppointmentDetails;
   @state() protected mode: Mode = 'view';
-  @state() protected busy = false;
+  /** The action in flight, if any. */
+  @state() protected busy?: Action;
   @state() protected notice?: string;
   @state() protected actionMessage?: string;
   @state() protected reasonType?: CancellationReasonType;
@@ -275,15 +295,25 @@ export class ZdAppointment extends CharmElement {
   private renderedMode?: Mode;
 
   /** Latched the first time `appointment` is set and never reset, so no path leads back to the API. */
-  private supplied = false;
+  private latched = false;
   private pending?: PendingAction;
+  /** Set when the appointment changes to another one, until the host sends times for it. */
+  private staleTimeslots = false;
+
+  /**
+   * Supplied mode. True as soon as `appointment` is set, before the update that latches it, so a
+   * `cancel()` in the same task as the assignment can't reach the API.
+   */
+  protected get supplied(): boolean {
+    return this.latched || this.appointment !== undefined;
+  }
 
   protected override willUpdate(changed: PropertyValues<this>): void {
-    if (changed.has('appointment') && this.appointment !== undefined && !this.supplied) {
-      this.supplied = true;
-      // Drops a lookup already in flight.
+    if (changed.has('appointment') && this.appointment !== undefined && !this.latched) {
+      this.latched = true;
+      // Drops a lookup or API action already in flight. A request made since waits for the host.
       this.loadToken++;
-      this.busy = false;
+      if (!this.pending) this.busy = undefined;
     }
 
     if (!this.supplied) {
@@ -291,19 +321,46 @@ export class ZdAppointment extends CharmElement {
       return;
     }
 
+    if (changed.has('rescheduleTimeslots')) this.staleTimeslots = false;
+
     if (changed.has('appointment') && this.appointment) {
-      if (this.pending) this.settle(this.pending, this.appointment);
+      const previous = changed.get('appointment');
+      if (previous && previous.appointment_id !== this.appointment.appointment_id) {
+        this.showOther(!changed.has('rescheduleTimeslots'));
+      } else if (this.pending && this.appointment !== this.pending.from) {
+        this.settle(this.pending, this.appointment);
+      }
+
       const locationId = this.appointment.provider_location_id;
       if (!this.providerLocation && locationId !== this.loadedProvider?.provider_location_id) {
+        this.loadedProvider = undefined;
         void this.loadProvider(this.loadToken, locationId);
       }
     }
 
     if (changed.has('actionError') && this.actionError && this.pending) {
-      this.actionMessage = this.pending.action === 'cancel' ? CANCEL_FAILED : RESCHEDULE_FAILED;
-      this.pending = undefined;
-      this.busy = false;
+      this.fail(this.pending.action);
     }
+  }
+
+  /**
+   * The host page moved to another appointment. Nothing on show belongs to it: a pending action
+   * is dropped unanswered, and its reschedule times wait for new ones unless they came with it.
+   */
+  private showOther(timeslotsStale: boolean): void {
+    this.pending = undefined;
+    this.busy = undefined;
+    this.mode = 'view';
+    this.notice = undefined;
+    this.actionMessage = undefined;
+    this.reasonType = undefined;
+    this.newStartTime = undefined;
+    this.staleTimeslots = timeslotsStale;
+  }
+
+  /** The host page's reschedule times, unless they are for another appointment. */
+  protected get suppliedTimeslots(): readonly AvailabilitySlot[] | undefined {
+    return this.staleTimeslots ? undefined : this.rescheduleTimeslots;
   }
 
   /** The appointment on show: the host page's in supplied mode, otherwise the looked-up one. */
@@ -331,7 +388,7 @@ export class ZdAppointment extends CharmElement {
     if (this.supplied) return;
 
     this.mode = 'view';
-    this.busy = false;
+    this.busy = undefined;
     this.notice = undefined;
     this.actionMessage = undefined;
     this.reasonType = undefined;
@@ -376,7 +433,7 @@ export class ZdAppointment extends CharmElement {
     if (this.busy || !appointment) return;
 
     if (this.supplied) {
-      this.request({ action: 'cancel' });
+      this.request({ action: 'cancel', from: appointment });
       this.emit('appointment-cancel-request', {
         detail: {
           appointmentId: appointment.appointment_id,
@@ -387,7 +444,7 @@ export class ZdAppointment extends CharmElement {
     }
 
     const token = this.loadToken;
-    this.busy = true;
+    this.busy = 'cancel';
     this.actionMessage = undefined;
 
     try {
@@ -406,7 +463,7 @@ export class ZdAppointment extends CharmElement {
         });
         if (token !== this.loadToken) return;
 
-        this.actionMessage = CANCEL_FAILED;
+        this.actionMessage = ACTION_FAILED.cancel;
         return;
       }
 
@@ -431,7 +488,7 @@ export class ZdAppointment extends CharmElement {
         this.actionMessage = userFacingError(error);
       }
     } finally {
-      if (token === this.loadToken) this.busy = false;
+      if (token === this.loadToken) this.busy = undefined;
     }
   }
 
@@ -454,6 +511,7 @@ export class ZdAppointment extends CharmElement {
         !this.providerLocation &&
         appointment.provider_location_id !== this.loadedProvider?.provider_location_id
       ) {
+        this.loadedProvider = undefined;
         void this.loadProvider(token, appointment.provider_location_id);
       }
     } catch {
@@ -464,7 +522,8 @@ export class ZdAppointment extends CharmElement {
   /**
    * Fills in the provider row. Secondary to the appointment, so it is quiet: a failure keeps the
    * `provider-name` fallback and emits nothing. A host acting on `appointment-error` would show a
-   * failure while the appointment is on screen and correct.
+   * failure while the appointment is on screen and correct. An answer for a location the
+   * appointment no longer has is dropped.
    */
   private async loadProvider(token: number, providerLocationId: string | undefined): Promise<void> {
     if (!providerLocationId) return;
@@ -472,6 +531,7 @@ export class ZdAppointment extends CharmElement {
     try {
       const location = await getProviderLocation(providerLocationId);
       if (token !== this.loadToken) return;
+      if (this.current?.provider_location_id !== providerLocationId) return;
       this.loadedProvider = location;
     } catch {
       // Keep the fallback.
@@ -488,7 +548,7 @@ export class ZdAppointment extends CharmElement {
     if (this.busy || !appointment) return;
 
     if (this.supplied) {
-      this.request({ action: 'reschedule', startTime });
+      this.request({ action: 'reschedule', startTime, from: appointment });
       this.emit('appointment-reschedule-request', {
         detail: { appointmentId: appointment.appointment_id, startTime },
       });
@@ -496,7 +556,7 @@ export class ZdAppointment extends CharmElement {
     }
 
     const token = this.loadToken;
-    this.busy = true;
+    this.busy = 'reschedule';
     this.actionMessage = undefined;
 
     try {
@@ -516,7 +576,7 @@ export class ZdAppointment extends CharmElement {
         if (token !== this.loadToken) return;
 
         // Stays on the picker: the likeliest fix is another time.
-        this.actionMessage = RESCHEDULE_FAILED;
+        this.actionMessage = ACTION_FAILED.reschedule;
         return;
       }
 
@@ -541,28 +601,42 @@ export class ZdAppointment extends CharmElement {
 
       this.actionMessage = userFacingError(error);
     } finally {
-      if (token === this.loadToken) this.busy = false;
+      if (token === this.loadToken) this.busy = undefined;
     }
   }
 
   /** Hands an action to the host page in supplied mode, and waits busy for its answer. */
   private request(pending: PendingAction): void {
     this.pending = pending;
-    this.busy = true;
+    this.busy = pending.action;
     this.actionMessage = undefined;
-    // Cleared so the host page's next failure is a change, even with the same text.
-    this.actionError = undefined;
+  }
+
+  /** The host page set `actionError`. Reported with the component's own words, never the host's. */
+  private fail(action: Action): void {
+    this.pending = undefined;
+    this.busy = undefined;
+    this.emit('appointment-error', {
+      detail: { error: new Error(`The host page reported a failed ${action}`), action },
+    });
+    this.actionMessage = ACTION_FAILED[action];
   }
 
   /**
    * Works out a supplied action's outcome from the updated appointment, the same way the API path
-   * reads the API's answer, and fires the same events.
+   * reads the API's answer, and fires the same events. A reschedule moved only if the appointment
+   * is at the chosen time, or waits for the practice to accept it.
    */
   private settle(pending: PendingAction, next: AppointmentDetails): void {
     this.pending = undefined;
-    this.busy = false;
+    this.busy = undefined;
     const status = next.appointment_status;
-    const moved = pending.action === 'cancel' ? status === 'cancelled' : MOVED_STATUSES.has(status);
+    const moved =
+      pending.action === 'cancel'
+        ? status === 'cancelled'
+        : status === 'pending_reschedule' ||
+          (MOVED_STATUSES.has(status) &&
+            Date.parse(next.start_time) === Date.parse(pending.startTime));
 
     if (!moved) {
       this.emit('appointment-error', {
@@ -572,7 +646,7 @@ export class ZdAppointment extends CharmElement {
           status,
         },
       });
-      this.actionMessage = pending.action === 'cancel' ? CANCEL_FAILED : RESCHEDULE_FAILED;
+      this.actionMessage = ACTION_FAILED[pending.action];
       return;
     }
 
@@ -618,7 +692,7 @@ export class ZdAppointment extends CharmElement {
    */
   private requestRescheduleTimes(): void {
     const appointment = this.current;
-    if (!this.supplied || this.rescheduleTimeslots !== undefined || !appointment) return;
+    if (!this.supplied || this.suppliedTimeslots !== undefined || !appointment) return;
 
     this.emit('availability-request', {
       detail: {
@@ -761,8 +835,8 @@ export class ZdAppointment extends CharmElement {
         .days=${RESCHEDULE_DAYS}
         .hidePatientType=${true}
         .selectedStartTime=${startTime}
-        .timeslots=${this.supplied ? (this.rescheduleTimeslots ?? []) : undefined}
-        .loading=${this.supplied && this.rescheduleTimeslots === undefined}
+        .timeslots=${this.supplied ? (this.suppliedTimeslots ?? NO_TIMESLOTS) : undefined}
+        .loading=${this.supplied && this.suppliedTimeslots === undefined}
         @slot-select=${(event: CustomEvent<SlotSelectDetail>) => {
           this.newStartTime = event.detail.startTime;
         }}
@@ -798,7 +872,7 @@ export class ZdAppointment extends CharmElement {
       <section class="panel" part="panel" tabindex="-1" aria-labelledby="panel-heading">
         <h2 class="heading" part="heading" id="panel-heading">${HEADINGS[this.mode]}</h2>
         ${this.renderDetails(appointment)}
-        <p class="notice" part="notice" role="status">${this.notice ?? nothing}</p>
+        <p class="notice" part="notice" role="status">${this.busy ? ACTION_BUSY[this.busy] : (this.notice ?? nothing)}</p>
         ${this.actionMessage ? this.html`<scoped-alert part="action-error" variant="danger" politeness="assertive" open>${this.actionMessage}</scoped-alert>` : nothing}
         ${body}
       </section>

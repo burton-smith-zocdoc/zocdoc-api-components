@@ -165,10 +165,12 @@ No bundler is needed. Load the prebuilt bundle and the theme, and the bundle con
 
 ```html
 <link rel="stylesheet" href="/zocdoc/all.css" />
-<script src="/zocdoc/zocdoc.js" zd-token="TOKEN_FROM_YOUR_BACKEND"></script>
+<script defer src="/zocdoc/zocdoc.js" zd-token="TOKEN_FROM_YOUR_BACKEND"></script>
 
 <zd-booking zip-code="11201"></zd-booking>
 ```
+
+`defer` lets the page finish parsing before the components start, which is what a component reading [JSON blocks](/zocdoc-api-components/guides/markup-and-supplied-data/) needs. A module script is deferred already.
 
 `zocdoc.js` is `@zocdoc/api-components/bundle/iife`, and `all.css` is `@zocdoc/api-primitive-components/theme/all.css`. Use `zd-mock` instead of `zd-token` to serve sample data with no network calls, and `zd-base-url` to point at another environment. With the IIFE bundle, everything the package exports is also on the `Zocdoc` global. For example, `Zocdoc.searchProviderLocations()` loads providers for `zd-provider-card`, which takes a `provider` object.
 

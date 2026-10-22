@@ -23,7 +23,11 @@ import {
 } from '../../utilities/availability-window.js';
 import { userFacingError } from '../../utilities/error-message.js';
 import { formatCount } from '../../utilities/format.js';
-import { hydrateFromMarkup, type HydrationShape } from '../../utilities/hydrate.js';
+import {
+  afterDocumentParsed,
+  hydrateFromMarkup,
+  type HydrationShape,
+} from '../../utilities/hydrate.js';
 import {
   addDays,
   dayKey,
@@ -225,6 +229,13 @@ export class ZdAvailabilityGrid extends CharmElement {
   @property({ type: Boolean, attribute: 'hide-window' })
   public hideWindow = false;
 
+  /**
+   * Says a day takes the patient to Zocdoc, for screen readers. Set by `zd-provider-results` in
+   * handoff mode, where a day does what the card's "Book now" link does.
+   */
+  @property({ type: Boolean, attribute: 'opens-zocdoc' })
+  public opensZocdoc = false;
+
   @state()
   private fetched: AvailabilitySlot[] = [];
 
@@ -233,6 +244,9 @@ export class ZdAvailabilityGrid extends CharmElement {
 
   @state()
   private errorMessage?: string;
+
+  /** Bumped per fetch, and when slots are supplied, so a late response can't land over newer state. */
+  private loadGeneration = 0;
 
   /** The day key that currently has roving tabindex="0". */
   @state()
@@ -253,6 +267,13 @@ export class ZdAvailabilityGrid extends CharmElement {
     return windowEndDate(this.windowStart, this.days);
   }
 
+  /** The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`). */
+  public static hydratable: Readonly<Record<string, HydrationShape>> = { timeslots: 'array' };
+
+  protected override scheduleUpdate(): void | Promise<unknown> {
+    return afterDocumentParsed(this, () => super.scheduleUpdate());
+  }
+
   /**
    * Refetching belongs here rather than in `connectedCallback` because both ids usually arrive
    * as property assignments after the element is in the document. Reactive state set before the
@@ -262,18 +283,9 @@ export class ZdAvailabilityGrid extends CharmElement {
    * after having supplied slots — hands fetching back to this component rather than leaving a
    * grid that counts nothing.
    */
-  /**
-   * The properties a page can supply as inline JSON blocks, and the shape each must parse to:
-   * `<script type="application/json" data-zd-prop="{name}">`. A property set by script wins.
-   */
-  public static hydratable: Readonly<Record<string, HydrationShape>> = { timeslots: 'array' };
-
-  /** Whether any property came from a JSON block, read on the first update. */
-  protected hydrated = false;
-
   protected override willUpdate(changed: PropertyValues<this>): void {
     // Applied here, so a supplied `timeslots` is in `changed` and no fetch starts.
-    if (!this.hasUpdated) this.hydrated = hydrateFromMarkup(this, ZdAvailabilityGrid.hydratable);
+    if (!this.hasUpdated) hydrateFromMarkup(this, ZdAvailabilityGrid.hydratable);
 
     if (
       changed.has('providerLocationId') ||
@@ -295,8 +307,11 @@ export class ZdAvailabilityGrid extends CharmElement {
     const providerLocationId = this.providerLocationId;
 
     // Supplied slots are not this component's to replace, and refetching them would both waste
-    // the parent's batched call and race it.
-    if (this.timeslots !== undefined) return;
+    // the parent's batched call and race it. Any fetch still in flight is now stale.
+    if (this.timeslots !== undefined) {
+      this.loadGeneration += 1;
+      return;
+    }
 
     if (!providerLocationId || !this.visitReasonId) {
       this.requestState = 'idle';
@@ -305,18 +320,23 @@ export class ZdAvailabilityGrid extends CharmElement {
 
     this.requestState = 'loading';
     this.errorMessage = undefined;
+    const generation = ++this.loadGeneration;
 
     try {
-      this.fetched = await getLocationSlots({
+      const fetched = await getLocationSlots({
         providerLocationId,
         visitReasonId: this.visitReasonId,
         patientType: this.patientType,
         startDate: this.windowStart,
         endDate: this.windowEnd,
       });
+      // A newer fetch, or slots the parent supplied meanwhile, own the state now.
+      if (generation !== this.loadGeneration) return;
 
+      this.fetched = fetched;
       this.requestState = this.fetched.length === 0 ? 'empty' : 'success';
     } catch (error: unknown) {
+      if (generation !== this.loadGeneration) return;
       this.requestState = 'error';
       // The raw error rides the event on purpose: the host page's handling of it is
       // developer-facing, while what reaches the DOM goes through userFacingError (PHI-001).
@@ -350,14 +370,13 @@ export class ZdAvailabilityGrid extends CharmElement {
     return counts;
   }
 
-  /** Days with at least one appointment, in order. */
-  protected get enabledDays(): string[] {
-    return [...this.dayCounts].filter(([, count]) => count > 0).map(([day]) => day);
+  /** Days with at least one appointment, in order. Takes `counts` so a caller builds it once. */
+  protected enabledDays(counts: Map<string, number> = this.dayCounts): string[] {
+    return [...counts].filter(([, count]) => count > 0).map(([day]) => day);
   }
 
   /** The day that should have tabindex="0": explicit roving state, selected day, or first enabled. */
-  protected get activeRovingDay(): string | undefined {
-    const enabled = this.enabledDays;
+  protected activeRovingDay(enabled: string[] = this.enabledDays()): string | undefined {
     if (this.rovingDay && enabled.includes(this.rovingDay)) return this.rovingDay;
     if (this.selectedDay && enabled.includes(this.selectedDay)) return this.selectedDay;
     return enabled[0];
@@ -365,10 +384,10 @@ export class ZdAvailabilityGrid extends CharmElement {
 
   /** Handles arrow-key navigation within the day grid. */
   protected handleDaysKeydown(event: KeyboardEvent): void {
-    const enabled = this.enabledDays;
+    const enabled = this.enabledDays();
     if (enabled.length === 0) return;
 
-    const current = this.activeRovingDay;
+    const current = this.activeRovingDay(enabled);
     const currentIndex = current ? enabled.indexOf(current) : -1;
     let nextIndex: number | undefined;
 
@@ -451,12 +470,13 @@ export class ZdAvailabilityGrid extends CharmElement {
    * The "More" button lives outside the listbox since it is not a selectable date.
    */
   protected renderDays(): unknown {
-    const activeDay = this.activeRovingDay;
+    const counts = this.dayCounts;
+    const activeDay = this.activeRovingDay(this.enabledDays(counts));
 
     return this.html`
       <span id="days-label" class="visually-hidden">Available dates</span>
       <div class="days" part="days" role="listbox" aria-labelledby="days-label" @keydown=${this.handleDaysKeydown}>
-        ${[...this.dayCounts].map(([day, count]) => {
+        ${[...counts].map(([day, count]) => {
           const date = providerLocalTime(day);
           const isEnabled = count > 0;
           return this.html`
@@ -475,6 +495,7 @@ export class ZdAvailabilityGrid extends CharmElement {
               <span class="day-weekday" part="day-weekday">${isValidDate(date) ? weekdayLabel.format(date) : ''}</span>
               <span class="day-date" part="day-date">${isValidDate(date) ? dateLabel.format(date) : day}</span>
               <span class="day-count" part="day-count">${countPhrase(count)}</span>
+              ${isEnabled && this.opensZocdoc ? this.html`<span class="visually-hidden">, opens Zocdoc</span>` : nothing}
             </button>
           `;
         })}

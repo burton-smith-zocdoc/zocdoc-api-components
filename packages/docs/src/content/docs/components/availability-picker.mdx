@@ -66,7 +66,7 @@ A server-rendered page can write the times, and the provider for the fallback li
 </zd-availability-picker>
 ```
 
-A picker hydrated this way is in handoff mode. Tapping a time goes to the slot's `booking_url` on Zocdoc, or to the provider's `profile_url` when `booking_url` is null, and the New/Existing patient control is hidden. Add `interactive` to show it again, or `disable-handoff` to keep taps on the page. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+A picker hydrated this way is in handoff mode. Each time is a link to the slot's `booking_url` on Zocdoc, or to the provider's `profile_url` when `booking_url` is null, and screen readers hear that it opens Zocdoc. The New/Existing patient control is hidden. Until you answer an `availability-request`, the picker shows its loading state. `days` in the request is never more than the API's 30. Add `interactive` to show it again, or `disable-handoff` to keep taps on the page. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
 
 ## Accessibility
 

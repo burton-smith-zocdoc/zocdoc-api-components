@@ -45,9 +45,9 @@ Loads specialties, visit reasons, and insurance plans from the [reference data](
 
 ## Supplied Data and Markup
 
-Set the `supplied` attribute when your page makes its own API calls. A submit or page change then emits `provider-search-request` with the validated criteria instead of searching. Set `loading` while you fetch, and give the results to your own `zd-provider-results`.
+Set the `supplied` attribute when your page makes its own API calls. The component then calls no API at all. A submit or page change emits `provider-search-request` with the validated criteria instead of searching. Set `loading` while you fetch, and give the results to your own `zd-provider-results`.
 
-`specialties` and `insurancePlans` can be set by script, or written as JSON blocks, so the selects need no lookups:
+Set `specialties` and `insurancePlans` by script, or write them as JSON blocks. With `supplied` set, a list you leave out stays empty. Without it, the component fetches any list you leave out, including one you set back to `undefined`:
 
 ```html
 <zd-provider-search supplied zip-code="11201">
@@ -65,7 +65,7 @@ See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied
 ## Accessibility
 
 - Form fields have visible labels
-- Error messages linked via `aria-describedby`
+- An invalid field is marked `aria-invalid` and linked to its own message with `aria-describedby`
 - Submit button disabled while a search is in flight
 - While searching, two placeholder provider cards with loading availability grids stand in for results. They are hidden from assistive technology and marked `aria-busy`, and a single polite status region outside them announces "Searching…" instead
 - Skeleton shimmer stops under `prefers-reduced-motion: reduce`

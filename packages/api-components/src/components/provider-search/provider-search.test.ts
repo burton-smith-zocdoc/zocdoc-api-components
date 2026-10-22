@@ -215,6 +215,32 @@ describe('zd-provider-search', () => {
     expect(getErrorMessage(element)).toBe('Enter a 5-digit ZIP code.');
   });
 
+  it('marks each invalid field and points it at its own message', async () => {
+    const element = await mount<Search>(
+      `<zd-provider-search zip-code="1120"></zd-provider-search>`
+    );
+
+    await element.search();
+    await settled(element);
+
+    const specialty = control(element, 'specialty')!;
+    const zip = control(element, 'zip')!;
+    expect(specialty.getAttribute('aria-invalid')).toBe('true');
+    expect(zip.getAttribute('aria-invalid')).toBe('true');
+    const message = (field: Element): string | undefined =>
+      shadow(element)
+        .getElementById(field.getAttribute('aria-describedby') ?? '')
+        ?.textContent?.trim();
+    expect(message(specialty)).toBe('Choose a specialty to search.');
+    expect(message(zip)).toBe('Enter a 5-digit ZIP code.');
+
+    element.specialtyId = SPECIALTY.id;
+    await element.search();
+    await settled(element);
+    expect(specialty.hasAttribute('aria-invalid')).toBe(false);
+    expect(specialty.hasAttribute('aria-describedby')).toBe(false);
+  });
+
   it('clears a field message once the field is corrected', async () => {
     const element = await mount<Search>(
       `<zd-provider-search zip-code="1120" specialty-id="${SPECIALTY.id}"></zd-provider-search>`
@@ -428,6 +454,48 @@ describe('zd-provider-search', () => {
     });
   });
 
+  it('emits the criteria it searched with, not edits made while it was in flight', async () => {
+    let resolveSearch!: (result: ProviderSearchResult) => void;
+    vi.mocked(providerLocations.searchProviderLocations).mockReturnValue(
+      new Promise<ProviderSearchResult>((resolve) => {
+        resolveSearch = resolve;
+      })
+    );
+    const element = await mountSearch();
+    const results: CustomEvent[] = [];
+    element.addEventListener('provider-results', (event) => results.push(event as CustomEvent));
+
+    const pending = element.search();
+    element.zipCode = SCENARIOS.zipEmpty;
+    resolveSearch(searchResult([]));
+    await pending;
+
+    expect(results.map((event) => event.detail.zipCode)).toEqual([SCENARIOS.zipWithResults]);
+  });
+
+  it('drops an answer overtaken by a newer search', async () => {
+    const answers: ((result: ProviderSearchResult) => void)[] = [];
+    vi.mocked(providerLocations.searchProviderLocations).mockImplementation(
+      () => new Promise<ProviderSearchResult>((resolve) => answers.push(resolve))
+    );
+    const element = await mountSearch();
+    const results: CustomEvent[] = [];
+    element.addEventListener('provider-results', (event) => results.push(event as CustomEvent));
+
+    const first = element.search();
+    const second = element.search();
+    answers[1]!(searchResult([]));
+    await second;
+    answers[0]!(
+      searchResult([{ provider_location_id: 'pr_a|lo_a', provider: { provider_id: 'pr_a' } }])
+    );
+    await first;
+    await settled(element);
+
+    expect(results.map((event) => event.detail.providers)).toEqual([[]]);
+    expect(shadow(element).querySelector('[part="empty"]')).not.toBeNull();
+  });
+
   it('renders the error state and emits provider-search-error when the request fails', async () => {
     vi.mocked(providerLocations.searchProviderLocations).mockRejectedValue(
       new ZocdocError('Zocdoc API request failed with 500.', 500)
@@ -638,7 +706,18 @@ describe('zd-provider-search', () => {
       expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
     });
 
-    it('fetches only the list not supplied', async () => {
+    it('fetches no list in supplied mode, even one the host left out', async () => {
+      const element = await mountSupplied(`zip-code="${SCENARIOS.zipWithResults}" supplied`, {
+        insurancePlans: SUPPLIED_PLANS,
+      });
+
+      expect(referenceData.getSpecialties).not.toHaveBeenCalled();
+      expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
+      expect(selectOptions(element, 'specialty')).toHaveLength(1);
+      expect(selectOptions(element, 'insurance')).toHaveLength(SUPPLIED_PLANS.length + 1);
+    });
+
+    it('fetches only the list not supplied without the supplied attribute', async () => {
       const element = await mountSupplied(`zip-code="${SCENARIOS.zipWithResults}"`, {
         insurancePlans: SUPPLIED_PLANS,
       });
@@ -648,7 +727,38 @@ describe('zd-provider-search', () => {
       );
       expect(referenceData.getSpecialties).toHaveBeenCalledOnce();
       expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
-      expect(selectOptions(element, 'insurance')).toHaveLength(SUPPLIED_PLANS.length + 1);
+    });
+
+    it('fetches a list the host sets back to undefined', async () => {
+      const element = await mountSupplied(`zip-code="${SCENARIOS.zipWithResults}"`);
+      expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
+
+      element.insurancePlans = undefined;
+      await settled(element);
+
+      await vi.waitFor(() =>
+        expect(selectOptions(element, 'insurance').map((option) => option.value)).toEqual([
+          '',
+          'ip_1',
+        ])
+      );
+      expect(referenceData.getInsurancePlans).toHaveBeenCalledOnce();
+    });
+
+    it('clears an error from an earlier search of its own when it turns supplied', async () => {
+      vi.mocked(providerLocations.searchProviderLocations).mockRejectedValue(
+        new ZocdocError('Zocdoc API request failed with 500.', 500)
+      );
+      const element = await mountSearch();
+      await element.search();
+      await settled(element);
+      expect(shadow(element).querySelector('[part="error"]')).not.toBeNull();
+
+      element.supplied = true;
+      await element.search();
+      await settled(element);
+
+      expect(shadow(element).querySelector('[part="error"]')).toBeNull();
     });
 
     it('prefers supplied reference data set after connecting', async () => {
@@ -857,9 +967,13 @@ describe('zd-provider-search markup hydration', () => {
     expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
   });
 
-  it('still fetches a list the markup left out', async () => {
+  it('still fetches a list the markup left out, unless supplied', async () => {
+    const block = jsonBlock('specialties', SPECIALTIES);
+    await mount<Search>(`<zd-provider-search ${attrs}>${block}</zd-provider-search>`);
+    expect(referenceData.getInsurancePlans).not.toHaveBeenCalled();
+
     await mount<Search>(
-      `<zd-provider-search ${attrs}>${jsonBlock('specialties', SPECIALTIES)}</zd-provider-search>`
+      `<zd-provider-search zip-code="${SCENARIOS.zipWithResults}">${block}</zd-provider-search>`
     );
     expect(referenceData.getSpecialties).not.toHaveBeenCalled();
     expect(referenceData.getInsurancePlans).toHaveBeenCalledOnce();

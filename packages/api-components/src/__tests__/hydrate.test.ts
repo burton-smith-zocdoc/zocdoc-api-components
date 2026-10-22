@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { applyHydratedProps, readHydratedProps } from '../utilities/hydrate.js';
+import {
+  afterDocumentParsed,
+  applyHydratedProps,
+  readHydratedProps,
+} from '../utilities/hydrate.js';
 
 /** Invented values, not anybody's (PHI-002). */
 const PROVIDERS = [{ provider_id: 'pr_test-1' }, { provider_id: 'pr_test-2' }];
@@ -116,5 +120,36 @@ describe('applyHydratedProps', () => {
 
   it('returns false for no values', () => {
     expect(applyHydratedProps(document.createElement('div'), {})).toBe(false);
+  });
+});
+
+describe('afterDocumentParsed', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('runs the update at once when the document has been parsed', () => {
+    const update = vi.fn(() => 'ran');
+    expect(afterDocumentParsed({ hasUpdated: false }, update)).toBe('ran');
+  });
+
+  it('holds a first update until DOMContentLoaded while the document is still parsing', async () => {
+    vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading');
+    const update = vi.fn();
+
+    const pending = afterDocumentParsed({ hasUpdated: false }, update);
+    await Promise.resolve();
+    expect(update).not.toHaveBeenCalled();
+
+    document.dispatchEvent(new Event('DOMContentLoaded'));
+    await pending;
+    expect(update).toHaveBeenCalledOnce();
+  });
+
+  it('never holds a later update', () => {
+    vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading');
+    const update = vi.fn();
+    afterDocumentParsed({ hasUpdated: true }, update);
+    expect(update).toHaveBeenCalledOnce();
   });
 });

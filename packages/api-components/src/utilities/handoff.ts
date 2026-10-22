@@ -1,3 +1,5 @@
+import { parseHttpsUrl } from './https-url.js';
+
 /** Identifies the components as the source of a visit, per Zocdoc's referrer standard (TS-019). */
 const REFERRER_TYPE = 'api_components';
 
@@ -21,16 +23,8 @@ function isZocdocHost(hostname: string): boolean {
  * up with two. Nothing else is added: they say which component sent the visit, never who (PHI-003).
  */
 export function handoffHref(url: string | null | undefined, component: string): string | undefined {
-  const trimmed = url?.trim();
-  if (!trimmed) return undefined;
-
-  let parsed: URL;
-  try {
-    parsed = new URL(trimmed);
-  } catch {
-    return undefined;
-  }
-  if (parsed.protocol !== 'https:' || !isZocdocHost(parsed.hostname)) return undefined;
+  const parsed = parseHttpsUrl(url);
+  if (!parsed || !isZocdocHost(parsed.hostname)) return undefined;
   if (parsed.username || parsed.password) return undefined;
 
   parsed.searchParams.set('referrerType', REFERRER_TYPE);

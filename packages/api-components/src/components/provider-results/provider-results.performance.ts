@@ -5,6 +5,7 @@ import {
 } from '../../../../primitives/src/utils/test/performance.js';
 import * as availability from '../../client/availability.js';
 import { buildTimeslots, PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
+import { jsonBlock } from '../../utils/test/hydration.js';
 import type { ZdProviderResults } from './index.js';
 import './index.js';
 
@@ -38,6 +39,26 @@ describe('zd-provider-results performance', () => {
           element.totalCount = PROVIDER_LOCATIONS.length;
           element.availabilityStart = START;
           element.availability = AVAILABILITY;
+          return element;
+        },
+        update: (element, i) =>
+          (element.selectedId =
+            PROVIDER_LOCATIONS[i % PROVIDER_LOCATIONS.length].provider_location_id),
+      },
+      { ...COMPOSED_OPTIONS, record: 'api-components' }
+    );
+  });
+
+  it('reports timings when hydrated from JSON blocks', async () => {
+    await benchmarkComponent<ZdProviderResults>(
+      {
+        name: 'provider-results/hydrated',
+        create: () => {
+          const element = document.createElement('zd-provider-results') as ZdProviderResults;
+          element.setAttribute('total-count', String(PROVIDER_LOCATIONS.length));
+          element.setAttribute('availability-start', START);
+          element.innerHTML =
+            jsonBlock('providers', PROVIDER_LOCATIONS) + jsonBlock('availability', AVAILABILITY);
           return element;
         },
         update: (element, i) =>

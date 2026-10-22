@@ -29,7 +29,7 @@
             {
               "kind": "field",
               "name": "actionError",
-              "description": "Set by the host page in supplied mode when the requested cancel or reschedule failed.\n\nOnly whether it's set counts. The component shows its own copy for the action, never this\nstring, because a host's error text can be developer-facing or echo request data\n(CLIENT-003, PHI-001). It is cleared when the next action starts.",
+              "description": "Set by the host page in supplied mode when the requested cancel or reschedule failed.\n\nEvery time it's set to a value, the pending action fails, even with the same text as last\ntime, so the host never has to clear it. The component never writes it. It shows its own\ncopy for the action and emits `appointment-error`, never this string, because a host's error\ntext can be developer-facing or echo request data (CLIENT-003, PHI-001).",
               "privacy": "public",
               "type": {
                 "text": "string"
@@ -83,11 +83,11 @@
             {
               "kind": "field",
               "name": "busy",
+              "description": "The action in flight, if any.",
               "privacy": "protected",
-              "default": "false",
               "internal": true,
               "type": {
-                "text": "boolean"
+                "text": "Action"
               }
             },
             {
@@ -200,6 +200,25 @@
             },
             {
               "kind": "method",
+              "name": "fail",
+              "description": "The host page set `actionError`. Reported with the component's own words, never the host's.",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "action",
+                  "type": {
+                    "text": "Action"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "getScopedElementById",
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
               "privacy": "protected",
@@ -263,6 +282,16 @@
               }
             },
             {
+              "kind": "field",
+              "name": "latched",
+              "description": "Latched the first time `appointment` is set and never reset, so no path leads back to the API.",
+              "privacy": "private",
+              "default": "false",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
               "kind": "method",
               "name": "load",
               "description": "Fetches the appointment. Safe to call repeatedly. Stays idle without an ID.",
@@ -294,7 +323,7 @@
             {
               "kind": "method",
               "name": "loadProvider",
-              "description": "Fills in the provider row. Secondary to the appointment, so it is quiet: a failure keeps the\n`provider-name` fallback and emits nothing. A host acting on `appointment-error` would show a\nfailure while the appointment is on screen and correct.",
+              "description": "Fills in the provider row. Secondary to the appointment, so it is quiet: a failure keeps the\n`provider-name` fallback and emits nothing. A host acting on `appointment-error` would show a\nfailure while the appointment is on screen and correct. An answer for a location the\nappointment no longer has is dropped.",
               "privacy": "private",
               "parameters": [
                 {
@@ -642,7 +671,7 @@
             {
               "kind": "method",
               "name": "settle",
-              "description": "Works out a supplied action's outcome from the updated appointment, the same way the API path\nreads the API's answer, and fires the same events.",
+              "description": "Works out a supplied action's outcome from the updated appointment, the same way the API path\nreads the API's answer, and fires the same events. A reschedule moved only if the appointment\nis at the chosen time, or waits for the practice to accept it.",
               "privacy": "private",
               "parameters": [
                 {
@@ -693,13 +722,50 @@
               }
             },
             {
+              "kind": "method",
+              "name": "showOther",
+              "description": "The host page moved to another appointment. Nothing on show belongs to it: a pending action\nis dropped unanswered, and its reschedule times wait for new ones unless they came with it.",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "timeslotsStale",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
               "kind": "field",
-              "name": "supplied",
-              "description": "Latched the first time `appointment` is set and never reset, so no path leads back to the API.",
+              "name": "staleTimeslots",
+              "description": "Set when the appointment changes to another one, until the host sends times for it.",
               "privacy": "private",
               "default": "false",
               "type": {
                 "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "supplied",
+              "description": "Supplied mode. True as soon as `appointment` is set, before the update that latches it, so a\n`cancel()` in the same task as the assignment can't reach the API.",
+              "privacy": "protected",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "suppliedTimeslots",
+              "description": "The host page's reschedule times, unless they are for another appointment.",
+              "privacy": "protected",
+              "type": {
+                "text": "readonly AvailabilitySlot[] | undefined"
               }
             }
           ],
@@ -951,12 +1017,23 @@
               }
             },
             {
-              "kind": "field",
+              "kind": "method",
               "name": "activeRovingDay",
               "description": "The day that should have tabindex=\"0\": explicit roving state, selected day, or first enabled.",
               "privacy": "protected",
-              "type": {
-                "text": "string | undefined"
+              "parameters": [
+                {
+                  "name": "enabled",
+                  "type": {
+                    "text": "string[]"
+                  },
+                  "default": "this.enabledDays()"
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "string | undefined"
+                }
               }
             },
             {
@@ -1024,12 +1101,23 @@
               }
             },
             {
-              "kind": "field",
+              "kind": "method",
               "name": "enabledDays",
-              "description": "Days with at least one appointment, in order.",
+              "description": "Days with at least one appointment, in order. Takes `counts` so a caller builds it once.",
               "privacy": "protected",
-              "type": {
-                "text": "string[]"
+              "parameters": [
+                {
+                  "name": "counts",
+                  "type": {
+                    "text": "Map<string, number>"
+                  },
+                  "default": "this.dayCounts"
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "string[]"
+                }
               }
             },
             {
@@ -1155,22 +1243,12 @@
             {
               "kind": "field",
               "name": "hydratable",
-              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "description": "The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`).",
               "privacy": "public",
               "static": true,
               "default": "{ timeslots: 'array' }",
               "type": {
                 "text": "Readonly<Record<string, HydrationShape>>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hydrated",
-              "description": "Whether any property came from a JSON block, read on the first update.",
-              "privacy": "protected",
-              "default": "false",
-              "type": {
-                "text": "boolean"
               }
             },
             {
@@ -1186,11 +1264,32 @@
             },
             {
               "kind": "field",
+              "name": "loadGeneration",
+              "description": "Bumped per fetch, and when slots are supplied, so a late response can't land over newer state.",
+              "privacy": "private",
+              "default": "0",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "kind": "field",
               "name": "loading",
               "description": "Whether the host is loading availability it supplied through `timeslots`.\n\nSet this while replacing supplied slots to keep stale counts out of view and announce loading.\nIt does not start a request.",
               "privacy": "public",
               "default": "false",
               "attribute": "loading",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "opensZocdoc",
+              "description": "Says a day takes the patient to Zocdoc, for screen readers. Set by `zd-provider-results` in\nhandoff mode, where a day does what the card's \"Book now\" link does.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "opens-zocdoc",
               "type": {
                 "text": "boolean"
               }
@@ -1436,6 +1535,15 @@
               "fieldName": "loading"
             },
             {
+              "name": "opens-zocdoc",
+              "description": "Says a day takes the patient to Zocdoc, for screen readers. Set by `zd-provider-results` in\nhandoff mode, where a day does what the card's \"Book now\" link does.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "opensZocdoc"
+            },
+            {
               "name": "patient-type",
               "description": "Which patient the days are counted for, since a practice can open different times to each.",
               "type": {
@@ -1606,7 +1714,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdAvailabilityPicker",
-          "description": "Fetches bookable timeslots for one provider location and renders them for the patient to\nchoose from. No calendar primitive is involved — the booking flow needs a list of times, and\nthat is a list of buttons.\n\n**Two layouts.** `strip` is a row of days with the selected day's times beneath it, which is\nwhat fits in a step of a flow. `stacked` is every day of the window in order, each with its own\nheading and its times under it, which is the shape of the production booking modal: nothing is\nhidden behind a day that has to be pressed first. Closed days appear in `stacked` too, as one\nspan apiece — \"Sat, Aug 8 – Tue, Aug 11 / No available appointments\" — because a day quietly\nmissing from the list is indistinguishable from a window that ends early.\n\n**Patient type is a control, not just a property.** It changes which slots the API returns, so\na patient who sees nothing bookable needs it within reach — often switching it is the fix. It\nstays rendered in the empty and error states for exactly that reason, and setting it refetches.\n\nEmits the chosen slot rather than booking it, so it composes with `zd-patient-form` or\nwith a host page that owns its own booking step (COMP-002).\n\n**Handoff.** A picker whose slots came from a JSON block has nobody listening to book with, so\na tap goes to Zocdoc: the slot's `booking_url`, or the provider's `profile_url` when the slot\nhas none (`booking_url` is often null). `disable-handoff` turns that off. The patient-type\ncontrol is hidden in that mode too, since nobody would answer its `availability-request`;\n`interactive` shows it again for a page that will.",
+          "description": "Fetches bookable timeslots for one provider location and renders them for the patient to\nchoose from. No calendar primitive is involved — the booking flow needs a list of times, and\nthat is a list of buttons.\n\n**Two layouts.** `strip` is a row of days with the selected day's times beneath it, which is\nwhat fits in a step of a flow. `stacked` is every day of the window in order, each with its own\nheading and its times under it, which is the shape of the production booking modal: nothing is\nhidden behind a day that has to be pressed first. Closed days appear in `stacked` too, as one\nspan apiece — \"Sat, Aug 8 – Tue, Aug 11 / No available appointments\" — because a day quietly\nmissing from the list is indistinguishable from a window that ends early.\n\n**Patient type is a control, not just a property.** It changes which slots the API returns, so\na patient who sees nothing bookable needs it within reach — often switching it is the fix. It\nstays rendered in the empty and error states for exactly that reason, and setting it refetches.\n\nEmits the chosen slot rather than booking it, so it composes with `zd-patient-form` or\nwith a host page that owns its own booking step (COMP-002).\n\n**Handoff.** A picker whose slots came from a JSON block has nobody listening to book with, so\neach time is a link to Zocdoc: the slot's `booking_url`, or the provider's `profile_url` when\nthe slot has none (`booking_url` is often null). Inside an iframe it opens a new tab.\n`disable-handoff` turns that off. The patient-type\ncontrol is hidden in that mode too, since nobody would answer its `availability-request`;\n`interactive` shows it again for a page that will.",
           "tagName": "zd-availability-picker",
           "superclass": {
             "name": "CharmElement",
@@ -1629,6 +1737,17 @@
               "internal": true,
               "type": {
                 "text": "string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "awaitingTimeslots",
+              "description": "Set by `availability-request` and cleared by the `timeslots` that answer it, so stale times aren't shown meanwhile.",
+              "privacy": "private",
+              "default": "false",
+              "internal": true,
+              "type": {
+                "text": "boolean"
               }
             },
             {
@@ -1809,7 +1928,7 @@
             {
               "kind": "field",
               "name": "hydratable",
-              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "description": "The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`).",
               "privacy": "public",
               "static": true,
               "default": "{\n    timeslots: 'array',\n    provider: 'object',\n  }",
@@ -1858,6 +1977,16 @@
                 "type": {
                   "text": "Promise<void>"
                 }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "loadGeneration",
+              "description": "Bumped per fetch, and when slots are supplied, so a late response can't land over newer state.",
+              "privacy": "private",
+              "default": "0",
+              "type": {
+                "text": "number"
               }
             },
             {
@@ -2035,12 +2164,25 @@
             {
               "kind": "method",
               "name": "select",
+              "description": "Emits `slot-select`. A slot with an `href` is a link the browser follows itself, unless a\nlistener cancels the event.",
               "privacy": "protected",
               "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                },
                 {
                   "name": "slot",
                   "type": {
                     "text": "AvailabilitySlot"
+                  }
+                },
+                {
+                  "name": "isLink",
+                  "type": {
+                    "text": "boolean"
                   }
                 }
               ],
@@ -2076,6 +2218,25 @@
               "return": {
                 "type": {
                   "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "slotHref",
+              "description": "Where a slot goes in handoff mode: its `booking_url`, else the provider's `profile_url`.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "slot",
+                  "type": {
+                    "text": "AvailabilitySlot"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "string | undefined"
                 }
               }
             },
@@ -2246,7 +2407,7 @@
             },
             {
               "name": "availability-request",
-              "description": "Emitted with `{ providerLocationId, visitReasonId, patientType,\nstartDate, days }` instead of a fetch when `timeslots` is supplied and one of those inputs\nchanges. The host page answers by setting `timeslots` again.",
+              "description": "Emitted with `{ providerLocationId, visitReasonId, patientType,\nstartDate, days }` instead of a fetch when `timeslots` is supplied and one of those inputs\nchanges. `days` is the window the picker renders, clamped to 1–30. The picker shows its\nloading state until the host page answers by setting `timeslots` again.",
               "type": {
                 "text": "CustomEvent<AvailabilityRequestDetail>"
               }
@@ -4429,7 +4590,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdProviderCard",
-          "description": "Displays a provider's photo, name, specialty, location, and insurance status\nin a horizontal card layout with a slot for availability.\n\n**Handoff.** A card whose provider came from a JSON block, or that `zd-provider-results` marks\nwith `handoff`, shows a \"Book now\" link to the provider's Zocdoc profile when it has no times\nof its own to tap. It needs a `profile_url` on Zocdoc over `https:`; without one there is no\nlink. `disable-handoff` turns it off.",
+          "description": "Displays a provider's photo, name, specialty, location, and insurance status\nin a horizontal card layout with a slot for availability.\n\n**Handoff.** A card whose provider came from a JSON block, or that `zd-provider-results` marks\nwith `handoff`, shows a \"Book now\" link to the provider's Zocdoc profile when it has no times\nof its own to tap. It needs a `profile_url` on Zocdoc over `https:`; without one there is no\nlink. `disable-handoff` turns it off. Outside handoff mode, `selectable` shows \"Book now\" as a\nbutton that only emits `book-select`.",
           "tagName": "zd-provider-card",
           "superclass": {
             "name": "CharmElement",
@@ -4509,16 +4670,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "filledSlots",
-              "description": "The slots that have content, so an empty one leaves no gap in the column.",
-              "privacy": "protected",
-              "internal": true,
-              "type": {
-                "text": "ReadonlySet<TrackedSlot>"
-              }
-            },
-            {
               "kind": "method",
               "name": "getScopedElementById",
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
@@ -4552,8 +4703,26 @@
             },
             {
               "kind": "method",
+              "name": "handleAvailabilityChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "handleBookClick",
-              "description": "Emits `book-select`, then follows the link unless a listener kept the patient here.",
+              "description": "Emits `book-select`. As a link, a listener that cancels it keeps the patient on the page;\notherwise the browser follows the link itself.",
               "privacy": "protected",
               "parameters": [
                 {
@@ -4563,9 +4732,9 @@
                   }
                 },
                 {
-                  "name": "href",
+                  "name": "isLink",
                   "type": {
-                    "text": "string"
+                    "text": "boolean"
                   }
                 }
               ],
@@ -4586,35 +4755,22 @@
               }
             },
             {
-              "kind": "method",
-              "name": "handleSlotChange",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "name",
-                  "type": {
-                    "text": "TrackedSlot"
-                  }
-                },
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
               "kind": "field",
               "name": "handoff",
               "description": "Puts the card in handoff mode as if its provider had come from a JSON block. Set by\n`zd-provider-results` on the cards of a hydrated list, which only ever show day counts, so the\ncard shows \"Book now\" even with availability slotted in.",
               "privacy": "public",
               "default": "false",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasAvailability",
+              "description": "Whether the `availability` slot has content: times of its own to tap instead of \"Book now\".",
+              "privacy": "protected",
+              "default": "false",
+              "internal": true,
               "type": {
                 "text": "boolean"
               }
@@ -4663,7 +4819,7 @@
             {
               "kind": "field",
               "name": "hydratable",
-              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "description": "The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`).",
               "privacy": "public",
               "static": true,
               "default": "{ provider: 'object' }",
@@ -4729,6 +4885,7 @@
             {
               "kind": "method",
               "name": "renderAnnotations",
+              "description": "A `<slot>` has no box of its own, so an empty one leaves no gap in the column, and the text it\nholds inherits the styles set on it.",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -4749,6 +4906,7 @@
             {
               "kind": "method",
               "name": "renderBook",
+              "description": "A real link, so the patient can see where it goes, open it in a new tab, or copy it. Inside\nan iframe it opens a new tab rather than loading Zocdoc in the frame. The provider's name is\nin the link text for screen readers, since a list has a \"Book now\" on every card (WCAG 2.4.4).",
               "privacy": "protected",
               "return": {
                 "type": {
@@ -4788,6 +4946,17 @@
               },
               "type": {
                 "text": "any"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selectable",
+              "description": "Shows \"Book now\" as a button that only emits `book-select`, for a parent that books on the\npage. Set by `zd-provider-results` on the cards of a list that isn't in handoff mode.",
+              "privacy": "public",
+              "default": "false",
+              "attribute": "selectable",
+              "type": {
+                "text": "boolean"
               }
             }
           ],
@@ -4835,12 +5004,21 @@
               },
               "default": "false",
               "fieldName": "loading"
+            },
+            {
+              "name": "selectable",
+              "description": "Shows \"Book now\" as a button that only emits `book-select`, for a parent that books on the\npage. Set by `zd-provider-results` on the cards of a list that isn't in handoff mode.",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "selectable"
             }
           ],
           "events": [
             {
               "name": "book-select",
-              "description": "Emitted with `{ provider }` when \"Book now\" is chosen. Cancelable:\n`preventDefault()` keeps the patient on the page.",
+              "description": "Emitted with `{ provider }` when \"Book now\" is chosen. Cancelable: in\nhandoff mode, `preventDefault()` keeps the patient on the page.",
               "type": {
                 "text": "CustomEvent<BookSelectDetail>"
               }
@@ -4892,7 +5070,7 @@
           "cssParts": [
             {
               "name": "book",
-              "description": "The \"Book now\" link, shown in handoff mode."
+              "description": "The \"Book now\" control: a link in handoff mode, a button with `selectable`."
             },
             {
               "name": "details",
@@ -4916,11 +5094,11 @@
             },
             {
               "name": "reason",
-              "description": "The wrapper around the `reason` slot, hidden while the slot is empty."
+              "description": "The `reason` slot. It has no box, so style the text it inherits."
             },
             {
               "name": "review",
-              "description": "The wrapper around the `review` slot, hidden while the slot is empty."
+              "description": "The `review` slot. It has no box, so style the text it inherits."
             },
             {
               "name": "skeleton",
@@ -4932,7 +5110,7 @@
             },
             {
               "name": "sponsored",
-              "description": "The wrapper around the `sponsored` slot, hidden while the slot is empty."
+              "description": "The `sponsored` slot. It has no box, so style the text it inherits."
             }
           ]
         }
@@ -5102,22 +5280,12 @@
             {
               "kind": "field",
               "name": "hydratable",
-              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "description": "The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`).",
               "privacy": "public",
               "static": true,
               "default": "{ provider: 'object' }",
               "type": {
                 "text": "Readonly<Record<string, HydrationShape>>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hydrated",
-              "description": "Whether any property came from a JSON block, read on the first update.",
-              "privacy": "protected",
-              "default": "false",
-              "type": {
-                "text": "boolean"
               }
             },
             {
@@ -5652,6 +5820,25 @@
             },
             {
               "kind": "method",
+              "name": "handleBookSelect",
+              "description": "A card's \"Book now\". In handoff mode it is a link and its `book-select` passes through\nuntouched, so the page can still cancel it. Otherwise it is the patient choosing that\nprovider, said as `provider-select`.",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent<BookSelectDetail>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "handleWindowShift",
               "description": "The count line and, when there is availability to page through, the window control beside it.\n\nOne control for the whole list rather than one per card, which is what the production search\npage does and the only arrangement that makes sense: ten pagers stepping independently would\nput every card on different dates, and a patient comparing them would be comparing nothing.\nThe cards get `hide-window` for the same reason.",
               "privacy": "protected",
@@ -5713,7 +5900,7 @@
             {
               "kind": "field",
               "name": "hydratable",
-              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "description": "The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`).",
               "privacy": "public",
               "static": true,
               "default": "{\n    providers: 'array',\n    availability: 'array',\n    annotations: 'object',\n  }",
@@ -6021,25 +6208,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "select",
-              "description": "A native `<button>` handles Enter and Space itself, so there is deliberately\nno keydown handler here — adding one would double-fire.",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "location",
-                  "type": {
-                    "text": "ProviderLocation"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
               "kind": "field",
               "name": "selectedId",
               "description": "The currently selected `provider_location_id`, if any.",
@@ -6214,7 +6382,7 @@
             },
             {
               "name": "day-select",
-              "description": "Emitted with `{ day, provider }` when a day is chosen on a card, forwarded\nfrom that card's grid with the provider attached.",
+              "description": "Emitted with `{ day, provider }` when a day is chosen on a card, forwarded\nfrom that card's grid with the provider attached. Not emitted in handoff mode, where the day\nemits `book-select` instead.",
               "type": {
                 "text": "CustomEvent<ProviderDaySelectDetail>"
               }
@@ -6228,7 +6396,7 @@
             },
             {
               "name": "provider-select",
-              "description": "Emitted with `{ provider }` when a provider is chosen.",
+              "description": "Emitted with `{ provider }` when \"Book now\" is chosen on a card,\noutside handoff mode.",
               "type": {
                 "text": "CustomEvent<ProviderSelectDetail>"
               }
@@ -6303,7 +6471,7 @@
             },
             {
               "name": "provider",
-              "description": "The selectable control for one provider."
+              "description": "One provider's card."
             },
             {
               "name": "provider-availability",
@@ -6400,7 +6568,7 @@
           "kind": "class",
           "customElement": true,
           "name": "ZdProviderSearch",
-          "description": "Collects search criteria and queries `GET /v1/provider_locations`.\n\nEmits results rather than rendering them, so it composes with `zd-provider-results` or\nwith a host page that wants to lay results out itself (COMP-002).\n\nA ZIP alone is not a search. The endpoint requires a 5-digit `zip_code` **and** a\n`specialty_id`, and answers a request missing either with a 400 whose body is\ndeveloper-facing — so both are checked here and reported on the field that caused them,\nrather than surfacing as a failed search (CLIENT-003, A11Y-004). This component does not\ncollect a visit reason; the API defaults to \"any\" for the chosen specialty.\n\n**Supplied mode.** A host page that makes its own API calls, such as an MCP server, sets\n`supplied`, and can hand over `specialties` and `insurancePlans` so the selects need no\nlookups. A submit or page change then emits `provider-search-request` instead of searching.\nThe host sets `loading` while it fetches and gives the results to its own `zd-provider-results`.",
+          "description": "Collects search criteria and queries `GET /v1/provider_locations`.\n\nEmits results rather than rendering them, so it composes with `zd-provider-results` or\nwith a host page that wants to lay results out itself (COMP-002).\n\nA ZIP alone is not a search. The endpoint requires a 5-digit `zip_code` **and** a\n`specialty_id`, and answers a request missing either with a 400 whose body is\ndeveloper-facing — so both are checked here and reported on the field that caused them,\nrather than surfacing as a failed search (CLIENT-003, A11Y-004). This component does not\ncollect a visit reason; the API defaults to \"any\" for the chosen specialty.\n\n**Supplied mode.** A host page that makes its own API calls, such as an MCP server, sets\n`supplied` and hands over `specialties` and `insurancePlans`. The component then calls no API\nat all: a list the host leaves out stays empty, and a submit or page change emits\n`provider-search-request` instead of searching. The host sets `loading` while it fetches and\ngives the results to its own `zd-provider-results`.",
           "tagName": "zd-provider-search",
           "superclass": {
             "name": "CharmElement",
@@ -6590,22 +6758,12 @@
             {
               "kind": "field",
               "name": "hydratable",
-              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "description": "The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`).",
               "privacy": "public",
               "static": true,
               "default": "{\n    specialties: 'array',\n    insurancePlans: 'array',\n  }",
               "type": {
                 "text": "Readonly<Record<string, HydrationShape>>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hydrated",
-              "description": "Whether any property came from a JSON block, read on the first update.",
-              "privacy": "protected",
-              "default": "false",
-              "type": {
-                "text": "boolean"
               }
             },
             {
@@ -6630,7 +6788,7 @@
             {
               "kind": "field",
               "name": "insurancePlans",
-              "description": "The insurance plan options, when the host page has them. Skips that lookup.",
+              "description": "The insurance plan options, when the host page has them. Skips that lookup. Unset again, it's fetched.",
               "privacy": "public",
               "type": {
                 "text": "InsurancePlan[]"
@@ -6788,8 +6946,18 @@
             },
             {
               "kind": "field",
+              "name": "searchToken",
+              "description": "Bumped by every search, so an answer overtaken by a newer search is dropped.",
+              "privacy": "private",
+              "default": "0",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "kind": "field",
               "name": "specialties",
-              "description": "The specialty options, when the host page has them. Skips that lookup.",
+              "description": "The specialty options, when the host page has them. Skips that lookup. Unset again, it's fetched.",
               "privacy": "public",
               "type": {
                 "text": "Specialty[]"
@@ -6817,7 +6985,7 @@
             {
               "kind": "field",
               "name": "supplied",
-              "description": "Requests searches from the host page instead of running them. A submit or page change emits\n`provider-search-request`, and nothing here calls the search API.",
+              "description": "Requests searches from the host page instead of running them. A submit or page change emits\n`provider-search-request`, and nothing here calls the API, including the option lists.",
               "privacy": "public",
               "default": "false",
               "attribute": "supplied",
@@ -6923,7 +7091,7 @@
             },
             {
               "name": "supplied",
-              "description": "Requests searches from the host page instead of running them. A submit or page change emits\n`provider-search-request`, and nothing here calls the search API.",
+              "description": "Requests searches from the host page instead of running them. A submit or page change emits\n`provider-search-request`, and nothing here calls the API, including the option lists.",
               "type": {
                 "text": "boolean"
               },
@@ -6954,7 +7122,7 @@
           "events": [
             {
               "name": "provider-results",
-              "description": "Emitted with `{ providers, totalCount, searchParameters, zipCode,\nspecialtyId, insurancePlanId, visitType, page, pageSize }` on a successful search,\nincluding a search that matched nothing, so a listener can clear a stale list. The\ncriteria are the ones actually used, which is how a parent learns what the patient\nchanged in these fields. `totalCount` and `pageSize` are what a pager needs, and only the\nenvelope has them — `providers` holds one page.",
+              "description": "Emitted with `{ providers, totalCount, searchParameters, zipCode,\nspecialtyId, insurancePlanId, visitType, page, pageSize }` on a successful search,\nincluding a search that matched nothing, so a listener can clear a stale list. The\ncriteria are the ones actually used, which is how a parent learns what the patient\nchanged in these fields. `totalCount` and `pageSize` are what a pager needs, and only the\nenvelope has them — `providers` holds one page. Only the latest search emits: an answer\novertaken by a newer search is dropped.",
               "type": {
                 "text": "CustomEvent<ProviderResultsDetail>"
               }
@@ -7015,6 +7183,10 @@
               "description": "The specialty select."
             },
             {
+              "name": "specialty-error",
+              "description": "The specialty field's message, inside `field-error`."
+            },
+            {
               "name": "specialty-field",
               "description": "The specialty select with its label."
             },
@@ -7025,6 +7197,10 @@
             {
               "name": "zip",
               "description": "The ZIP code field."
+            },
+            {
+              "name": "zip-error",
+              "description": "The ZIP code field's message, inside `field-error`."
             }
           ]
         }
@@ -7175,22 +7351,12 @@
             {
               "kind": "field",
               "name": "hydratable",
-              "description": "The properties a page can supply as inline JSON blocks, and the shape each must parse to:\n`<script type=\"application/json\" data-zd-prop=\"{name}\">`. A property set by script wins.",
+              "description": "The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`).",
               "privacy": "public",
               "static": true,
               "default": "{ provider: 'object' }",
               "type": {
                 "text": "Readonly<Record<string, HydrationShape>>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hydrated",
-              "description": "Whether any property came from a JSON block, read on the first update.",
-              "privacy": "protected",
-              "default": "false",
-              "type": {
-                "text": "boolean"
               }
             },
             {

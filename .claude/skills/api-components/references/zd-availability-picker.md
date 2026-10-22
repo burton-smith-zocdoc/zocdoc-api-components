@@ -19,8 +19,9 @@ Emits the chosen slot rather than booking it, so it composes with `zd-patient-fo
 with a host page that owns its own booking step (COMP-002).
 
 **Handoff.** A picker whose slots came from a JSON block has nobody listening to book with, so
-a tap goes to Zocdoc: the slot's `booking_url`, or the provider's `profile_url` when the slot
-has none (`booking_url` is often null). `disable-handoff` turns that off. The patient-type
+each time is a link to Zocdoc: the slot's `booking_url`, or the provider's `profile_url` when
+the slot has none (`booking_url` is often null). Inside an iframe it opens a new tab.
+`disable-handoff` turns that off. The patient-type
 control is hidden in that mode too, since nobody would answer its `availability-request`;
 `interactive` shows it again for a page that will.
 
@@ -53,7 +54,7 @@ control is hidden in that mode too, since nobody would answer its `availability-
 | Event | Type | Description |
 | --- | --- | --- |
 | `availability-error` | `CustomEvent<ErrorDetail>` | Emitted with `{ error }` when the request fails. |
-| `availability-request` | `CustomEvent<AvailabilityRequestDetail>` | Emitted with `{ providerLocationId, visitReasonId, patientType, startDate, days }` instead of a fetch when `timeslots` is supplied and one of those inputs changes. The host page answers by setting `timeslots` again. |
+| `availability-request` | `CustomEvent<AvailabilityRequestDetail>` | Emitted with `{ providerLocationId, visitReasonId, patientType, startDate, days }` instead of a fetch when `timeslots` is supplied and one of those inputs changes. `days` is the window the picker renders, clamped to 1–30. The picker shows its loading state until the host page answers by setting `timeslots` again. |
 | `patient-type-change` | `CustomEvent<PatientTypeChangeDetail>` | Emitted with `{ patientType }` when the New/Existing control is used. A host page that books through its own step should follow it, since the same value has to go to `POST /v1/appointments`. |
 | `slot-select` | `CustomEvent<SlotSelectDetail>` | Emitted with `{ startTime, providerLocationId }` when a time is chosen. `startTime` is the API's own string, offset included, so it can be handed back to `POST /v1/appointments` unmodified. Cancelable: `preventDefault()` stops the handoff to Zocdoc. |
 

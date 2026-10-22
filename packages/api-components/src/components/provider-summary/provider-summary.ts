@@ -7,7 +7,11 @@ import {
   providerLocationLine,
   providerPhotoUrl,
 } from '../../utilities/provider-summary.js';
-import { hydrateFromMarkup, type HydrationShape } from '../../utilities/hydrate.js';
+import {
+  afterDocumentParsed,
+  hydrateFromMarkup,
+  type HydrationShape,
+} from '../../utilities/hydrate.js';
 import styles from './provider-summary.styles.js';
 
 /**
@@ -31,21 +35,19 @@ export class ZdProviderSummary extends CharmElement {
     return [ZdAvatar, ZdIcon];
   }
 
-  /**
-   * The properties a page can supply as inline JSON blocks, and the shape each must parse to:
-   * `<script type="application/json" data-zd-prop="{name}">`. A property set by script wins.
-   */
+  /** The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`). */
   public static hydratable: Readonly<Record<string, HydrationShape>> = { provider: 'object' };
 
-  /** Whether any property came from a JSON block, read on the first update. */
-  protected hydrated = false;
+  protected override scheduleUpdate(): void | Promise<unknown> {
+    return afterDocumentParsed(this, () => super.scheduleUpdate());
+  }
 
   /** The provider location data to render. */
   @property({ attribute: false })
   public provider?: ProviderLocation;
 
   protected override willUpdate(changed: PropertyValues<this>): void {
-    if (!this.hasUpdated) this.hydrated = hydrateFromMarkup(this, ZdProviderSummary.hydratable);
+    if (!this.hasUpdated) hydrateFromMarkup(this, ZdProviderSummary.hydratable);
     super.willUpdate(changed);
   }
 

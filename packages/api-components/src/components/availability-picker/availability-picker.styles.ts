@@ -10,7 +10,8 @@ export default css`
     display: none;
   }
 
-  [part~='loading-message'] {
+  [part~='loading-message'],
+  .visually-hidden {
     block-size: 1px;
     clip-path: inset(50%);
     inline-size: 1px;
