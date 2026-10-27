@@ -1,0 +1,11 @@
+/* Self-hosted: the docs make no third-party requests (PHI-003). */
+@import '@fontsource-variable/figtree';
+
+/*
+ * Figtree stands in for Sharp Sans, which the docs can't serve. The components get it too so
+ * live previews match the page around them; drop the `--zd-*` line once Sharp Sans is licensed.
+ */
+:root {
+  --sl-font: 'Figtree Variable', system-ui, sans-serif;
+  --zd-font-family-base: 'Figtree Variable', system-ui, sans-serif;
+}

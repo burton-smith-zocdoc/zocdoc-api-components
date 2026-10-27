@@ -8,10 +8,12 @@
     "dev": "astro dev",
     "prebuild": "pnpm --dir ../.. run build:theme",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "smoke": "oxnode smoke.ts"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.0",
+    "@fontsource-variable/figtree": "^5.3.0",
     "astro": "^7.3.5",
     "code-bubble": "^1.3.3",
     "sharp": "^0.34.3",

@@ -48,44 +48,37 @@ This stylesheet includes the design tokens, reset, and utility classes used by t
 
 ## Script Tag Alternative
 
-For pages without a build step, load one of the prebuilt bundles. Use the IIFE bundle as a classic script:
+For pages without a build step, add your API key in a `<meta>` tag and load one of the prebuilt bundles. Use the IIFE bundle as a classic script:
 
 ```html
+<meta name="zocdoc-api-key" content="TOKEN_FROM_YOUR_BACKEND" />
 <link
   rel="stylesheet"
   href="https://unpkg.com/@zocdoc/api-primitive-components/dist/theme/all.css"
 />
-<script
-  src="https://unpkg.com/@zocdoc/api-components/bundle/iife"
-  zd-token="TOKEN_FROM_YOUR_BACKEND"
-></script>
+<script src="https://unpkg.com/@zocdoc/api-components/bundle/iife"></script>
 ```
 
 Or use the ESM bundle as a module script:
 
 ```html
+<meta name="zocdoc-api-key" content="TOKEN_FROM_YOUR_BACKEND" />
 <link
   rel="stylesheet"
   href="https://unpkg.com/@zocdoc/api-primitive-components/dist/theme/all.css"
 />
-<script
-  type="module"
-  src="https://unpkg.com/@zocdoc/api-components/bundle"
-  zd-token="TOKEN_FROM_YOUR_BACKEND"
-></script>
+<script type="module" src="https://unpkg.com/@zocdoc/api-components/bundle"></script>
 ```
 
-Either one registers all components and configures the client from its own `<script>` tag:
+Either one registers all components and configures the client from these `<meta>` tags:
 
-| Attribute     | Effect                                                                            |
-| ------------- | --------------------------------------------------------------------------------- |
-| `zd-token`    | API token for live requests. Takes precedence over `zd-mock`.                     |
-| `zd-base-url` | API environment. Defaults to `https://api-developer-sandbox.zocdoc.com`.          |
-| `zd-mock`     | Serves sample data with no network calls. Only applies when `zd-token` is absent. |
+| Meta name             | `content`                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------ |
+| `zocdoc-api-key`      | API token for live requests. Takes precedence over `zocdoc-api-mock`.                      |
+| `zocdoc-api-base-url` | API environment. Defaults to `https://api-developer-sandbox.zocdoc.com`.                   |
+| `zocdoc-api-mock`     | Any value. Serves sample data with no network calls. Only applies when there's no API key. |
 
-The attributes are read once, when the bundle runs. A token that expires needs `configureZocdoc({ baseUrl, getToken })` with a function instead. The IIFE bundle exposes it as `Zocdoc.configureZocdoc`, and the ESM bundle exports it.
-
-The ESM bundle finds its tag by matching the tag's `src` to its own URL. If a CDN redirects that URL, it falls back to the only module script with a `zd-*` attribute. With more than one such script on the page, it configures nothing, so call `configureZocdoc()` yourself. A bundle loaded with `import` rather than a `<script>` tag never reads attributes.
+The tags are read once, when the bundle runs, so put them before the IIFE bundle's `<script>` tag. A token that expires needs `configureZocdoc({ baseUrl, getToken })` with a function instead. The IIFE bundle exposes it as `Zocdoc.configureZocdoc`, and the ESM bundle exports it.
 
 Neither bundle includes theme CSS, so keep the `<link>` tag shown in both examples.
 

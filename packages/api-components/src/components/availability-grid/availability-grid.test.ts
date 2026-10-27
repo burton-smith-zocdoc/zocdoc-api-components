@@ -200,6 +200,22 @@ describe('zd-availability-grid', () => {
       expect(texts(element, 'day-count').every((text) => text === 'No appts')).toBe(true);
     });
 
+    /*
+     * An open day is a call to action, so it wears the same brand surface as a primary button
+     * (the search button beside it) rather than its own shade of yellow.
+     */
+    it('paints an open day like a primary button', async () => {
+      const element = await mountSupplied();
+      const button = await mount<HTMLElement>('<zd-button variant="primary">Search</zd-button>');
+      const control = button.shadowRoot?.querySelector('.control');
+      if (!control) throw new Error('zd-button rendered no .control');
+      const primary = getComputedStyle(control);
+      const day = getComputedStyle(dayCells(element)[0]!);
+
+      expect(day.backgroundColor).toBe(primary.backgroundColor);
+      expect(day.color).toBe(primary.color);
+    });
+
     it('disables a day with nothing open', async () => {
       const element = await mountSupplied();
       const cells = dayCells(element);
