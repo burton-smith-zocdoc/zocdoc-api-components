@@ -58,10 +58,33 @@
   }
 }
 
+/* Keep the hero centered at every width. Starlight switches to a two-column,
+   start-aligned layout at 50rem to make room for a hero image, which we don't use. */
+.hero {
+  grid-template-columns: 1fr;
+
+  & .stack {
+    text-align: center;
+  }
+
+  & .copy {
+    align-items: center;
+  }
+
+  & .actions {
+    justify-content: center;
+  }
+}
+
 /* Marker highlight for the part of the hero title wrapped in `<mark>`. */
 .hero mark {
   color: inherit;
   background: linear-gradient(transparent 60%, var(--zd-docs-yellow) 60%);
+
+  /* Keep the marked phrase on one line so the title breaks before it, not mid-phrase. */
+  @media (min-width: 50rem) {
+    white-space: nowrap;
+  }
 
   :root[data-theme='dark'] & {
     background: linear-gradient(

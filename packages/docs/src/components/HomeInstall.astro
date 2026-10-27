@@ -2,18 +2,14 @@
 /** Homepage install: npm first, then the no-build CDN tag. */
 import { Code } from '@astrojs/starlight/components';
 
-const npmInstall = `# The components, plus the primitives and theme they're built on
-npm install @zocdoc/api-components @zocdoc/api-primitive-components`;
+const npmInstall = `npm install @zocdoc/api-components @zocdoc/api-primitive-components`;
 
-const npmSetup = `// Design tokens, reset, and utility classes the components use
-import '@zocdoc/api-primitive-components/theme/all.css';
-// Importing the package also registers every <zd-*> element
+const npmSetup = `import '@zocdoc/api-primitive-components/theme/all.css';
 import { configureZocdoc } from '@zocdoc/api-components';
 
 configureZocdoc({
   // The developer sandbox; switch to production when you go live
   baseUrl: 'https://api-developer-sandbox.zocdoc.com',
-  // Called before each request, so it can return a fresh token.
   // Mint tokens on your backend, never in the browser.
   getToken: fetchTokenFromYourBackend,
 });`;
@@ -21,12 +17,10 @@ configureZocdoc({
 const cdn = `<!-- Your API token, rendered by your backend. Must come before the script. -->
 <meta name="zocdoc-api-key" content="TOKEN_FROM_YOUR_BACKEND" />
 
-<!-- Design tokens, reset, and utility classes the components use -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/@zocdoc/api-primitive-components/dist/theme/all.css"
 />
-<!-- Registers every <zd-*> element and configures itself from the meta tag -->
 <script src="https://unpkg.com/@zocdoc/api-components/bundle/iife"></script>
 
 <!-- The full booking flow: search, pick a time, book -->
