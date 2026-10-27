@@ -5,6 +5,30 @@ description: Render the components from data you already have, set by script or 
 
 Most components can fetch for themselves from the Zocdoc API. They can also render data your page already has, either set as properties by script or written into the HTML as JSON. This page covers both, and what happens when a patient taps something on a page that has no script of its own.
 
+## When to use it
+
+Letting a component fetch for itself is the simplest setup. Supply the data yourself when one of these fits your page.
+
+### Supplied by script
+
+- **Your app already has the data.** If your own backend or data layer already calls the Zocdoc API, pass its results to the components. That avoids a second request for the same data and keeps one source of truth.
+- **You choose and order the providers.** Filter, rank or combine results with your own data, such as the providers your network prefers or a list you picked by hand, then hand the final list to `zd-provider-results`.
+- **You add your own context.** Use `annotations` to show why each provider fits or to label a paid placement. The component still renders the cards.
+- **You control when requests happen.** Answer request events such as `availability-request` and `page-change` with your own requests. You decide the batching, caching, retries and the endpoint they go to.
+- **In an MCP app.** The MCP server holds the token and calls the Zocdoc API in its tools. The UI it returns runs in a sandboxed frame and shouldn't fetch. Set the properties from the tool result, and turn each request event into a tool call. For example, `availability-request` asks for more times and `appointment-cancel-request` asks to cancel. The components don't know which host they're in.
+- **Display components need it.** `zd-provider-results`, `zd-provider-card`, `zd-provider-summary` and `zd-provider-profile` never fetch, so you always supply their data.
+
+### Written into the HTML
+
+- **Server-rendered pages.** Your server renders the page with the data already in it.
+- **The browser never needs a token.** Your server calls the Zocdoc API with its own credential and writes the results into the page. The page doesn't need a `getToken`, and no credential reaches the browser.
+- **Content appears sooner.** The data arrives with the HTML, so the components render as soon as they load. There's no extra request first, and no loading state.
+- **Pages without app code.** CMS pages, static sites and marketing pages can show providers and open times with only the component script. On those pages, taps hand the patient off to Zocdoc to book (see [Taps](#taps)).
+- **Requests can be cached.** A server can cache API responses and reuse them for many visitors, instead of every browser making its own requests.
+- **Generated HTML.** A tool or assistant that already has API results can write a page from them, such as an HTML artifact built from an MCP tool result.
+
+Only the data is in the HTML. The components still render in the browser once their script loads, so this isn't Lit SSR or declarative shadow DOM. Nothing renders before the script runs.
+
 ## Supplied data
 
 A component whose data property is **`undefined`** fetches it. A component whose data property **holds a value** renders that value and never fetches it. That includes an empty array, which renders the empty state.
