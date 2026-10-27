@@ -23,11 +23,13 @@
   <body>
     <h1>Standalone Integration</h1>
     <p>This page demonstrates the simplest possible integration:</p>
-    <pre><code>&lt;script src="zocdoc.js" zd-mock&gt;&lt;/script&gt;
+    <pre><code>&lt;meta name="zocdoc-api-mock" content="true" /&gt;
+&lt;script src="zocdoc.js"&gt;&lt;/script&gt;
 &lt;zd-booking zip-code="11201"&gt;&lt;/zd-booking&gt;</code></pre>
 
     <p>With a real token:</p>
-    <pre><code>&lt;script src="zocdoc.js" zd-token="your-api-token"&gt;&lt;/script&gt;
+    <pre><code>&lt;meta name="zocdoc-api-key" content="your-api-token" /&gt;
+&lt;script src="zocdoc.js"&gt;&lt;/script&gt;
 &lt;zd-booking zip-code="11201"&gt;&lt;/zd-booking&gt;</code></pre>
 
     <hr />
@@ -35,6 +37,7 @@
     <h2>Live Demo (using fixtures)</h2>
     <zd-booking zip-code="11201"></zd-booking>
 
-    <script src="/zocdoc.js" zd-mock></script>
+    <meta name="zocdoc-api-mock" content="true" />
+    <script src="/zocdoc.js"></script>
   </body>
 </html>

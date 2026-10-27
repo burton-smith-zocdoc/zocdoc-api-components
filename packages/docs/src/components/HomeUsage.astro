@@ -1,0 +1,103 @@
+---
+/**
+ * Homepage "Two ways to use it": the all-in-one element beside the composed pieces. Code only;
+ * the playground above already shows a live instance.
+ */
+import { Code } from '@astrojs/starlight/components';
+
+const allInOne = `<zd-booking zip-code="11201"></zd-booking>`;
+
+const composed = `<zd-provider-card></zd-provider-card>
+<zd-availability-picker id="picker">
+</zd-availability-picker>
+
+<script>
+  picker.addEventListener('slot-select', (e) => {
+    showYourOwnForm(e.detail.startTime);
+  });
+</script>`;
+---
+
+<section class="usage not-content" aria-labelledby="usage-heading">
+  <h2 id="usage-heading">Two ways to use it</h2>
+  <p class="lead">Start with one tag. Break it apart when you need control.</p>
+  <div class="cards">
+    <article>
+      <h3>All-in-one</h3>
+      <p>The whole booking flow, ready to use.</p>
+      <Code code={allInOne} lang="html" />
+      <p class="links">
+        <a href="/zocdoc-api-components/components/booking/">Booking component →</a>
+      </p>
+    </article>
+    <article>
+      <h3>Compose your own</h3>
+      <p>Use only the pieces you need, in your own layout.</p>
+      <Code code={composed} lang="html" />
+      <p class="links">
+        <a href="/zocdoc-api-components/guides/composed-vs-single/">Composed vs single element →</a>
+        <a href="/zocdoc-api-components/components/appointment/">See all 13 components →</a>
+      </p>
+    </article>
+  </div>
+</section>
+
+<style>
+  .usage {
+    margin-block: 4rem;
+
+    & h2 {
+      margin: 0;
+      font-size: var(--sl-text-3xl);
+      text-align: center;
+    }
+  }
+
+  .lead {
+    margin: 0.5rem 0 2rem;
+    color: var(--sl-color-gray-2);
+    text-align: center;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+
+    @media (max-width: 50rem) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  article {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 1rem;
+    background: var(--sl-color-bg-nav);
+
+    & h3 {
+      margin: 0;
+      font-size: var(--sl-text-xl);
+    }
+
+    & p {
+      margin: 0;
+      color: var(--sl-color-gray-2);
+    }
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-block-start: auto;
+
+    & a {
+      font-weight: 600;
+      color: var(--sl-color-text-accent);
+    }
+  }
+</style>

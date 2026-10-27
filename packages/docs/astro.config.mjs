@@ -27,6 +27,8 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Zocdoc API Components',
+      // A stand-in "Z" chip beside the text title until an approved Zocdoc mark is available.
+      logo: { src: './src/assets/wordmark.svg', alt: '' },
       social: [
         {
           icon: 'github',
@@ -72,7 +74,7 @@ export default defineConfig({
           items: [{ autogenerate: { directory: 'primitive-components' } }],
         },
       ],
-      customCss: ['./src/styles/custom.css', './src/styles/preview.css'],
+      customCss: ['./src/styles/fonts.css', './src/styles/custom.css', './src/styles/preview.css'],
       components: {
         // Auto-import custom components for MDX
       },

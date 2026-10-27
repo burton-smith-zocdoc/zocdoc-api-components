@@ -1,0 +1,30 @@
+---
+/** Homepage closing call to action. */
+import { LinkButton } from '@astrojs/starlight/components';
+---
+
+<section class="closing not-content" aria-label="Get started">
+  <p>Ready to add Zocdoc to your site?</p>
+  <LinkButton href="/zocdoc-api-components/getting-started/installation/" variant="primary" icon="right-arrow">
+    Get started
+  </LinkButton>
+</section>
+
+<style>
+  .closing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    margin-block: 4rem 2rem;
+    padding-block: 3rem;
+    border-block-start: 1px solid var(--sl-color-gray-5);
+    text-align: center;
+
+    & p {
+      margin: 0;
+      font-size: var(--sl-text-2xl);
+      font-weight: 600;
+    }
+  }
+</style>

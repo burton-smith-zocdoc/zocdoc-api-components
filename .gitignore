@@ -38,3 +38,6 @@ packages/demo/sites/synergy-partners/*.user
 
 # Local, report-only benchmark output (pnpm test:performance)
 performance-results/
+
+# Brainstorming mockups (visual companion)
+.superpowers/

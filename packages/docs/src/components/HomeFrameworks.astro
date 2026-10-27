@@ -1,0 +1,78 @@
+---
+/**
+ * Homepage "works with any framework": the stacks the framework guide and demo sites cover.
+ * Seti icons ship with Starlight, so no icon is fetched from anywhere (PHI-003).
+ */
+import { Icon, LinkButton } from '@astrojs/starlight/components';
+
+const frameworks = [
+  { name: 'HTML', icon: 'seti:html' },
+  { name: 'React', icon: 'seti:react' },
+  { name: 'Vue', icon: 'seti:vue' },
+  { name: 'Svelte', icon: 'seti:svelte' },
+  { name: 'PHP', icon: 'seti:php' },
+  { name: 'ASP.NET', icon: 'seti:c-sharp' },
+] as const;
+---
+
+<section class="frameworks not-content" aria-labelledby="frameworks-heading">
+  <h2 id="frameworks-heading">Works with any framework</h2>
+  <p class="lead">They're standard web components, so they run anywhere HTML does.</p>
+  <ul>
+    {
+      frameworks.map(({ name, icon }) => (
+        <li>
+          <Icon name={icon} size="2.5rem" />
+          <span>{name}</span>
+        </li>
+      ))
+    }
+  </ul>
+  <LinkButton href="/zocdoc-api-components/guides/frameworks/" variant="secondary" icon="right-arrow">
+    Framework integration
+  </LinkButton>
+</section>
+
+<style>
+  .frameworks {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-block: 4rem;
+    text-align: center;
+
+    & h2 {
+      margin: 0;
+      font-size: var(--sl-text-3xl);
+    }
+  }
+
+  .lead {
+    margin: 0.5rem 0 2rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-inline-size: 6.5rem;
+    padding: 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 1rem;
+    background: var(--sl-color-bg-nav);
+    font-weight: 600;
+    color: var(--sl-color-gray-2);
+  }
+</style>
