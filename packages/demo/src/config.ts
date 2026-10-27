@@ -74,7 +74,8 @@ export function renderModeBanner(config: DemoConfig): void {
 
   if (config.mode === 'mock') {
     const code = document.createElement('code');
-    code.textContent = `<script src="..." zd-token="..."></script>
+    code.textContent = `<meta name="zocdoc-api-key" content="..." />
+<script src="..."></script>
 <zd-booking></zd-booking>`;
     const pre = document.createElement('pre');
     pre.className = 'code-sample';

@@ -1,20 +1,22 @@
 /**
  * Auto-configuring bundle entry point.
  *
- * Reads configuration from script tag attributes when loaded via either build:
+ * Reads configuration from `<meta>` tags in the page when loaded via either build:
  *
- *   <script src="zocdoc.js" zd-token="..."></script>
- *   <script type="module" src="zocdoc.esm.js" zd-token="..."></script>
+ *   <meta name="zocdoc-api-key" content="..." />
+ *   <script src="zocdoc.js"></script>
  *   <zd-booking zip-code="10001"></zd-booking>
  *
- * Supported attributes:
- * - `zd-token` (required for live mode) — API token
- * - `zd-base-url` (optional) — defaults to developer sandbox
- * - `zd-mock` (optional) — use fixtures instead of live API (no token needed)
+ * Supported meta names:
+ * - `zocdoc-api-key` (required for live mode) — API token
+ * - `zocdoc-api-base-url` (optional) — defaults to developer sandbox
+ * - `zocdoc-api-mock` (optional) — use fixtures instead of live API (no token needed)
  *
- * For mock/fixture mode (no network calls), omit `zd-token` and add `zd-mock`:
+ * For mock/fixture mode (no network calls), omit `zocdoc-api-key` and add `zocdoc-api-mock`:
  *
- *   <script src="zocdoc.js" zd-mock></script>
+ *   <meta name="zocdoc-api-mock" content="true" />
+ *
+ * The tags are read once, when the bundle runs, so they must come before the bundle's script.
  *
  * ## Theme CSS
  *
@@ -34,7 +36,7 @@ import '@zocdoc/api-primitive-components/configure-only';
 // Client configuration
 import { configureZocdoc } from './client/configure.js';
 import { configureZocdocMock } from './client/mock/index.js';
-import { findBundleScript, readBundleScriptConfig } from './bundle-script.js';
+import { readBundleConfig } from './bundle-config.js';
 
 // Re-export client API
 export * from './client/appointments.js';
@@ -114,10 +116,10 @@ export {
 export { providerHeading } from './utilities/provider-summary.js';
 export type { AvailabilityWindowDetail, DetailOf, ErrorDetail } from './components/events.js';
 
-// Re-export mock utilities for zd-mock mode
+// Re-export mock utilities for zocdoc-api-mock mode
 export { configureZocdocMock, createMockTransport, SCENARIOS } from './client/mock/index.js';
 
-const config = readBundleScriptConfig(findBundleScript(import.meta.url));
+const config = readBundleConfig();
 
 if (config.mode === 'live') {
   configureZocdoc({ baseUrl: config.baseUrl, getToken: config.token });

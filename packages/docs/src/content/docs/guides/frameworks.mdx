@@ -161,21 +161,23 @@ Because they're styled entirely by CSS, they need `theme/all.css` or `theme/layo
 
 ## Plain HTML, PHP, ASP.NET, and other server-rendered sites
 
-No bundler is needed. Load the prebuilt bundle and the theme, and the bundle configures itself from its own `<script>` tag:
+No bundler is needed. Add your API key in a `<meta>` tag, then load the prebuilt bundle and the theme. The bundle configures itself from the meta tag:
 
 ```html
 <link rel="stylesheet" href="/zocdoc/all.css" />
-<script src="/zocdoc/zocdoc.js" zd-token="TOKEN_FROM_YOUR_BACKEND"></script>
+<meta name="zocdoc-api-key" content="TOKEN_FROM_YOUR_BACKEND" />
+<script src="/zocdoc/zocdoc.js"></script>
 
 <zd-booking zip-code="11201"></zd-booking>
 ```
 
-`zocdoc.js` is `@zocdoc/api-components/bundle/iife`, and `all.css` is `@zocdoc/api-primitive-components/theme/all.css`. Use `zd-mock` instead of `zd-token` to serve sample data with no network calls, and `zd-base-url` to point at another environment. With the IIFE bundle, everything the package exports is also on the `Zocdoc` global. For example, `Zocdoc.searchProviderLocations()` loads providers for `zd-provider-card`, which takes a `provider` object.
+`zocdoc.js` is `@zocdoc/api-components/bundle/iife`, and `all.css` is `@zocdoc/api-primitive-components/theme/all.css`. Use `<meta name="zocdoc-api-mock" content="true" />` instead of the API key to serve sample data with no network calls, and `<meta name="zocdoc-api-base-url">` to point at another environment. With the IIFE bundle, everything the package exports is also on the `Zocdoc` global. For example, `Zocdoc.searchProviderLocations()` loads providers for `zd-provider-card`, which takes a `provider` object.
 
-To load the components as a module instead, use the ESM bundle, `@zocdoc/api-components/bundle` (`zocdoc.esm.js`). It reads the same attributes from a `<script type="module">` tag, and it exports the API rather than setting the `Zocdoc` global:
+To load the components as a module instead, use the ESM bundle, `@zocdoc/api-components/bundle` (`zocdoc.esm.js`). It reads the same meta tags, and it exports the API rather than setting the `Zocdoc` global:
 
 ```html
-<script type="module" src="/zocdoc/zocdoc.esm.js" zd-token="TOKEN_FROM_YOUR_BACKEND"></script>
+<meta name="zocdoc-api-key" content="TOKEN_FROM_YOUR_BACKEND" />
+<script type="module" src="/zocdoc/zocdoc.esm.js"></script>
 ```
 
 ## See it in other stacks

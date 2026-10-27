@@ -98,9 +98,20 @@ export default css`
      * inherited text colour, so the distinction never rests on colour alone (A11Y-001) - the
      * count line says which is which in words.
      */
+    /* The same brand surface as a primary button, so the two calls to action match. */
     &:not(:disabled) {
-      background: light-dark(var(--zd-color-brand-300), var(--zd-color-brand-400));
-      color: light-dark(var(--zd-color-on-brand-300), var(--zd-color-on-brand-400));
+      background: var(--zd-surface-brand-bg-color);
+      color: var(--zd-surface-brand-fg-color);
+
+      &:hover {
+        background: var(--zd-surface-brand-hover-bg-color);
+        color: var(--zd-surface-brand-hover-fg-color);
+      }
+
+      &:active {
+        background: var(--zd-surface-brand-active-bg-color);
+        color: var(--zd-surface-brand-active-fg-color);
+      }
     }
 
     &:disabled {

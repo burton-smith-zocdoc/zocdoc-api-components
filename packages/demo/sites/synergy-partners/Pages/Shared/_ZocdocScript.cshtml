@@ -2,12 +2,14 @@
 @{
     var options = Zocdoc.Value;
 }
-@* The bundle configures itself from these attributes (see packages/api-components/src/bundle.ts). *@
+@* The bundle configures itself from these meta tags (see packages/api-components/src/bundle.ts). *@
 @if (options.IsLive)
 {
-    <script src="~/zocdoc/zocdoc.js" zd-token="@options.Token" zd-base-url="@options.BaseUrl"></script>
+    <meta name="zocdoc-api-key" content="@options.Token" />
+    <meta name="zocdoc-api-base-url" content="@options.BaseUrl" />
 }
 else
 {
-    <script src="~/zocdoc/zocdoc.js" zd-mock></script>
+    <meta name="zocdoc-api-mock" content="true" />
 }
+<script src="~/zocdoc/zocdoc.js"></script>

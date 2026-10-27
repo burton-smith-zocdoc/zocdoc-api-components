@@ -1,0 +1,74 @@
+---
+/** Homepage install: npm first, then the no-build CDN tag. */
+import { Code } from '@astrojs/starlight/components';
+
+const npmInstall = `# The components, plus the primitives and theme they're built on
+npm install @zocdoc/api-components @zocdoc/api-primitive-components`;
+
+const npmSetup = `// Design tokens, reset, and utility classes the components use
+import '@zocdoc/api-primitive-components/theme/all.css';
+// Importing the package also registers every <zd-*> element
+import { configureZocdoc } from '@zocdoc/api-components';
+
+configureZocdoc({
+  // The developer sandbox; switch to production when you go live
+  baseUrl: 'https://api-developer-sandbox.zocdoc.com',
+  // Called before each request, so it can return a fresh token.
+  // Mint tokens on your backend, never in the browser.
+  getToken: fetchTokenFromYourBackend,
+});`;
+
+const cdn = `<!-- Your API token, rendered by your backend. Must come before the script. -->
+<meta name="zocdoc-api-key" content="TOKEN_FROM_YOUR_BACKEND" />
+
+<!-- Design tokens, reset, and utility classes the components use -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@zocdoc/api-primitive-components/dist/theme/all.css"
+/>
+<!-- Registers every <zd-*> element and configures itself from the meta tag -->
+<script src="https://unpkg.com/@zocdoc/api-components/bundle/iife"></script>
+
+<!-- The full booking flow: search, pick a time, book -->
+<zd-booking></zd-booking>`;
+---
+
+<section class="install not-content" aria-labelledby="install-heading">
+  <h2 id="install-heading">Quick Start</h2>
+  <div class="npm">
+    <h3>With npm</h3>
+    <Code code={npmInstall} lang="sh" />
+    <p>Then, in your app's entry point:</p>
+    <Code code={npmSetup} lang="js" />
+  </div>
+  <div class="cdn">
+    <h3>Or from a CDN, no build step</h3>
+    <Code code={cdn} lang="html" />
+  </div>
+</section>
+
+<style>
+  .install {
+    display: grid;
+    /* minmax(0, …) lets long code lines scroll inside their frame instead of widening the page. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    margin-block: 1rem 4rem;
+
+    & h2 {
+      margin: 0;
+      font-size: var(--sl-text-3xl);
+      text-align: center;
+    }
+
+    & h3 {
+      margin: 0 0 0.75rem;
+      font-size: var(--sl-text-lg);
+    }
+
+    & p {
+      margin: 0.75rem 0;
+      color: var(--sl-color-gray-2);
+    }
+  }
+</style>
