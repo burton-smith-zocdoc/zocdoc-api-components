@@ -12,6 +12,11 @@ wanted to (COMP-002). `window-change` works the same way.
 Supply `availability` and each card grows a `zd-availability-grid` of day counts, with one
 shared window control above the list driving all of them.
 
+**Handoff.** A list hydrated from JSON blocks has nobody to answer its events, so every card
+shows "Book now" to the provider's Zocdoc profile, and a day on a card does the same. Paging
+and the window control are hidden, since nothing would fetch the page or window they ask for;
+`interactive` shows them again for a page that will. `disable-handoff` turns handoff off.
+
 **Class** `ZdProviderResults` — **Package** `@zocdoc/api-components`
 
 ```html
@@ -24,23 +29,27 @@ shared window control above the list driving all of them.
 | --- | --- | --- | --- | --- |
 | `availability-days` | `availabilityDays` | `number` | `14` | How many days of availability each card shows. Clamped to the API's 30-day maximum. |
 | `availability-start` | `availabilityStart` | `string` | — | The first day of the availability window, as `YYYY-MM-DD`. Defaults to today. Set by this component's own window control and read by every card, which is what keeps them showing the same dates. Whoever supplies `availability` is expected to bind this back down after a `window-change` so the counts and the dates above them cannot disagree. |
+| `disable-handoff` | `disableHandoff` | `boolean` | `false` | Stops a list hydrated from markup from handing taps off to Zocdoc. |
 | `hide-photos` | `hidePhotos` | `boolean` | `false` | Hides each provider's photo, which otherwise renders from Zocdoc's image CDN — see `ProviderSummaryOptions.hidePhoto`. |
 | `insurance-name` | `insuranceName` | `string` | — | The insurance plan the search was run with. Supplying it is what allows the network line to render at all, since `accepts_patient_insurance` is only meaningful against a plan. |
+| `interactive` | `interactive` | `boolean` | `false` | Says the page will answer `page-change` and `window-change` itself, so a list hydrated from markup keeps its pager and window control. |
 | `loading` | `loading` | `boolean` | `false` | Shows a page of skeleton cards in place of `providers`. Reported state, like paging: this component never fetches, so whoever owns the search sets this while a page is in flight and clears it when the new `providers` arrive. |
 | `page` | `page` | `number` | `0` | The zero-indexed page `providers` holds, matching the API's own indexing. |
 | `page-size` | `pageSize` | `number` | `10` | The page size the search used. Defaults to the API's own, which is what it fell back to. |
 | `selected-id` | `selectedId` | `string` | — | The currently selected `provider_location_id`, if any. |
 | `total-count` | `totalCount` | `number` | — | The **unpaged** total from `total_count`, which is what makes the count line and the pager possible: `providers` only ever holds the page in hand. Left undefined by a host page that has no total, in which case neither renders — a count of the current page presented as the count of the search would be a lie, and a pager cannot know where it ends. |
+| — | `annotations` | `Readonly<Record<string, ProviderAnnotation>>` | — | Extra lines for the cards, keyed by `provider_location_id`: the card's `reason`, `review` and `sponsored` slots, which a card inside this shadow root can't be handed any other way. An entry for a provider not in `providers` is ignored. |
 | — | `availability` | `ProviderLocationAvailability[]` | — | Day counts per card, from one batched availability request for the whole page. Batched by whoever owns the search, not by the cards: the endpoint takes an array of `provider_location_ids` and answers for all of them at once, so ten cards fetching for themselves would be ten requests for one screen. Left undefined by a host page with no availability to show, in which case no card renders a grid at all — which is the standalone case, and the list still works (COMP-004). Entries the batch did not answer for get {@link NO_TIMESLOTS} rather than nothing, so a card says "no appointments" instead of quietly going and asking on its own. |
-| — | `providers` | `ProviderLocation[]` | — | The provider locations to display. |
+| — | `providers` | `ProviderLocation[]` | — | The provider locations to display. Unset renders the same as `[]`; it's unset rather than `[]` by default so a JSON block can supply it. |
 
 ## Events
 
 | Event | Type | Description |
 | --- | --- | --- |
-| `day-select` | `CustomEvent<ProviderDaySelectDetail>` | Emitted with `{ day, provider }` when a day is chosen on a card, forwarded from that card's grid with the provider attached. |
+| `book-select` | `CustomEvent<BookSelectDetail>` | Emitted with `{ provider }` in handoff mode, when "Book now" or a day on a card is chosen. Cancelable: `preventDefault()` keeps the patient on the page. |
+| `day-select` | `CustomEvent<ProviderDaySelectDetail>` | Emitted with `{ day, provider }` when a day is chosen on a card, forwarded from that card's grid with the provider attached. Not emitted in handoff mode, where the day emits `book-select` instead. |
 | `page-change` | `CustomEvent<PageChangeDetail>` | Emitted with `{ page }` when the patient pages. Zero-indexed, matching the API. The owner of the search is expected to fetch that page and hand back new `providers`; nothing here changes until it does. |
-| `provider-select` | `CustomEvent<ProviderSelectDetail>` | Emitted with `{ provider }` when a provider is chosen. |
+| `provider-select` | `CustomEvent<ProviderSelectDetail>` | Emitted with `{ provider }` when "Book now" is chosen on a card, outside handoff mode. |
 | `window-change` | `CustomEvent<AvailabilityWindowDetail>` | Emitted with `{ startDate, endDate }` when the shared window moves. The owner of `availability` is expected to refetch that window; the dates on show move regardless. |
 
 ## Methods
@@ -66,7 +75,7 @@ shared window control above the list driving all of them.
 | `pager-next` | The button going forward a page. |
 | `pager-position` | The line saying which page this is. |
 | `pager-previous` | The button going back a page. |
-| `provider` | The selectable control for one provider. |
+| `provider` | One provider's card. |
 | `provider-availability` | One card's availability grid. |
 | `provider-badges` | The per-card slot for anything `renderBadges` adds. |
 | `provider-detail` | The text column beside the photo. |

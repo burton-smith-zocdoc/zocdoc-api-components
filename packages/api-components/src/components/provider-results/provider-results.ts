@@ -1,5 +1,11 @@
-import { CharmElement, ZdButton, ZdCard, ZdDialog, ZdSkeleton } from '@zocdoc/api-primitive-components';
-import { nothing } from 'lit';
+import {
+  CharmElement,
+  ZdButton,
+  ZdCard,
+  ZdDialog,
+  ZdSkeleton,
+} from '@zocdoc/api-primitive-components';
+import { nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { DEFAULT_PAGE_SIZE } from '../../client/provider-locations.js';
 import type {
@@ -8,12 +14,16 @@ import type {
   ProviderLocationAvailability,
 } from '../../client/types.js';
 import { ZdAvailabilityGrid } from '../availability-grid/availability-grid.js';
-import { ZdAvailabilityWindow, type WindowShiftDetail } from '../availability-window/availability-window.js';
-import { ZdProviderCard } from '../provider-card/provider-card.js';
+import {
+  ZdAvailabilityWindow,
+  type WindowShiftDetail,
+} from '../availability-window/availability-window.js';
+import { ZdProviderCard, type BookSelectDetail } from '../provider-card/provider-card.js';
 import { ZdProviderProfile } from '../provider-profile/provider-profile.js';
 import type { AvailabilityWindowDetail, TypedEmit, TypedEventTarget } from '../events.js';
 // Re-exported because the generated framework types import every event payload from this module.
 export type { AvailabilityWindowDetail } from '../events.js';
+export type { BookSelectDetail } from '../provider-card/provider-card.js';
 import {
   nextWindowStart,
   resolveWindowStart,
@@ -21,6 +31,12 @@ import {
 } from '../../utilities/availability-window.js';
 import { formatCount } from '../../utilities/format.js';
 import { NO_PROVIDERS_MATCH } from '../../utilities/messages.js';
+import { handoffHref, navigateTo } from '../../utilities/handoff.js';
+import {
+  afterDocumentParsed,
+  hydrateFromMarkup,
+  type HydrationShape,
+} from '../../utilities/hydrate.js';
 import { todayDayKey } from '../../utilities/provider-time.js';
 import summaryStyles from '../../utilities/provider-summary.styles.js';
 import styles from './provider-results.styles.js';
@@ -59,11 +75,26 @@ export interface PageChangeDetail {
   page: number;
 }
 
+/**
+ * What a caller can add to one provider's card. `reason` and `review` render as text, never
+ * markup. `sponsored` shows the component's own "Sponsored" label, so a paid placement is always
+ * labelled and always worded the same way.
+ */
+export interface ProviderAnnotation {
+  /** One line on why this provider fits the search. */
+  reason?: string;
+  /** A verified review snippet. */
+  review?: string;
+  /** Whether this is a paid placement. */
+  sponsored?: boolean;
+}
+
 export interface ZdProviderResultsEventMap {
   'provider-select': CustomEvent<ProviderSelectDetail>;
   'day-select': CustomEvent<ProviderDaySelectDetail>;
   'page-change': CustomEvent<PageChangeDetail>;
   'window-change': CustomEvent<AvailabilityWindowDetail>;
+  'book-select': CustomEvent<BookSelectDetail>;
 }
 
 /**
@@ -79,15 +110,24 @@ export interface ZdProviderResultsEventMap {
  * Supply `availability` and each card grows a `zd-availability-grid` of day counts, with one
  * shared window control above the list driving all of them.
  *
+ * **Handoff.** A list hydrated from JSON blocks has nobody to answer its events, so every card
+ * shows "Book now" to the provider's Zocdoc profile, and a day on a card does the same. Paging
+ * and the window control are hidden, since nothing would fetch the page or window they ask for;
+ * `interactive` shows them again for a page that will. `disable-handoff` turns handoff off.
+ *
  * @tag zd-provider-results
- * @event provider-select - Emitted with `{ provider }` when a provider is chosen.
+ * @event provider-select - Emitted with `{ provider }` when "Book now" is chosen on a card,
+ *   outside handoff mode.
  * @event page-change - Emitted with `{ page }` when the patient pages. Zero-indexed, matching
  *   the API. The owner of the search is expected to fetch that page and hand back new
  *   `providers`; nothing here changes until it does.
  * @event day-select - Emitted with `{ day, provider }` when a day is chosen on a card, forwarded
- *   from that card's grid with the provider attached.
+ *   from that card's grid with the provider attached. Not emitted in handoff mode, where the day
+ *   emits `book-select` instead.
  * @event window-change - Emitted with `{ startDate, endDate }` when the shared window moves. The
  *   owner of `availability` is expected to refetch that window; the dates on show move regardless.
+ * @event book-select - Emitted with `{ provider }` in handoff mode, when "Book now" or a day on a
+ *   card is chosen. Cancelable: `preventDefault()` keeps the patient on the page.
  * @csspart header - The count line and the window control together, present only with availability.
  * @csspart summary - The line counting what the search found.
  * @csspart window - The shared availability window control.
@@ -95,7 +135,7 @@ export interface ZdProviderResultsEventMap {
  * @csspart window-previous - The control stepping the window back.
  * @csspart window-next - The control stepping the window forward.
  * @csspart list - The list wrapper.
- * @csspart provider - The selectable control for one provider.
+ * @csspart provider - One provider's card.
  * @csspart provider-summary - The summary block for one provider.
  * @csspart provider-photo - The provider's photo, unless `hide-photos` is set.
  * @csspart provider-detail - The text column beside the photo.
@@ -132,12 +172,77 @@ export class ZdProviderResults extends CharmElement {
   ] as typeof CharmElement.styles;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [ZdCard, ZdButton, ZdAvailabilityGrid, ZdAvailabilityWindow, ZdProviderCard, ZdDialog, ZdProviderProfile, ZdSkeleton];
+    return [
+      ZdCard,
+      ZdButton,
+      ZdAvailabilityGrid,
+      ZdAvailabilityWindow,
+      ZdProviderCard,
+      ZdDialog,
+      ZdProviderProfile,
+      ZdSkeleton,
+    ];
   }
 
-  /** The provider locations to display. */
+  /**
+   * The provider locations to display. Unset renders the same as `[]`; it's unset rather than
+   * `[]` by default so a JSON block can supply it.
+   */
   @property({ attribute: false })
-  public providers: ProviderLocation[] = [];
+  public providers?: ProviderLocation[];
+
+  /** The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`). */
+  public static hydratable: Readonly<Record<string, HydrationShape>> = {
+    providers: 'array',
+    availability: 'array',
+    annotations: 'object',
+  };
+
+  /** Whether any property came from a JSON block, read on the first update. */
+  protected hydrated = false;
+
+  protected override scheduleUpdate(): void | Promise<unknown> {
+    return afterDocumentParsed(this, () => super.scheduleUpdate());
+  }
+
+  protected override willUpdate(changed: PropertyValues<this>): void {
+    if (!this.hasUpdated) this.hydrated = hydrateFromMarkup(this, ZdProviderResults.hydratable);
+    super.willUpdate(changed);
+  }
+
+  /** Stops a list hydrated from markup from handing taps off to Zocdoc. */
+  @property({ type: Boolean, attribute: 'disable-handoff' })
+  public disableHandoff = false;
+
+  /**
+   * Says the page will answer `page-change` and `window-change` itself, so a list hydrated from
+   * markup keeps its pager and window control.
+   */
+  @property({ type: Boolean })
+  public interactive = false;
+
+  /** Whether taps go to Zocdoc: data from markup, and the page hasn't opted out. */
+  protected get handingOff(): boolean {
+    return this.hydrated && !this.disableHandoff;
+  }
+
+  /** Whether the pager and window control show: always, unless handing off to a page that won't answer them. */
+  protected get navigable(): boolean {
+    return !this.handingOff || this.interactive;
+  }
+
+  /** `providers`, with unset read as none. */
+  protected get providerList(): ProviderLocation[] {
+    return this.providers ?? [];
+  }
+
+  /**
+   * Extra lines for the cards, keyed by `provider_location_id`: the card's `reason`, `review` and
+   * `sponsored` slots, which a card inside this shadow root can't be handed any other way. An
+   * entry for a provider not in `providers` is ignored.
+   */
+  @property({ attribute: false })
+  public annotations?: Readonly<Record<string, ProviderAnnotation>>;
 
   /** The currently selected `provider_location_id`, if any. */
   @property({ attribute: 'selected-id' })
@@ -257,7 +362,8 @@ export class ZdProviderResults extends CharmElement {
     const count = formatCount(this.totalCount);
     const label = this.totalCount === 1 ? `${count} provider` : `${count} providers`;
 
-    return this.html`<p class="summary" part="summary" role="status" aria-live="polite">${label}</p>`;
+    return this
+      .html`<p class="summary" part="summary" role="status" aria-live="polite">${label}</p>`;
   }
 
   /**
@@ -281,13 +387,19 @@ export class ZdProviderResults extends CharmElement {
     return this.html`
       <div class="header" part="header">
         ${summary}
+        ${this.navigable ? this.renderWindow(startDate) : nothing}
+      </div>
+    `;
+  }
+
+  protected renderWindow(startDate: string): unknown {
+    return this.html`
         <scoped-availability-window
           start-date=${startDate}
           end-date=${windowEndDate(startDate, this.availabilityDays)}
           .canGoEarlier=${startDate > todayDayKey()}
           @window-shift=${this.handleWindowShift}
         ></scoped-availability-window>
-      </div>
     `;
   }
 
@@ -343,6 +455,7 @@ export class ZdProviderResults extends CharmElement {
         part="provider-availability"
         exportparts="days: availability-days, day: availability-day, empty: availability-empty"
         hide-window
+        ?opens-zocdoc=${this.handingOff && handoffHref(location.provider.profile_url, 'provider-results') !== undefined}
         provider-location-id=${location.provider_location_id}
         start-date=${resolveWindowStart(this.availabilityStart)}
         days=${this.availabilityDays}
@@ -351,10 +464,23 @@ export class ZdProviderResults extends CharmElement {
           // Restated with the provider attached: a bare day key is not actionable by a parent
           // that has ten cards and no way to tell which one it came from.
           event.stopPropagation();
-          this.emit('day-select', { detail: { day: event.detail.day, provider: location } });
+          if (this.handingOff) this.bookFromDay(location);
+          else this.emit('day-select', { detail: { day: event.detail.day, provider: location } });
         }}
       ></scoped-availability-grid>
     `;
+  }
+
+  /**
+   * A day tapped in handoff mode does what the card's "Book now" does: a day count with nothing
+   * behind it would read as broken.
+   */
+  protected bookFromDay(location: ProviderLocation): void {
+    const href = handoffHref(location.provider.profile_url, 'provider-results');
+    if (!href) return;
+
+    const selected = this.emit('book-select', { detail: { provider: location }, cancelable: true });
+    if (!selected.defaultPrevented) navigateTo(href);
   }
 
   protected openProfileDialog(provider: ProviderLocation): void {
@@ -436,13 +562,27 @@ export class ZdProviderResults extends CharmElement {
       <div class="results" part="results" aria-busy=${this.loading ? 'true' : 'false'}>
         ${this.loading ? this.renderLoading() : this.renderResults()}
       </div>
-      ${this.loading || this.providers.length > 0 ? this.renderPager() : nothing}
-      ${!this.loading && this.providers.length > 0 ? this.renderProfileDialog() : nothing}
+      ${this.navigable && (this.loading || this.providerList.length > 0) ? this.renderPager() : nothing}
+      ${!this.loading && this.providerList.length > 0 ? this.renderProfileDialog() : nothing}
+    `;
+  }
+
+  /** The card's annotation slots for one provider, through text bindings only. */
+  protected renderAnnotations(location: ProviderLocation): unknown {
+    const annotation = Object.hasOwn(this.annotations ?? {}, location.provider_location_id)
+      ? this.annotations![location.provider_location_id]
+      : undefined;
+    if (!annotation) return nothing;
+
+    return this.html`
+      ${annotation.reason ? this.html`<span slot="reason">${annotation.reason}</span>` : nothing}
+      ${annotation.review ? this.html`<span slot="review">${annotation.review}</span>` : nothing}
+      ${annotation.sponsored === true ? this.html`<span slot="sponsored">Sponsored</span>` : nothing}
     `;
   }
 
   protected renderResults(): unknown {
-    if (this.providers.length === 0) {
+    if (this.providerList.length === 0) {
       return this.renderEmpty();
     }
 
@@ -450,7 +590,7 @@ export class ZdProviderResults extends CharmElement {
       ${this.renderHeader()}
 
       <ul class="list" part="list">
-        ${this.providers.map((location) => {
+        ${this.providerList.map((location) => {
           const badges = this.renderBadges(location);
           return this.html`
             <li>
@@ -458,11 +598,15 @@ export class ZdProviderResults extends CharmElement {
                 class="provider"
                 part="provider"
                 .provider=${location}
+                .handoff=${this.handingOff}
+                ?selectable=${!this.handingOff}
                 ?hide-photo=${this.hidePhotos}
                 insurance-name=${this.insuranceName ?? nothing}
                 @profile-request=${(e: CustomEvent<{ provider: ProviderLocation }>) =>
                   this.openProfileDialog(e.detail.provider)}
+                @book-select=${(e: CustomEvent<BookSelectDetail>) => this.handleBookSelect(e)}
               >
+                ${this.renderAnnotations(location)}
                 ${badges === nothing ? nothing : this.html`<span slot="badges">${badges}</span>`}
                 ${this.renderAvailability(location)}
               </scoped-provider-card>
@@ -479,9 +623,12 @@ export class ZdProviderResults extends CharmElement {
         ?open=${this.profileOpen}
         @dialog-hide=${() => this.closeProfileDialog()}
       >
-        ${this.profileProvider
-          ? this.html`<scoped-provider-profile .provider=${this.profileProvider} ?hide-photo=${this.hidePhotos}></scoped-provider-profile>`
-          : nothing}
+        ${
+          this.profileProvider
+            ? this
+                .html`<scoped-provider-profile .provider=${this.profileProvider} ?hide-photo=${this.hidePhotos}></scoped-provider-profile>`
+            : nothing
+        }
       </scoped-dialog>
     `;
   }
@@ -544,11 +691,14 @@ export class ZdProviderResults extends CharmElement {
   }
 
   /**
-   * A native `<button>` handles Enter and Space itself, so there is deliberately
-   * no keydown handler here — adding one would double-fire.
+   * A card's "Book now". In handoff mode it is a link and its `book-select` passes through
+   * untouched, so the page can still cancel it. Otherwise it is the patient choosing that
+   * provider, said as `provider-select`.
    */
-  protected select(location: ProviderLocation): void {
-    this.selectedId = location.provider_location_id;
-    this.emit('provider-select', { detail: { provider: location } });
+  protected handleBookSelect(event: CustomEvent<BookSelectDetail>): void {
+    if (this.handingOff) return;
+    event.stopPropagation();
+    this.selectedId = event.detail.provider.provider_location_id;
+    this.emit('provider-select', { detail: { provider: event.detail.provider } });
   }
 }

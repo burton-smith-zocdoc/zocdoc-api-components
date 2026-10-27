@@ -1,7 +1,7 @@
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
+import { buildTimeslots, PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import { addDays, todayDayKey } from '../../utilities/provider-time.js';
 import type { ZdAvailabilityPicker } from './availability-picker.js';
@@ -18,6 +18,10 @@ import './index.js';
  * never do. `StartsTomorrow` is the exception, and it computes the date rather than hard-coding it.
  */
 configureZocdocMock();
+
+/** One inline data block, as a server writes it, with `<` escaped so the JSON can't end it early. */
+const jsonBlock = (name: string, value: unknown): string =>
+  `<script type="application/json" data-zd-prop="${name}">${JSON.stringify(value).replaceAll('<', String.raw`\u003c`)}</script>`;
 
 const { args, argTypes, template } = getStorybookHelpers<ZdAvailabilityPicker>(
   'zd-availability-picker',
@@ -155,4 +159,33 @@ export const AwaitingVisitReason: Story = {
  */
 export const NarrowContainer: Story = {
   decorators: [(story) => html`<div style="max-inline-size: 18rem">${story()}</div>`],
+};
+
+/**
+ * Times the host page supplied, so the picker fetches nothing. Moving the window logs
+ * `availability-request`, and the picker shows its loading state until the host answers.
+ */
+export const Supplied: Story = {
+  args: { timeslots: buildTimeslots(dayFromToday(0), ['09:00', '10:30', '14:00']) },
+};
+
+/**
+ * Handoff mode, from JSON blocks. Each time links to Zocdoc (here the provider's profile, since
+ * `booking_url` is null) and says so to screen readers. The patient type control is hidden.
+ */
+export const Handoff: Story = {
+  render: () => {
+    const host = document.createElement('div');
+    host.innerHTML = `<zd-availability-picker provider-location-id="${PROVIDER_LOCATION_ID}" visit-reason-id="${VISIT_REASON_ID}">${jsonBlock(
+      'timeslots',
+      buildTimeslots(dayFromToday(0), ['09:00', '10:30', '14:00'])
+    )}${jsonBlock('provider', {
+      ...PROVIDER_LOCATIONS[0],
+      provider: {
+        ...PROVIDER_LOCATIONS[0]!.provider,
+        profile_url: 'https://www.zocdoc.com/doctor/test-provider-12345',
+      },
+    })}</zd-availability-picker>`;
+    return host;
+  },
 };

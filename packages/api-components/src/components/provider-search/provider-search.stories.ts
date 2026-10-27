@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { SCENARIOS, SPECIALTIES } from '../../client/mock/fixtures.js';
+import { INSURANCE_PLANS, SCENARIOS, SPECIALTIES } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import type { ZdProviderResults } from '../provider-results/provider-results.js';
 import type { ZdProviderSearch } from './provider-search.js';
@@ -41,9 +41,7 @@ export const Default: Story = {
 export const NothingChosen: Story = {
   args: { zipCode: '', specialtyId: undefined },
   render: (args) => html`
-    <zd-provider-search
-      zip-code=${args.zipCode ?? ''}
-    ></zd-provider-search>
+    <zd-provider-search zip-code=${args.zipCode ?? ''}></zd-provider-search>
   `,
 };
 
@@ -100,5 +98,26 @@ export const NarrowViewport: Story = {
         specialty-id=${args.specialtyId ?? ''}
       ></zd-provider-search>
     </div>
+  `,
+};
+
+/**
+ * Supplied mode, for a page that makes its own API calls. The option lists come from the host,
+ * nothing is fetched, and a submit logs `provider-search-request` instead of searching.
+ */
+export const Supplied: Story = {
+  render: (args) => html`
+    <zd-provider-search
+      supplied
+      zip-code=${args.zipCode ?? ''}
+      specialty-id=${args.specialtyId ?? ''}
+      .specialties=${SPECIALTIES}
+      .insurancePlans=${INSURANCE_PLANS}
+      @provider-search-request=${(event: Event) => {
+        const search = event.currentTarget as ZdProviderSearch;
+        search.loading = true;
+        setTimeout(() => (search.loading = false), 1500);
+      }}
+    ></zd-provider-search>
   `,
 };

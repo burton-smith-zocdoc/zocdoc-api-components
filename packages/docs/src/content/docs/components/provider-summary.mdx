@@ -38,6 +38,20 @@ The `<zd-provider-summary>` component shows a compact view of provider informati
 </script>
 ```
 
+## Markup
+
+The `provider` can be written into the HTML as a JSON block instead of set by script:
+
+```html
+<zd-provider-summary>
+  <script type="application/json" data-zd-prop="provider">
+    { "provider_location_id": "…", "provider": { … } }
+  </script>
+</zd-provider-summary>
+```
+
+See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+
 ## Accessibility
 
 - Provider name is the primary heading

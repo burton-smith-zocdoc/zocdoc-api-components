@@ -6,6 +6,7 @@ import type { AvailabilitySlot, ProviderLocationAvailability } from '../../clien
 import { expectNoViolations } from '../../utils/test/a11y.js';
 import { dayFromToday } from '../../utils/test/dates.js';
 import { mount, part, parts, settled, shadow, texts } from '../../utils/test/mount.js';
+import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
 import './index.js';
 
 /**
@@ -711,5 +712,37 @@ describe('zd-availability-grid', () => {
 
       await expectNoViolations(element);
     });
+  });
+});
+
+describe('zd-availability-grid markup hydration', () => {
+  beforeEach(() => {
+    vi.spyOn(availability, 'getAvailability').mockResolvedValue(entry());
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const markup = (timeslots: AvailabilitySlot[]) =>
+    `<zd-availability-grid provider-location-id="${PROVIDER_LOCATION_ID}" visit-reason-id="${VISIT_REASON_ID}">${jsonBlock('timeslots', timeslots)}</zd-availability-grid>`;
+
+  it('renders the same from a JSON block as from the property', async () => {
+    const fromProperty = await mountSupplied(`visit-reason-id="${VISIT_REASON_ID}"`);
+    const fromMarkup = await mount<Grid>(markup(slots()));
+
+    expect(renderedText(fromMarkup)).not.toBe('');
+    expect(renderedText(fromMarkup)).toBe(renderedText(fromProperty));
+  });
+
+  it('lets a property set before upgrade win over the block', async () => {
+    const chosen = slots().slice(0, 1);
+    const element = await mountBeforeUpgrade<Grid>(markup(slots()), { timeslots: chosen });
+    expect(element.timeslots).toBe(chosen);
+  });
+
+  it('fetches nothing when hydrated, even with both ids set', async () => {
+    await mount<Grid>(markup(slots()));
+    expect(availability.getAvailability).not.toHaveBeenCalled();
   });
 });

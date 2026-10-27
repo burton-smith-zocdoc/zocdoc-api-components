@@ -14,7 +14,8 @@ export default css`
     padding-inline-start: var(--zd-spacing-24, 24px);
     padding-inline-end: var(--zd-spacing-12, 12px);
     background: light-dark(var(--zd-color-white, #fff), var(--zd-color-neutral-900, #444343));
-    border: 1px solid light-dark(var(--zd-color-neutral-200, #e5e5e5), var(--zd-color-neutral-700, #525252));
+    border: 1px solid
+      light-dark(var(--zd-color-neutral-200, #e5e5e5), var(--zd-color-neutral-700, #525252));
     border-radius: var(--zd-form-control-border-radius);
     box-shadow: var(--zd-shadow-raised);
   }
@@ -26,7 +27,8 @@ export default css`
     flex: 1 1 10rem;
     min-width: 8rem;
     padding-inline-end: var(--zd-spacing-16, 16px);
-    border-inline-end: 1px solid light-dark(var(--zd-color-neutral-200, #e5e5e5), var(--zd-color-neutral-800, #555));
+    border-inline-end: 1px solid
+      light-dark(var(--zd-color-neutral-200, #e5e5e5), var(--zd-color-neutral-800, #555));
     position: relative;
 
     &:last-of-type {
@@ -56,7 +58,10 @@ export default css`
       cursor: pointer;
 
       &::placeholder {
-        color: light-dark(var(--zd-color-neutral-400, #a3a3a3), var(--zd-color-neutral-500, #8a8a8a));
+        color: light-dark(
+          var(--zd-color-neutral-400, #a3a3a3),
+          var(--zd-color-neutral-500, #8a8a8a)
+        );
       }
 
       &:focus {
@@ -83,6 +88,10 @@ export default css`
   .error-container {
     width: 100%;
     margin-block-start: var(--zd-spacing-8, 8px);
+
+    & p {
+      margin: 0;
+    }
   }
 
   /*

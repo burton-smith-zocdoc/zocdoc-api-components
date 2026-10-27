@@ -4,6 +4,7 @@ import {
   type PerformanceOptions,
 } from '../../../../primitives/src/utils/test/performance.js';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
+import { jsonBlock } from '../../utils/test/hydration.js';
 import type { ZdProviderProfile } from './index.js';
 import './index.js';
 
@@ -17,6 +18,22 @@ describe('zd-provider-profile performance', () => {
         create: () => {
           const element = document.createElement('zd-provider-profile') as ZdProviderProfile;
           element.provider = PROVIDER_LOCATIONS[0];
+          return element;
+        },
+        update: (element, i) =>
+          (element.provider = PROVIDER_LOCATIONS[1 + (i % (PROVIDER_LOCATIONS.length - 1))]),
+      },
+      OPTIONS
+    );
+  });
+
+  it('reports timings when hydrated from a JSON block', async () => {
+    await benchmarkComponent<ZdProviderProfile>(
+      {
+        name: 'provider-profile/hydrated',
+        create: () => {
+          const element = document.createElement('zd-provider-profile') as ZdProviderProfile;
+          element.innerHTML = jsonBlock('provider', PROVIDER_LOCATIONS[0]);
           return element;
         },
         update: (element, i) =>

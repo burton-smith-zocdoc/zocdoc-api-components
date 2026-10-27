@@ -69,7 +69,8 @@ export default css`
    */
   .specialty,
   .location,
-  .insurance {
+  .insurance,
+  .annotation {
     color: light-dark(var(--zd-color-neutral-700, #737373), var(--zd-color-neutral-400, #c0bfbf));
     font-size: var(--zd-font-size-sm, 0.875rem);
     margin: 0;
@@ -93,6 +94,24 @@ export default css`
         height: 100%;
       }
     }
+  }
+
+  .annotation {
+    line-height: var(--zd-line-height-normal, 1.4);
+
+    &.review {
+      font-style: italic;
+    }
+
+    &.sponsored {
+      font-size: var(--zd-font-size-xs, 0.75rem);
+      font-weight: var(--zd-font-weight-semibold, 600);
+    }
+  }
+
+  .book {
+    align-self: start;
+    margin-block-start: var(--zd-spacing-sm, 0.5rem);
   }
 
   .visually-hidden {

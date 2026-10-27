@@ -143,7 +143,9 @@ function show(step: HTMLElement, visible: boolean, moveFocus = false): void {
  * dates appearing over another window's counts.
  */
 async function loadAvailability(startDate: string): Promise<void> {
-  const providerLocationIds = results.providers.map((location) => location.provider_location_id);
+  const providerLocationIds = (results.providers ?? []).map(
+    (location) => location.provider_location_id
+  );
 
   // No visit reason is a real state rather than an oversight: a search that matched nothing has
   // none to echo. The list simply goes without counts.

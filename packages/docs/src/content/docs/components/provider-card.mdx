@@ -46,10 +46,40 @@ The `<zd-provider-card>` component displays a single provider with photo, name, 
 
 The card never fetches, so set `loading` while your request for provider data is in flight and clear it when the data arrives. Skeletons hold the card's layout, and screen readers hear "Loading provider". The `availability` slot stays rendered, so a slotted availability grid can show its own loading state.
 
+## Annotation Slots
+
+Three named slots take text you write. An empty slot takes no space.
+
+```html preview
+<zd-provider-card id="annotated-card">
+  <span slot="reason">Sees new patients for annual checkups</span>
+  <span slot="review">"Thorough and kind."</span>
+  <span slot="sponsored">Sponsored</span>
+</zd-provider-card>
+<script>
+  document.getElementById('annotated-card').provider = {
+    provider_location_id: 'pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890',
+    provider_location_type: 'in_person_provider',
+    provider: {
+      provider_id: 'pr_abc123-def456_wxyz7890',
+      first_name: 'Avery',
+      last_name: 'Sandoval',
+      title: 'MD',
+      specialties: ['Primary Care Doctor'],
+      provider_photo_url: '/zocdoc-api-components/images/michael-scott.png',
+    },
+    location: { address1: '1 Sandbox Plaza', city: 'Brooklyn', state: 'NY', zip_code: '11201' },
+  };
+</script>
+```
+
+## Markup and Handoff
+
+The `provider` can be written into the HTML as a JSON block. A card hydrated this way, or placed by a hydrated `zd-provider-results`, shows a "Book now" link to the provider's Zocdoc `profile_url`, unless its `availability` slot has times to tap instead. Choosing it emits a cancelable `book-select`, and `preventDefault()` keeps the patient on the page. Add `disable-handoff` to turn it off. Set `selectable` to show "Book now" as a button that only emits `book-select`. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+
 ## Accessibility
 
-- Entire card is a single focusable element
-- Activates on Enter or Space
+- "Book now" is a real link or button, and names its provider for screen readers
 - Insurance status announced as part of card content
 
 ## API Reference

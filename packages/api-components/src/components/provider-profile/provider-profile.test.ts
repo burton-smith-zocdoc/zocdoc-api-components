@@ -3,6 +3,7 @@ import type { ProviderLocation } from '../../client/types.js';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import { expectNoViolations } from '../../utils/test/a11y.js';
 import { mount, parts, queryPart, settled, shadow } from '../../utils/test/mount.js';
+import { jsonBlock, mountBeforeUpgrade, renderedText } from '../../utils/test/hydration.js';
 import './index.js';
 
 /**
@@ -308,5 +309,25 @@ describe('zd-provider-profile', () => {
       expect(levels[0]).toBe('H2');
       expect(levels.slice(1)).toEqual(['H3', 'H3', 'H3', 'H3', 'H3']);
     });
+  });
+});
+
+describe('zd-provider-profile markup hydration', () => {
+  it('renders the same from a JSON block as from the property', async () => {
+    const fromProperty = await mountProfile(FULL);
+    const fromMarkup = await mount<Profile>(
+      `<zd-provider-profile>${jsonBlock('provider', FULL)}</zd-provider-profile>`
+    );
+
+    expect(renderedText(fromMarkup)).not.toBe('');
+    expect(renderedText(fromMarkup)).toBe(renderedText(fromProperty));
+  });
+
+  it('lets a property set before upgrade win over the block', async () => {
+    const element = await mountBeforeUpgrade<Profile>(
+      `<zd-provider-profile>${jsonBlock('provider', FULL)}</zd-provider-profile>`,
+      { provider: VIRTUAL }
+    );
+    expect(element.provider).toBe(VIRTUAL);
   });
 });

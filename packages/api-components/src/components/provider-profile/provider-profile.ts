@@ -1,5 +1,5 @@
 import { CharmElement, ZdAvatar, ZdIcon } from '@zocdoc/api-primitive-components';
-import { nothing } from 'lit';
+import { nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { ProviderLocation } from '../../client/types.js';
 import { telHref } from '../../utilities/phone.js';
@@ -9,6 +9,11 @@ import {
   providerLocationLine,
   providerPhotoUrl,
 } from '../../utilities/provider-summary.js';
+import {
+  afterDocumentParsed,
+  hydrateFromMarkup,
+  type HydrationShape,
+} from '../../utilities/hydrate.js';
 import styles from './provider-profile.styles.js';
 
 /**
@@ -109,6 +114,18 @@ export class ZdProviderProfile extends CharmElement {
    */
   @property({ attribute: false })
   public provider?: ProviderLocation;
+
+  /** The properties a page can supply as JSON blocks, and their shapes (see `utilities/hydrate.ts`). */
+  public static hydratable: Readonly<Record<string, HydrationShape>> = { provider: 'object' };
+
+  protected override scheduleUpdate(): void | Promise<unknown> {
+    return afterDocumentParsed(this, () => super.scheduleUpdate());
+  }
+
+  protected override willUpdate(changed: PropertyValues<this>): void {
+    if (!this.hasUpdated) hydrateFromMarkup(this, ZdProviderProfile.hydratable);
+    super.willUpdate(changed);
+  }
 
   /**
    * Hides the provider's photo, which otherwise renders from Zocdoc's image CDN

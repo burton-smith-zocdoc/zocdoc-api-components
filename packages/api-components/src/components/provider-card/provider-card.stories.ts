@@ -94,3 +94,39 @@ export const NarrowContainer: Story = {
 export const Loading: Story = {
   args: { loading: true },
 };
+
+/**
+ * The three annotation slots. Each is the patient-facing text the host page writes, and an empty
+ * one takes no space.
+ */
+export const WithAnnotations: Story = {
+  render: (storyArgs) => html`
+    <zd-provider-card .provider=${storyArgs.provider}>
+      <span slot="reason">Sees new patients for annual checkups</span>
+      <span slot="review">"Thorough and kind."</span>
+      <span slot="sponsored">Sponsored</span>
+    </zd-provider-card>
+  `,
+};
+
+/**
+ * Handoff mode, as a card hydrated from markup or placed by a hydrated list. "Book now" links to
+ * the provider's Zocdoc profile and logs a cancelable `book-select` first.
+ */
+export const BookNowLink: Story = {
+  args: {
+    handoff: true,
+    provider: {
+      ...PROVIDER,
+      provider: {
+        ...PROVIDER.provider,
+        profile_url: 'https://www.zocdoc.com/doctor/test-provider-12345',
+      },
+    },
+  },
+};
+
+/** "Book now" as a button that only emits `book-select`, for a page that books in its own step. */
+export const Selectable: Story = {
+  args: { selectable: true },
+};
