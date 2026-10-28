@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { buildTimeslots, PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import { addDays, todayDayKey } from '../../utilities/provider-time.js';
+import { jsonBlock } from '../../utils/test/json-block.js';
 import type { ZdProviderCard } from './provider-card.js';
 import '../availability-grid/index.js';
 import './index.js';
@@ -129,4 +130,23 @@ export const BookNowLink: Story = {
 /** "Book now" as a button that only emits `book-select`, for a page that books in its own step. */
 export const Selectable: Story = {
   args: { selectable: true },
+};
+
+/**
+ * The provider written into the HTML as a JSON block, with the reason in its slot, and no script.
+ * Hydrating from markup is what puts the card in handoff mode, so "Book now" links to the
+ * provider's Zocdoc profile without setting `handoff`.
+ */
+export const FromMarkup: Story = {
+  render: () => {
+    const host = document.createElement('div');
+    host.innerHTML = `<zd-provider-card>${jsonBlock('provider', {
+      ...PROVIDER,
+      provider: {
+        ...PROVIDER.provider,
+        profile_url: 'https://www.zocdoc.com/doctor/test-provider-12345',
+      },
+    })}<span slot="reason">Sees new patients for annual checkups</span></zd-provider-card>`;
+    return host;
+  },
 };

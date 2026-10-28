@@ -72,7 +72,47 @@ document.querySelector('zd-provider-results').annotations = {
 
 `providers`, `availability` and `annotations` can all be written into the HTML as JSON blocks, so a server-rendered page needs no script. A list hydrated this way is in handoff mode. Each card shows "Book now" linking to the provider's Zocdoc profile, tapping a day does the same, and `book-select` is emitted first, cancelable. The pager and the shared window control are hidden, since nobody would answer them. Add `interactive` to show them again, or `disable-handoff` to turn handoff off. In handoff mode, a day tap emits `book-select`, not `day-select`, and each day says it opens Zocdoc.
 
-Outside handoff mode, "Book now" is a button. It emits `provider-select` with the card's provider, and a day tap emits `day-select`. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/) for a complete example.
+Outside handoff mode, "Book now" is a button. It emits `provider-select` with the card's provider, and a day tap emits `day-select`. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/) for more.
+
+This list has no script. Each card's "Book now" links to the provider's Zocdoc profile:
+
+```html preview
+<zd-provider-results total-count="1">
+  <script type="application/json" data-zd-prop="providers">
+    [
+      {
+        "provider_location_id": "pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890",
+        "provider_location_type": "in_person_provider",
+        "accepts_patient_insurance": "accepted",
+        "provider": {
+          "provider_id": "pr_abc123-def456_wxyz7890",
+          "first_name": "Avery",
+          "last_name": "Sandoval",
+          "title": "MD",
+          "specialties": ["Primary Care Doctor"],
+          "provider_photo_url": "/zocdoc-api-components/images/michael-scott.png",
+          "profile_url": "https://www.zocdoc.com/doctor/test-provider-12345"
+        },
+        "location": {
+          "address1": "1 Sandbox Plaza",
+          "city": "Brooklyn",
+          "state": "NY",
+          "zip_code": "11201",
+          "distance_to_patient_mi": 0.8
+        }
+      }
+    ]
+  </script>
+  <script type="application/json" data-zd-prop="annotations">
+    {
+      "pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890": {
+        "reason": "Sees new patients for annual checkups",
+        "sponsored": true
+      }
+    }
+  </script>
+</zd-provider-results>
+```
 
 ## Accessibility
 

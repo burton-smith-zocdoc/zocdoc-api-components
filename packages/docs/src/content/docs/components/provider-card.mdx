@@ -77,6 +77,37 @@ Three named slots take text you write. An empty slot takes no space.
 
 The `provider` can be written into the HTML as a JSON block. A card hydrated this way, or placed by a hydrated `zd-provider-results`, shows a "Book now" link to the provider's Zocdoc `profile_url`, unless its `availability` slot has times to tap instead. Choosing it emits a cancelable `book-select`, and `preventDefault()` keeps the patient on the page. Add `disable-handoff` to turn it off. Set `selectable` to show "Book now" as a button that only emits `book-select`. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
 
+This card has no script. "Book now" links to the provider's Zocdoc profile:
+
+```html preview
+<zd-provider-card>
+  <script type="application/json" data-zd-prop="provider">
+    {
+      "provider_location_id": "pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890",
+      "provider_location_type": "in_person_provider",
+      "accepts_patient_insurance": "accepted",
+      "provider": {
+        "provider_id": "pr_abc123-def456_wxyz7890",
+        "first_name": "Avery",
+        "last_name": "Sandoval",
+        "title": "MD",
+        "specialties": ["Primary Care Doctor"],
+        "provider_photo_url": "/zocdoc-api-components/images/michael-scott.png",
+        "profile_url": "https://www.zocdoc.com/doctor/test-provider-12345"
+      },
+      "location": {
+        "address1": "1 Sandbox Plaza",
+        "city": "Brooklyn",
+        "state": "NY",
+        "zip_code": "11201",
+        "distance_to_patient_mi": 0.8
+      }
+    }
+  </script>
+  <span slot="reason">Sees new patients for annual checkups</span>
+</zd-provider-card>
+```
+
 ## Accessibility
 
 - "Book now" is a real link or button, and names its provider for screen readers

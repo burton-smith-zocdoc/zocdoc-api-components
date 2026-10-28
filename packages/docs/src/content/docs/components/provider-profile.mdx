@@ -51,10 +51,32 @@ The `<zd-provider-profile>` component displays complete provider details includi
 
 The `provider` can be written into the HTML as a JSON block instead of set by script:
 
-```html
+```html preview
 <zd-provider-profile>
   <script type="application/json" data-zd-prop="provider">
-    { "provider_location_id": "…", "provider": { … } }
+    {
+      "provider_location_id": "pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890",
+      "provider_location_type": "in_person_provider",
+      "provider": {
+        "provider_id": "pr_abc123-def456_wxyz7890",
+        "first_name": "Avery",
+        "last_name": "Sandoval",
+        "title": "MD",
+        "specialties": ["Primary Care Doctor"],
+        "provider_photo_url": "/zocdoc-api-components/images/michael-scott.png",
+        "statement": "I have practised primary care in Brooklyn for twelve years.",
+        "languages": ["English", "Spanish"]
+      },
+      "practice": { "practice_id": "pt_abc123-def456_wxyz7890", "practice_name": "Sandbox Health Partners" },
+      "location": {
+        "location_name": "Sandbox Plaza Family Medicine",
+        "address1": "1 Sandbox Plaza",
+        "city": "Brooklyn",
+        "state": "NY",
+        "zip_code": "11201",
+        "time_zone": "America/New_York"
+      }
+    }
   </script>
 </zd-provider-profile>
 ```

@@ -49,18 +49,41 @@ Set the `supplied` attribute when your page makes its own API calls. The compone
 
 Set `specialties` and `insurancePlans` by script, or write them as JSON blocks. With `supplied` set, a list you leave out stays empty. Without it, the component fetches any list you leave out, including one you set back to `undefined`:
 
-```html
-<zd-provider-search supplied zip-code="11201">
+```html preview
+<zd-provider-search supplied zip-code="11201" specialty-id="sp_153">
   <script type="application/json" data-zd-prop="specialties">
-    […]
+    [
+      {
+        "id": "sp_153",
+        "name": "Primary Care Doctor",
+        "care_category": "health",
+        "default_visit_reason_id": "pc_FRO-18leckytNKtruw5dLR",
+        "default_visit_reason_name": "New patient visit"
+      },
+      {
+        "id": "sp_154",
+        "name": "Dentist",
+        "care_category": "dental",
+        "default_visit_reason_id": "pc_TlZW-r06U0W3pCsIGtSI5B",
+        "default_visit_reason_name": "New patient cleaning"
+      }
+    ]
   </script>
   <script type="application/json" data-zd-prop="insurancePlans">
-    […]
+    [
+      {
+        "id": "ip_9111",
+        "name": "Sandbox National PPO",
+        "status": "active",
+        "care_categories": ["health"],
+        "coverage_area": { "is_national": true, "states": [] }
+      }
+    ]
   </script>
 </zd-provider-search>
 ```
 
-See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
+Nothing is fetched. Submitting emits `provider-search-request` instead of searching. See [Markup and Supplied Data](/zocdoc-api-components/guides/markup-and-supplied-data/).
 
 ## Accessibility
 

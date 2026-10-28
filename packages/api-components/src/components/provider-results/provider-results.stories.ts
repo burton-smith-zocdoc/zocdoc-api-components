@@ -3,12 +3,9 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { buildAvailability, PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
 import { addDays, todayDayKey } from '../../utilities/provider-time.js';
+import { jsonBlock } from '../../utils/test/json-block.js';
 import type { ZdProviderResults } from './provider-results.js';
 import './index.js';
-
-/** One inline data block, as a server writes it, with `<` escaped so the JSON can't end it early. */
-const jsonBlock = (name: string, value: unknown): string =>
-  `<script type="application/json" data-zd-prop="${name}">${JSON.stringify(value).replaceAll('<', String.raw`\u003c`)}</script>`;
 
 const { args, argTypes, template } = getStorybookHelpers<ZdProviderResults>('zd-provider-results', {
   excludeCategories: ['cssParts'],

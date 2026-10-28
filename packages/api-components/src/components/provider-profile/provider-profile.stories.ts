@@ -2,6 +2,7 @@ import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { PROVIDER_LOCATIONS } from '../../client/mock/fixtures.js';
+import { jsonBlock } from '../../utils/test/json-block.js';
 import type { ZdProviderProfile } from './provider-profile.js';
 import './index.js';
 
@@ -131,4 +132,13 @@ export const WithInsurance: Story = {
  */
 export const NarrowContainer: Story = {
   decorators: [(story) => html`<div style="max-inline-size: 22rem">${story()}</div>`],
+};
+
+/** The full profile from a JSON block instead of a property, as a server-rendered page writes it. */
+export const FromMarkup: Story = {
+  render: () => {
+    const host = document.createElement('div');
+    host.innerHTML = `<zd-provider-profile hide-photo>${jsonBlock('provider', FULL)}</zd-provider-profile>`;
+    return host;
+  },
 };

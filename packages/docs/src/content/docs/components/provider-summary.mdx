@@ -42,10 +42,30 @@ The `<zd-provider-summary>` component shows a compact view of provider informati
 
 The `provider` can be written into the HTML as a JSON block instead of set by script:
 
-```html
+```html preview
 <zd-provider-summary>
   <script type="application/json" data-zd-prop="provider">
-    { "provider_location_id": "…", "provider": { … } }
+    {
+      "provider_location_id": "pr_abc123-def456_wxyz7890|lo_abc123-def456_wxyz7890",
+      "provider_location_type": "in_person_provider",
+      "accepts_patient_insurance": "accepted",
+      "provider": {
+        "provider_id": "pr_abc123-def456_wxyz7890",
+        "first_name": "Avery",
+        "last_name": "Sandoval",
+        "title": "MD",
+        "specialties": ["Primary Care Doctor"],
+        "provider_photo_url": "/zocdoc-api-components/images/michael-scott.png",
+        "profile_url": "https://www.zocdoc.com/doctor/test-provider-12345"
+      },
+      "location": {
+        "address1": "1 Sandbox Plaza",
+        "city": "Brooklyn",
+        "state": "NY",
+        "zip_code": "11201",
+        "distance_to_patient_mi": 0.8
+      }
+    }
   </script>
 </zd-provider-summary>
 ```

@@ -4,6 +4,7 @@ import { html } from 'lit';
 import { buildTimeslots, PROVIDER_LOCATIONS, SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import { addDays, todayDayKey } from '../../utilities/provider-time.js';
+import { jsonBlock } from '../../utils/test/json-block.js';
 import type { ZdAvailabilityPicker } from './availability-picker.js';
 import './index.js';
 
@@ -18,10 +19,6 @@ import './index.js';
  * never do. `StartsTomorrow` is the exception, and it computes the date rather than hard-coding it.
  */
 configureZocdocMock();
-
-/** One inline data block, as a server writes it, with `<` escaped so the JSON can't end it early. */
-const jsonBlock = (name: string, value: unknown): string =>
-  `<script type="application/json" data-zd-prop="${name}">${JSON.stringify(value).replaceAll('<', String.raw`\u003c`)}</script>`;
 
 const { args, argTypes, template } = getStorybookHelpers<ZdAvailabilityPicker>(
   'zd-availability-picker',

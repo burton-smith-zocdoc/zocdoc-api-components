@@ -5,6 +5,7 @@ import { buildTimeslots, SCENARIOS } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
 import type { AvailabilitySlot } from '../../client/types.js';
 import { addDays, todayDayKey } from '../../utilities/provider-time.js';
+import { jsonBlock } from '../../utils/test/json-block.js';
 import type { ZdAvailabilityGrid } from './availability-grid.js';
 import './index.js';
 
@@ -164,4 +165,17 @@ export const StartsLater: Story = {
  */
 export const NarrowContainer: Story = {
   decorators: [(story) => html`<div style="max-inline-size: 20rem">${story()}</div>`],
+};
+
+/**
+ * The same fortnight, written into the HTML as a JSON block the way a server-rendered page would,
+ * with no script setting `timeslots`. It renders as `Supplied` does, and paging still only logs
+ * `window-change`.
+ */
+export const FromMarkup: Story = {
+  render: () => {
+    const host = document.createElement('div');
+    host.innerHTML = `<zd-availability-grid>${jsonBlock('timeslots', SUPPLIED_SLOTS)}</zd-availability-grid>`;
+    return host;
+  },
 };

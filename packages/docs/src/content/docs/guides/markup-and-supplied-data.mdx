@@ -3,6 +3,11 @@ title: Markup and Supplied Data
 description: Render the components from data you already have, set by script or written into the HTML, and what taps do when nobody is listening
 ---
 
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
 Most components can fetch for themselves from the Zocdoc API. They can also render data your page already has, either set as properties by script or written into the HTML as JSON. This page covers both, and what happens when a patient taps something on a page that has no script of its own.
 
 ## When to use it
@@ -70,7 +75,9 @@ Load the components with a `defer` or `type="module"` script, or at the end of `
 - **Text for people to read** goes in named slots, so it stays in the page where browser translation can reach it.
 - **Lists and objects** go in an inline JSON block, one per property.
 
-```html
+This example has no script of its own, so it's in handoff mode: "Book now" links to the provider's Zocdoc profile.
+
+```html preview
 <zd-provider-results total-count="1" page-size="10">
   <script type="application/json" data-zd-prop="providers">
     [
@@ -83,6 +90,7 @@ Load the components with a `defer` or `type="module"` script, or at the end of `
           "last_name": "Sandoval",
           "title": "MD",
           "specialties": ["Primary Care Doctor"],
+          "provider_photo_url": "/zocdoc-api-components/images/michael-scott.png",
           "profile_url": "https://www.zocdoc.com/doctor/test-provider-12345"
         },
         "location": {

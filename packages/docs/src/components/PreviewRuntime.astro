@@ -55,4 +55,29 @@
       },
     },
   });
+
+  /*
+   * code-bubble re-runs every `<script>` in a preview as JavaScript, so an inline JSON data block
+   * (`type="application/json"`) would be wrapped in a function and throw. Re-run only the scripts
+   * a browser would execute, and leave data blocks in place for the components to read.
+   */
+  type LoadScripts = (this: HTMLElement, preview: HTMLElement) => void;
+  const bubble = customElements.get('code-bubble')?.prototype as
+    | { loadScripts?: LoadScripts }
+    | undefined;
+  const loadScripts = bubble?.loadScripts;
+  if (bubble && loadScripts) {
+    bubble.loadScripts = function (preview) {
+      const data = [...preview.querySelectorAll('script')].filter(
+        (script) => script.type && script.type !== 'text/javascript' && script.type !== 'module'
+      );
+      const placeholders = data.map((script) => {
+        const marker = document.createComment('');
+        script.replaceWith(marker);
+        return marker;
+      });
+      loadScripts.call(this, preview);
+      placeholders.forEach((marker, index) => marker.replaceWith(data[index]!));
+    };
+  }
 </script>

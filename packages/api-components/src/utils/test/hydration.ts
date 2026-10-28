@@ -1,13 +1,6 @@
 import { settled, track } from './mount.js';
 
-/**
- * One inline data block, as a server would write it. `<` is escaped so content can't end the
- * script early, which is the escaping a page embedding JSON in HTML has to do.
- */
-export function jsonBlock(name: string, value: unknown): string {
-  const json = JSON.stringify(value).replaceAll('<', String.raw`\u003c`);
-  return `<script type="application/json" data-zd-prop="${name}">${json}</script>`;
-}
+export { jsonBlock } from './json-block.js';
 
 /** A shadow root's text with whitespace collapsed, for comparing two renders of the same data. */
 export function renderedText(element: HTMLElement): string {

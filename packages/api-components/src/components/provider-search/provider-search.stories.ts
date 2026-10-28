@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { INSURANCE_PLANS, SCENARIOS, SPECIALTIES } from '../../client/mock/fixtures.js';
 import { configureZocdocMock } from '../../client/mock/transport.js';
+import { jsonBlock } from '../../utils/test/json-block.js';
 import type { ZdProviderResults } from '../provider-results/provider-results.js';
 import type { ZdProviderSearch } from './provider-search.js';
 import '../provider-results/index.js';
@@ -120,4 +121,19 @@ export const Supplied: Story = {
       }}
     ></zd-provider-search>
   `,
+};
+
+/**
+ * `Supplied`, with the option lists written into the HTML as JSON blocks rather than set by
+ * script. A submit logs `provider-search-request`, and nothing is fetched.
+ */
+export const FromMarkup: Story = {
+  render: (args) => {
+    const host = document.createElement('div');
+    host.innerHTML = `<zd-provider-search supplied zip-code="${args.zipCode ?? ''}" specialty-id="${args.specialtyId ?? ''}">${jsonBlock(
+      'specialties',
+      SPECIALTIES
+    )}${jsonBlock('insurancePlans', INSURANCE_PLANS)}</zd-provider-search>`;
+    return host;
+  },
 };
