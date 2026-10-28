@@ -149,10 +149,13 @@ PHI-001).
 - **Storybook** on `@storybook/web-components-vite`, globbing `packages/{primitives,api-components}/src/**/*.stories.ts`.
 - **Vitest browser mode** with `@vitest/browser-playwright` for component tests.
 - **`pnpm run docs:check`** regenerates the manifest for both packages and diffs
-  `.claude/skills/*/references` and `packages/*/custom-elements.json` against git. It catches a
+  `.agents/skills/*/references` and `packages/*/custom-elements.json` against git. It catches a
   component added or changed without regenerating the agent reference docs — modified, deleted,
   or untracked pages all fail it. Run it after any change to a component's public API, and before
   committing.
+- **Project skills live in `.agents/skills`**, beside `.agents/rules`. `.claude/skills` is a
+  symlink to it so Claude Code finds them. Edit `.agents/skills`; don't replace the link with a
+  copy, which would go stale.
 - **`pnpm build:agent-docs`** writes `packages/*/agent-docs/` (gitignored, shipped via each package's `files`): the docs-site MDX converted to markdown by `tools/site-agent-docs`, plus the manifest reference. It's what the consumer skill in `skills/zocdoc-web-components/` reads from `node_modules`. A site page using an MDX component, or linking a page, the converter can't place fails the build — teach `convert.ts` the new component rather than dropping it.
 - **Manifest plugins** (`cem-generator.config.base.mjs`) fill what the Lit analyzer misses. `tools/cem-event-types` types each event from the component's `*EventMap`, so `@event` JSDoc carries no `{Type}`; it fails `pnpm cem` when a payload type isn't exported from the component's module, which the generated framework types import it from. `tools/cem-field-defaults` reads defaults from field initializers, so no `@default` is needed. `tools/cem-css-prefix` prefixes custom properties only — part names stay as the template writes them.
 - **Site API tables are generated.** An ` ```api-reference ` fence naming a tag expands, through `tools/api-reference`, into that tag's tables from the manifest — on the site (`remark-api-reference.js`) and in `agent-docs`. Don't hand-write attribute, event, slot, method, or part tables on a component page; fix the JSDoc and run `pnpm cem`. The first paragraph of each JSDoc description is what readers see, so keep design rationale in later paragraphs.

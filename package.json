@@ -22,7 +22,7 @@
     "test:performance:production": "pnpm run build:types && PERF_BUILD=production vitest run --config vitest.performance.config.ts",
     "test:profile": "pnpm run build:types && PERF_BUILD=production PERF_PROFILE=1 vitest run --config vitest.performance.config.ts",
     "cem": "pnpm run build:theme && cem generate && pnpm -r run cem",
-    "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .claude/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
+    "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .agents/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
     "storybook": "pnpm run build:types && pnpm run cem && storybook dev -p 6006",
     "storybook:build": "pnpm run build:types && pnpm run cem && storybook build",
     "demo": "pnpm --filter demo dev",

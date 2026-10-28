@@ -38,7 +38,7 @@
     }
   },
   "scripts": {
-    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @zocdoc/api-components --out ../../.claude/skills/api-components/references",
+    "cem": "cem generate --tsconfig tsconfig.build.json && oxnode ../../tools/cem-agent-docs/src/cli.ts --manifest custom-elements.json --package @zocdoc/api-components --out ../../.agents/skills/api-components/references",
     "build:bundle": "vite build"
   },
   "dependencies": {
