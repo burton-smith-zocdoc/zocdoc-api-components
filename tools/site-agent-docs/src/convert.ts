@@ -213,7 +213,18 @@ function stripPreviewMeta(tree: Root): void {
  */
 export function convertPage(source: string, options: ConvertOptions): Converted {
   const { frontmatter, body } = parseFrontmatter(source);
+  return { frontmatter, markdown: convertBody(frontmatter, body, options) };
+}
 
+/**
+ * The same conversion for a page whose frontmatter is already parsed, as an Astro content
+ * entry's is.
+ */
+export function convertBody(
+  frontmatter: Frontmatter,
+  body: string,
+  options: ConvertOptions
+): string {
   const processor = unified()
     .use(remarkParse)
     .use(remarkMdx)
@@ -229,5 +240,5 @@ export function convertPage(source: string, options: ConvertOptions): Converted 
 
   const rendered = processor.stringify(tree).trim();
   const header = [`# ${frontmatter.title}`, frontmatter.description].filter(Boolean).join('\n\n');
-  return { frontmatter, markdown: `${header}\n\n${rendered}\n` };
+  return `${header}\n\n${rendered}\n`;
 }
