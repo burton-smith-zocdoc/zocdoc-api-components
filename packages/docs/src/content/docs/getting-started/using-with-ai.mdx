@@ -67,6 +67,18 @@ Don't rely on memory of other versions or read `dist/`.
 
 Adjust the path if your package manager doesn't put packages in the project's `node_modules`, as with Yarn Plug'n'Play.
 
+## Without an install
+
+Agents with no project to read from, such as a chat assistant writing an HTML page, can read this site as markdown instead:
+
+| URL                                                                                          | Contents                                         |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [`llms.txt`](https://burton-smith-zocdoc.github.io/zocdoc-api-components/llms.txt)           | Every page, with a one-line summary and its link |
+| [`llms-full.txt`](https://burton-smith-zocdoc.github.io/zocdoc-api-components/llms-full.txt) | Every page in one file                           |
+| Any page's URL, ending `.md` instead of `/`                                                  | That page as markdown                            |
+
+These describe the latest release. When the packages are installed, `agent-docs/` is the better source.
+
 ## Privacy
 
 The skill and `agent-docs/` are documentation only. They don't send anything anywhere, and they don't give the agent access to the Zocdoc API. Whatever your agent sends to its model provider is governed by your agent's own settings. Don't paste real patient data into prompts. Use the [documented test data](https://api-docs.zocdoc.com/guides/testing-data) instead.
