@@ -5,7 +5,6 @@ export default css`
     color: var(--zd-alert-icon-color);
   }
 
-
   :host([variant='info']) {
     --zd-alert-bg-color: var(--zd-alert-info-bg-color);
     --zd-alert-fg-color: var(--zd-alert-info-fg-color);

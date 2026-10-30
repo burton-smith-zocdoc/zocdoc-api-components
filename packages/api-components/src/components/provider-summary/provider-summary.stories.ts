@@ -5,10 +5,9 @@ import { jsonBlock } from '../../utils/test/json-block.js';
 import type { ZdProviderSummary } from './provider-summary.js';
 import './index.js';
 
-const { args, argTypes, template } = getStorybookHelpers<ZdProviderSummary>(
-  'zd-provider-summary',
-  { excludeCategories: ['cssParts'] }
-);
+const { args, argTypes, template } = getStorybookHelpers<ZdProviderSummary>('zd-provider-summary', {
+  excludeCategories: ['cssParts'],
+});
 
 const PROVIDER = PROVIDER_LOCATIONS[0]!;
 

@@ -7,12 +7,12 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 The components are standard custom elements, so they work in any framework. Both packages also ship framework-specific entry points. These give you typed props, attributes, and events in your editor and type checker.
 
-| Entry point                   | What it provides                                                                        |
-| ----------------------------- | --------------------------------------------------------------------------------------- |
-| `<package>/react`             | React wrapper components with camelCase props, `on*` event props, and typed refs        |
-| `<package>/types/jsx`         | `IntrinsicElements` types for React, Preact, Solid, Qwik, Stencil, Hono, and global JSX |
-| `<package>/types/vue`         | `GlobalComponents` types for Vue templates                                              |
-| `<package>/types/svelte`      | `svelteHTML.IntrinsicElements` types for Svelte templates                               |
+| Entry point              | What it provides                                                                        |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| `<package>/react`        | React wrapper components with camelCase props, `on*` event props, and typed refs        |
+| `<package>/types/jsx`    | `IntrinsicElements` types for React, Preact, Solid, Qwik, Stencil, Hono, and global JSX |
+| `<package>/types/vue`    | `GlobalComponents` types for Vue templates                                              |
+| `<package>/types/svelte` | `svelteHTML.IntrinsicElements` types for Svelte templates                               |
 
 `<package>` is `@zocdoc/api-components` or `@zocdoc/api-primitive-components`. Import from both if you use elements from both.
 
@@ -133,16 +133,12 @@ Import the Svelte types, or reference them from a `.d.ts` file. Templates then g
 
 <Tabs>
   <TabItem label="Import">
-    ```ts
-    // e.g. src/custom-elements.d.ts
-    import type {} from '@zocdoc/api-components/types/svelte';
-    import type {} from '@zocdoc/api-primitive-components/types/svelte';
-    ```
+    ```ts // e.g. src/custom-elements.d.ts import type {} from
+    '@zocdoc/api-components/types/svelte'; import type {} from
+    '@zocdoc/api-primitive-components/types/svelte'; ```
   </TabItem>
   <TabItem label="Reference">
-    ```ts
-    // e.g. src/app.d.ts
-    /// <reference types="@zocdoc/api-components/types/svelte" />
+    ```ts // e.g. src/app.d.ts /// <reference types="@zocdoc/api-components/types/svelte" />
     /// <reference types="@zocdoc/api-primitive-components/types/svelte" />
     ```
   </TabItem>

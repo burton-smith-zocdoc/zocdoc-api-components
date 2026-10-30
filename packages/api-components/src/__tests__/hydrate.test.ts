@@ -129,13 +129,13 @@ describe('afterDocumentParsed', () => {
   });
 
   it('runs the update at once when the document has been parsed', () => {
-    const update = vi.fn(() => 'ran');
+    const update = vi.fn<() => string>(() => 'ran');
     expect(afterDocumentParsed({ hasUpdated: false }, update)).toBe('ran');
   });
 
   it('holds a first update until DOMContentLoaded while the document is still parsing', async () => {
     vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading');
-    const update = vi.fn();
+    const update = vi.fn<() => void>();
 
     const pending = afterDocumentParsed({ hasUpdated: false }, update);
     await Promise.resolve();
@@ -148,7 +148,7 @@ describe('afterDocumentParsed', () => {
 
   it('never holds a later update', () => {
     vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading');
-    const update = vi.fn();
+    const update = vi.fn<() => void>();
     afterDocumentParsed({ hasUpdated: true }, update);
     expect(update).toHaveBeenCalledOnce();
   });

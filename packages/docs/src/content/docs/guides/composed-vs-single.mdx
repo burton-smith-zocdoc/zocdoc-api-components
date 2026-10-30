@@ -20,18 +20,17 @@ You can integrate Zocdoc API Components in two ways:
 The `<zd-booking>` component handles the entire booking funnel:
 
 ```html preview
-<zd-booking
-  modal
-  zip-code="11201"
-></zd-booking>
+<zd-booking modal zip-code="11201"></zd-booking>
 ```
 
 **Pros:**
+
 - Zero wiring required
 - Handles all state transitions
 - One event to handle (`booking-complete`)
 
 **Cons:**
+
 - Fixed layout and flow
 - Limited customization points
 - All-or-nothing
@@ -43,29 +42,15 @@ The `<zd-booking>` component handles the entire booking funnel:
 For custom layouts, wire the components yourself:
 
 ```html
-<zd-provider-search
-  id="search"
-  zip-code="11201"
-></zd-provider-search>
+<zd-provider-search id="search" zip-code="11201"></zd-provider-search>
 
-<zd-provider-results
-  id="results"
-></zd-provider-results>
+<zd-provider-results id="results"></zd-provider-results>
 
-<zd-availability-picker
-  id="picker"
-  style="display: none;"
-></zd-availability-picker>
+<zd-availability-picker id="picker" style="display: none;"></zd-availability-picker>
 
-<zd-patient-form
-  id="form"
-  style="display: none;"
-></zd-patient-form>
+<zd-patient-form id="form" style="display: none;"></zd-patient-form>
 
-<zd-booking-confirmation
-  id="confirmation"
-  style="display: none;"
-></zd-booking-confirmation>
+<zd-booking-confirmation id="confirmation" style="display: none;"></zd-booking-confirmation>
 ```
 
 Then handle the events. Each component renders from properties and reports back through events. Your code passes data between them and makes the booking call:
@@ -158,11 +143,13 @@ form.addEventListener('patient-submit', async (e) => {
 `<zd-booking>` also handles things this example doesn't: batched day counts on the results, Back buttons, focus management between steps, and every `appointment_status`. See [Booking Failures on a Success Status](/zocdoc-api-components/client/errors/#booking-failures-on-a-success-status).
 
 **Pros:**
+
 - Full control over layout
 - Custom step order and logic
 - Insert your own UI between steps
 
 **Cons:**
+
 - More code to write and maintain
 - You handle error states
 - You manage visibility and transitions

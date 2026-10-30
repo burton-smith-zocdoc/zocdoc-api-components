@@ -54,7 +54,15 @@
       }
     },
     {
-      "files": ["scripts/**", "skills/*/scripts/**", "*.config.ts", "*.config.mjs", ".storybook/**"],
+      "files": [
+        "scripts/**",
+        "packages/*/scripts/**",
+        "tools/*/src/cli.ts",
+        "skills/*/scripts/**",
+        "*.config.ts",
+        "*.config.mjs",
+        ".storybook/**"
+      ],
       "env": {
         "node": true
       },

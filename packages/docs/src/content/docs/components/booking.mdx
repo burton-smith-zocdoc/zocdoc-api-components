@@ -14,11 +14,7 @@ The `<zd-booking>` component orchestrates the entire booking flow: provider sear
 ## Usage
 
 ```html preview
-<zd-booking
-  modal
-  zip-code="11201"
-  insurance-plan-id="ip_9111"
-></zd-booking>
+<zd-booking modal zip-code="11201" insurance-plan-id="ip_9111"></zd-booking>
 ```
 
 ## Examples
@@ -28,9 +24,7 @@ The `<zd-booking>` component orchestrates the entire booking flow: provider sear
 Render the booking flow inline rather than in a modal:
 
 ```html preview
-<zd-booking
-  zip-code="11201"
-></zd-booking>
+<zd-booking zip-code="11201"></zd-booking>
 ```
 
 ### Starting Partway
@@ -60,7 +54,8 @@ Read the current step from the `step` property (`'search' | 'time' | 'patient' |
 Events from the child components (`provider-select`, `slot-select`, `patient-submit`, and others) bubble out of `<zd-booking>` too, so you can observe them. See [Hybrid Approach](/zocdoc-api-components/guides/composed-vs-single/#hybrid-approach).
 
 <Aside type="danger">
-  `detail.error` is the client's error. Its body can echo submitted patient fields, so never log or render it.
+  `detail.error` is the client's error. Its body can echo submitted patient fields, so never log or
+  render it.
 </Aside>
 
 ## Zocdoc API

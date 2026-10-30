@@ -1,6 +1,6 @@
 ---
 title: Overflow
-description: "Collapses items that no longer fit into an overflow menu."
+description: 'Collapses items that no longer fit into an overflow menu.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -15,7 +15,10 @@ Use `zd-overflow` for a row of items that should collapse when their container c
 ### Overflowing labels in a resizable region
 
 ```html preview
-<div class="p-12" style="max-width: 18rem; resize: horizontal; overflow: auto; border: 1px dashed currentColor;">
+<div
+  class="p-12"
+  style="max-width: 18rem; resize: horizontal; overflow: auto; border: 1px dashed currentColor;"
+>
   <zd-overflow label="Show remaining categories" min="1">
     <zd-badge>Design</zd-badge>
     <zd-badge>Engineering</zd-badge>

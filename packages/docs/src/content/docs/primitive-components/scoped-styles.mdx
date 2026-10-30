@@ -1,6 +1,6 @@
 ---
 title: Scoped Styles
-description: "Applies slotted stylesheets only to its own subtree."
+description: 'Applies slotted stylesheets only to its own subtree.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -23,7 +23,8 @@ Use `zd-scoped-styles` to apply CSS custom properties or stylesheets to only the
 </zd-scoped-styles>
 <zd-button variant="primary">Unchanged outside the scope</zd-button>
 <script>
-  document.querySelector('#local-theme').css = '--zd-button-primary-bg-color: #315a46; --zd-button-primary-fg-color: #ffffff;';
+  document.querySelector('#local-theme').css =
+    '--zd-button-primary-bg-color: #315a46; --zd-button-primary-fg-color: #ffffff;';
 </script>
 ```
 

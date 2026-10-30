@@ -1,4 +1,4 @@
-import { css, unsafeCSS, type CSSResult } from "lit";
+import { css, unsafeCSS, type CSSResult } from 'lit';
 
 /**
  * Zocdoc button style overrides.
@@ -41,12 +41,7 @@ import { css, unsafeCSS, type CSSResult } from "lit";
  * makes their deviations visible rather than buried in a list of near-identical
  * blocks.
  */
-const COMPLETE_VARIANTS = [
-  "primary",
-  "secondary",
-  "inverse",
-  "destructive",
-] as const;
+const COMPLETE_VARIANTS = ['primary', 'secondary', 'inverse', 'destructive'] as const;
 
 const completeVariant = (name: string): CSSResult => {
   const v = unsafeCSS(name);
@@ -60,21 +55,15 @@ const completeVariant = (name: string): CSSResult => {
       --zd-button-hover-border-color: var(--zd-button-${v}-hover-border-color);
       --zd-button-active-bg-color: var(--zd-button-${v}-active-bg-color);
       --zd-button-active-fg-color: var(--zd-button-${v}-active-fg-color);
-      --zd-button-active-border-color: var(
-        --zd-button-${v}-active-border-color
-      );
+      --zd-button-active-border-color: var(--zd-button-${v}-active-border-color);
       --zd-button-disabled-bg-color: var(--zd-button-${v}-disabled-bg-color);
       --zd-button-disabled-fg-color: var(--zd-button-${v}-disabled-fg-color);
-      --zd-button-disabled-border-color: var(
-        --zd-button-${v}-disabled-border-color
-      );
+      --zd-button-disabled-border-color: var(--zd-button-${v}-disabled-border-color);
       --zd-button-focus-bg-color: var(--zd-button-${v}-bg-color);
       --zd-button-focus-fg-color: var(--zd-button-${v}-fg-color);
       --zd-button-pressed-bg-color: var(--zd-button-${v}-active-bg-color);
       --zd-button-pressed-fg-color: var(--zd-button-${v}-active-fg-color);
-      --zd-button-pressed-border-color: var(
-        --zd-button-${v}-active-border-color
-      );
+      --zd-button-pressed-border-color: var(--zd-button-${v}-active-border-color);
     }
   `;
 };
@@ -82,7 +71,7 @@ const completeVariant = (name: string): CSSResult => {
 const completeVariants = COMPLETE_VARIANTS.map(completeVariant).reduce(
   (all, one) => css`
     ${all} ${one}
-  `,
+  `
 );
 
 export default css`
@@ -105,18 +94,15 @@ export default css`
       min(
         calc(var(--zd-button-padding-y, 0px) - var(--zd-button-border-width)),
         calc(
-          (
-              var(--zd-button-height) -
-                max(1em, var(--zd-button-icon-size, 1em)) -
-                var(--zd-button-border-width) * 2
-            ) /
+          (var(--zd-button-height) - max(1em, var(--zd-button-icon-size, 1em)) -
+              var(--zd-button-border-width) * 2) /
             2
         )
       )
     );
   }
 
-  :host(:not([variant="link"])) a.control {
+  :host(:not([variant='link'])) a.control {
     color: inherit;
     text-decoration: none;
   }
@@ -167,7 +153,7 @@ export default css`
     }
   }
 
-  :host([size="small"]) {
+  :host([size='small']) {
     --zd-button-font-size: var(--zd-button-small-font-size);
     --zd-button-height: var(--zd-button-small-height);
     --zd-button-icon-size: var(--zd-button-small-icon-size);
@@ -201,9 +187,7 @@ export default css`
       var(--zd-button-ghost-bg-color)
     );
     --zd-button-disabled-fg-color: var(--zd-button-ghost-disabled-fg-color);
-    --zd-button-disabled-border-color: var(
-      --zd-button-ghost-disabled-border-color
-    );
+    --zd-button-disabled-border-color: var(--zd-button-ghost-disabled-border-color);
     --zd-button-focus-bg-color: var(--zd-button-ghost-bg-color);
     --zd-button-focus-fg-color: var(--zd-button-ghost-fg-color);
     --zd-button-pressed-bg-color: var(--zd-button-ghost-active-bg-color);
@@ -211,9 +195,7 @@ export default css`
       --zd-button-ghost-active-fg-color,
       var(--zd-button-ghost-fg-color)
     );
-    --zd-button-pressed-border-color: var(
-      --zd-button-ghost-active-border-color
-    );
+    --zd-button-pressed-border-color: var(--zd-button-ghost-active-border-color);
   }
 
   /*
@@ -221,7 +203,7 @@ export default css`
    * primitive so Charm's shorthand still resolves, and adds the underline
    * Charm's button never declares.
    */
-  :host([variant="link"]) {
+  :host([variant='link']) {
     --zd-button-bg-color: var(--zd-button-link-bg-color);
     --zd-button-fg-color: var(--zd-button-link-fg-color);
     --zd-button-border-color: var(--zd-color-transparent);

@@ -38,7 +38,7 @@ const schweigerTokensBase = zocdocTokensBase
       },
     };
   })
-  .extendComponents(({ primitive: primitiveRef, semantic }) => {
+  .extendComponents(({ primitive: primitiveRef }) => {
     const primitive = primitiveRef as TokenRef;
     return {
       button: {

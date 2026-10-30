@@ -1,6 +1,6 @@
 ---
 title: Button Group Overflow
-description: "A button group that moves buttons into a menu when space runs out."
+description: 'A button group that moves buttons into a menu when space runs out.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -15,7 +15,10 @@ Use `zd-button-group-overflow` when a related set of actions should collapse int
 ### Responsive action group
 
 ```html preview
-<div class="p-12" style="max-width: 20rem; resize: horizontal; overflow: auto; border: 1px dashed currentColor;">
+<div
+  class="p-12"
+  style="max-width: 20rem; resize: horizontal; overflow: auto; border: 1px dashed currentColor;"
+>
   <zd-button-group-overflow label="More actions">
     <zd-button variant="secondary">Open</zd-button>
     <zd-button variant="secondary">Duplicate</zd-button>

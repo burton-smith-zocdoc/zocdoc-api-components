@@ -1,6 +1,6 @@
 ---
 title: Radio Group
-description: "Groups radio buttons for single-selection choices."
+description: 'Groups radio buttons for single-selection choices.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -15,8 +15,12 @@ A radio group manages one selection from several related `zd-radio` options. Pro
 ### Labeled selection with helper text
 
 ```html preview
-<zd-radio-group label="Choose a display mode" name="display-mode" value="list"
-  help-text="You can change this preference later.">
+<zd-radio-group
+  label="Choose a display mode"
+  name="display-mode"
+  value="list"
+  help-text="You can change this preference later."
+>
   <zd-radio value="list">List</zd-radio>
   <zd-radio value="grid">Grid</zd-radio>
   <zd-radio value="compact">Compact list</zd-radio>
@@ -28,8 +32,14 @@ The group coordinates child radios, exposes a single value, and supports normal 
 ### Horizontal options and validation
 
 ```html preview
-<zd-radio-group label="Choose a time range" name="time-range" layout="horizontal" required
-  invalid error-message="Choose one range to continue.">
+<zd-radio-group
+  label="Choose a time range"
+  name="time-range"
+  layout="horizontal"
+  required
+  invalid
+  error-message="Choose one range to continue."
+>
   <zd-radio value="week">One week</zd-radio>
   <zd-radio value="month">One month</zd-radio>
 </zd-radio-group>
