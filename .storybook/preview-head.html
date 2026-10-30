@@ -3,7 +3,7 @@
   // throws "Illegal invocation" when accessed on HTMLElement.prototype
   // (rather than an element instance). Pre-patch with a safe getter that
   // handles prototype access gracefully.
-  (function() {
+  (function () {
     const originalFocus = HTMLElement.prototype.focus;
     let currentFocus = originalFocus;
     const focusingElements = new Set();
@@ -26,7 +26,7 @@
       },
       set(newFocus) {
         currentFocus = newFocus;
-      }
+      },
     });
   })();
 </script>

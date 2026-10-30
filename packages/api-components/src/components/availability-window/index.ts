@@ -3,4 +3,8 @@ import { ZdAvailabilityWindow } from './availability-window.js';
 
 project.scope.registerComponent(ZdAvailabilityWindow);
 
-export { ZdAvailabilityWindow, type WindowShiftDetail, type ZdAvailabilityWindowEventMap } from './availability-window.js';
+export {
+  ZdAvailabilityWindow,
+  type WindowShiftDetail,
+  type ZdAvailabilityWindowEventMap,
+} from './availability-window.js';

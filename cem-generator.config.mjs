@@ -5,7 +5,10 @@ export default {
   ...sharedConfig({
     charmManifestPath: 'packages/primitives/node_modules/@charm-ux/core/custom-elements.json',
     tsConfigPath: 'tsconfig.json',
-    include: ['packages/*/src/**/*.ts', 'packages/primitives/src/theme/generated/layout-elements.css'],
+    include: [
+      'packages/*/src/**/*.ts',
+      'packages/primitives/src/theme/generated/layout-elements.css',
+    ],
   }),
   filePath: 'custom-elements.json',
 };

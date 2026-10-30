@@ -1,6 +1,6 @@
 ---
 title: Button Group
-description: "Groups related buttons together with connected styling."
+description: 'Groups related buttons together with connected styling.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -88,7 +88,9 @@ Set `select="multiple"` when any combination of options can be active, like a se
   const dayFilter = document.querySelector('#day-filter');
   const dayFilterOutput = document.querySelector('#day-filter-output');
   dayFilter.addEventListener('change', () => {
-    const selected = [...dayFilter.querySelectorAll('zd-button[pressed]')].map((button) => button.textContent.trim());
+    const selected = [...dayFilter.querySelectorAll('zd-button[pressed]')].map((button) =>
+      button.textContent.trim()
+    );
     dayFilterOutput.textContent = `Selected: ${selected.join(', ') || 'none'}`;
   });
 </script>

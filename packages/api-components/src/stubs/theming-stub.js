@@ -9,7 +9,9 @@ export { generateThemeSync, generateTheme } from './generate-theme-stub.js';
 
 export function cssVarName(prefix, ...segments) {
   const parts = segments.map((s) =>
-    String(s).replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+    String(s)
+      .replace(/([a-z])([A-Z])/g, '$1-$2')
+      .toLowerCase()
   );
   return `--${prefix}-${parts.join('-')}`;
 }

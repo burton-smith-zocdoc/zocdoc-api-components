@@ -354,7 +354,7 @@ describe('zd-provider-card handoff', () => {
 
   it('Book now emits book-select and lets the link be followed', async () => {
     const card = await hydrated();
-    const selected = vi.fn();
+    const selected = vi.fn<(event: Event) => void>();
     card.addEventListener('book-select', selected);
 
     anchor(card).click();

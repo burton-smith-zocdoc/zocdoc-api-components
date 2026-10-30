@@ -1,6 +1,6 @@
 ---
 title: Badge
-description: "A small label or status indicator."
+description: 'A small label or status indicator.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -30,8 +30,12 @@ Choose a variant for visual emphasis, but include the actual status in the badge
 
 ```html preview
 <zd-flex gap="8" wrap>
-  <zd-badge variant="info"><zd-icon slot="start" name="calendar" label="Calendar"></zd-icon>Updated today</zd-badge>
-  <zd-badge variant="success"><zd-icon slot="start" name="checkmark" label="Complete"></zd-icon>Verified</zd-badge>
+  <zd-badge variant="info"
+    ><zd-icon slot="start" name="calendar" label="Calendar"></zd-icon>Updated today</zd-badge
+  >
+  <zd-badge variant="success"
+    ><zd-icon slot="start" name="checkmark" label="Complete"></zd-icon>Verified</zd-badge
+  >
 </zd-flex>
 ```
 

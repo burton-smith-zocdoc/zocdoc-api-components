@@ -2,12 +2,12 @@
   "name": "@zocdoc/api-components",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "files": [
     "dist",
     "agent-docs",
     "custom-elements.json"
   ],
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -45,6 +45,9 @@
     "@zocdoc/api-primitive-components": "workspace:*",
     "lit": "^3.2.1"
   },
+  "devDependencies": {
+    "vite": "^7.1.5"
+  },
   "peerDependencies": {
     "react": ">=18"
   },
@@ -52,9 +55,6 @@
     "react": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "vite": "^7.1.5"
   },
   "customElements": "custom-elements.json"
 }

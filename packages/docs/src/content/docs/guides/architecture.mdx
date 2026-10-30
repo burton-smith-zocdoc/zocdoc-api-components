@@ -37,9 +37,12 @@ Each component exports TypeScript types for its events:
 ```typescript
 import type { ZdProviderSearchEvents, DetailOf } from '@zocdoc/api-components';
 
-element.addEventListener('provider-results', (event: DetailOf<ZdProviderSearchEvents['provider-results']>) => {
-  const { providers, totalCount } = event.detail;
-});
+element.addEventListener(
+  'provider-results',
+  (event: DetailOf<ZdProviderSearchEvents['provider-results']>) => {
+    const { providers, totalCount } = event.detail;
+  }
+);
 ```
 
 ## No Global State

@@ -1,8 +1,4 @@
-import type {
-  ProviderLocation,
-  Timeslot,
-  Appointment,
-} from '@zocdoc/api-components';
+import type { ProviderLocation, Timeslot, Appointment } from '@zocdoc/api-components';
 
 export const sampleProvider: ProviderLocation = {
   id: 'pl_sandbox_001',
@@ -27,11 +23,31 @@ export const sampleProvider: ProviderLocation = {
 };
 
 export const sampleTimeslots: Timeslot[] = [
-  { start_time: '2026-09-02T09:00:00', provider_location_id: 'pl_sandbox_001', visit_reason_id: 'vr_001' },
-  { start_time: '2026-09-02T09:30:00', provider_location_id: 'pl_sandbox_001', visit_reason_id: 'vr_001' },
-  { start_time: '2026-09-02T10:00:00', provider_location_id: 'pl_sandbox_001', visit_reason_id: 'vr_001' },
-  { start_time: '2026-09-02T14:00:00', provider_location_id: 'pl_sandbox_001', visit_reason_id: 'vr_001' },
-  { start_time: '2026-09-02T14:30:00', provider_location_id: 'pl_sandbox_001', visit_reason_id: 'vr_001' },
+  {
+    start_time: '2026-09-02T09:00:00',
+    provider_location_id: 'pl_sandbox_001',
+    visit_reason_id: 'vr_001',
+  },
+  {
+    start_time: '2026-09-02T09:30:00',
+    provider_location_id: 'pl_sandbox_001',
+    visit_reason_id: 'vr_001',
+  },
+  {
+    start_time: '2026-09-02T10:00:00',
+    provider_location_id: 'pl_sandbox_001',
+    visit_reason_id: 'vr_001',
+  },
+  {
+    start_time: '2026-09-02T14:00:00',
+    provider_location_id: 'pl_sandbox_001',
+    visit_reason_id: 'vr_001',
+  },
+  {
+    start_time: '2026-09-02T14:30:00',
+    provider_location_id: 'pl_sandbox_001',
+    visit_reason_id: 'vr_001',
+  },
 ];
 
 export const sampleAppointment: Appointment = {

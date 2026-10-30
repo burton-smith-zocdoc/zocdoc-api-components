@@ -1,6 +1,6 @@
 ---
 title: Select
-description: "A dropdown select field for choosing from options."
+description: 'A dropdown select field for choosing from options.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -28,8 +28,14 @@ Use the normal HTML `option` elements and values. The `size` property is the nat
 ### Helper and error text
 
 ```html preview
-<zd-select label="Display format" name="format" help-text="Choose the format used for this view." required
-  invalid error-message="Choose a display format.">
+<zd-select
+  label="Display format"
+  name="format"
+  help-text="Choose the format used for this view."
+  required
+  invalid
+  error-message="Choose a display format."
+>
   <option value="">Select a format</option>
   <option value="list">List</option>
   <option value="calendar">Calendar</option>

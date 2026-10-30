@@ -34,10 +34,10 @@ The form collects:
 
 Set two properties so the form collects what the provider location needs. `<zd-booking>` sets both for you:
 
-| Property | Type | Description |
-|---|---|---|
-| `insurancePlanId` | `string` | The plan chosen during search. Sent as `patient.insurance.insurance_plan_id`, and shows the member ID field |
-| `requiredFields` | `string[]` | The selected location's `booking_requirements.required_fields`, as the API returns them |
+| Property          | Type       | Description                                                                                                 |
+| ----------------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| `insurancePlanId` | `string`   | The plan chosen during search. Sent as `patient.insurance.insurance_plan_id`, and shows the member ID field |
+| `requiredFields`  | `string[]` | The selected location's `booking_requirements.required_fields`, as the API returns them                     |
 
 Both are properties only (`.insurancePlanId=`, `.requiredFields=`), never attributes, because insurance details are PHI.
 

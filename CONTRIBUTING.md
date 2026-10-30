@@ -81,7 +81,7 @@ Without a token, the demo runs in mock mode with fixture data—useful for UI de
 3. Run `pnpm typecheck` and `pnpm test` before committing
 4. Run `pnpm run docs:check` if you changed a component's public API
 
-A husky pre-commit hook (installed by `pnpm install`) runs lint-staged on staged files: `oxlint --fix` on scripts, then `oxfmt` on everything. Fixes are re-staged; remaining lint errors block the commit.
+A husky pre-commit hook (installed by `pnpm install`) runs lint-staged on staged files: `oxlint --fix` on scripts, then `oxfmt` on everything. Fixes are re-staged; remaining lint errors block the commit. CI (`.github/workflows/ci.yml`) runs `pnpm lint`, `pnpm format:check`, and `pnpm test` on every pull request and push to `main`.
 
 ### Browser Tests
 

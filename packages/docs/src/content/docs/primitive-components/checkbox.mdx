@@ -1,6 +1,6 @@
 ---
 title: Checkbox
-description: "A labelled checkbox for boolean and multi-select choices, with indeterminate support."
+description: 'A labelled checkbox for boolean and multi-select choices, with indeterminate support.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -30,7 +30,9 @@ The default slot provides the visible label. `indeterminate` is useful for a par
 ```html preview
 <zd-grid gap="16">
   <zd-checkbox help-text="You can change this preference later.">Remember this choice</zd-checkbox>
-  <zd-checkbox required invalid error-message="Select this option to continue.">I agree to the terms</zd-checkbox>
+  <zd-checkbox required invalid error-message="Select this option to continue."
+    >I agree to the terms</zd-checkbox
+  >
 </zd-grid>
 ```
 

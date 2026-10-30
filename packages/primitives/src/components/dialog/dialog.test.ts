@@ -1,5 +1,10 @@
 import { it } from 'vitest';
-import { describeA11y, expectNoViolations, getContainer, waitForUpdate } from '../../utils/test/a11y.js';
+import {
+  describeA11y,
+  expectNoViolations,
+  getContainer,
+  waitForUpdate,
+} from '../../utils/test/a11y.js';
 
 interface ZdDialog extends HTMLElement {
   open?: boolean;

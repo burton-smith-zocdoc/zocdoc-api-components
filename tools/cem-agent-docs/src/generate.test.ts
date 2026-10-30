@@ -96,17 +96,20 @@ describe('generateAgentDocs', () => {
 
   it('passes normalized API and siblings to the render hook', () => {
     const fs = memoryFileSystem();
-    let seen: string[] = [];
+    const seen: { siblings: string[]; propCount: number; packageName: string; resolved: string }[] =
+      [];
     generateAgentDocs(
       fixtureManifest(),
       {
         ...config,
         render: (c, ctx) => {
           if (c.tagName === 'zd-widget') {
-            seen = ctx.siblings.map((s) => s.tagName ?? '');
-            expect(ctx.api.own.props.length).toBeGreaterThan(0);
-            expect(ctx.config.packageName).toBe('@zocdoc/api-primitive-components');
-            expect(ctx.resolveType({ type: { text: 'boolean' } })).toBe('boolean');
+            seen.push({
+              siblings: ctx.siblings.map((s) => s.tagName ?? ''),
+              propCount: ctx.api.own.props.length,
+              packageName: ctx.config.packageName,
+              resolved: ctx.resolveType({ type: { text: 'boolean' } }),
+            });
           }
           return 'x\n';
         },
@@ -114,7 +117,11 @@ describe('generateAgentDocs', () => {
       fs
     );
 
-    expect(seen).toEqual(['zd-thing', 'zd-widget']);
+    expect(seen).toHaveLength(1);
+    expect(seen[0].siblings).toEqual(['zd-thing', 'zd-widget']);
+    expect(seen[0].propCount).toBeGreaterThan(0);
+    expect(seen[0].packageName).toBe('@zocdoc/api-primitive-components');
+    expect(seen[0].resolved).toBe('boolean');
   });
 
   it('fails the build naming the component when render throws', () => {

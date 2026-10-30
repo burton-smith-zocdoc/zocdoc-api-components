@@ -1,6 +1,6 @@
 ---
 title: Text Area
-description: "A multi-line text field with label and validation support."
+description: 'A multi-line text field with label and validation support.'
 ---
 
 import PreviewRuntime from '@/components/PreviewRuntime.astro';
@@ -29,8 +29,13 @@ The label remains visible as the field is edited. Use `maxlength` when the appli
 ### Validation feedback
 
 ```html preview
-<zd-text-area label="Reason for request" name="reason" required invalid
-  error-message="Add a short explanation to continue.">
+<zd-text-area
+  label="Reason for request"
+  name="reason"
+  required
+  invalid
+  error-message="Add a short explanation to continue."
+>
 </zd-text-area>
 ```
 
