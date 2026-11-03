@@ -1,0 +1,98 @@
+---
+title: Combobox
+description: 'A text input with a filterable listbox for choosing one or more options.'
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+A combobox pairs a text input with a listbox so a reader can filter a long list and choose from it. Build the list from `zd-option` children, optionally grouped with `zd-option-group`. Prefer `zd-select` for a short list; use a combobox when typing beats scrolling or when several values can be chosen.
+
+## Usage
+
+### Filterable list
+
+```html preview
+<zd-combobox label="Specialty" name="specialty" placeholder="Search specialties" with-clear>
+  <zd-option value="dermatology">Dermatology</zd-option>
+  <zd-option value="dentistry">Dentistry</zd-option>
+  <zd-option value="cardiology">Cardiology</zd-option>
+  <zd-option value="primary-care">Primary care</zd-option>
+</zd-combobox>
+```
+
+Give every option a `value` and understandable text. Keep the visible label, and use `required` when a choice is mandatory.
+
+### Grouped options
+
+```html preview
+<zd-combobox label="Reason for visit" name="reason">
+  <zd-option-group label="Routine">
+    <zd-option value="cleaning">Cleaning</zd-option>
+    <zd-option value="checkup">Checkup</zd-option>
+  </zd-option-group>
+  <zd-option-group label="Urgent">
+    <zd-option value="pain">Tooth pain</zd-option>
+  </zd-option-group>
+</zd-combobox>
+```
+
+A group is hidden while none of its options match the typed text.
+
+### Multiple selection
+
+```html preview
+<zd-combobox
+  label="Insurance carriers"
+  name="carriers"
+  multiple
+  with-clear
+  max-tag-count="2"
+  value="aetna,cigna"
+>
+  <zd-option value="aetna">Aetna</zd-option>
+  <zd-option value="cigna">Cigna</zd-option>
+  <zd-option value="unitedhealthcare">UnitedHealthcare</zd-option>
+</zd-combobox>
+```
+
+With `multiple`, `value` is a comma-separated list. Selections beyond `max-tag-count` collapse into a "+N" tag.
+
+### Helper and error text
+
+```html preview
+<zd-combobox
+  label="Specialty"
+  help-text="Start typing to filter the list."
+  required
+  invalid
+  error-message="Choose a specialty to continue."
+>
+  <zd-option value="dermatology">Dermatology</zd-option>
+  <zd-option value="cardiology">Cardiology</zd-option>
+</zd-combobox>
+```
+
+Show validation feedback only after the field has been checked.
+
+## API Reference
+
+### `zd-combobox`
+
+```api-reference
+zd-combobox
+```
+
+### `zd-option`
+
+```api-reference
+zd-option
+```
+
+### `zd-option-group`
+
+```api-reference
+zd-option-group
+```

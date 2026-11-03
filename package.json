@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "pnpm storybook",
     "build": "pnpm run build:types && pnpm run build:theme && pnpm run cem && pnpm -r run cem && pnpm run build:agent-docs",
     "build:agent-docs": "oxnode scripts/build-agent-docs.ts",
     "build:types": "tsc --build tsconfig.build.json",
@@ -33,7 +34,7 @@
     "dev:docs": "pnpm --filter docs dev"
   },
   "devDependencies": {
-    "@charm-ux/theming": "0.0.0-beta-20261012145959",
+    "@charm-ux/theming": "0.0.0-beta-20261030170210",
     "@oxc-node/cli": "^0.1.0",
     "@storybook/addon-docs": "^10.5.6",
     "@storybook/web-components": "^10.5.5",

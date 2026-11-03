@@ -1,5 +1,6 @@
 import { html, render } from 'lit';
 import { describe, expect, it, vi } from 'vitest';
+import type { ZdButton } from '@zocdoc/api-primitive-components';
 import { settled, track } from '../utils/test/mount.js';
 import { renderRequestState, type RequestState } from '../utilities/request-state.js';
 
@@ -51,9 +52,15 @@ describe('renderRequestState', () => {
     expect(renderTo('idle').textContent?.trim()).toBe('');
   });
 
-  it('calls onRetry when the retry control is clicked', () => {
+  it('calls onRetry when the retry control is clicked', async () => {
     const onRetry = vi.fn<() => void>();
-    renderTo('error', onRetry).querySelector<HTMLElement>('[part="retry"]')?.click();
+    const host = renderTo('error', onRetry);
+    document.body.append(track(host));
+    const retry = host.querySelector<ZdButton>('[part="retry"]');
+    // zd-button's click() forwards to its inner control, which exists only once
+    // the button is connected, upgraded, and rendered
+    if (retry) await settled(retry);
+    retry?.click();
     expect(onRetry).toHaveBeenCalledOnce();
   });
 

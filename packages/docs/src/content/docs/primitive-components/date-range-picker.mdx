@@ -1,0 +1,46 @@
+---
+title: Date Range Picker
+description: 'A segmented date field with a popup calendar for selecting a start and end date.'
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+`zd-date-range-picker` is a form field for a start and end date. The value is `start/end`, each in `YYYY-MM-DD` format.
+
+## Usage
+
+### Labeled date range
+
+```html preview
+<zd-date-range-picker
+  label="Availability window"
+  name="availability"
+  value="2026-03-10/2026-03-14"
+  help-text="Choose a start and end date."
+></zd-date-range-picker>
+```
+
+Use `min-range` and `max-range` to limit the length in days, counting both ends.
+
+### Required with error text
+
+```html preview
+<zd-date-range-picker
+  label="Availability window"
+  name="availability"
+  required
+  invalid
+  error-message="Enter a date range."
+></zd-date-range-picker>
+```
+
+Show validation feedback only after the field has been checked. `change` fires when a value is committed.
+
+## API Reference
+
+```api-reference
+zd-date-range-picker
+```

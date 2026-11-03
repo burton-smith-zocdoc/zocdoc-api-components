@@ -14,8 +14,8 @@ Groups radio buttons for single-selection choices.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Focus on the input on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
+| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
 | `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
 | `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
@@ -53,8 +53,9 @@ Groups radio buttons for single-selection choices.
 | Method | Description | From |
 | --- | --- | --- |
 | `checkValidity(): boolean` | Checks for validity but doesn't report a validation message when invalid. | `CoreRadioGroup` |
+| `focus(options?: FocusOptions): void` | Focus the selected radio or the first enabled radio. | `CoreRadioGroup` |
 | `reportValidity(): boolean` | Checks for validity and shows the browser's validation message if the control is invalid. | `CoreRadioGroup` |
-| `setCustomValidity(message: unknown): void` | Sets a custom validation message. | `CharmFormControlElement` |
+| `setCustomValidity(message?: string): void` | — | `CoreRadioGroup` |
 
 ### CSS Parts
 

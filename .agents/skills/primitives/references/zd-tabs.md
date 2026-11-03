@@ -15,7 +15,8 @@ Coordinates a tab list and its panels.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `active-id` | `activeId` | `string \| undefined` | — | Refers to the currently active tab. | `CoreTabs` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
+| `label` | `label` | `string` | — | Required localized accessible name for the tab list. | `CoreTabs` |
 | `layout` | `layout` | `'horizontal' \| 'vertical'` | — | Whether to render the tabs in a column or row fashion. The default value is a `horizontal` layout. | `CoreTabs` |
 | `manual-activation` | `manualActivation` | `boolean` | — | Set this if you do not want to navigate to a new tab with arrow keys, users will need to push "space" or "enter" to navigate. | `CoreTabs` |
 
@@ -42,7 +43,7 @@ Coordinates a tab list and its panels.
 
 | Property | Syntax | Default | Description | From |
 | --- | --- | --- | --- | --- |
-| `--zd-charm-tabs-align` | — | — | The alignment of the tabs ('start', 'center', or 'end'). | `CoreTabs` |
+| `--zd-charm-tabs-align` | — | — | The alignment of the tabs ('start' or 'flex-start', 'center', or 'end'). | `CoreTabs` |
 | `--zd-charm-tabs-bg-color` | — | — | The background color of the tabs container. | `CoreTabs` |
 | `--zd-charm-tabs-border-color` | — | — | The border color of the tabs container. | `CoreTabs` |
 | `--zd-charm-tabs-border-radius` | — | — | The border radius of the tabs container. | `CoreTabs` |

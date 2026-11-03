@@ -133,6 +133,8 @@ describe('zd-button loading', () => {
     await waitForUpdate();
 
     control(button).click();
+    // Charm defers the submit to a timer so a click handler can still cancel it
+    await new Promise((resolve) => setTimeout(resolve));
     expect(submits).toBe(1);
   });
 });

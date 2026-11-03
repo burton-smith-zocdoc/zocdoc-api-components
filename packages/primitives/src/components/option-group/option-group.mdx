@@ -1,0 +1,69 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as OptionGroupStories from './option-group.stories';
+
+<Meta of={OptionGroupStories} />
+
+# Option Group
+
+A labelled set of options inside a `zd-combobox`. The label is announced before the options, and the
+combobox hides a group when none of its options match the typed text.
+
+## Default
+
+<code-bubble>
+
+```html
+<zd-combobox label="Reason for visit">
+  <zd-option-group label="Routine">
+    <zd-option value="cleaning">Cleaning</zd-option>
+    <zd-option value="checkup">Checkup</zd-option>
+  </zd-option-group>
+  <zd-option-group label="Urgent">
+    <zd-option value="pain">Tooth pain</zd-option>
+  </zd-option-group>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Rich label
+
+Use the `label` slot when the label needs markup.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Insurance carrier">
+  <zd-option-group>
+    <span slot="label">Popular <zd-badge variant="info">New</zd-badge></span>
+    <zd-option value="aetna">Aetna</zd-option>
+  </zd-option-group>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Disabled
+
+`disabled` disables every option in the group.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Reason for visit">
+  <zd-option-group label="Urgent" disabled>
+    <zd-option value="pain">Tooth pain</zd-option>
+  </zd-option-group>
+</zd-combobox>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The group has the `group` role and is named by its label, which stays in the DOM so browser
+translation reaches it (I18N-001).
+
+# API
+
+<ArgTypes />

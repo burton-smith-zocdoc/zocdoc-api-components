@@ -14,7 +14,7 @@
           "tagName": "zd-appointment",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -23,7 +23,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -74,7 +74,7 @@
               "default": "'appointment'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -172,10 +172,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -237,7 +236,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -278,7 +277,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -644,10 +643,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -780,7 +779,6 @@
             },
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -1004,7 +1002,7 @@
           "tagName": "zd-availability-grid",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -1013,7 +1011,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1044,7 +1042,7 @@
               "default": "'availability-grid'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -1083,10 +1081,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -1158,7 +1155,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1237,7 +1234,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1376,10 +1373,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -1509,7 +1506,6 @@
             },
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -1718,7 +1714,7 @@
           "tagName": "zd-availability-picker",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -1727,7 +1723,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1758,7 +1754,7 @@
               "default": "'availability-picker'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -1806,10 +1802,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -1872,7 +1867,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1922,7 +1917,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2155,10 +2150,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -2300,7 +2295,6 @@
             },
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -2522,7 +2516,7 @@
           "tagName": "zd-availability-window",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -2531,7 +2525,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2542,7 +2536,7 @@
               "default": "'availability-window'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -2571,10 +2565,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -2618,7 +2611,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2648,7 +2641,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2657,10 +2650,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -2704,7 +2697,6 @@
             },
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -2800,7 +2792,7 @@
           "tagName": "zd-booking-confirmation",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -2809,7 +2801,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2830,7 +2822,7 @@
               "default": "'booking-confirmation'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -2848,10 +2840,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -2877,7 +2868,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2907,7 +2898,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2966,10 +2957,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -3017,7 +3008,6 @@
             },
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -3154,7 +3144,7 @@
           "tagName": "zd-booking",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -3163,7 +3153,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3225,7 +3215,7 @@
               "default": "'booking'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -3313,10 +3303,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -3359,7 +3348,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3426,7 +3415,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3685,10 +3674,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -3778,7 +3767,6 @@
           "attributes": [
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -4033,7 +4021,7 @@
           "tagName": "zd-patient-form",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -4042,7 +4030,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4053,7 +4041,7 @@
               "default": "'patient-form'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -4082,10 +4070,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -4166,7 +4153,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4215,7 +4202,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4330,10 +4317,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -4454,7 +4441,6 @@
             },
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -4594,7 +4580,7 @@
           "tagName": "zd-provider-card",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -4603,7 +4589,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4614,7 +4600,7 @@
               "default": "'provider-card'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -4641,10 +4627,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -4689,7 +4674,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4813,7 +4798,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4942,10 +4927,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -4963,7 +4948,6 @@
           "attributes": [
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -5147,7 +5131,7 @@
           "tagName": "zd-provider-profile",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -5156,7 +5140,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5167,7 +5151,7 @@
               "default": "'provider-profile'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -5185,10 +5169,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -5214,7 +5197,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5274,7 +5257,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5442,17 +5425,16 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             }
           ],
           "attributes": [
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -5632,7 +5614,7 @@
           "tagName": "zd-provider-results",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -5641,7 +5623,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5691,7 +5673,7 @@
               "default": "'provider-results'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -5739,10 +5721,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -5787,7 +5768,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5894,7 +5875,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6201,10 +6182,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -6286,7 +6267,6 @@
             },
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -6572,7 +6552,7 @@
           "tagName": "zd-provider-search",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -6581,7 +6561,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6592,7 +6572,7 @@
               "default": "'provider-search'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -6610,10 +6590,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -6703,7 +6682,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6752,7 +6731,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6918,10 +6897,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -7032,7 +7011,6 @@
           "attributes": [
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -7237,7 +7215,7 @@
           "tagName": "zd-provider-summary",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -7246,7 +7224,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7257,7 +7235,7 @@
               "default": "'provider-summary'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -7275,10 +7253,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -7304,7 +7281,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7345,7 +7322,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7417,17 +7394,16 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             }
           ],
           "attributes": [
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -7525,7 +7501,7 @@
           "tagName": "zd-sign-in",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -7534,7 +7510,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7567,7 +7543,7 @@
               "default": "'sign-in'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -7596,10 +7572,9 @@
             {
               "kind": "field",
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\n{@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -7670,7 +7645,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7722,7 +7697,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7782,10 +7757,10 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261012145959_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               }
             },
             {
@@ -7802,7 +7777,6 @@
           "attributes": [
             {
               "name": "dir",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",

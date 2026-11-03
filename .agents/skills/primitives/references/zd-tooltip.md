@@ -17,7 +17,7 @@ Describes or labels its anchor, showing supplementary text on hover and focus.
 | `anchor` | `anchor` | `string \| Element \| undefined` | — | When the anchor element is separate from the popup, provide its ID or a reference to the anchor element. | `CoreTooltip` |
 | `arrow` | `arrow` | `boolean` | — | Attaches an arrow pointing to the tooltip. | `CoreTooltip` |
 | `content` | `content` | `string \| undefined` | — | The content to display inside the tooltip. You can use `content` slot instead if you need text formatting. | `CoreTooltip` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables/enables the tooltip | `CoreTooltip` |
 | `distance` | `distance` | `number \| undefined` | — | The distance in pixels from which to offset the tooltip away from its target. | `CoreTooltip` |
 | `fixed-placement` | `fixedPlacement` | `boolean` | — | Enable this option to prevent the tooltip from being clipped when the component is placed inside a container with `overflow: auto\|hidden\|scroll`. | `CoreTooltip` |
@@ -47,7 +47,7 @@ Describes or labels its anchor, showing supplementary text on hover and focus.
 | Method | Description | From |
 | --- | --- | --- |
 | `hide(): void` | Hides/closes the component. | `CharmDismissibleElement` |
-| `show(): void` | Shows/opens the component. | `CharmDismissibleElement` |
+| `show(): void` | — | `CoreTooltip` |
 | `toggle(): void` | Shows or hides the component depending on whether it is currently visible. | `CharmDismissibleElement` |
 
 ### CSS Parts
@@ -71,10 +71,10 @@ Describes or labels its anchor, showing supplementary text on hover and focus.
 | `--zd-charm-tooltip-border-style` | — | — | The border style of the tooltip | `CoreTooltip` |
 | `--zd-charm-tooltip-border-width` | — | — | The border width of the tooltip | `CoreTooltip` |
 | `--zd-charm-tooltip-fg-color` | — | — | The foreground color of the tooltip | `CoreTooltip` |
-| `--zd-charm-tooltip-hide-delay` | — | — | The amount of time to wait before hiding the tooltip when hovering. | `CoreTooltip` |
+| `--zd-charm-tooltip-hide-transition` | — | — | The transition effect when closing the tooltip | `CoreTooltip` |
 | `--zd-charm-tooltip-max-width` | — | — | The maximum width of the tooltip. | `CoreTooltip` |
 | `--zd-charm-tooltip-padding` | — | — | The padding of the tooltip | `CoreTooltip` |
 | `--zd-charm-tooltip-shadow` | — | — | The box shadow of the tooltip | `CoreTooltip` |
-| `--zd-charm-tooltip-show-delay` | — | — | The amount of time to wait before showing the tooltip when hovering. | `CoreTooltip` |
 | `--zd-charm-tooltip-show-transition` | — | — | The transition effect when opening the tooltip | `CoreTooltip` |
-| `--zd-charm-tooltip-show-transition` | — | — | The transition effect when closing the tooltip | `CoreTooltip` |
+| `--zd-tooltip-hide-delay` | — | — | The amount of time to wait before hiding the tooltip when hovering. | `CoreTooltip` |
+| `--zd-tooltip-show-delay` | — | — | The amount of time to wait before showing the tooltip when hovering. | `CoreTooltip` |

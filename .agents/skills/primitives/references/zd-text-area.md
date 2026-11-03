@@ -21,9 +21,9 @@ A multi-line text field with label and validation support.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `autocapitalize` | `autocapitalize` | `'off' \| 'none' \| 'on' \| 'sentences' \| 'words' \| 'characters'` | `'none'` | Controls whether and how text input is automatically capitalized as it is entered/edited by the user. | `CoreTextArea` |
-| `autocomplete` | `autocomplete` | `'off' \| 'on'` | — | This attribute specifies whether the browser can automatically fill in the control's value. | `CoreTextArea` |
-| `autofocus` | `autofocus` | `unknown` | `false` | Focus on the input on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
+| `autocomplete` | `autocomplete` | `string` | — | Permission the user agent has to provide automated assistance in filling out form field values and the type of information expected in the field. | `CoreTextArea` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
+| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
 | `enterkeyhint` | `enterkeyhint` | `'enter' \| 'done' \| 'go' \| 'next' \| 'previous' \| 'search' \| 'send'` | — | Used to customize the label or icon of the Enter key on virtual keyboards. | `CoreTextArea` |
 | `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |

@@ -1,0 +1,62 @@
+---
+title: Checkbox Group
+description: 'Groups checkboxes for multiple-selection choices with shared validation.'
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+A checkbox group manages several related `zd-checkbox` options where any number can be selected. Provide a visible `label`, give the group a `name`, and use `layout` to choose a horizontal or vertical arrangement.
+
+## Usage
+
+### Labeled selection with helper text
+
+```html preview
+<zd-checkbox-group
+  label="Preferred times"
+  name="times"
+  value="morning,evening"
+  help-text="Choose all that apply."
+>
+  <zd-checkbox value="morning">Morning</zd-checkbox>
+  <zd-checkbox value="afternoon">Afternoon</zd-checkbox>
+  <zd-checkbox value="evening">Evening</zd-checkbox>
+</zd-checkbox-group>
+```
+
+The group exposes a single comma-separated `value` (or `valueAsArray`), and a `required` group needs at least one option checked.
+
+### Horizontal options and validation
+
+```html preview
+<zd-checkbox-group
+  label="Languages spoken"
+  name="languages"
+  layout="horizontal"
+  required
+  invalid
+  error-message="Choose at least one language."
+>
+  <zd-checkbox value="en">English</zd-checkbox>
+  <zd-checkbox value="es">Spanish</zd-checkbox>
+</zd-checkbox-group>
+```
+
+Set invalid feedback from the form’s validation state, and explain how to resolve the error.
+
+## API Reference
+
+### `zd-checkbox-group`
+
+```api-reference
+zd-checkbox-group
+```
+
+### `zd-checkbox`
+
+```api-reference
+zd-checkbox
+```

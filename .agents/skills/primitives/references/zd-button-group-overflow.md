@@ -14,13 +14,13 @@ A button group that moves buttons into a menu when space runs out.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
+| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `fixed-placement` | `fixedPlacement` | `unknown` | `false` | Enable this option to prevent the overflow menu from being clipped when the component is placed inside a container with `overflow: auto\|hidden\|scroll`. | `CoreOverflow` |
 | `label` | `label` | `unknown` | `'More options'` | Label for the icon button in the overflow menu. | `CoreOverflow` |
 | `menu-position` | `menuPosition` | `unknown` | `'end'` | Location of overflow menu. Default is end. | `CoreOverflow` |
 | `min` | `min` | `unknown` | `0` | Minimum number of values to always display, even if they overflow the container. | `CoreOverflow` |
 | `overflow-direction` | `overflowDirection` | `unknown` | — | Side to start hiding/adding elements when collapsing/expanding. | `CoreOverflow` |
-| `overflowing` | `overflowing` | `unknown` | — | Whether or not there are overflowing elements. Readonly. (readonly) | `CoreOverflow` |
+| `overflowing` | `overflowing` | `unknown` | `false` | Whether or not there are overflowing elements. | `CoreOverflow` |
 
 ### Events
 

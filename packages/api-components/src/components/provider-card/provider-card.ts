@@ -192,6 +192,7 @@ export class ZdProviderCard extends CharmElement {
         variant="primary"
         href=${href ?? nothing}
         target=${href && window.self !== window.top ? '_blank' : nothing}
+        rel=${href && window.self !== window.top ? 'noreferrer noopener' : nothing}
         @click=${(event: MouseEvent) => this.handleBookClick(event, href !== undefined)}
       >
         Book now<span class="visually-hidden"> with ${providerHeading(this.provider)}</span>

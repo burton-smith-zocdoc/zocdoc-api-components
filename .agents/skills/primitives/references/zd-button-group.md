@@ -14,8 +14,8 @@ Groups related buttons together with connected styling.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
-| `label` | `label` | `string` | — | A label to use for the button group's aria-label attribute. | `CoreButtonGroup` |
+| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
+| `label` | `label` | `string` | — | Plain-text accessible name rendered in the group's visually hidden label slot. | `CoreButtonGroup` |
 | `select` | `select` | `'single' \| 'multiple' \| null` | — | When set to 'single', only one button in the group can be selected at a time, multiple buttons can be selected when set to 'multiple' | `CoreButtonGroup` |
 | `split` | `split` | `boolean` | — | Splits the buttons in the group by removing gap and border radius | `CoreButtonGroup` |
 | `toolbar` | `toolbar` | `boolean` | — | When set, the button group will behave like a toolbar with a roving tab index, arrow keyboard interaction, and a role of toolbar | `CoreButtonGroup` |
@@ -27,6 +27,12 @@ Groups related buttons together with connected styling.
 | --- | --- | --- | --- |
 | `change` | `Event` | Listens for change events from child buttons when their state changes. | `CoreButtonGroup` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `label` | Accessible label text for the group or toolbar. | `CoreButtonGroup` |
 
 ### CSS Parts
 

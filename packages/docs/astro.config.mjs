@@ -15,6 +15,10 @@ export default defineConfig({
       '/zocdoc-api-components/primitive-components/accordion/#zd-accordion-item',
     '/primitive-components/breadcrumb-item':
       '/zocdoc-api-components/primitive-components/breadcrumb/#zd-breadcrumb-item',
+    '/primitive-components/option':
+      '/zocdoc-api-components/primitive-components/combobox/#zd-option',
+    '/primitive-components/option-group':
+      '/zocdoc-api-components/primitive-components/combobox/#zd-option-group',
     '/primitive-components/menu-group':
       '/zocdoc-api-components/primitive-components/menu/#zd-menu-group',
     '/primitive-components/menu-item':

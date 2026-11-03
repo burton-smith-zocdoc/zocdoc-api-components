@@ -2,7 +2,7 @@
 
 Generated from the Custom Elements Manifest. Do not edit by hand.
 
-39 components. Read this file first, then open the one page you need.
+46 components. Read this file first, then open the one page you need.
 
 - [`zd-accordion`](zd-accordion.md) — Groups accordion items into a single collapsible region.
 - [`zd-accordion-item`](zd-accordion-item.md) — A single collapsible section of an accordion: a heading that expands to reveal its content.
@@ -14,9 +14,14 @@ Generated from the Custom Elements Manifest. Do not edit by hand.
 - [`zd-button`](zd-button.md) — An interactive button, with a variant per visual treatment and two densities.
 - [`zd-button-group`](zd-button-group.md) — Groups related buttons together with connected styling.
 - [`zd-button-group-overflow`](zd-button-group-overflow.md) — A button group that moves buttons into a menu when space runs out.
+- [`zd-calendar`](zd-calendar.md) — A calendar grid for selecting a date, a date range, or multiple separate dates.
 - [`zd-card`](zd-card.md) — A container for grouping related content.
 - [`zd-checkbox`](zd-checkbox.md) — A labelled checkbox for boolean and multi-select choices, with indeterminate support.
+- [`zd-checkbox-group`](zd-checkbox-group.md) — Groups checkboxes for multiple-selection choices with a shared label, help text, and validation.
 - [`zd-column`](zd-column.md) — A grid child that places its content within a zd-grid.
+- [`zd-combobox`](zd-combobox.md) — A text input paired with a listbox for filtering and selecting from a set of options.
+- [`zd-date-picker`](zd-date-picker.md) — A segmented date field with a popup calendar for selecting a single date.
+- [`zd-date-range-picker`](zd-date-range-picker.md) — A segmented date field with a popup calendar for selecting a start and end date.
 - [`zd-dialog`](zd-dialog.md) — A modal dialog for focused tasks and confirmations, with heading, body, and footer slots.
 - [`zd-disclosure`](zd-disclosure.md) — Toggles a region of content from a slotted trigger.
 - [`zd-divider`](zd-divider.md) — A horizontal or vertical rule separating content, with an optional inline label.
@@ -27,6 +32,8 @@ Generated from the Custom Elements Manifest. Do not edit by hand.
 - [`zd-menu`](zd-menu.md) — A popup menu of actions anchored to a trigger.
 - [`zd-menu-group`](zd-menu-group.md) — Groups related menu items under a heading.
 - [`zd-menu-item`](zd-menu-item.md) — A single selectable action inside a menu.
+- [`zd-option`](zd-option.md) — A single choice within a combobox or option group.
+- [`zd-option-group`](zd-option-group.md) — Labels and groups related options within a combobox.
 - [`zd-overflow`](zd-overflow.md) — Collapses items that no longer fit into an overflow menu.
 - [`zd-popup`](zd-popup.md) — Low-level positioning primitive: places floating content relative to an anchor element.
 - [`zd-progress-bar`](zd-progress-bar.md) — Shows determinate or indeterminate progress, for multi-step flows and uploads.

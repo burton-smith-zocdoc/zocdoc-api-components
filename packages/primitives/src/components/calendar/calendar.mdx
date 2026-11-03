@@ -1,0 +1,130 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as CalendarStories from './calendar.stories';
+
+<Meta of={CalendarStories} />
+
+# Calendar
+
+An inline month grid for choosing a date, a date range, or several separate dates. Use it when the
+calendar should always be visible, such as the first step of picking an appointment day. For a form
+field that opens a calendar on demand, use `zd-date-picker`.
+
+## Default
+
+Dates are `YYYY-MM-DD` strings. `focus-date` sets the month shown and the day keyboard focus lands on
+when nothing is selected.
+
+<code-bubble>
+
+```html
+<zd-calendar focus-date="2026-03-01"></zd-calendar>
+```
+
+</code-bubble>
+
+## Selected date and bounds
+
+`value` is the selected date. `min` and `max` set the earliest and latest selectable days.
+
+<code-bubble>
+
+```html
+<zd-calendar value="2026-03-10" min="2026-03-05" max="2026-03-25"></zd-calendar>
+```
+
+</code-bubble>
+
+## Selection modes
+
+`selection-mode` is `single` (the default), `range`, or `multiple`. A range value is
+`start/end`; for `multiple`, set the `value` property to an array of dates.
+
+<code-bubble>
+
+```html
+<zd-calendar selection-mode="range" value="2026-03-10/2026-03-14"></zd-calendar>
+```
+
+</code-bubble>
+
+In range mode, `min-range` and `max-range` limit the length in days, counting both ends.
+
+## Unavailable dates
+
+`disabled-dates` takes a comma- or whitespace-separated list of dates. `disabled-week-days` takes
+weekday numbers from 0 (Sunday) to 6 (Saturday). Use them to mirror days a provider has no openings.
+
+<code-bubble>
+
+```html
+<zd-calendar
+  focus-date="2026-03-01"
+  disabled-week-days="0,6"
+  disabled-dates="2026-03-16 2026-03-17"
+></zd-calendar>
+```
+
+</code-bubble>
+
+## Weekday headings
+
+`weekday-format` is `narrow`, `short`, or `long`. `first-day-of-week` overrides the locale's default.
+
+<code-bubble>
+
+```html
+<zd-calendar focus-date="2026-03-01" weekday-format="short" first-day-of-week="1"></zd-calendar>
+```
+
+</code-bubble>
+
+## Disabled and read-only
+
+`disabled` blocks selection and month navigation. `read-only` blocks selection but keeps navigation.
+
+<code-bubble>
+
+```html
+<zd-calendar value="2026-03-10" read-only></zd-calendar>
+```
+
+</code-bubble>
+
+## Per-day content
+
+A child with `slot="day-YYYY-MM-DD"` renders inside that date's cell.
+
+<code-bubble>
+
+```html
+<zd-calendar focus-date="2026-03-01">
+  <span slot="day-2026-03-10">3 open</span>
+</zd-calendar>
+```
+
+</code-bubble>
+
+## Events
+
+`input` fires as the selection changes and `change` fires when it is committed (in range mode, after
+the second date). `event.detail` is `{ value, selectionMode }`.
+
+## Methods
+
+`goToDate(date)` moves the visible month and focus without selecting. `focus()` focuses the active day.
+
+# Accessibility
+
+The grid is keyboard operable: arrow keys move by day and week, and the month and year have their own
+controls. Weekday headings and day buttons are named from the locale.
+
+Dates are formatted with `Intl` using the page locale (I18N-002). Translate the control names with the
+`previous-month-label`, `next-month-label`, `month-label`, and `year-label` slots so browser translation
+and your own copy reach them (I18N-001).
+
+Colour is not the only signal for selected, today, and unavailable days; keep it that way if you
+override the `--charm-calendar-*` custom properties, and check the result with axe (A11Y-001, A11Y-005).
+
+# API
+
+<ArgTypes />

@@ -1,0 +1,46 @@
+---
+title: Date Picker
+description: 'A segmented date field with a popup calendar for selecting a single date.'
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+`zd-date-picker` is a form field for one date. People can type into the day, month, and year segments or open the calendar. The value is a `YYYY-MM-DD` string.
+
+## Usage
+
+### Labeled date picker
+
+```html preview
+<zd-date-picker
+  label="Appointment date"
+  name="appointment-date"
+  value="2026-03-10"
+  help-text="Choose a date within the next month."
+></zd-date-picker>
+```
+
+Always provide a visible `label`. Use `min`, `max`, `disabled-dates`, and `disabled-week-days` to limit the choices.
+
+### Required with error text
+
+```html preview
+<zd-date-picker
+  label="Appointment date"
+  name="appointment-date"
+  required
+  invalid
+  error-message="Enter a date."
+></zd-date-picker>
+```
+
+Show validation feedback only after the field has been checked. `change` fires when a value is committed.
+
+## API Reference
+
+```api-reference
+zd-date-picker
+```

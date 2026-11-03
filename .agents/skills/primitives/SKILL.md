@@ -111,16 +111,17 @@ generated names follow a fixed grammar, so you can guess one and let
 --zd-form-control-<prop>                     shared across input/select/text-area/checkbox/radio
 ```
 
-**Component shape.** All 36 subclass a `Core*` class and append a stylesheet. Only
+**Component shape.** All 43 subclass a `Core*` class and append a stylesheet. Only
 these deviate, so a component not listed here is styles-only:
 
 | Deviation | Components |
 |-----------|-----------|
 | `@property` override | alert, badge, button, checkbox, icon, input, radio, text-area |
-| `dependencies()` override (17) | accordion-item, alert, breadcrumb-item, button-group-overflow, checkbox, dialog, input, menu, menu-group, menu-item, overflow, push-pane, radio-group, select, switch, text-area, tooltip |
+| `dependencies()` override (22) | accordion-item, alert, breadcrumb-item, button-group-overflow, calendar, checkbox, combobox, date-picker, date-range-picker, dialog, input, menu, menu-group, menu-item, option, overflow, push-pane, radio-group, select, switch, text-area, tooltip |
 | Template override | alert (`iconTemplate`) — the only one |
+| Lifecycle override | radio — mirrors `aria-disabled` onto the host, which Charm sets only through ElementInternals, so axe exempts the disabled label from contrast |
 
-**Empty stylesheets are the convention, not an oversight.** 25 of the 36
+**Empty stylesheets are the convention, not an oversight.** 29 of the 43
 `*.styles.ts` files are placeholders holding just a comment. They exist so that
 adding a Zocdoc override later is a one-line edit rather than a new file plus a
 new import, and so the `stylesheet-tokens` test discovers every component. Don't
