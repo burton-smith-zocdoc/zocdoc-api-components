@@ -10,7 +10,9 @@ const { args, argTypes, template } = getStorybookHelpers<ZdCalendar>('zd-calenda
 const meta: Meta<ZdCalendar> = {
   title: 'Primitives/Calendar',
   component: 'zd-calendar',
-  args,
+  // Charm sets these defaults in its constructor, so the manifest records none and the
+  // helper seeds them as ''. An empty weekdayFormat reaches Intl.DateTimeFormat and throws.
+  args: { ...args, weekdayFormat: 'short', firstDayOfWeek: undefined },
   argTypes,
   render: (args) => template(args),
 };

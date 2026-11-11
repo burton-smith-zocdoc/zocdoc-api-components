@@ -804,9 +804,14 @@ const zocdocTokensBase = charmTokens
               light: primitive('color', 'neutral', 100),
               dark: primitive('color', 'neutral', 700),
             },
+            /**
+             * Neutral 700 is a contrast dead zone: the generated `on-neutral-700`
+             * (#f9f8f7) reaches only 4.41:1, and dark text 3.2:1. White clears AA
+             * at 4.67:1.
+             */
             fgColor: {
               light: semantic('color', 'on', 'neutral', 100),
-              dark: semantic('color', 'on', 'neutral', 700),
+              dark: primitive('color', 'white'),
             },
             borderColor: {
               light: primitive('color', 'neutral', 400),
@@ -2837,8 +2842,11 @@ const zocdocTokensBase = charmTokens
         option: {
           fgColor: semantic('surface', 'default', 'fgColor'),
           hoverBgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+          hoverFgColor: semantic('surface', 'default', 'hover', 'fgColor'),
           selectedBgColor: semantic('surface', 'default', 'active', 'bgColor'),
+          selectedFgColor: semantic('surface', 'default', 'active', 'fgColor'),
           activeBgColor: semantic('surface', 'default', 'active', 'bgColor'),
+          activeFgColor: semantic('surface', 'default', 'active', 'fgColor'),
           disabledFgColor: primitive('color', 'neutral', 500),
           paddingX: primitive('spacing', 12),
           paddingY: primitive('spacing', 8),

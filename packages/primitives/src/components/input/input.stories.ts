@@ -42,3 +42,64 @@ export const Types: Story = {
     </zd-flex>
   `,
 };
+
+export const Required: Story = {
+  args: { label: 'Email', type: 'email', required: true },
+};
+
+export const HelpText: Story = {
+  args: { label: 'Email', type: 'email', helpText: 'We only use this to send your confirmation.' },
+};
+
+export const Invalid: Story = {
+  args: {
+    label: 'Email',
+    type: 'email',
+    value: 'not-an-email',
+    invalid: true,
+    errorMessage: 'Enter an email address like name@example.com.',
+  },
+};
+
+export const Readonly: Story = {
+  args: { label: 'Email', type: 'email', readonly: true, value: 'name@example.com' },
+};
+
+export const Sizes: Story = {
+  render: () => html`
+    <zd-flex direction="column" gap="16">
+      <zd-input label="Default size"></zd-input>
+      <zd-input label="Small size" size="small"></zd-input>
+    </zd-flex>
+  `,
+};
+
+export const WithClear: Story = {
+  args: { label: 'Search', withClear: true, value: 'Dermatology' },
+};
+
+export const PasswordToggle: Story = {
+  args: { label: 'Password', type: 'password', passwordToggle: true, value: 'example-password' },
+};
+
+export const NumberRange: Story = {
+  args: { label: 'Number of guests', type: 'number', min: 1, max: 4, step: 1, value: '2' },
+};
+
+export const MaxLength: Story = {
+  args: { label: 'Nickname', maxlength: 20, helpText: 'Up to 20 characters.' },
+};
+
+export const HideLabel: Story = {
+  args: { label: 'Search providers', hideLabel: true, placeholder: 'Search providers' },
+};
+
+export const LabelPositions: Story = {
+  render: () => html`
+    <zd-flex direction="column" gap="16">
+      <zd-input label="Label on top (default)" label-position="top"></zd-input>
+      <zd-input label="Label at the start" label-position="start"></zd-input>
+      <zd-input label="Label at the end" label-position="end"></zd-input>
+    </zd-flex>
+  `,
+};

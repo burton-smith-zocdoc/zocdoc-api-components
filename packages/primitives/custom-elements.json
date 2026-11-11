@@ -12293,6 +12293,7 @@
             {
               "kind": "method",
               "name": "validate",
+              "description": "Charm's `validate()` hands `this.input` to `ElementInternals.setValidity()` as\nthe anchor, which throws before the first render creates it. Setting\n`error-message` before then (in markup, or as a property) marks the control\nas touched and validates on the first `willUpdate`, so the checkbox never\nrenders. Defer until the input exists, then validate once it does.",
               "privacy": "protected",
               "return": {
                 "type": {

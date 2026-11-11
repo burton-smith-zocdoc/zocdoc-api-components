@@ -10,7 +10,9 @@ const { args, argTypes, template } = getStorybookHelpers<ZdDatePicker>('zd-date-
 const meta: Meta<ZdDatePicker> = {
   title: 'Primitives/Date Picker',
   component: 'zd-date-picker',
-  args,
+  // Charm sets these defaults in its constructor, so the manifest records none and the
+  // helper seeds them as ''. An empty weekdayFormat reaches Intl.DateTimeFormat and throws.
+  args: { ...args, weekdayFormat: 'short', firstDayOfWeek: undefined },
   argTypes,
   render: (args) => template(args),
 };

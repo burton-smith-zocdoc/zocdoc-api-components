@@ -78,6 +78,39 @@ input with `aria-describedby`.
 
 </code-bubble>
 
+## Clear button and password toggle
+
+`with-clear` adds a button that empties the field. On `type="password"`, `password-toggle` adds a
+button that shows and hides the value, and `password-visible` sets its initial state. The buttons'
+accessible names come from the `clear-label`, `show-password-label`, and `hide-password-label`
+slots, so provide translated text there when the page isn't in English (I18N-001).
+
+<code-bubble>
+
+```html
+<zd-input label="Search" with-clear value="Dermatology"></zd-input>
+<zd-input label="Password" type="password" password-toggle></zd-input>
+<zd-input label="Password" type="password" password-toggle>
+  <span slot="show-password-label">Mostrar contraseña</span>
+  <span slot="hide-password-label">Ocultar contraseña</span>
+</zd-input>
+```
+
+</code-bubble>
+
+## Label position
+
+`label-position` is `top` (the default), `start`, or `end`. `hide-label` hides the label visually
+but keeps it for assistive technology.
+
+<code-bubble>
+
+```html
+<zd-input label="Search providers" label-position="start"></zd-input>
+```
+
+</code-bubble>
+
 ## Placeholder
 
 <code-bubble>

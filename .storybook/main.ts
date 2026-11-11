@@ -1,9 +1,16 @@
 import type { StorybookConfig } from '@storybook/web-components-vite';
 import type { Plugin } from 'vite';
 
-// Storybook 10.x bundles React Aria which patches HTMLElement.prototype.focus.
-// When accessed on the prototype (not an instance), it throws "Illegal invocation".
-// This plugin injects a fix as the very first script in the HTML head.
+// Storybook 10.x patches HTMLElement.prototype.focus with a getter that reads
+// `this.ownerDocument`, which throws "Illegal invocation" when React Aria (in the
+// docs blocks) reads `HTMLElement.prototype.focus` off the prototype itself. That
+// happens on every story -> docs navigation. This plugin injects an equivalent
+// getter that tolerates the prototype, as the very first script in the head.
+//
+// It is non-configurable on purpose: Storybook redefines the property when it
+// first renders a story, and would otherwise replace this fix with its own
+// broken getter. Storybook's redefinition sits in a try/catch, so it fails
+// silently and this one stays in place.
 function reactAriaFocusFix(): Plugin {
   const fixScript = `<script>
 (function() {
@@ -11,7 +18,7 @@ function reactAriaFocusFix(): Plugin {
   var currentFocus = originalFocus;
   var focusingElements = new Set();
   Object.defineProperty(HTMLElement.prototype, 'focus', {
-    configurable: true,
+    configurable: false,
     enumerable: false,
     get: function() {
       if (this === HTMLElement.prototype || !this.ownerDocument) return originalFocus;

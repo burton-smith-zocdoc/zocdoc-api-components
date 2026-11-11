@@ -93,6 +93,25 @@ only — it clears as soon as the person clicks.
 
 </code-bubble>
 
+## Readonly and name
+
+`readonly` stops the checkbox changing and exposes `aria-readonly` to assistive technology. `name`
+is the key the value is submitted under in a form.
+
+<code-bubble>
+
+```html
+<zd-checkbox
+  name="reminders"
+  value="sms"
+  label="Text message reminders"
+  checked
+  readonly
+></zd-checkbox>
+```
+
+</code-bubble>
+
 ## Validation
 
 The checkbox is form-associated, so it takes part in native form validation. Use `error-message` to

@@ -22,6 +22,7 @@
     "test:performance:primitives": "pnpm run build:types && vitest run --config vitest.performance.config.ts packages/primitives",
     "test:performance:api": "pnpm run build:types && vitest run --config vitest.performance.config.ts packages/api-components",
     "test:performance:production": "pnpm run build:types && PERF_BUILD=production vitest run --config vitest.performance.config.ts",
+    "test:performance:network": "pnpm run build:types && pnpm --filter @zocdoc/api-components build:bundle && oxnode scripts/benchmark-network.ts",
     "test:profile": "pnpm run build:types && PERF_BUILD=production PERF_PROFILE=1 vitest run --config vitest.performance.config.ts",
     "cem": "pnpm run build:theme && cem generate && pnpm -r run cem",
     "docs:check": "pnpm run cem && pnpm -r run cem && (DRIFT=\"$(git status --porcelain -- .agents/skills/*/references packages/*/custom-elements.json)\"; if [ -n \"$DRIFT\" ]; then echo 'Generated docs are stale — regenerate and commit the changes below:' >&2; echo \"$DRIFT\" >&2; exit 1; fi)",
@@ -34,7 +35,7 @@
     "dev:docs": "pnpm --filter docs dev"
   },
   "devDependencies": {
-    "@charm-ux/theming": "0.0.0-beta-20261030170210",
+    "@charm-ux/theming": "0.0.0-beta-20261109185553",
     "@oxc-node/cli": "^0.1.0",
     "@storybook/addon-docs": "^10.5.6",
     "@storybook/web-components": "^10.5.5",

@@ -24,6 +24,22 @@ export class ZdCheckbox extends CoreCheckbox {
    */
   @property({ reflect: true })
   public size?: ZdControlSize;
+
+  /**
+   * Charm's `validate()` hands `this.input` to `ElementInternals.setValidity()` as
+   * the anchor, which throws before the first render creates it. Setting
+   * `error-message` before then (in markup, or as a property) marks the control
+   * as touched and validates on the first `willUpdate`, so the checkbox never
+   * renders. Defer until the input exists, then validate once it does.
+   */
+  protected override validate(): void {
+    if (this.input) super.validate();
+  }
+
+  protected override firstUpdated(): void {
+    super.firstUpdated();
+    this.validate();
+  }
 }
 
 project.scope.registerComponent(ZdCheckbox);
