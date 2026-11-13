@@ -18,8 +18,8 @@ importers:
   .:
     devDependencies:
       '@charm-ux/theming':
-        specifier: 0.0.0-beta-20261012145959
-        version: 0.0.0-beta-20261012145959(lit@3.3.3)
+        specifier: 0.0.0-beta-20261112123826
+        version: 0.0.0-beta-20261112123826(lit@3.3.3)
       '@oxc-node/cli':
         specifier: ^0.1.0
         version: 0.1.0
@@ -255,11 +255,11 @@ importers:
   packages/primitives:
     dependencies:
       '@charm-ux/core':
-        specifier: 0.0.0-beta-20261012145959
-        version: 0.0.0-beta-20261012145959(@floating-ui/utils@0.2.12)
+        specifier: 0.0.0-beta-20261112123826
+        version: 0.0.0-beta-20261112123826(@floating-ui/utils@0.2.12)
       '@charm-ux/theming':
-        specifier: 0.0.0-beta-20261012145959
-        version: 0.0.0-beta-20261012145959(lit@3.3.3)
+        specifier: 0.0.0-beta-20261112123826
+        version: 0.0.0-beta-20261112123826(lit@3.3.3)
       lit:
         specifier: ^3.2.1
         version: 3.3.3
@@ -580,11 +580,11 @@ packages:
     resolution: {integrity: sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ==}
     engines: {node: '>=18'}
 
-  '@charm-ux/core@0.0.0-beta-20261012145959':
-    resolution: {integrity: sha512-agQg2juajzVIyNNGlICV558wIcfE5zFOXbIjZSBom/4li+Rbq7xSEWT43kGPl/BGmgeOLte8RxD88iHVb7hM5g==}
+  '@charm-ux/core@0.0.0-beta-20261112123826':
+    resolution: {integrity: sha512-igDR2RTeq5F1CTlu0E4ERP2IAtzao3kW5l3uT1lBF2Z8fiK5qil2lUesCvZRTmEQ3wi+uE2afatBXHO92PpbSA==}
 
-  '@charm-ux/theming@0.0.0-beta-20261012145959':
-    resolution: {integrity: sha512-5E0dmwZLBeE5GEtHrqOHfeKTEF9NkcidmoYd3CkKzD+fJ0YUIatKTTeH0Ynji4Q3mbKj5VnBTIPWAplAW/2AzA==}
+  '@charm-ux/theming@0.0.0-beta-20261112123826':
+    resolution: {integrity: sha512-bpP5nopikpLZq+MzDTkRxAAPnBoxHbmzqz8yP+EbOBQ+mkWFWj1cyQ64Gg9cKERXAew0w/EVjcSou1Jb1nZ4YA==}
     peerDependencies:
       lit: ^3.0.0
     peerDependenciesMeta:
@@ -824,6 +824,9 @@ packages:
 
   '@fontsource-variable/figtree@5.3.0':
     resolution: {integrity: sha512-VRVodD7OiG7apQwE8/2fMjaqpY/a0qRJqL5HtYj8CKIVps+9amaFcdfKmDIf7iqYQx6iPLlArVXAfKeIZmVcNQ==}
+
+  '@github/arianotify-polyfill@2.4.0':
+    resolution: {integrity: sha512-pUhesPIflu3FpabgU55EUZVdowrsT5ax1k818Ffoo0TgxBKXkTy+HT74I3wk9VZKf++JdbBikHB2+tTwu2GwWg==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -4757,16 +4760,17 @@ snapshots:
     dependencies:
       fontkitten: 1.0.3
 
-  '@charm-ux/core@0.0.0-beta-20261012145959(@floating-ui/utils@0.2.12)':
+  '@charm-ux/core@0.0.0-beta-20261112123826(@floating-ui/utils@0.2.12)':
     dependencies:
-      '@charm-ux/theming': 0.0.0-beta-20261012145959(lit@3.3.3)
+      '@charm-ux/theming': 0.0.0-beta-20261112123826(lit@3.3.3)
       '@floating-ui/dom': 1.8.0
+      '@github/arianotify-polyfill': 2.4.0
       composed-offset-position: 0.0.6(@floating-ui/utils@0.2.12)
       lit: 3.3.3
     transitivePeerDependencies:
       - '@floating-ui/utils'
 
-  '@charm-ux/theming@0.0.0-beta-20261012145959(lit@3.3.3)':
+  '@charm-ux/theming@0.0.0-beta-20261112123826(lit@3.3.3)':
     dependencies:
       culori: 4.0.2
     optionalDependencies:
@@ -4976,6 +4980,8 @@ snapshots:
   '@floating-ui/utils@0.2.12': {}
 
   '@fontsource-variable/figtree@5.3.0': {}
+
+  '@github/arianotify-polyfill@2.4.0': {}
 
   '@img/colour@1.1.0': {}
 

@@ -1,0 +1,120 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as DateRangePickerStories from './date-range-picker.stories';
+
+<Meta of={DateRangePickerStories} />
+
+# Date Range Picker
+
+A form field for a start and end date. Two sets of day, month, and year segments sit side by side, and
+a button opens a `zd-calendar` popup in range mode. Use it to filter availability by a window of days.
+
+## Default
+
+The value is `start/end`, each as `YYYY-MM-DD`.
+
+<code-bubble>
+
+```html
+<zd-date-range-picker label="Availability window"></zd-date-range-picker>
+```
+
+</code-bubble>
+
+## Value
+
+<code-bubble>
+
+```html
+<zd-date-range-picker
+  label="Availability window"
+  value="2026-03-10/2026-03-14"
+  help-text="Choose a start and end date."
+></zd-date-range-picker>
+```
+
+</code-bubble>
+
+## Limiting dates and length
+
+`min`, `max`, `disabled-dates`, and `disabled-week-days` work as they do on `zd-date-picker`.
+`min-range` and `max-range` limit the length in days, counting both ends. Violations show the
+`min-range-message` and `max-range-message` text, which supports `{count}`.
+
+<code-bubble>
+
+```html
+<zd-date-range-picker
+  label="Availability window"
+  min="2026-03-02"
+  max="2026-04-30"
+  min-range="2"
+  max-range="14"
+></zd-date-range-picker>
+```
+
+</code-bubble>
+
+## Popup
+
+`open` shows the calendar. In the popup, the range is only committed after the second date is chosen;
+closing early discards the in-progress selection.
+
+<code-bubble>
+
+```html
+<zd-date-range-picker
+  label="Availability window"
+  focus-date="2026-03-01"
+  open
+></zd-date-range-picker>
+```
+
+</code-bubble>
+
+## Required and validation
+
+`required`, `error-message`, and `invalid` behave as on other form controls. Partial, impossible, and
+unavailable ranges have message slots: `incomplete-range-message`, `invalid-range-message`, and
+`unavailable-range-message`.
+
+<code-bubble>
+
+```html
+<zd-date-range-picker
+  label="Availability window"
+  required
+  invalid
+  error-message="Enter a date range."
+></zd-date-range-picker>
+```
+
+</code-bubble>
+
+## Disabled
+
+<code-bubble>
+
+```html
+<zd-date-range-picker label="Availability window" disabled></zd-date-range-picker>
+```
+
+</code-bubble>
+
+## Events
+
+`input` fires while the value changes and `change` when it is committed. `date-range-picker-today`
+fires when the Today action sets the range. `show()`, `hide()`, and `clear()` are available from script.
+
+# Accessibility
+
+The start and end segment groups are named through the `start-label` and `end-label` slots, and each
+segment through slots such as `start-day-label`; provide translated text for each so browser
+translation reaches them (I18N-001). Keep the field label visible.
+
+Errors are tied to the field and announced (A11Y-002, A11Y-004). Dates display with `Intl` for the page
+locale (I18N-002). Do not log entered dates (PHI-001) and use documented test dates in examples
+(PHI-002).
+
+# API
+
+<ArgTypes />

@@ -15,8 +15,8 @@ Toggles a region of content from a slotted trigger.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `content-below` | `contentBelow` | `boolean` | — | Controls the expand direction of the component. | `CoreDisclosure` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
-| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CoreDisclosure` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 
@@ -25,8 +25,15 @@ Toggles a region of content from a slotted trigger.
 | `disclosure-after-hide` | `Event` | Emitted after the disclosure has hidden and all animations are complete. | `CoreDisclosure` |
 | `disclosure-after-show` | `Event` | Emitted after the disclosure has shown and all animations are complete. | `CoreDisclosure` |
 | `disclosure-hide` | `Event` | Emitted when the disclosure begins to hide. | `CoreDisclosure` |
+| `disclosure-request-close` | `Event` | Cancelable event emitted when the trigger requests closing. | `CoreDisclosure` |
 | `disclosure-show` | `Event` | Emitted when the disclosure begins to show. | `CoreDisclosure` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `trigger` | A button that toggles the expandable content. | `CoreDisclosure` |
 
 ### Methods
 

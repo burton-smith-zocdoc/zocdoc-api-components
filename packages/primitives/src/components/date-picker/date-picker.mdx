@@ -1,0 +1,133 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as DatePickerStories from './date-picker.stories';
+
+<Meta of={DatePickerStories} />
+
+# Date Picker
+
+A form field for a single date. It has day, month, and year segments that can be typed into, and a
+button that opens a `zd-calendar` popup. Use it for the appointment date or a date of birth.
+
+## Default
+
+The value is a `YYYY-MM-DD` string.
+
+<code-bubble>
+
+```html
+<zd-date-picker label="Appointment date"></zd-date-picker>
+```
+
+</code-bubble>
+
+## Value
+
+Set `value` as an attribute or property. `valueAsDate` reads and writes a `Date` at local midnight.
+
+<code-bubble>
+
+```html
+<zd-date-picker label="Appointment date" value="2026-03-10"></zd-date-picker>
+```
+
+</code-bubble>
+
+## Help text
+
+Use `help-text`, or the `help-text` slot for markup.
+
+<code-bubble>
+
+```html
+<zd-date-picker
+  label="Appointment date"
+  help-text="Choose a date within the next month."
+></zd-date-picker>
+```
+
+</code-bubble>
+
+## Limiting dates
+
+`min` and `max` bound the range. `disabled-dates` and `disabled-week-days` (0 is Sunday) remove
+specific days. Anything outside these shows the `unavailable-date-message`.
+
+<code-bubble>
+
+```html
+<zd-date-picker
+  label="Appointment date"
+  min="2026-03-02"
+  max="2026-04-02"
+  disabled-week-days="0,6"
+  focus-date="2026-03-02"
+></zd-date-picker>
+```
+
+</code-bubble>
+
+`focus-date` picks the month the calendar opens on when there is no value.
+
+## Popup
+
+`open` shows the calendar. `placement` and `fixed-placement` control positioning. The `footer` slot
+adds content below the calendar; Today and Clear actions are built in.
+
+<code-bubble>
+
+```html
+<zd-date-picker label="Appointment date" focus-date="2026-03-01" open></zd-date-picker>
+```
+
+</code-bubble>
+
+## Required and validation
+
+The field is form-associated. `required` rejects an empty value, `error-message` sets custom text, and
+`invalid` renders the error state. Partial and impossible dates have their own message slots:
+`incomplete-date-message`, `invalid-date-message`, and `unavailable-date-message`.
+
+<code-bubble>
+
+```html
+<zd-date-picker
+  label="Appointment date"
+  required
+  invalid
+  error-message="Enter a date."
+></zd-date-picker>
+```
+
+</code-bubble>
+
+## Disabled
+
+<code-bubble>
+
+```html
+<zd-date-picker label="Appointment date" disabled></zd-date-picker>
+```
+
+</code-bubble>
+
+## Events
+
+`input` fires while the value changes and `change` when it is committed. `date-picker-today` fires
+when the Today action sets the value; `event.detail.value` is the date. `show()`, `hide()`, and
+`clear()` control the popup and value from script.
+
+# Accessibility
+
+Each segment has an accessible name, the toggle button is labelled, and the popup is a dialog named
+after the field label. Keep the label visible. Override segment names, placeholders, and messages
+through the matching slots so they translate with the page (I18N-001).
+
+Errors are associated with the field and announced; keep `error-message` specific about what to fix
+(A11Y-002, A11Y-004). Dates display with `Intl` for the page locale (I18N-002).
+
+For a date of birth, set `autocomplete="bday"`. Never log the entered value (PHI-001), and use documented
+test dates in examples and tests (PHI-002).
+
+# API
+
+<ArgTypes />

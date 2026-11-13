@@ -1,0 +1,129 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as CheckboxGroupStories from './checkbox-group.stories';
+
+<Meta of={CheckboxGroupStories} />
+
+# Checkbox Group
+
+A set of independent choices where any number can be selected. The group is the form control — it holds
+the value, the name, and the validation; the checkboxes inside it are just the options.
+
+## Default
+
+Put `zd-checkbox` elements in the default slot. Give each a `value`; the group's `value` is the
+comma-separated list of the checked ones, and `valueAsArray` is the same list as an array.
+
+<code-bubble>
+
+```html
+<zd-checkbox-group label="Preferred times" name="times" value="morning,evening">
+  <zd-checkbox value="morning" label="Morning"></zd-checkbox>
+  <zd-checkbox value="afternoon" label="Afternoon"></zd-checkbox>
+  <zd-checkbox value="evening" label="Evening"></zd-checkbox>
+</zd-checkbox-group>
+```
+
+</code-bubble>
+
+Use the `label` slot when the group label needs markup. Set `value-delimiter` if an option value
+contains a comma.
+
+## Layout
+
+`layout` takes `vertical` (the default), `horizontal`, or `horizontal-stacked`.
+
+<code-bubble>
+
+```html
+<zd-checkbox-group label="Languages spoken" layout="horizontal">
+  <zd-checkbox value="en" label="English"></zd-checkbox>
+  <zd-checkbox value="es" label="Spanish"></zd-checkbox>
+  <zd-checkbox value="fr" label="French"></zd-checkbox>
+</zd-checkbox-group>
+```
+
+</code-bubble>
+
+Keep horizontal layouts to a handful of short options. A long row wraps unpredictably.
+
+## Help text
+
+Use `help-text`, or the `help-text` slot for markup.
+
+<code-bubble>
+
+```html
+<zd-checkbox-group label="Preferred times" help-text="Choose all that apply.">
+  <zd-checkbox value="morning" label="Morning"></zd-checkbox>
+  <zd-checkbox value="afternoon" label="Afternoon"></zd-checkbox>
+</zd-checkbox-group>
+```
+
+</code-bubble>
+
+## Required and validation
+
+The group is form-associated. `required` means at least one option has to be checked;
+`error-message` sets a custom validation message and `invalid` renders the error state.
+`checkValidity()` tests without reporting, `reportValidity()` reports.
+
+<code-bubble>
+
+```html
+<zd-checkbox-group
+  label="Preferred times"
+  required
+  invalid
+  error-message="Choose at least one time."
+>
+  <zd-checkbox value="morning" label="Morning"></zd-checkbox>
+  <zd-checkbox value="afternoon" label="Afternoon"></zd-checkbox>
+</zd-checkbox-group>
+```
+
+</code-bubble>
+
+Describe what's needed rather than echoing what was submitted — patient-entered values don't belong in
+messages (PHI-001).
+
+## Disabled
+
+Disable the whole set from the group, or a single option from the checkbox.
+
+<code-bubble>
+
+```html
+<zd-checkbox-group label="Preferred times" disabled>
+  <zd-checkbox value="morning" label="Morning"></zd-checkbox>
+  <zd-checkbox value="afternoon" label="Afternoon"></zd-checkbox>
+</zd-checkbox-group>
+```
+
+</code-bubble>
+
+## Listbox mode
+
+Set `listbox` to present the choices as a single-tab-stop listbox: arrow keys move between options,
+Space toggles, and typing jumps to a match. Prefer the default fieldset for short lists; reach for
+`listbox` when a long list would otherwise add many tab stops.
+
+## Events
+
+`change` fires when the selected values change; `input` fires on user input; `focus` and `blur` fire as
+the group gains and loses focus.
+
+# Accessibility
+
+By default the group renders a `fieldset` with the label as its legend, so assistive technology
+announces the question before each option (A11Y-004). It sets `aria-invalid`, points `aria-describedby`
+at the help text, and points `aria-errormessage` at the error region when `invalid`.
+
+Always give the group a label. Without one the options read as bare choices with no question attached.
+Keep it as visible text so browser translation can reach it (I18N-001).
+
+Announce validation changes — the error region is exposed to assistive technology when `invalid`
+(A11Y-002).
+
+# API
+
+<ArgTypes />

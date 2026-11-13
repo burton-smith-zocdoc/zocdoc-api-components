@@ -1,0 +1,156 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as ComboboxStories from './combobox.stories';
+
+<Meta of={ComboboxStories} />
+
+# Combobox
+
+A text input paired with a listbox. People type to filter a long list — specialties, insurance
+carriers — and pick one (or several) options. Build the list from `zd-option` and `zd-option-group`
+children.
+
+## Select or combobox
+
+Prefer `zd-select` for a short list of a dozen options or fewer, where a native picker is the best
+experience, especially on a phone. Reach for `zd-combobox` when the list is long enough that scanning
+is slower than typing, or when people need to choose several values and see them as tags.
+
+## Default
+
+<code-bubble>
+
+```html
+<zd-combobox label="Specialty" placeholder="Search specialties">
+  <zd-option value="dermatology">Dermatology</zd-option>
+  <zd-option value="dentistry">Dentistry</zd-option>
+  <zd-option value="cardiology">Cardiology</zd-option>
+  <zd-option value="primary-care">Primary care</zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Option groups
+
+<code-bubble>
+
+```html
+<zd-combobox label="Specialty">
+  <zd-option-group label="Medical">
+    <zd-option value="cardiology">Cardiology</zd-option>
+    <zd-option value="dermatology">Dermatology</zd-option>
+  </zd-option-group>
+  <zd-option-group label="Dental">
+    <zd-option value="dentistry">Dentistry</zd-option>
+    <zd-option value="orthodontics">Orthodontics</zd-option>
+  </zd-option-group>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Multiple selection
+
+`multiple` shows each choice as a removable tag; `max-tag-count` summarizes the rest as "+N". With
+`multiple`, `value` is a delimiter-separated list, and `valueAsArray` returns an array.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Insurance carriers" multiple with-clear value="aetna,cigna">
+  <zd-option value="aetna">Aetna</zd-option>
+  <zd-option value="cigna">Cigna</zd-option>
+  <zd-option value="unitedhealthcare">UnitedHealthcare</zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Autocomplete mode
+
+`mode` controls what typing does: `list` filters the listbox, `inline` completes the text in place,
+`both` does both, and `none` leaves the list unfiltered. `select-only` makes the input read-only so it
+behaves like a select with type-ahead.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Visit type" mode="select-only">
+  <zd-option value="in-person">In person</zd-option>
+  <zd-option value="video">Video visit</zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Custom values
+
+`allows-custom-value` lets someone commit text that matches no option (single selection only).
+
+<code-bubble>
+
+```html
+<zd-combobox label="Reason for visit" allows-custom-value>
+  <zd-option value="checkup">Checkup</zd-option>
+  <zd-option value="cleaning">Cleaning</zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Loading and empty results
+
+Set `loading` while options are fetched. The `no-results` slot replaces the default message when
+nothing matches.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Specialty" loading>
+  <span slot="no-results">No matching specialties</span>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Help text, required, and validation
+
+The combobox is form-associated. `required` needs at least one selection; `invalid` and
+`error-message` render the error state.
+
+<code-bubble>
+
+```html
+<zd-combobox
+  label="Specialty"
+  help-text="Start typing to filter."
+  required
+  invalid
+  error-message="Choose a specialty to continue."
+>
+  <zd-option value="dermatology">Dermatology</zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Events
+
+`input` fires while the value changes and `change` when a new value is committed. `combobox-show` and
+`combobox-hide` fire as the listbox opens and closes. Read the value from `event.target.value`.
+
+# Accessibility
+
+The input and listbox follow the ARIA combobox pattern. Typing results and the active option are
+announced through a live region, and the loading and empty states are announced too (A11Y-002).
+
+Keep the label visible. Option text and group labels live in the DOM so browser translation reaches
+them (I18N-001). Make each option stand on its own, and never put patient-identifying text in an
+option label (PHI-001).
+
+When options come from the API, cache reference data such as specialties and insurance plans rather
+than refetching per render (CLIENT-004).
+
+# API
+
+<ArgTypes />

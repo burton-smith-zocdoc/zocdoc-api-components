@@ -16,12 +16,12 @@ A modal dialog for focused tasks and confirmations, with heading, body, and foot
 | --- | --- | --- | --- | --- | --- |
 | `alert` | `alert` | `boolean` | — | Indicates whether the dialog can only be closed programmatically or by clicking the close button. | `CoreDialog` |
 | `close-button-label` | `closeButtonLabel` | `string` | `'close'` | The label for the close button. | `CoreDialog` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `heading` | `heading` | `string` | — | The optional header of the dialog. | `CoreDialog` |
 | `hide-close-button` | `hideCloseButton` | `boolean` | — | Hides the close button when it is not focused. | `CoreDialog` |
-| `no-header` | `noHeader` | `boolean` | — | Removes the header. This will also remove the default close button. If using prevent default on dialog-request-close please provide a way for the user to close the dialog. | `CoreDialog` |
-| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+| `no-header` | `noHeader` | `boolean` | — | Hides the visible header; the heading and close button remain available to assistive technology. | `CoreDialog` |
+| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CoreDialog` |
 | `position` | `position` | `'start' \| 'end' \| 'top' \| 'bottom' \| 'center'` | — | Position of the dialog. | `CoreDialog` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 
@@ -95,6 +95,7 @@ A modal dialog for focused tasks and confirmations, with heading, body, and foot
 | `--zd-charm-dialog-margin-top` | — | — | determines dialog's top margin when it has a header or footer. | `CoreDialog` |
 | `--zd-charm-dialog-max-height` | — | — | determines dialog's max height. | `CoreDialog` |
 | `--zd-charm-dialog-max-width` | — | — | determines dialog's max width. | `CoreDialog` |
+| `--zd-charm-dialog-min-width` | — | — | determines dialog's minimum width. | `CoreDialog` |
 | `--zd-charm-dialog-padding-x` | — | — | determines dialog's inline padding. | `CoreDialog` |
 | `--zd-charm-dialog-padding-y` | — | — | determines dialog's block padding. | `CoreDialog` |
 | `--zd-charm-dialog-position-transition` | — | — | determines dialog's transform when position is set. | `CoreDialog` |

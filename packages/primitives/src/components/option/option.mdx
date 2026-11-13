@@ -1,0 +1,81 @@
+import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import * as OptionStories from './option.stories';
+
+<Meta of={OptionStories} />
+
+# Option
+
+One choice in a `zd-combobox`. An option only works inside a combobox — it is slotted into the
+listbox, and the combobox owns `selected`, `current`, and `hidden`.
+
+## Default
+
+`value` is what the form submits; the text content is what people see and filter on. Without a
+`value`, the text is used.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Visit type">
+  <zd-option value="in-person">In person</zd-option>
+  <zd-option value="video">Video visit</zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Label
+
+When the content has markup, set `label` to the plain text used for filtering, type-ahead, and the
+selected-value display.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Insurance carrier">
+  <zd-option value="aetna" label="Aetna">Aetna <small>PPO</small></zd-option>
+  <zd-option value="cigna" label="Cigna">Cigna <small>HMO</small></zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Icons
+
+The `start` and `end` slots take decorative content such as an icon.
+
+<code-bubble>
+
+```html
+<zd-combobox label="Visit type">
+  <zd-option value="video">
+    <zd-icon slot="start" name="video"></zd-icon>
+    Video visit
+  </zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+## Disabled
+
+<code-bubble>
+
+```html
+<zd-combobox label="Visit type">
+  <zd-option value="in-person">In person</zd-option>
+  <zd-option value="phone" disabled>Phone call</zd-option>
+</zd-combobox>
+```
+
+</code-bubble>
+
+# Accessibility
+
+The combobox exposes each option with the `option` role and its position in the list. Write text that
+stands on its own, keep it in the DOM for translation (I18N-001), and keep patient-identifying text
+out of labels (PHI-001).
+
+# API
+
+<ArgTypes />

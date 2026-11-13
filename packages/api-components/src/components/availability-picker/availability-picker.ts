@@ -657,6 +657,7 @@ export class ZdAvailabilityPicker extends CharmElement {
             this.selectPatientType(button.value);
           }
         }}
+        @change=${(event: Event) => event.stopPropagation()}
       >
         <scoped-button part="patient-type-option" variant="ghost" value="new" ?pressed=${this.patientType === 'new'}>
           ${this.patientType === 'new' ? this.html`<scoped-icon slot="start" name="checkmark"></scoped-icon>` : nothing}

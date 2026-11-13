@@ -79,6 +79,57 @@ made earlier in a flow without making it look unavailable.
 `vertical` stacks a single radio's control above its label. For laying out the whole set, use the
 group's `layout` attribute instead.
 
+## Sizes
+
+`size="small"` shrinks the control and its label. Keep the radios in one group the same size.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type" value="in-person">
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit" size="small"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+## Label position
+
+`label-position` is `end` (the default), `start`, or `top`.
+
+<code-bubble>
+
+```html
+<zd-radio-group label="Visit type">
+  <zd-radio value="in-person" label="In person" label-position="start"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
+## Required, help text, and errors
+
+Set `required`, `help-text`, `invalid`, and `error-message` on the `zd-radio-group` so the message
+is shown once for the whole set, not repeated on each radio.
+
+<code-bubble>
+
+```html
+<zd-radio-group
+  label="Visit type"
+  required
+  invalid
+  help-text="Video visits are available for most providers."
+  error-message="Choose a visit type to continue."
+>
+  <zd-radio value="in-person" label="In person"></zd-radio>
+  <zd-radio value="video" label="Video visit"></zd-radio>
+</zd-radio-group>
+```
+
+</code-bubble>
+
 ## Events
 
 `selected` fires when the radio becomes the selected option; `focus` and `blur` fire as it gains and

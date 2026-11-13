@@ -22,34 +22,33 @@ A text input field with label and validation support.
 | --- | --- | --- | --- | --- | --- |
 | `autocapitalize` | `autocapitalize` | `'off' \| 'none' \| 'on' \| 'sentences' \| 'words' \| 'characters'` | `'off'` | Controls whether and how text input is automatically capitalized as it is entered/edited by the user. | `CoreInput` |
 | `autocomplete` | `autocomplete` | `string` | — | Permission the user agent has to provide automated assistance in filling out form field values and the type of information expected in the field. | `CoreInput` |
-| `autofocus` | `autofocus` | `unknown` | `false` | Focus on the input on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreInput` |
 | `enterkeyhint` | `enterkeyhint` | `'enter' \| 'done' \| 'go' \| 'next' \| 'previous' \| 'search' \| 'send'` | — | Used to customize the label or icon of the Enter key on virtual keyboards. | `CoreInput` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreInput` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreInput` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreInput` |
 | `inputmode` | `inputmode` | `'none' \| 'text' \| 'decimal' \| 'numeric' \| 'tel' \| 'search' \| 'email' \| 'url'` | — | Hints at the type of data that might be entered by the user while editing the element or its contents. | `CoreInput` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreInput` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreInput` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreInput` |
 | `max` | `max` | `number` | — | The input's max attribute. | `CoreInput` |
 | `maxlength` | `maxlength` | `number` | — | The input's maxlength attribute. | `CoreInput` |
 | `min` | `min` | `number` | — | The input's min attribute. | `CoreInput` |
 | `minlength` | `minlength` | `number` | — | The input's minlength attribute. | `CoreInput` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreInput` |
 | `password-toggle` | `passwordToggle` | `boolean` | `false` | Adds a button to toggle the password's visibility. Only applies to password types. | `CoreInput` |
 | `password-visible` | `passwordVisible` | `boolean` | `false` | Determines whether the password is currently visible. Only applies to password types. | `CoreInput` |
 | `pattern` | `pattern` | `string` | — | A pattern to validate input against. | `CoreInput` |
 | `placeholder` | `placeholder` | `string` | — | The input's placeholder text. | `CoreInput` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreInput` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreInput` |
 | `spellcheck` | `spellcheck` | `boolean` | `false` | Enables spell checking on the input. | `CoreInput` |
 | `step` | `step` | `number` | — | The input's step attribute. | `CoreInput` |
-| `title` | `title` | `string` | `''` | Tooltip text for the input. | `CoreInput` |
 | `type` | `type` | `InputTypes` | — | — | `CoreInput` |
 | `value` | `value` | `string` | — | The input's value attribute. | `CharmFormControlElement` |
 | `with-clear` | `withClear` | `boolean` | `false` | Adds a clear button when the input is not empty. | `CoreInput` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 | — | `valueAsDate` | `Date \| null` | — | Gets or sets the current value as a `Date` object. Only valid when `type` is `date`. | `CoreInput` |
@@ -59,16 +58,20 @@ A text input field with label and validation support.
 
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
-| `change` | `Event` | Emitted when an alteration to the control's value is committed by the user. | `CharmFormControlElement` |
-| `input` | `Event` | Emitted when the value is being changed by the user. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when an alteration to the control's value is committed by the user. | `CoreInput` |
+| `input` | `Event` | Emitted when the value is being changed by the user. | `CoreInput` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots
 
 | Slot | Description | From |
 | --- | --- | --- |
+| `clear-label` | Accessible label for the clear button. | `CoreInput` |
 | `end` | A presentational suffix icon or similar element. | `CoreInput` |
+| `help-text` | — | `CharmFormControlElement` |
+| `hide-password-label` | Accessible label for the password visibility button when visible. | `CoreInput` |
 | `label` | The input's label. Alternatively, you can use the label prop. | `CoreInput` |
+| `show-password-label` | Accessible label for the password visibility button when hidden. | `CoreInput` |
 | `start` | A presentational prefix icon or similar element. | `CoreInput` |
 
 ### Methods

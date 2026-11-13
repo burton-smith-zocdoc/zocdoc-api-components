@@ -8,8 +8,11 @@
  * triggers the theme generator to run, adding ~170KB to bundles that don't
  * tree-shake it away.
  */
+
+// Side effect: configure the prefix before components are defined (PBZD-001). It must come first:
+// `export … from` is an import too, and modules evaluate in source order, so a re-export above
+// this line would register every component under the default prefix.
+import './configure.js';
+
 export { project, CharmElement } from '@charm-ux/core';
 export * from './components/index.js';
-
-// Side effect: configure the prefix before components are defined
-import './configure.js';

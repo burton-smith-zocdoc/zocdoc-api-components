@@ -20,29 +20,56 @@ A single radio button option within a group.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `boolean` | `false` | Focus on the radio on page load. | `CoreRadio` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
 | `checked` | `checked` | `boolean` | — | This toggles the selected status for the radio and is for use when a radio button is used outside of a radio group. When used within a radio group, this value be overridden by the radio group's value. | `CoreRadio` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
-| `disabled` | `disabled` | `boolean` | — | Disables the radio. | `CoreRadio` |
-| `hide-label` | `hideLabel` | `boolean` | — | Hides the input label. | `CoreRadio` |
-| `label` | `label` | `string` | — | The input's label. Alternatively, you can use the default slot. | `CoreRadio` |
-| `readonly` | `readonly` | `boolean` | — | Makes the input readonly. | `CoreRadio` |
-| `value` | `value` | `string` | — | The radio's value attribute. | `CoreRadio` |
-| `vertical` | `vertical` | `boolean` | — | The layout direction of the radio. | `CoreRadio` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreRadio` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreRadio` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreRadio` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreRadio` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreRadio` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreRadio` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreRadio` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreRadio` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreRadio` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreRadio` |
+| `value` | `value` | `unknown` | — | The input's value attribute. | `CoreRadio` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
+| — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
+| — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 
 ### Events
 
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
 | `blur` | `Event` | Emitted when the control loses focus. | `CoreRadio` |
+| `change` | `Event` | fired when the user modifies the element's value | `CharmFormControlElement` |
 | `focus` | `Event` | Emitted when the control gains focus. | `CoreRadio` |
-| `ready` | `Event` | Emitted when the component has completed its initial render. | `CharmElement` |
+| `input` | `Event` | fires when the value of the element has been changed as a direct result of a user action | `CharmFormControlElement` |
+| `ready` | `Event` | Emitted when the component has completed its initial render. | `CoreRadio` |
 | `selected` | `Event` | Emitted when the radio is selected. | `CoreRadio` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `help-text` | — | `CharmFormControlElement` |
+
+### Methods
+
+| Method | Description | From |
+| --- | --- | --- |
+| `checkValidity(): boolean` | — | `CoreRadio` |
+| `reportValidity(): boolean` | — | `CoreRadio` |
+| `setCustomValidity(message?: string): void` | — | `CoreRadio` |
 
 ### CSS Parts
 
 | Part | Description | From |
 | --- | --- | --- |
+| `form-control-error-text` | The error message container. | `CharmFormControlElement` |
+| `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
+| `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
+| `form-control-help-text` | The help text container. | `CharmFormControlElement` |
 | `radio-base` | The component's internal wrapper. | `CoreRadio` |
 | `radio-checked-icon` | The container the wraps the checked icon. | `CoreRadio` |
 | `radio-control` | The radio control. | `CoreRadio` |
@@ -52,6 +79,35 @@ A single radio button option within a group.
 
 | Property | Syntax | Default | Description | From |
 | --- | --- | --- | --- | --- |
+| `--zd-charm-form-control-bg-color` | — | — | Determines the background color for the control. | `CharmFormControlElement` |
+| `--zd-charm-form-control-border-radius` | — | — | Determines the border radius of the control. | `CharmFormControlElement` |
+| `--zd-charm-form-control-disabled-bg-color` | — | — | Determines the disabled input background color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-disabled-border-color` | — | — | Determines the disabled input border color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-disabled-fg-color` | — | — | Determines the disabled input foreground color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-disabled-opacity` | — | — | Determines the disabled input opacity. | `CharmFormControlElement` |
+| `--zd-charm-form-control-fg-color` | — | — | Determines the control text color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-focus-border-color` | — | — | Determines the focused control border color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-font-size` | — | — | Determines the font size. | `CharmFormControlElement` |
+| `--zd-charm-form-control-help-text-color` | — | — | Determines the help text color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-help-text-font-size` | — | — | Determines the help text font size. | `CharmFormControlElement` |
+| `--zd-charm-form-control-help-text-font-weight` | — | — | Determines the help text font weight. | `CharmFormControlElement` |
+| `--zd-charm-form-control-help-text-gap` | — | — | Determines the margin after help text. | `CharmFormControlElement` |
+| `--zd-charm-form-control-icon-gap` | — | — | Determines the margin between start/end icons and the input. | `CharmFormControlElement` |
+| `--zd-charm-form-control-input-height` | — | — | Determines the input height. | `CharmFormControlElement` |
+| `--zd-charm-form-control-invalid-border-color` | — | — | Determines the error border color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-invalid-message-color` | — | — | Determines the error text color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-invalid-message-font-size` | — | — | Determines the error message font size. | `CharmFormControlElement` |
+| `--zd-charm-form-control-label-color` | — | — | Determines the label color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-label-font-size` | — | — | Determines the label font size. | `CharmFormControlElement` |
+| `--zd-charm-form-control-label-font-weight` | — | — | Determines the label font weight. | `CharmFormControlElement` |
+| `--zd-charm-form-control-label-gap` | — | — | Determines the margin between label and the control. | `CharmFormControlElement` |
+| `--zd-charm-form-control-label-required-indicator-gap` | — | — | Determines the margin between the required indicator and the label. | `CharmFormControlElement` |
+| `--zd-charm-form-control-padding-x` | — | — | Determines the inline padding within the input element. | `CharmFormControlElement` |
+| `--zd-charm-form-control-padding-y` | — | — | Determines the input block padding within the input element. | `CharmFormControlElement` |
+| `--zd-charm-form-control-placeholder-color` | — | — | Determines the placeholder text color. | `CharmFormControlElement` |
+| `--zd-charm-form-control-range-thumb-size` | — | — | Determines thumb size when the input type is range. | `CharmFormControlElement` |
+| `--zd-charm-form-control-range-track-margin-top` | — | — | Determines the margin-top of the track when the input type is range. | `CharmFormControlElement` |
+| `--zd-charm-form-control-range-track-size` | — | — | Determines track size when the input type is range. | `CharmFormControlElement` |
 | `--zd-charm-radio-active-bg-color` | — | — | The background color of the radio control when active. | `CoreRadio` |
 | `--zd-charm-radio-bg-color` | — | — | The background color of the radio control. | `CoreRadio` |
 | `--zd-charm-radio-border-color` | — | — | The border color of the radio control. | `CoreRadio` |

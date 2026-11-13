@@ -108,6 +108,32 @@ const EXCLUDED_RULES = [
 ];
 
 /**
+ * Wait for every running CSS transition and animation, including those inside
+ * shadow roots, to finish. A popup fades in over 200ms, and axe reading it
+ * mid-fade measures the text at partial opacity - a contrast failure the
+ * user never sees. `document.getAnimations()` omits shadow trees, so each
+ * shadow root is asked separately.
+ */
+async function settleAnimations(): Promise<void> {
+  const roots: DocumentOrShadowRoot[] = [document];
+  const walk = (root: ParentNode): void => {
+    for (const el of root.querySelectorAll('*')) {
+      if (el.shadowRoot) {
+        roots.push(el.shadowRoot);
+        walk(el.shadowRoot);
+      }
+    }
+  };
+  walk(document);
+
+  /** Infinite animations (spinners, indeterminate progress) never finish */
+  const finite = roots
+    .flatMap((r) => r.getAnimations())
+    .filter((a) => a.playState === 'running' && a.effect?.getComputedTiming().endTime !== Infinity);
+  await Promise.all(finite.map((a) => a.finished.catch(() => undefined)));
+}
+
+/**
  * Run axe-core accessibility checks on the current document.
  * Returns only the violations found.
  *
@@ -118,6 +144,7 @@ async function checkAccessibility(): Promise<Result[]> {
   await new Promise((resolve) => requestAnimationFrame(resolve));
   await new Promise((resolve) => requestAnimationFrame(resolve));
   await new Promise((resolve) => setTimeout(resolve, 100));
+  await settleAnimations();
 
   const results: AxeResults = await axe.run(document, {
     runOnly: {

@@ -16,13 +16,13 @@ A single selectable action inside a menu.
 | --- | --- | --- | --- | --- | --- |
 | `checked` | `checked` | `boolean` | — | Indicates whether the menu item is checked. | `CoreMenuItem` |
 | `current` | `current` | `'page' \| 'step' \| 'location' \| 'date' \| 'time' \| 'true' \| 'false' \| null` | — | Sets `aria-current` on the internal link. | `CoreMenuItem` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the emitted click event. | `CoreMenuItem` |
 | `expanded` | `expanded` | `boolean` | — | Expands the menu item to reveal a submenu. | `CoreMenuItem` |
 | `href` | `href` | `string` | — | When set, the underlying menu item will be rendered as an `<a>` with this `href` instead of a `<span>`. | `CoreMenuItem` |
 | `role` | `role` | `string \| null` | `null` | The role of the menu item. | `CoreMenuItem` |
-| `sub-menu-placement` | `subMenuPlacement` | `string` | `'right-start'` | Controls the placement of the submenu popup. | `CoreMenuItem` |
+| `sub-menu-placement` | `subMenuPlacement` | `string` | `'end-top'` | Controls the placement of the submenu popup. | `CoreMenuItem` |
 | `target` | `target` | `'_blank' \| '_parent' \| '_self' \| '_top' \| (string & {})` | — | Tells the browser where to open the link. Only used when `href` is set. | `CoreMenuItem` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `hasSubmenu` | `boolean` | — | Indicates whether the menu item contains a submenu. | `CoreMenuItem` |
 
 ### Events
@@ -42,6 +42,7 @@ A single selectable action inside a menu.
 | `end` | A presentational suffix icon or similar element. | `CoreMenuItem` |
 | `radio-indicator` | The radio indicator icon. | `CoreMenuItem` |
 | `start` | A presentational prefix icon or similar element. | `CoreMenuItem` |
+| `submenu` | — | `CoreMenuItem` |
 | `trigger` | The trigger element when the menu item has a submenu. | `CoreMenuItem` |
 
 ### Methods
@@ -92,5 +93,6 @@ A single selectable action inside a menu.
 | `--zd-charm-menu-item-radio-active-bg-color` | — | — | Determines the background color of the radio indicator when active. | `CoreMenuItem` |
 | `--zd-charm-menu-item-radio-bg-color` | — | — | Determines the background color of the radio indicator. | `CoreMenuItem` |
 | `--zd-charm-menu-item-radio-hover-border-color` | — | — | Determines the border color of the radio indicator when hovered. | `CoreMenuItem` |
+| `--zd-charm-menu-item-radio-indicator-bg-color` | — | — | Determines the checked radio indicator color. | `CoreMenuItem` |
 | `--zd-charm-menu-item-submenu-icon-rotation` | — | — | Determines the rotation of the submenu icon on expanded. | `CoreMenuItem` |
 | `--zd-charm-menu-item-submenu-icon-size` | — | — | Determines the size of the submenu icon. | `CoreMenuItem` |

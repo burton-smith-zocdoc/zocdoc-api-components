@@ -35,3 +35,38 @@ export const WithMessages: Story = {
     </zd-switch>
   `,
 };
+
+export const Disabled: Story = {
+  args: { label: 'Text message reminders', disabled: true },
+};
+
+export const DisabledChecked: Story = {
+  args: { label: 'Text message reminders', disabled: true, checked: true },
+};
+
+export const Readonly: Story = {
+  args: { label: 'Text message reminders', readonly: true, checked: true },
+};
+
+export const HelpText: Story = {
+  args: { label: 'Text message reminders', helpText: 'Standard message rates may apply.' },
+};
+
+export const Invalid: Story = {
+  args: {
+    label: 'Accept the cancellation policy',
+    required: true,
+    invalid: true,
+    errorMessage: 'Turn this on to continue.',
+  },
+};
+
+export const LabelPositions: Story = {
+  render: () => html`
+    <zd-flex direction="column" gap="12">
+      <zd-switch label="Label at the end (default)" label-position="end"></zd-switch>
+      <zd-switch label="Label at the start" label-position="start"></zd-switch>
+      <zd-switch label="Label on top" label-position="top"></zd-switch>
+    </zd-flex>
+  `,
+};

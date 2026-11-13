@@ -804,9 +804,14 @@ const zocdocTokensBase = charmTokens
               light: primitive('color', 'neutral', 100),
               dark: primitive('color', 'neutral', 700),
             },
+            /**
+             * Neutral 700 is a contrast dead zone: the generated `on-neutral-700`
+             * (#f9f8f7) reaches only 4.41:1, and dark text 3.2:1. White clears AA
+             * at 4.67:1.
+             */
             fgColor: {
               light: semantic('color', 'on', 'neutral', 100),
-              dark: semantic('color', 'on', 'neutral', 700),
+              dark: primitive('color', 'white'),
             },
             borderColor: {
               light: primitive('color', 'neutral', 400),
@@ -1937,6 +1942,22 @@ const zocdocTokensBase = charmTokens
       },
     });
 
+    /** Footer buttons shared by the date picker and date range picker popups. */
+    const datePickerFooter = () => {
+      const button = {
+        fgColor: semantic('surface', 'default', 'fgColor'),
+        hover: {
+          bgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+          fgColor: semantic('surface', 'default', 'hover', 'fgColor'),
+        },
+        active: {
+          bgColor: semantic('surface', 'default', 'active', 'bgColor'),
+          fgColor: semantic('surface', 'default', 'active', 'fgColor'),
+        },
+      };
+      return { footer: { clear: button, today: button } };
+    };
+
     return {
       button: {
         // Shared properties across all variants
@@ -2680,6 +2701,157 @@ const zocdocTokensBase = charmTokens
           focus: {
             /** Draws the focus ring inside the item, as Zinc does */
             outlineOffset: `calc(-1 * ${semantic('focus', 'outlineWidth')})`,
+          },
+        },
+      },
+      /**
+       * Zinc's `calendar`. Zinc names day cells `cell` and has no heading
+       * navigation group, so those map onto Charm's `day` and `heading`.
+       * Charm's defaults point muted text at `text.secondary` and the
+       * selected day at `action.primary` - neutral 600 and accent 500 here,
+       * which fail AA (3.59:1 and 2.49:1). Zinc selects with neutral 900.
+       */
+      calendar: {
+        day: {
+          borderRadius: primitive('borderRadius', 'sm'),
+          fontSize: semantic('typography', 'body', 'md', 'fontSize'),
+          fgColor: semantic('surface', 'default', 'fgColor'),
+          hover: {
+            bgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+            fgColor: semantic('surface', 'default', 'hover', 'fgColor'),
+          },
+          active: {
+            bgColor: semantic('surface', 'default', 'active', 'bgColor'),
+            fgColor: semantic('surface', 'default', 'active', 'fgColor'),
+          },
+          selected: {
+            bgColor: {
+              light: primitive('color', 'neutral', 900),
+              dark: primitive('color', 'neutral', 50),
+            },
+            borderColor: {
+              light: primitive('color', 'neutral', 900),
+              dark: primitive('color', 'neutral', 50),
+            },
+            fgColor: {
+              light: semantic('color', 'on', 'neutral', 900),
+              dark: semantic('color', 'on', 'neutral', 50),
+            },
+            /** Not in Zinc; follows the inverse surface's hover and active steps */
+            hover: {
+              bgColor: {
+                light: primitive('color', 'neutral', 800),
+                dark: primitive('color', 'neutral', 100),
+              },
+              borderColor: {
+                light: primitive('color', 'neutral', 800),
+                dark: primitive('color', 'neutral', 100),
+              },
+              fgColor: {
+                light: semantic('color', 'on', 'neutral', 800),
+                dark: semantic('color', 'on', 'neutral', 100),
+              },
+            },
+            active: {
+              bgColor: {
+                light: primitive('color', 'neutral', 700),
+                dark: primitive('color', 'neutral', 200),
+              },
+              borderColor: {
+                light: primitive('color', 'neutral', 700),
+                dark: primitive('color', 'neutral', 200),
+              },
+              fgColor: {
+                light: semantic('color', 'on', 'neutral', 700),
+                dark: semantic('color', 'on', 'neutral', 200),
+              },
+            },
+          },
+          range: {
+            bgColor: semantic('surface', 'neutralMuted', 'bgColor'),
+            fgColor: semantic('surface', 'neutralMuted', 'fgColor'),
+          },
+          today: {
+            borderColor: semantic('defaultBorder', 'color'),
+          },
+          disabled: {
+            fgColor: primitive('color', 'neutral', 500),
+          },
+        },
+        /** Zinc's `body.foregroundColorMuted` is neutral 700 on light (on-muted-white) */
+        weekday: {
+          fgColor: {
+            light: primitive('color', 'neutral', 700),
+            dark: primitive('color', 'neutral', 300),
+          },
+          fontSize: primitive('fontSize', '14'),
+        },
+        /** Zinc's `calendar.header` */
+        heading: {
+          fgColor: semantic('surface', 'default', 'fgColor'),
+          fontSize: primitive('fontSize', '18'),
+          disabled: {
+            fgColor: primitive('color', 'neutral', 500),
+          },
+          navigation: {
+            fgColor: semantic('surface', 'default', 'fgColor'),
+            borderRadius: primitive('borderRadius', 'sm'),
+            hover: {
+              bgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+              fgColor: semantic('surface', 'default', 'hover', 'fgColor'),
+            },
+            active: {
+              bgColor: semantic('surface', 'default', 'active', 'bgColor'),
+              fgColor: semantic('surface', 'default', 'active', 'fgColor'),
+            },
+            disabled: {
+              fgColor: primitive('color', 'neutral', 500),
+            },
+          },
+        },
+      },
+      /**
+       * Zinc has no popup footer for the date pickers, so its buttons follow
+       * the menu items: the default surface text and states. Charm's `today`
+       * default is `action.primary` as a text color - accent 500 here, 2.13:1.
+       */
+      datePicker: datePickerFooter(),
+      dateRangePicker: datePickerFooter(),
+      /**
+       * Zinc's `itemContent` and `itemGroup`, shared with menu items so options
+       * and menu items read the same. Charm's group label default is
+       * `text.secondary` at 12px, which fails AA here (2.81:1).
+       */
+      combobox: {
+        listbox: {
+          maxHeight: '360px',
+        },
+        group: {
+          gap: primitive('spacing', 4),
+          label: {
+            color: {
+              light: primitive('color', 'neutral', 700),
+              dark: primitive('color', 'neutral', 300),
+            },
+            fontSize: semantic('typography', 'label', 'lg', 'fontSize'),
+            fontWeight: semantic('typography', 'label', 'lg', 'fontWeight'),
+            lineHeight: semantic('typography', 'label', 'lg', 'lineHeight'),
+            paddingY: primitive('spacing', 4),
+          },
+        },
+        option: {
+          fgColor: semantic('surface', 'default', 'fgColor'),
+          hoverBgColor: semantic('surface', 'default', 'hover', 'bgColor'),
+          hoverFgColor: semantic('surface', 'default', 'hover', 'fgColor'),
+          selectedBgColor: semantic('surface', 'default', 'active', 'bgColor'),
+          selectedFgColor: semantic('surface', 'default', 'active', 'fgColor'),
+          activeBgColor: semantic('surface', 'default', 'active', 'bgColor'),
+          activeFgColor: semantic('surface', 'default', 'active', 'fgColor'),
+          disabledFgColor: primitive('color', 'neutral', 500),
+          paddingX: primitive('spacing', 12),
+          paddingY: primitive('spacing', 8),
+          check: {
+            color: semantic('surface', 'default', 'fgColor'),
           },
         },
       },

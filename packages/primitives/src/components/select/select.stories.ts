@@ -47,3 +47,63 @@ export const WithLabel: Story = {
 export const Disabled: Story = {
   args: { disabled: true },
 };
+
+export const Required: Story = {
+  args: { label: 'Choose a specialty', required: true },
+};
+
+export const HelpText: Story = {
+  args: { label: 'Choose a specialty', helpText: 'You can change this later.' },
+};
+
+export const Invalid: Story = {
+  args: {
+    label: 'Choose a specialty',
+    required: true,
+    invalid: true,
+    errorMessage: 'Select a specialty to continue.',
+  },
+};
+
+export const Readonly: Story = {
+  args: { label: 'Choose a specialty', readonly: true },
+};
+
+export const Multiple: Story = {
+  args: { label: 'Choose specialties', multiple: true },
+  render: (args) =>
+    template(
+      args,
+      html`
+        <option value="dentist">Dentist</option>
+        <option value="dermatologist">Dermatologist</option>
+        <option value="primary-care">Primary Care</option>
+      `
+    ),
+};
+
+export const Sizes: Story = {
+  render: () => html`
+    <zd-flex direction="column" gap="16">
+      <zd-select label="Default size">
+        <option value="1">Option 1</option>
+      </zd-select>
+      <zd-select label="Small size" size="small">
+        <option value="1">Option 1</option>
+      </zd-select>
+    </zd-flex>
+  `,
+};
+
+export const LabelPositions: Story = {
+  render: () => html`
+    <zd-flex direction="column" gap="16">
+      <zd-select label="Label on top (default)" label-position="top">
+        <option value="1">Option 1</option>
+      </zd-select>
+      <zd-select label="Label at the start" label-position="start">
+        <option value="1">Option 1</option>
+      </zd-select>
+    </zd-flex>
+  `,
+};

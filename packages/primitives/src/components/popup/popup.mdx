@@ -117,8 +117,13 @@ pointer from the anchor into the popup doesn't cross dead space and close it.
 `shift` nudges the popup along its axis to keep it inside the viewport instead of flipping. Use both:
 `flip` handles the side that doesn't fit, `shift` handles the edge that overflows.
 
-`flip-boundary`, `flip-padding`, `shift-boundary`, and `shift-padding` scope those behaviors to a
-container.
+`flip-padding` and `shift-padding` keep that much space, in pixels, between the popup and the edge of
+the boundary.
+
+By default both behaviors measure against the viewport. Set `boundary="scroll"` to measure against
+the anchor's scrolling ancestors instead. To use a specific container, set the `flipBoundary` and
+`shiftBoundary` properties to an element or array of elements — they are JavaScript properties, not
+attributes, so they can't be set from markup.
 
 ## Sizing
 
@@ -143,8 +148,9 @@ Those two are `--popup-auto-size-available-width` and `--popup-auto-size-availab
 the themeable properties, they're set at runtime without the `zd` prefix. They only exist while
 `auto-size` is set.
 
-`auto-size-boundary` and `auto-size-padding` scope the measurement, the same way the flip and shift
-boundaries do.
+`auto-size-padding` keeps that much space, in pixels, between the popup and the edge of the boundary.
+The `autoSizeBoundary` property scopes the measurement to a specific element, the same way
+`flipBoundary` and `shiftBoundary` do; like them it is a property, not an attribute.
 
 `sync` takes `width`, `height`, or `both` and matches the popup to the anchor's size — what a combobox
 listbox usually wants.

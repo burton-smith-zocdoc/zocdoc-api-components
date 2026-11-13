@@ -14,8 +14,8 @@ Shows the hierarchy leading to the current page.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
-| `label` | `label` | `string` | `'breadcrumb'` | The `aria-label` for the entire breadcrumb. Will not be displayed, but is required for accessibility. | `CoreBreadcrumb` |
+| `label` | `label` | `string` | — | Required localized accessible name for the breadcrumb navigation landmark. | `CoreBreadcrumb` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 
@@ -27,7 +27,7 @@ Shows the hierarchy leading to the current page.
 
 | Slot | Description | From |
 | --- | --- | --- |
-| `separator` | The default separator used between breadcrumb items. When set, it is cloned into every item that does not provide its own. | `CoreBreadcrumb` |
+| `separator` | The separator placed between breadcrumb items. Defaults to a chevron that mirrors in `rtl`. | `CoreBreadcrumb` |
 
 ### CSS Parts
 

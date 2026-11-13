@@ -20,21 +20,21 @@ A labelled checkbox for boolean and multi-select choices, with indeterminate sup
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Focus on the input on page load. | `CharmFocusableElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
 | `checked` | `checked` | `boolean` | — | Draws the checkbox in a checked state. | `CoreCheckbox` |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreCheckbox` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreCheckbox` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreCheckbox` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreCheckbox` |
 | `indeterminate` | `indeterminate` | `boolean` | — | Draws the checkbox in an indeterminate state. | `CoreCheckbox` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
-| `value` | `value` | `unknown` | — | The input's value attribute. | `CharmFormControlElement` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreCheckbox` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreCheckbox` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreCheckbox` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreCheckbox` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreCheckbox` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreCheckbox` |
+| `value` | `value` | `unknown` | — | The input's value attribute. | `CoreCheckbox` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 
@@ -43,10 +43,16 @@ A labelled checkbox for boolean and multi-select choices, with indeterminate sup
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
 | `blur` | `Event` | Emitted when the control loses focus. | `CoreCheckbox` |
-| `change` | `Event` | Emitted when the control's checked state changes. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when the control's checked state changes. | `CoreCheckbox` |
 | `focus` | `Event` | Emitted when the control gains focus. | `CoreCheckbox` |
-| `input` | `Event` | Emitted when the value of the control changes. | `CharmFormControlElement` |
+| `input` | `Event` | Emitted when the value of the control changes. | `CoreCheckbox` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `help-text` | — | `CharmFormControlElement` |
 
 ### Methods
 

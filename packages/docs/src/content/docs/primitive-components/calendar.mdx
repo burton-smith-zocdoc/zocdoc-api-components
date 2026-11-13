@@ -1,0 +1,43 @@
+---
+title: Calendar
+description: 'An inline calendar grid for selecting a date, a range, or multiple dates.'
+---
+
+import PreviewRuntime from '@/components/PreviewRuntime.astro';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<PreviewRuntime />
+
+`zd-calendar` shows a month grid for choosing dates. Dates use the `YYYY-MM-DD` format. Use it when the calendar should stay visible; use `zd-date-picker` for a form field.
+
+## Usage
+
+### Single date
+
+```html preview
+<zd-calendar value="2026-03-10" min="2026-03-05" max="2026-03-25"></zd-calendar>
+```
+
+Use `min` and `max` to limit which days can be chosen.
+
+### Date range
+
+```html preview
+<zd-calendar selection-mode="range" value="2026-03-10/2026-03-14"></zd-calendar>
+```
+
+A range value is `start/end`. `change` fires after the second date is selected, and `event.detail` holds `value` and `selectionMode`.
+
+### Unavailable days
+
+```html preview
+<zd-calendar focus-date="2026-03-01" disabled-week-days="0,6"></zd-calendar>
+```
+
+`disabled-week-days` takes numbers from 0 (Sunday) to 6 (Saturday); `disabled-dates` takes a list of dates. Weekday and month names follow the page locale.
+
+## API Reference
+
+```api-reference
+zd-calendar
+```

@@ -14,7 +14,6 @@ Shows determinate or indeterminate progress, for multi-step flows and uploads.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when unset) and does no layout or style work, and writing reflects back to the attribute. Use resolvedDir for the effective `'ltr' \| 'rtl'` direction, including inherited directionality. | `CharmElement` |
 | `help-text` | `helpText` | `string` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreProgressBar` |
 | `hide-label` | `hideLabel` | `boolean` | — | Hides the input label and help text. | `CoreProgressBar` |
 | `indeterminate` | `indeterminate` | `boolean` | — | When true, percentage is ignored, the label is hidden, and the progress bar is drawn in an indeterminate state. | `CoreProgressBar` |
@@ -22,6 +21,7 @@ Shows determinate or indeterminate progress, for multi-step flows and uploads.
 | `max` | `max` | `number` | — | The maximum value, which indicates the task is complete.. | `CoreProgressBar` |
 | `meter` | `meter` | `boolean` | — | Update the role of the progress bar from 'progressbar' to 'meter' to indicate that it measures a specific value instead of progress towards a specific task. | `CoreProgressBar` |
 | `value` | `value` | `number` | — | The current progress, 0 to `max` or 100 if max is not defined. | `CoreProgressBar` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 
