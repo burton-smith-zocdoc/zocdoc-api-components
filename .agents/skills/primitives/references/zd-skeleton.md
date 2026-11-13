@@ -15,8 +15,8 @@ A placeholder shown while content is loading.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `animation` | `animation` | `'none' \| 'wave' \| 'pulse'` | — | The animation type of the Skeleton. | `CoreSkeleton` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `shape` | `shape` | `'rect' \| 'circle'` | — | The shape of the Skeleton. | `CoreSkeleton` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

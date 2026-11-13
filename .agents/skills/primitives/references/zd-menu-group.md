@@ -14,9 +14,9 @@ Groups related menu items under a heading.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `heading` | `heading` | `string` | — | The heading text for the menu group. | `CoreMenuGroup` |
 | `select` | `select` | `'single' \| 'multiple'` | — | Determines if the elements inside the group are selectable as "single" (only one selected at a time) or "multiple" (checkbox behavior). | `CoreMenuGroup` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

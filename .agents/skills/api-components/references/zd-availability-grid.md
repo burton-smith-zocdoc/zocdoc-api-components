@@ -79,7 +79,7 @@ page to a range that does have appointments.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
+| — | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
 
 ### Events
 

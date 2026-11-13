@@ -61,7 +61,7 @@ The component doesn't configure the client. The host passes `auth.getToken` to
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
+| — | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
 
 ### Events
 

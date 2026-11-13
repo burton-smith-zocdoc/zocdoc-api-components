@@ -14,9 +14,9 @@ An animated loading indicator.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `label` | `label` | `string` | — | A custom label rendered under the progress ring. | `CoreSpinner` |
 | `label-position` | `labelPosition` | `'below' \| 'before' \| 'after' \| 'above'` | — | The position of the progress label. | `CoreSpinner` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

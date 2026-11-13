@@ -22,26 +22,26 @@ A multi-line text field with label and validation support.
 | --- | --- | --- | --- | --- | --- |
 | `autocapitalize` | `autocapitalize` | `'off' \| 'none' \| 'on' \| 'sentences' \| 'words' \| 'characters'` | `'none'` | Controls whether and how text input is automatically capitalized as it is entered/edited by the user. | `CoreTextArea` |
 | `autocomplete` | `autocomplete` | `string` | — | Permission the user agent has to provide automated assistance in filling out form field values and the type of information expected in the field. | `CoreTextArea` |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreTextArea` |
 | `enterkeyhint` | `enterkeyhint` | `'enter' \| 'done' \| 'go' \| 'next' \| 'previous' \| 'search' \| 'send'` | — | Used to customize the label or icon of the Enter key on virtual keyboards. | `CoreTextArea` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreTextArea` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreTextArea` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreTextArea` |
 | `inputmode` | `inputmode` | `'none' \| 'text' \| 'decimal' \| 'numeric' \| 'tel' \| 'search' \| 'email' \| 'url'` | — | Hints at the type of data that might be entered by the user while editing the element or its contents. | `CoreTextArea` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreTextArea` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreTextArea` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreTextArea` |
 | `maxlength` | `maxlength` | `number` | — | The maximum length of input that will be considered valid. | `CoreTextArea` |
 | `minlength` | `minlength` | `number` | — | The minimum length of input that will be considered valid. | `CoreTextArea` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreTextArea` |
 | `placeholder` | `placeholder` | `string` | — | The textarea's placeholder text. | `CoreTextArea` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreTextArea` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreTextArea` |
 | `resize` | `resize` | `'none' \| 'horizontal' \| 'vertical' \| 'both'` | `'vertical'` | How the control can be resized. Charm leaves this unset (the browser default is `both`); Zocdoc's text area only grows vertically so it can't be dragged out of a form's column. | `CoreTextArea` |
 | `rows` | `rows` | `number` | `6` | Number of visible rows. Charm defaults to 4; Zocdoc's text area is 6 rows. | `CoreTextArea` |
-| `value` | `value` | `unknown` | — | The input's value attribute. | `CharmFormControlElement` |
+| `value` | `value` | `unknown` | — | The input's value attribute. | `CoreTextArea` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 
@@ -50,11 +50,17 @@ A multi-line text field with label and validation support.
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
 | `blur` | `Event` | Emitted when the control loses focus. | `CoreTextArea` |
-| `change` | `Event` | Emitted when an alteration to the control's value is committed by the user. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when an alteration to the control's value is committed by the user. | `CoreTextArea` |
 | `focus` | `Event` | Emitted when the control gains focus. | `CoreTextArea` |
-| `input` | `Event` | Emitted when the control receives input and its value changes. | `CharmFormControlElement` |
+| `input` | `Event` | Emitted when the control receives input and its value changes. | `CoreTextArea` |
 | `keydown` | `Event` | Emitted when a key is pressed down while the control is focused. | `CoreTextArea` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `help-text` | — | `CharmFormControlElement` |
 
 ### Methods
 

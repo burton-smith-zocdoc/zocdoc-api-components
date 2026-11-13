@@ -14,7 +14,7 @@ The content region shown when its tab is selected.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

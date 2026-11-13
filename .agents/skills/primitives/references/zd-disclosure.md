@@ -15,8 +15,8 @@ Toggles a region of content from a slotted trigger.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `content-below` | `contentBelow` | `boolean` | — | Controls the expand direction of the component. | `CoreDisclosure` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CoreDisclosure` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

@@ -20,20 +20,20 @@ A single radio button option within a group.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
 | `checked` | `checked` | `boolean` | — | This toggles the selected status for the radio and is for use when a radio button is used outside of a radio group. When used within a radio group, this value be overridden by the radio group's value. | `CoreRadio` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
-| `value` | `value` | `unknown` | — | The input's value attribute. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreRadio` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreRadio` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreRadio` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreRadio` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreRadio` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreRadio` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreRadio` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreRadio` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreRadio` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreRadio` |
+| `value` | `value` | `unknown` | — | The input's value attribute. | `CoreRadio` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 
@@ -45,8 +45,14 @@ A single radio button option within a group.
 | `change` | `Event` | fired when the user modifies the element's value | `CharmFormControlElement` |
 | `focus` | `Event` | Emitted when the control gains focus. | `CoreRadio` |
 | `input` | `Event` | fires when the value of the element has been changed as a direct result of a user action | `CharmFormControlElement` |
-| `ready` | `Event` | Emitted when the component has completed its initial render. | `CharmElement` |
+| `ready` | `Event` | Emitted when the component has completed its initial render. | `CoreRadio` |
 | `selected` | `Event` | Emitted when the radio is selected. | `CoreRadio` |
+
+### Slots
+
+| Slot | Description | From |
+| --- | --- | --- |
+| `help-text` | — | `CharmFormControlElement` |
 
 ### Methods
 

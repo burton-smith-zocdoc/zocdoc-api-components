@@ -30,9 +30,8 @@ An interactive button, with a variant per visual treatment and two densities.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `allow-wrap` | `allowWrap` | `boolean \| undefined` | `false` | An optional toggle that allows text to wrap. Helper for longer text scenarios. | `CoreButton` |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CoreButton` |
 | `current` | `current` | `'page' \| 'step' \| 'location' \| 'date' \| 'time' \| 'true' \| 'false' \| null` | — | Sets "aria-current" on the internal button or link. | `CoreButton` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the component on page load. | `CoreButton` |
 | `download` | `download` | `string` | — | Downloads the linked file as the filename. Only used when `href` is set. | `CoreButton` |
 | `expanded` | `expanded` | `boolean` | — | Sets "aria-expanded" on the internal button or link. | `CoreButton` |
@@ -43,13 +42,14 @@ An interactive button, with a variant per visual treatment and two densities.
 | `name` | `name` | `string` | — | An optional name for the button. Ignored when `href` is set. | `CoreButton` |
 | `pressed` | `pressed` | `boolean` | — | Sets "aria-pressed" on the internal button or link. | `CoreButton` |
 | `referrerpolicy` | `referrerPolicy` | `'no-referrer' \| 'no-referrer-when-downgrade' \| 'origin' \| 'origin-when-cross-origin' \| 'same-origin' \| 'strict-origin' \| 'strict-origin-when-cross-origin' \| 'unsafe-url' \| (string & {})` | `'strict-origin-when-cross-origin'` | Defining which referrer is sent when fetching the resource. Only applies to links. | `CoreButton` |
-| `rel` | `rel` | `string` | — | Relationship tokens for linked buttons. | `CoreButton` |
+| `rel` | `rel` | `string` | — | Relationship tokens for linked buttons. Defaults to `noreferrer noopener` when `target` is `_blank`. | `CoreButton` |
 | `shows` | `shows` | `string \| undefined` | — | referencing a dismissible element's ID, this button will show it when clicked | `CoreButton` |
 | `target` | `target` | `'_blank' \| '_parent' \| '_self' \| '_top' \| (string & {})` | — | Tells the browser where to open the link. Only used when `href` is set. | `CoreButton` |
 | `toggle` | `toggle` | `boolean` | `false` | Allows a toggling behavior on the component that emits change event if not disabled. Only when is a button. | `CoreButton` |
 | `toggles` | `toggles` | `string \| undefined` | — | referencing a dismissible element's ID, this button will show/hide it when clicked | `CoreButton` |
 | `type` | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Allows the component to be treated standalone or part of a form. The type of button. When the type is `submit`, the button will submit the surrounding form. Note that the default value is `button` instead of `submit`, which is opposite of how native `<button>` elements behave. | `CoreButton` |
 | `value` | `value` | `string` | — | An optional value for the button. Ignored when `href` is set. | `CoreButton` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

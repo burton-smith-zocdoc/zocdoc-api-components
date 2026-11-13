@@ -29,10 +29,10 @@ A container for grouping related content.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `heading` | `heading` | `string` | — | Provides a heading for the card. | `CoreCard` |
 | `media-position` | `mediaPosition` | `'top' \| 'bottom' \| 'start' \| 'end'` | — | A flag used to change visual positioning of any media (default 'top'). | `CoreCard` |
 | `subheading` | `subheading` | `string` | — | Provides a subheading for the card. | `CoreCard` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

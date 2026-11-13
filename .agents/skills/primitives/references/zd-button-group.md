@@ -14,12 +14,12 @@ Groups related buttons together with connected styling.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `label` | `label` | `string` | — | Plain-text accessible name rendered in the group's visually hidden label slot. | `CoreButtonGroup` |
 | `select` | `select` | `'single' \| 'multiple' \| null` | — | When set to 'single', only one button in the group can be selected at a time, multiple buttons can be selected when set to 'multiple' | `CoreButtonGroup` |
 | `split` | `split` | `boolean` | — | Splits the buttons in the group by removing gap and border radius | `CoreButtonGroup` |
 | `toolbar` | `toolbar` | `boolean` | — | When set, the button group will behave like a toolbar with a roving tab index, arrow keyboard interaction, and a role of toolbar | `CoreButtonGroup` |
 | `vertical` | `vertical` | `boolean` | — | Vertically stacks the buttons in the group | `CoreButtonGroup` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

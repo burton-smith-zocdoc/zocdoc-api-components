@@ -15,13 +15,13 @@ Applies slotted stylesheets only to its own subtree.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `css` | `css` | `string \| string[]` | — | CSS styles to scope to this element. Alternatively you can slot `<link>` tags in the `stylesheets` slot. | `CoreScopedStyles` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
-| `ready` | `Event` | Emitted when the component has completed its initial render. | `CharmElement` |
+| `ready` | `Event` | Emitted when the component has completed its initial render. | `CoreScopedStyles` |
 | `styles-loaded` | `Event` | Emitted when the styles are loaded. | `CoreScopedStyles` |
 
 ### Slots

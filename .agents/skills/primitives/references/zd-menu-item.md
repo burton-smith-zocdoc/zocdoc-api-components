@@ -16,13 +16,13 @@ A single selectable action inside a menu.
 | --- | --- | --- | --- | --- | --- |
 | `checked` | `checked` | `boolean` | — | Indicates whether the menu item is checked. | `CoreMenuItem` |
 | `current` | `current` | `'page' \| 'step' \| 'location' \| 'date' \| 'time' \| 'true' \| 'false' \| null` | — | Sets `aria-current` on the internal link. | `CoreMenuItem` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the emitted click event. | `CoreMenuItem` |
 | `expanded` | `expanded` | `boolean` | — | Expands the menu item to reveal a submenu. | `CoreMenuItem` |
 | `href` | `href` | `string` | — | When set, the underlying menu item will be rendered as an `<a>` with this `href` instead of a `<span>`. | `CoreMenuItem` |
 | `role` | `role` | `string \| null` | `null` | The role of the menu item. | `CoreMenuItem` |
 | `sub-menu-placement` | `subMenuPlacement` | `string` | `'end-top'` | Controls the placement of the submenu popup. | `CoreMenuItem` |
 | `target` | `target` | `'_blank' \| '_parent' \| '_self' \| '_top' \| (string & {})` | — | Tells the browser where to open the link. Only used when `href` is set. | `CoreMenuItem` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `hasSubmenu` | `boolean` | — | Indicates whether the menu item contains a submenu. | `CoreMenuItem` |
 
 ### Events
@@ -42,6 +42,7 @@ A single selectable action inside a menu.
 | `end` | A presentational suffix icon or similar element. | `CoreMenuItem` |
 | `radio-indicator` | The radio indicator icon. | `CoreMenuItem` |
 | `start` | A presentational prefix icon or similar element. | `CoreMenuItem` |
+| `submenu` | — | `CoreMenuItem` |
 | `trigger` | The trigger element when the menu item has a submenu. | `CoreMenuItem` |
 
 ### Methods

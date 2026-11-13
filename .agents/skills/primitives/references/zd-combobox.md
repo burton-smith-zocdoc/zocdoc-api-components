@@ -18,32 +18,32 @@ A text input paired with a listbox for filtering and selecting from a set of opt
 | `allows-empty-collection` | `allowsEmptyCollection` | `boolean` | `false` | Keeps the listbox open when the collection is empty. | `CoreCombobox` |
 | `auto-highlight` | `autoHighlight` | `boolean` | `false` | Highlights the first enabled option while filtering. | `CoreCombobox` |
 | `autocomplete` | `autocomplete` | `string` | `'off'` | Controls browser autofill for the text input. | `CoreCombobox` |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreCombobox` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreCombobox` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreCombobox` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreCombobox` |
 | `inputmode` | `inputmode` | `'none' \| 'text' \| 'decimal' \| 'numeric' \| 'tel' \| 'search' \| 'email' \| 'url'` | — | Hints at the type of data that might be entered by the user. | `CoreCombobox` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreCombobox` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreCombobox` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreCombobox` |
 | `loading` | `loading` | `boolean` | `false` | Shows a spinner and allows the listbox to open while options are loading. | `CoreCombobox` |
-| `max-tag-count` | `maxTagCount` | `number` | `DEFAULT_MAX_TAG_COUNT` | The number of selected tags to show, defaulting to 2. Selections beyond this count are summarized by a read-only "+N" tag. | `CoreCombobox` |
+| `max-tag-count` | `maxTagCount` | `number` | `2` | The number of selected tags to show, defaulting to 2. Selections beyond this count are summarized by a read-only "+N" tag. | `CoreCombobox` |
 | `menu-trigger` | `menuTrigger` | `ComboboxMenuTrigger` | `'input'` | The interaction that opens the listbox. | `CoreCombobox` |
 | `mode` | `mode` | `ComboboxMode` | `'both'` | Controls whether typing shows a list, an inline completion, both, or neither. | `CoreCombobox` |
 | `multiple` | `multiple` | `boolean` | `false` | Allows more than one option to be selected. | `CoreCombobox` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreCombobox` |
 | `open` | `open` | `boolean` | `false` | Indicates whether the listbox is open. | `CoreCombobox` |
 | `placeholder` | `placeholder` | `string` | — | The text input's placeholder. | `CoreCombobox` |
 | `placement` | `placement` | `PopupPlacement` | `'bottom-start'` | The preferred placement of the listbox. | `CoreCombobox` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `remove-label` | `removeLabel` | `string` | `'Remove'` | Accessible label prefix for a tag's remove button. | `CoreCombobox` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreCombobox` |
+| `remove-label` | `removeLabel` | `string` | `'Remove'` | Text announced before each tag's label (e.g. "Remove Apple"), telling assistive technology that Delete or Backspace removes it. | `CoreCombobox` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreCombobox` |
 | `should-focus-wrap` | `shouldFocusWrap` | `boolean` | `false` | Wraps keyboard navigation from the last option to the first and vice versa. | `CoreCombobox` |
 | `value` | `value` | `string` | — | The input's value attribute. | `CharmFormControlElement` |
 | `value-delimiter` | `valueDelimiter` | `string` | — | The delimiter used to parse and serialize `value` when multiple selection is enabled. | `CoreCombobox` |
 | `with-clear` | `withClear` | `boolean` | `false` | Adds a clear button when the combobox has a selection or input text. | `CoreCombobox` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `filter` | `ComboboxFilter` | — | A custom filter function. Receives the source option and the current input value. | `CoreCombobox` |
 | — | `validationMessage` | `string` | — | Gets the current validation message, if one exists. | `CoreCombobox` |
 | — | `validity` | `ValidityState` | — | Gets the current validity, where a required combobox must have at least one selected value. | `CoreCombobox` |
@@ -53,10 +53,10 @@ A text input paired with a listbox for filtering and selecting from a set of opt
 
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
-| `change` | `Event` | Emitted when the user commits a new value. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when the user commits a new value. | `CoreCombobox` |
 | `combobox-hide` | `Event` | Emitted when the listbox closes. | `CoreCombobox` |
 | `combobox-show` | `Event` | Emitted when the listbox opens. | `CoreCombobox` |
-| `input` | `Event` | Emitted when the value is being changed by the user. | `CharmFormControlElement` |
+| `input` | `Event` | Emitted when the value is being changed by the user. | `CoreCombobox` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots
@@ -100,7 +100,7 @@ A text input paired with a listbox for filtering and selecting from a set of opt
 | `combobox-start` | Container for the start slot. | `CoreCombobox` |
 | `combobox-tag` | A selected-value tag. | `CoreCombobox` |
 | `combobox-tag-label` | The text within a tag. | `CoreCombobox` |
-| `combobox-tag-remove` | The remove button within a tag. | `CoreCombobox` |
+| `combobox-tag-remove` | The pointer-only remove control within a tag. Keyboard users remove the focused tag with Delete or Backspace. | `CoreCombobox` |
 | `combobox-tags` | Container for selected-value tags. | `CoreCombobox` |
 | `form-control-error-text` | The error message container. | `CharmFormControlElement` |
 | `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |

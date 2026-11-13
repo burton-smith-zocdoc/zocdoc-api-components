@@ -14,12 +14,12 @@ A single collapsible section of an accordion: a heading that expands to reveal i
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the emitted click event. | `CoreAccordionItem` |
 | `expand-icon-position` | `expandIconPosition` | `'start' \| 'end'` | `'end'` | Where the expand chevron sits. Charm defaults to the start of the row; Zinc's accordion trails it after the heading. | `CoreAccordionItem` |
 | `heading` | `heading` | `string` | — | The content of the toggle element. Can be used in lieu of the slot if only a string is needed. | `CoreAccordionItem` |
 | `heading-level` | `headingLevel` | `1 \| 2 \| 3 \| 6 \| 4 \| 5 \| undefined` | — | The header level value (1-6) for summary, when summary is rendered as a header. | `CoreAccordionItem` |
-| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CoreAccordionItem` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

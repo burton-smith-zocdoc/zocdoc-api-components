@@ -14,20 +14,20 @@ Groups radio buttons for single-selection choices.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreRadioGroup` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreRadioGroup` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreRadioGroup` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreRadioGroup` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreRadioGroup` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreRadioGroup` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreRadioGroup` |
 | `layout` | `layout` | `'horizontal' \| 'vertical' \| 'horizontal-stacked'` | — | How the radio items are laid out in the group. | `CoreRadioGroup` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
-| `value` | `value` | `unknown` | — | The input's value attribute. | `CharmFormControlElement` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreRadioGroup` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreRadioGroup` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreRadioGroup` |
+| `value` | `value` | `unknown` | — | The input's value attribute. | `CoreRadioGroup` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `string` | — | Gets the current validation message, if one exists. | `CoreRadioGroup` |
 | — | `validity` | `ValidityState` | — | — | `CoreRadioGroup` |
 
@@ -36,9 +36,9 @@ Groups radio buttons for single-selection choices.
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
 | `blur` | `Event` | Emitted when the radio group loses focus. | `CoreRadioGroup` |
-| `change` | `Event` | Emitted when the radio group's selected value changes. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when the radio group's selected value changes. | `CoreRadioGroup` |
 | `focus` | `Event` | Emitted when the radio group gains focus. | `CoreRadioGroup` |
-| `input` | `Event` | Emitted when the radio group receives user input. | `CharmFormControlElement` |
+| `input` | `Event` | Emitted when the radio group receives user input. | `CoreRadioGroup` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots
@@ -61,7 +61,7 @@ Groups radio buttons for single-selection choices.
 
 | Part | Description | From |
 | --- | --- | --- |
-| `form-control-error-text` | The control's error text's wrapper. | `CharmFormControlElement` |
+| `form-control-error-text` | The control's error text's wrapper. | `CoreRadioGroup` |
 | `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
 | `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |
 | `form-control-help-text` | The help text container. | `CharmFormControlElement` |

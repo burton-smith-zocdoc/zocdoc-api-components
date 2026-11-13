@@ -20,7 +20,7 @@ A small label or status indicator.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

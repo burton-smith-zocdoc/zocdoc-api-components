@@ -92,7 +92,7 @@ the API calls. The appointment is property-only and never read from markup (PHI-
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
+| — | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
 
 ### Events
 

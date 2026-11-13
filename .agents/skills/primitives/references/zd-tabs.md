@@ -14,11 +14,11 @@ Coordinates a tab list and its panels.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `active-id` | `activeId` | `string \| undefined` | — | Refers to the currently active tab. | `CoreTabs` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `label` | `label` | `string` | — | Required localized accessible name for the tab list. | `CoreTabs` |
+| `active-id` | `activeId` | `string \| undefined` | — | Controls which tab is selected. (You can also set `selected` on a single tab.) | `CoreTabs` |
+| `label` | `label` | `string` | — | Accessible name for the tab list. | `CoreTabs` |
 | `layout` | `layout` | `'horizontal' \| 'vertical'` | — | Whether to render the tabs in a column or row fashion. The default value is a `horizontal` layout. | `CoreTabs` |
 | `manual-activation` | `manualActivation` | `boolean` | — | Set this if you do not want to navigate to a new tab with arrow keys, users will need to push "space" or "enter" to navigate. | `CoreTabs` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

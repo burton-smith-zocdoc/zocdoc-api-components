@@ -99,7 +99,7 @@ and the window control are hidden, since nothing would fetch the page or window 
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
+| — | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
 
 ### Events
 

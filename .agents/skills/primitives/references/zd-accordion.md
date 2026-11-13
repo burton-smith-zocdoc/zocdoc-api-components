@@ -14,8 +14,8 @@ Groups accordion items into a single collapsible region.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `open-single` | `openSingle` | `boolean` | `false` | If set, allows only one child accordion-item to be open at a time. | `CoreAccordion` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

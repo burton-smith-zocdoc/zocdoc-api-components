@@ -45,7 +45,7 @@ standalone confirmation page as plain markup rather than only at the end of a fl
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
+| — | `dir` | `"" \| "ltr" \| "rtl" \| "auto"` | — | — | `CharmElement` |
 
 ### Events
 

@@ -21,21 +21,21 @@ that need the compact treatment can set `--zd-form-control-input-height` and
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `autocomplete` | `autocomplete` | `string` | — | Permission the user agent has to provide automated assistance in filling out the select's value. | `CoreSelect` |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreSelect` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreSelect` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreSelect` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreSelect` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreSelect` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreSelect` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreSelect` |
 | `multiple` | `multiple` | `boolean` | `false` | This Boolean attribute indicates that multiple options can be selected in the list. * | `CoreSelect` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreSelect` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreSelect` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreSelect` |
 | `size` | `size` | `number` | — | This attribute represents the number of rows in the list that should be visible at one time * | `CoreSelect` |
-| `value` | `value` | `unknown` | — | The input's value attribute. | `CharmFormControlElement` |
+| `value` | `value` | `unknown` | — | The input's value attribute. | `CoreSelect` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 
@@ -43,8 +43,8 @@ that need the compact treatment can set `--zd-form-control-input-height` and
 
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
-| `change` | `Event` | Custom event that indicates a new selection has been made through e.target.value. | `CharmFormControlElement` |
-| `input` | `Event` | Custom event that indicates a new selection has been made through e.target.value. | `CharmFormControlElement` |
+| `change` | `Event` | Custom event that indicates a new selection has been made through e.target.value. | `CoreSelect` |
+| `input` | `Event` | Custom event that indicates a new selection has been made through e.target.value. | `CoreSelect` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots
@@ -52,6 +52,7 @@ that need the compact treatment can set `--zd-form-control-input-height` and
 | Slot | Description | From |
 | --- | --- | --- |
 | `end` | A slot for content to be placed at the end of the select. | `CoreSelect` |
+| `help-text` | — | `CharmFormControlElement` |
 | `label` | A placeholder for the select's label. | `CoreSelect` |
 | `start` | A slot for content to be placed at the start of the select. | `CoreSelect` |
 

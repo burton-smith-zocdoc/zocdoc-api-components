@@ -16,12 +16,12 @@ A modal dialog for focused tasks and confirmations, with heading, body, and foot
 | --- | --- | --- | --- | --- | --- |
 | `alert` | `alert` | `boolean` | — | Indicates whether the dialog can only be closed programmatically or by clicking the close button. | `CoreDialog` |
 | `close-button-label` | `closeButtonLabel` | `string` | `'close'` | The label for the close button. | `CoreDialog` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `heading` | `heading` | `string` | — | The optional header of the dialog. | `CoreDialog` |
 | `hide-close-button` | `hideCloseButton` | `boolean` | — | Hides the close button when it is not focused. | `CoreDialog` |
 | `no-header` | `noHeader` | `boolean` | — | Hides the visible header; the heading and close button remain available to assistive technology. | `CoreDialog` |
-| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CoreDialog` |
 | `position` | `position` | `'start' \| 'end' \| 'top' \| 'bottom' \| 'center'` | — | Position of the dialog. | `CoreDialog` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

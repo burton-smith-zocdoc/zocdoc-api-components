@@ -15,10 +15,10 @@ A horizontal or vertical rule separating content, with an optional inline label.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `align-content` | `alignContent` | `'center' \| 'start' \| 'end'` | — | Determines the alignment of the content within the divider. | `CoreDivider` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `inset` | `inset` | `boolean` | — | Adds padding to the beginning and end of the divider. | `CoreDivider` |
 | `orientation` | `orientation` | `'horizontal' \| 'vertical'` | — | The divider's orientation. | `CoreDivider` |
 | `presentation` | `presentation` | `boolean` | — | Renders the divider as a presentational element instead of a content separator when set to true. | `CoreDivider` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

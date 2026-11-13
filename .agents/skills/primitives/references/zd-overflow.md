@@ -14,13 +14,13 @@ Collapses items that no longer fit into an overflow menu.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `fixed-placement` | `fixedPlacement` | `boolean` | `false` | Enable this option to prevent the overflow menu from being clipped when the component is placed inside a container with `overflow: auto\|hidden\|scroll`. | `CoreOverflow` |
 | `label` | `label` | `string` | `'More options'` | Label for the icon button in the overflow menu. | `CoreOverflow` |
 | `menu-position` | `menuPosition` | `'start' \| 'end' \| 'none'` | `'end'` | Location of overflow menu. Default is end. | `CoreOverflow` |
 | `min` | `min` | `number` | `0` | Minimum number of values to always display, even if they overflow the container. | `CoreOverflow` |
 | `overflow-direction` | `overflowDirection` | `'start' \| 'end'` | — | Side to start hiding/adding elements when collapsing/expanding. | `CoreOverflow` |
 | `overflowing` | `overflowing` | `boolean` | `false` | Whether or not there are overflowing elements. | `CoreOverflow` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 
@@ -50,7 +50,6 @@ Collapses items that no longer fit into an overflow menu.
 | `overflow-base` | The component's base wrapper. | `CoreOverflow` |
 | `overflow-content` | The container for the default slot. | `CoreOverflow` |
 | `overflow-end` | The end slot. | `CoreOverflow` |
-| `overflow-menu` | The menu for overflowed items. | `CoreOverflow` |
 | `overflow-menu` | The menu for overflowed items. | `CoreOverflow` |
 | `overflow-menu-item` | The menu item for overflowed items. | `CoreOverflow` |
 | `overflow-start` | The start slot. | `CoreOverflow` |

@@ -14,8 +14,7 @@ A calendar grid for selecting a date, a date range, or multiple separate dates.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CoreCalendar` |
 | `disabled` | `disabled` | `boolean` | `false` | Prevents date selection and calendar navigation. | `CoreCalendar` |
 | `disabled-dates` | `disabledDates` | `string` | `''` | A comma- or whitespace-separated list of unavailable dates in `YYYY-MM-DD` format. | `CoreCalendar` |
 | `disabled-week-days` | `disabledWeekDays` | `string` | `''` | A comma- or whitespace-separated list of unavailable weekdays, from 0 (Sunday) to 6 (Saturday). | `CoreCalendar` |
@@ -29,6 +28,7 @@ A calendar grid for selecting a date, a date range, or multiple separate dates.
 | `selection-mode` | `selectionMode` | `CalendarSelectionMode` | `'single'` | Whether the calendar selects one date, a continuous range, or separate dates. | `CoreCalendar` |
 | `value` | `value` | `CalendarValue` | — | The selected date (`YYYY-MM-DD`) or date list. Range values contain the start and end dates. | `CoreCalendar` |
 | `weekday-format` | `weekdayFormat` | `'narrow' \| 'short' \| 'long'` | `'short'` | The visible format for weekday headings. | `CoreCalendar` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

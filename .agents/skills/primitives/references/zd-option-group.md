@@ -14,9 +14,9 @@ Labels and groups related options within a combobox.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | `false` | Disables every option in the group. | `CoreOptionGroup` |
 | `label` | `label` | `string` | — | The group's label, announced before its options. | `CoreOptionGroup` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 
@@ -42,6 +42,7 @@ Labels and groups related options within a combobox.
 | --- | --- | --- | --- | --- |
 | `--zd-charm-combobox-group-gap` | — | — | The gap between option groups. | `CoreOptionGroup` |
 | `--zd-charm-combobox-group-label-color` | — | — | The group label color. | `CoreOptionGroup` |
+| `--zd-charm-combobox-group-label-disabled-color` | — | — | The group label color when the group is disabled. | `CoreOptionGroup` |
 | `--zd-charm-combobox-group-label-font-size` | — | — | The group label font size. | `CoreOptionGroup` |
 | `--zd-charm-combobox-group-label-font-weight` | — | — | The group label font weight. | `CoreOptionGroup` |
 | `--zd-charm-combobox-group-label-line-height` | — | — | The group label line height. | `CoreOptionGroup` |

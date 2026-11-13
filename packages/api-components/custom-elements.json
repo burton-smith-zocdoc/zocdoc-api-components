@@ -14,7 +14,7 @@
           "tagName": "zd-appointment",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -23,7 +23,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -74,7 +74,7 @@
               "default": "'appointment'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -174,7 +174,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -236,7 +236,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -277,7 +277,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -643,7 +643,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -778,14 +778,6 @@
               "fieldName": "appointmentId"
             },
             {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
-            {
               "name": "hide-photo",
               "description": "Leaves the provider's photo out, as on `zd-provider-card`.",
               "type": {
@@ -854,7 +846,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -1002,7 +994,7 @@
           "tagName": "zd-availability-grid",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -1011,7 +1003,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1042,7 +1034,7 @@
               "default": "'availability-grid'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -1083,7 +1075,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -1155,7 +1147,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1234,7 +1226,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1373,7 +1365,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -1505,14 +1497,6 @@
               "fieldName": "days"
             },
             {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
-            {
               "name": "hide-window",
               "description": "Drops this component's own window control, leaving the days.\n\nWhat a results list sets on every card: the production search page has one range control\nabove the list governing every provider in it, not ten of them disagreeing. The pager still\nworks through `shiftWindow` and `start-date`, so whoever owns the shared control drives all\nof them by binding the same `start-date` down.\n\nNamed for what it does rather than as `show-window`, which would default to true and could\nthen never be turned off through an attribute — a boolean attribute's presence is its value.",
               "type": {
@@ -1623,7 +1607,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             },
             {
@@ -1714,7 +1698,7 @@
           "tagName": "zd-availability-picker",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -1723,7 +1707,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1754,7 +1738,7 @@
               "default": "'availability-picker'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -1804,7 +1788,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -1867,7 +1851,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -1917,7 +1901,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2150,7 +2134,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -2294,14 +2278,6 @@
               "fieldName": "days"
             },
             {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
-            {
               "name": "disable-handoff",
               "description": "Stops a picker hydrated from markup from sending a slot tap to Zocdoc.",
               "type": {
@@ -2421,7 +2397,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             },
             {
@@ -2516,7 +2492,7 @@
           "tagName": "zd-availability-window",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -2525,7 +2501,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2536,7 +2512,7 @@
               "default": "'availability-window'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -2567,7 +2543,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -2611,7 +2587,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2641,7 +2617,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2650,7 +2626,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -2696,14 +2672,6 @@
               "fieldName": "canGoEarlier"
             },
             {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
-            {
               "name": "end-date",
               "description": "The window's last day, inclusive, as `YYYY-MM-DD`.",
               "type": {
@@ -2729,7 +2697,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             },
             {
@@ -2792,7 +2760,7 @@
           "tagName": "zd-booking-confirmation",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -2801,7 +2769,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2822,7 +2790,7 @@
               "default": "'booking-confirmation'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -2842,7 +2810,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -2868,7 +2836,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2898,7 +2866,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -2957,7 +2925,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -3005,14 +2973,6 @@
                 "text": "string"
               },
               "fieldName": "appointmentId"
-            },
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
             },
             {
               "name": "location-phone",
@@ -3068,7 +3028,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -3144,7 +3104,7 @@
           "tagName": "zd-booking",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -3153,7 +3113,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3215,7 +3175,7 @@
               "default": "'booking'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -3305,7 +3265,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -3348,7 +3308,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3415,7 +3375,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -3674,7 +3634,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -3765,14 +3725,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
             {
               "name": "hide-photos",
               "description": "Hides provider photos in the results list and booking summary.",
@@ -3917,7 +3869,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -4021,7 +3973,7 @@
           "tagName": "zd-patient-form",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -4030,7 +3982,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4041,7 +3993,7 @@
               "default": "'patient-form'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -4072,7 +4024,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -4153,7 +4105,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4202,7 +4154,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4317,7 +4269,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -4438,14 +4390,6 @@
               },
               "default": "false",
               "fieldName": "busy"
-            },
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
             }
           ],
           "events": [
@@ -4464,7 +4408,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -4580,7 +4524,7 @@
           "tagName": "zd-provider-card",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -4589,7 +4533,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4600,7 +4544,7 @@
               "default": "'provider-card'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -4629,7 +4573,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -4674,7 +4618,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4798,7 +4742,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -4927,7 +4871,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -4946,14 +4890,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
             {
               "name": "disable-handoff",
               "description": "Stops a card in handoff mode from showing \"Book now\".",
@@ -5022,7 +4958,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -5131,7 +5067,7 @@
           "tagName": "zd-provider-profile",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -5140,7 +5076,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5151,7 +5087,7 @@
               "default": "'provider-profile'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -5171,7 +5107,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -5197,7 +5133,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5257,7 +5193,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5425,7 +5361,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -5433,14 +5369,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
             {
               "name": "hide-photo",
               "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
@@ -5468,7 +5396,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -5614,7 +5542,7 @@
           "tagName": "zd-provider-results",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -5623,7 +5551,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5673,7 +5601,7 @@
               "default": "'provider-results'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -5723,7 +5651,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -5768,7 +5696,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -5875,7 +5803,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6182,7 +6110,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -6264,14 +6192,6 @@
                 "text": "string"
               },
               "fieldName": "availabilityStart"
-            },
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
             },
             {
               "name": "disable-handoff",
@@ -6389,7 +6309,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             },
             {
@@ -6552,7 +6472,7 @@
           "tagName": "zd-provider-search",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -6561,7 +6481,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6572,7 +6492,7 @@
               "default": "'provider-search'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -6592,7 +6512,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -6682,7 +6602,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6731,7 +6651,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -6897,7 +6817,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -7010,14 +6930,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
-            {
               "name": "insurance-plan-id",
               "description": "The insurance plan to filter by. Optional: without it the search spans every network.",
               "type": {
@@ -7127,7 +7039,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -7215,7 +7127,7 @@
           "tagName": "zd-provider-summary",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -7224,7 +7136,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7235,7 +7147,7 @@
               "default": "'provider-summary'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -7255,7 +7167,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -7281,7 +7193,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7322,7 +7234,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7394,7 +7306,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -7402,14 +7314,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
             {
               "name": "hide-photo",
               "description": "Hides the provider's photo, which otherwise renders from Zocdoc's image CDN\n(see `ProviderSummaryOptions.hidePhoto`).",
@@ -7437,7 +7341,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -7501,7 +7405,7 @@
           "tagName": "zd-sign-in",
           "superclass": {
             "name": "CharmElement",
-            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+            "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
           },
           "members": [
             {
@@ -7510,7 +7414,7 @@
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7543,7 +7447,7 @@
               "default": "'sign-in'",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "string"
@@ -7574,7 +7478,7 @@
               "name": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
@@ -7645,7 +7549,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7697,7 +7601,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               }
             },
             {
@@ -7757,7 +7661,7 @@
               "privacy": "protected",
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261030170210_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
+                "module": "/Users/burton.smith/Projects/zocdoc-api-components/node_modules/.pnpm/@charm-ux+core@0.0.0-beta-20261112123826_@floating-ui+utils@0.2.12/node_modules/@charm-ux/core/dist/base/charm-element/charm-element.d.ts"
               },
               "type": {
                 "text": "CharmScope"
@@ -7775,14 +7679,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
             {
               "name": "hide-email",
               "description": "Leaves out the optional email field.",
@@ -7802,7 +7698,7 @@
               },
               "inheritedFrom": {
                 "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
+                "module": "dist/base/charm-element/charm-element.js"
               }
             },
             {

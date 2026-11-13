@@ -14,20 +14,20 @@ A labelled on/off toggle for a single setting.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
 | `checked` | `checked` | `boolean` | — | Draws the switch in a checked state. | `CoreSwitch` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
-| `value` | `value` | `unknown` | — | The input's value attribute. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreSwitch` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreSwitch` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreSwitch` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreSwitch` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreSwitch` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreSwitch` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreSwitch` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreSwitch` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreSwitch` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreSwitch` |
+| `value` | `value` | `unknown` | — | The input's value attribute. | `CoreSwitch` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 
@@ -36,16 +36,17 @@ A labelled on/off toggle for a single setting.
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
 | `blur` | `Event` | Emitted when the control loses focus. | `CoreSwitch` |
-| `change` | `Event` | Emitted when the control's checked state changes. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when the control's checked state changes. | `CoreSwitch` |
 | `focus` | `Event` | Emitted when the control gains focus. | `CoreSwitch` |
 | `input` | `Event` | fires when the value of the element has been changed as a direct result of a user action | `CharmFormControlElement` |
-| `ready` | `Event` | Emitted when the component has completed its initial render. | `CharmElement` |
+| `ready` | `Event` | Emitted when the component has completed its initial render. | `CoreSwitch` |
 
 ### Slots
 
 | Slot | Description | From |
 | --- | --- | --- |
 | `checked-message` | The message to display when the toggle is checked. | `CoreSwitch` |
+| `help-text` | — | `CharmFormControlElement` |
 | `label` | The switch's label. | `CoreSwitch` |
 | `unchecked-message` | The message to display when the toggle is unchecked. | `CoreSwitch` |
 
@@ -62,6 +63,7 @@ A labelled on/off toggle for a single setting.
 
 | Part | Description | From |
 | --- | --- | --- |
+| `form-control` | — | `CoreSwitch` |
 | `form-control-error-text` | The error message container. | `CharmFormControlElement` |
 | `form-control-error-text-icon` | The error message icon. | `CharmFormControlElement` |
 | `form-control-error-text-message` | The error message text. | `CharmFormControlElement` |

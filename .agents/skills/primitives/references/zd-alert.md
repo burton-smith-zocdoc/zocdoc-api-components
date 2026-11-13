@@ -33,11 +33,11 @@ Displays contextual feedback messages, with a variant per severity.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `closeLabel` | `closeLabel` | `string` | `'Close'` | The label for the close button. | `CoreAlert` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `dismissible` | `dismissible` | `boolean` | `false` | Shows the close button. | `CoreAlert` |
 | `heading` | `heading` | `string` | — | The heading of the alert. | `CoreAlert` |
-| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CharmDismissibleElement` |
+| `open` | `open` | `unknown` | — | Indicates whether or not the component is open. Can be used in lieu of show/hide methods. | `CoreAlert` |
 | `politeness` | `politeness` | `"off" \| "polite" \| "assertive"` | — | Controls how the alert is announced to assistive technology. `polite` renders `role="status"`, `assertive` renders `role="alert"`, and `off` renders neither. | `CoreAlert` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

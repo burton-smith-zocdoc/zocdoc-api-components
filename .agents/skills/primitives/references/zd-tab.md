@@ -14,9 +14,9 @@ A single selectable tab in a tab list.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Disables the component on page load. | `CoreTab` |
 | `selected` | `selected` | `boolean` | — | Enables a selected tab. | `CoreTab` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

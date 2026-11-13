@@ -14,13 +14,13 @@ A single link in a breadcrumb trail.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CoreBreadcrumbItem` |
 | `current` | `current` | `'page' \| 'step'` | — | Sets `aria-current` on the link or text control. | `CoreBreadcrumbItem` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `disabled` | `disabled` | `boolean` | — | Prevents navigation and presents this item as non-interactive text. | `CoreBreadcrumbItem` |
 | `href` | `href` | `string` | — | When set, renders a navigable `<a>` with this `href`. Without it, the item is non-interactive text. | `CoreBreadcrumbItem` |
 | `referrerpolicy` | `referrerPolicy` | `'no-referrer' \| 'no-referrer-when-downgrade' \| 'origin' \| 'origin-when-cross-origin' \| 'same-origin' \| 'strict-origin' \| 'strict-origin-when-cross-origin' \| 'unsafe-url' \| (string & {})` | `'strict-origin-when-cross-origin'` | Defining which referrer is sent when fetching the resource. Only applies to links. | `CoreBreadcrumbItem` |
 | `target` | `target` | `'_blank' \| '_parent' \| '_self' \| '_top' \| (string & {})` | — | Tells the browser where to open the link. Only used when `href` is set. | `CoreBreadcrumbItem` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

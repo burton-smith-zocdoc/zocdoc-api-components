@@ -15,29 +15,29 @@ A segmented date field with a popup calendar for selecting a single date.
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
 | `autocomplete` | `autocomplete` | `string` | — | Autofill hint for the date segments. Set to `bday` to autofill a birthday. | `CoreDatePicker` |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreDatePicker` |
 | `disabled-dates` | `disabledDates` | `string` | `''` | A comma- or whitespace-separated list of unavailable dates in `YYYY-MM-DD` format. | `CoreDatePicker` |
 | `disabled-week-days` | `disabledWeekDays` | `string` | `''` | A comma- or whitespace-separated list of unavailable weekdays, from 0 (Sunday) to 6 (Saturday). | `CoreDatePicker` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreDatePicker` |
 | `first-day-of-week` | `firstDayOfWeek` | `number` | — | The first weekday, from 0 (Sunday) to 6 (Saturday), forwarded to the nested calendar. | `CoreDatePicker` |
 | `fixed-placement` | `fixedPlacement` | `boolean` | `false` | Enables fixed positioning for the popup calendar. | `CoreDatePicker` |
 | `focus-date` | `focusDate` | `string` | — | The date initially focused when there is no selected value. | `CoreDatePicker` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreDatePicker` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreDatePicker` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreDatePicker` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreDatePicker` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreDatePicker` |
 | `max` | `max` | `string` | — | The latest selectable date, in `YYYY-MM-DD` format. | `CoreDatePicker` |
 | `min` | `min` | `string` | — | The earliest selectable date, in `YYYY-MM-DD` format. | `CoreDatePicker` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreDatePicker` |
 | `open` | `open` | `boolean` | `false` | Whether the popup calendar is open. | `CoreDatePicker` |
 | `placement` | `placement` | `PopupPlacement` | `'bottom-start'` | Preferred popup placement relative to the segmented input. | `CoreDatePicker` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreDatePicker` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreDatePicker` |
 | `value` | `value` | `string` | — | The input's value attribute. | `CharmFormControlElement` |
 | `weekday-format` | `weekdayFormat` | `'narrow' \| 'short' \| 'long'` | `'short'` | The visible format for calendar weekday headings. | `CoreDatePicker` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `unknown` | — | Gets the current validation message, if one exists. (readonly) | `CharmFormControlElement` |
 | — | `validity` | `unknown` | — | Gets the validity of the input. (readonly) | `CharmFormControlElement` |
 | — | `valueAsDate` | `Date \| null` | — | Gets or sets the value as a `Date` at local midnight; the Date's local calendar day is used. | `CoreDatePicker` |
@@ -46,9 +46,9 @@ A segmented date field with a popup calendar for selecting a single date.
 
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
-| `change` | `Event` | Emitted when a value change is committed. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when a value change is committed. | `CoreDatePicker` |
 | `date-picker-today` | `Event` | Emitted when the Today action sets the value. | `CoreDatePicker` |
-| `input` | `Event` | Emitted when the value changes during user interaction. | `CharmFormControlElement` |
+| `input` | `Event` | Emitted when the value changes during user interaction. | `CoreDatePicker` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots
@@ -113,6 +113,7 @@ A segmented date field with a popup calendar for selecting a single date.
 
 | Property | Syntax | Default | Description | From |
 | --- | --- | --- | --- | --- |
+| `--zd-charm-date-picker-segment-placeholder-color` | — | — | The color of empty segment placeholders. | `CoreDatePicker` |
 | `--zd-charm-form-control-bg-color` | — | — | Determines the background color for the control. | `CharmFormControlElement` |
 | `--zd-charm-form-control-border-radius` | — | — | Determines the border radius of the control. | `CharmFormControlElement` |
 | `--zd-charm-form-control-disabled-bg-color` | — | — | Determines the disabled input background color. | `CharmFormControlElement` |

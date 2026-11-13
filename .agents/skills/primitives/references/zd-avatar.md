@@ -14,11 +14,11 @@ Displays an image or initials representing a person.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `image` | `image` | `string` | — | The image URL for the user's avatar. | `CoreAvatar` |
 | `initials` | `initials` | `string` | — | The initials of the represented user. | `CoreAvatar` |
 | `label` | `label` | `string` | — | The alt text for the avatar. | `CoreAvatar` |
 | `loading` | `loading` | `'eager' \| 'lazy'` | `'eager'` | Indicates how the browser should load the avatar's image. | `CoreAvatar` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

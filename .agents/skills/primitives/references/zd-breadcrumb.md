@@ -14,8 +14,8 @@ Shows the hierarchy leading to the current page.
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
 | `label` | `label` | `string` | — | Required localized accessible name for the breadcrumb navigation landmark. | `CoreBreadcrumb` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 
 ### Events
 

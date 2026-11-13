@@ -14,22 +14,22 @@ Groups checkboxes for multiple-selection choices with a shared label, help text,
 
 | Attribute | Property | Type | Default | Description | From |
 | --- | --- | --- | --- | --- | --- |
-| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFocusableElement` |
-| `dir` | `dir` | `unknown` | — | — | `CharmElement` |
-| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CharmFormControlElement` |
-| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CharmFormControlElement` |
-| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CharmFormControlElement` |
-| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CharmFormControlElement` |
-| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CharmFormControlElement` |
-| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CharmFormControlElement` |
-| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CharmFormControlElement` |
+| `autofocus` | `autofocus` | `unknown` | `false` | Auto focuses the component on page load. | `CharmFormControlElement` |
+| `disabled` | `disabled` | `unknown` | — | Disables the input. | `CoreCheckboxGroup` |
+| `error-message` | `errorMessage` | `unknown` | — | The input's error message. | `CoreCheckboxGroup` |
+| `help-text` | `helpText` | `unknown` | — | The input's help text. Alternatively, you can use the help-text slot. | `CoreCheckboxGroup` |
+| `hide-label` | `hideLabel` | `unknown` | `false` | Hides the input label and help text. | `CoreCheckboxGroup` |
+| `invalid` | `invalid` | `unknown` | `false` | This will be true when the control is in an invalid state. Validity is determined by the `required` prop. | `CoreCheckboxGroup` |
+| `label` | `label` | `unknown` | — | The input's label. If you need to display HTML, you can use the `label` slot instead. | `CoreCheckboxGroup` |
+| `label-position` | `labelPosition` | `unknown` | — | The position of the label | `CoreCheckboxGroup` |
 | `layout` | `layout` | `'horizontal' \| 'vertical' \| 'horizontal-stacked'` | — | How the checkboxes are laid out in the group. | `CoreCheckboxGroup` |
 | `listbox` | `listbox` | `boolean` | `false` | Presents the choices as a single-tab-stop listbox with arrow-key navigation. | `CoreCheckboxGroup` |
-| `name` | `name` | `unknown` | — | The input's name attribute. | `CharmFormControlElement` |
-| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CharmFormControlElement` |
-| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CharmFormControlElement` |
+| `name` | `name` | `unknown` | — | The input's name attribute. | `CoreCheckboxGroup` |
+| `readonly` | `readonly` | `unknown` | — | Makes the input readonly. | `CoreCheckboxGroup` |
+| `required` | `required` | `unknown` | `false` | Makes the input a required field. | `CoreCheckboxGroup` |
 | `value` | `value` | `string` | — | The input's value attribute. | `CharmFormControlElement` |
 | `value-delimiter` | `valueDelimiter` | `string` | — | The delimiter used to parse and serialize `value`. Defaults to a comma. | `CoreCheckboxGroup` |
+| — | `dir` | `unknown` | — | — | `CharmElement` |
 | — | `validationMessage` | `string` | — | Gets the current validation message, if one exists. | `CoreCheckboxGroup` |
 | — | `validity` | `ValidityState` | — | Gets group validity, where a required group must have at least one selected checkbox. | `CoreCheckboxGroup` |
 | — | `valueAsArray` | `string[]` | — | The checkbox group's selected values as an array. | `CoreCheckboxGroup` |
@@ -39,9 +39,9 @@ Groups checkboxes for multiple-selection choices with a shared label, help text,
 | Event | Type | Description | From |
 | --- | --- | --- | --- |
 | `blur` | `Event` | Emitted when the group loses focus. | `CoreCheckboxGroup` |
-| `change` | `Event` | Emitted when the group's selected values change. | `CharmFormControlElement` |
+| `change` | `Event` | Emitted when the group's selected values change. | `CoreCheckboxGroup` |
 | `focus` | `Event` | Emitted when the group gains focus. | `CoreCheckboxGroup` |
-| `input` | `Event` | Emitted when the group receives user input. | `CharmFormControlElement` |
+| `input` | `Event` | Emitted when the group receives user input. | `CoreCheckboxGroup` |
 | `ready` | `Event` | Emitted when the component is ready. | `CharmElement` |
 
 ### Slots
